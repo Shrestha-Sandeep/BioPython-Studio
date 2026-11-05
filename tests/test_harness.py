@@ -16,6 +16,8 @@ namespace = {}
 exec(MATCH.group(1), namespace)
 evaluate = namespace['evaluate']
 
+big_images = [(np.arange(40*48,dtype=np.uint16).reshape(40,48)%256).astype(np.uint8).tolist(), (np.arange(38*45,dtype=np.uint16).reshape(38,45)*3%256).astype(np.uint8).tolist()]
+
 images = [
     np.arange(35, dtype=np.uint8).reshape(5,7).tolist(),
     np.arange(48, dtype=np.uint8).reshape(6,8).tolist(),
@@ -28,7 +30,7 @@ GOOD = [
  ('replicates','total=sum(counts)\nprint(total)', [{'counts':[2,3,4]},{'counts':[10,1]}]),
  ('function','def mean_signal(values):\n    return sum(values)/len(values)\nprint(round(mean_signal(signals),2))',[{'signals':[1,2,3]},{'signals':[3,6,9,12]}]),
  ('shape','print(image.shape)', [{'image':images[0]},{'image':images[1]}]),
- ('pixel','print(int(image[2,3]))', [{'image':images[0]},{'image':images[2]}]),
+ ('pixel','print(int(image[20,25]))', [{'image':big_images[0]},{'image':big_images[1]}]),
  ('mask','mask=image > threshold\nprint(int(mask.sum()))',[{'image':images[0],'threshold':10},{'image':images[1],'threshold':35}]),
  ('table','df=pd.DataFrame(rows)\nprint(int(df["bright_pixels"].sum()))',[{'rows':[{'sample_id':'A','bright_pixels':2},{'sample_id':'B','bright_pixels':5}]},{'rows':[{'sample_id':'C','bright_pixels':10}]}]),
  ('group','df=pd.DataFrame(rows)\nmeans=df.groupby("condition")["bright_pixels"].mean()\nprint(round(float(means["treated"]-means["control"]),2))',[{'rows':[{'condition':'control','bright_pixels':3},{'condition':'control','bright_pixels':5},{'condition':'treated','bright_pixels':9}]},{'rows':[{'condition':'control','bright_pixels':6},{'condition':'control','bright_pixels':4},{'condition':'treated','bright_pixels':1},{'condition':'treated','bright_pixels':3}]}]),
@@ -48,7 +50,7 @@ BAD = [
  ('replicates','total=counts[0]\nprint(total)',[{'counts':[2,3,4]}]),
  ('function','def mean_signal(values):\n    return values[0]\nprint(mean_signal(signals))',[{'signals':[1,2,3]}]),
  ('shape','print((5,7))',[{'image':images[0]},{'image':images[1]}]),
- ('pixel','print(17)',[{'image':images[0]},{'image':images[2]}]),
+ ('pixel','print(17)',[{'image':big_images[0]},{'image':big_images[1]}]),
  ('mask','mask=image>100\nprint(int(mask.sum()))',[{'image':images[0],'threshold':10}]),
  ('table','df=pd.DataFrame(rows)\nprint(df["bright_pixels"].iloc[0])',[{'rows':[{'sample_id':'A','bright_pixels':2},{'sample_id':'B','bright_pixels':5}]}]),
  ('group','df=pd.DataFrame(rows)\nmeans=df.groupby("condition")["bright_pixels"].mean()\nprint(0)',[{'rows':[{'condition':'control','bright_pixels':3},{'condition':'treated','bright_pixels':9}]}]),

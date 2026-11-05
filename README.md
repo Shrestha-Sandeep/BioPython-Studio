@@ -79,3 +79,19 @@ python -m pytest -q tests/test_harness.py
 ```
 
 Local UI previews were generated with Playwright and Chromium using in-page JavaScript injection because this environment restricts network navigation, so full browser runtime delivery remains unverified.
+
+## Real microscopy source data (v0.2)
+
+The original v0.1 synthetic image generator has been **replaced**. BioPython Studio now ships **three real fluorescence RGB composite JPEGs from the Human Protein Atlas (HPA)**, including two fields named in the [Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner) teaching materials:
+
+| Local asset | Original HPA image | Educational role |
+|---|---|---|
+| `assets/hpa-8346-22-C1-1.jpg` | https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg | Visible field; first NumPy array |
+| `assets/hpa-46658-784-B12-1.jpg` | https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg | Changed-size independent Python test |
+| `assets/hpa-23394-182-H7-1.jpg` | https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg | Third unfamiliar microscopy field |
+
+**Credit:** Human Protein Atlas, [proteinatlas.org](https://www.proteinatlas.org/); Thul PJ et al., *Science* (2017), DOI [10.1126/science.aal3321](https://doi.org/10.1126/science.aal3321). HPA's [current data license](https://www.proteinatlas.org/about/licence) is **CC BY 4.0**, subject to the image's provenance and any third-party conditions. The teaching repository notes an older CC BY-SA 3.0 designation; these particular assets were obtained **directly from HPA**, with direct image links preserved here and next to the images in the app. The app does not copy the reference course's written lessons, nor the *Python Data Science Handbook* text. The source course's code uses a BSD 3-Clause license; the handbook's code is MIT, while its text is CC BY-NC-ND.
+
+For the NumPy shape, pixel and threshold exercises, the app draws the real HPA composite and creates actual `uint8` NumPy input arrays by **resampling and taking the blue channel** of that same decoded JPEG in the learner's browser. Threshold overlays are calculated from those arrays. These are **not original raw microscopy files**, and decoded/resampled JPEG intensities are unsuitable for publication-quality quantitative fluorescence measurements. Counts in the other beginner activities, tables, and plots remain clearly labeled as illustrative teaching data, not measurements of these HPA images. An unavailable image produces an explicit loading error—never an invented substitute.
+
+**Standing project direction:** Keep BioPython Studio a single, low-clutter Python-for-biology training app. Preserve the progression from *Image Processing for Beginners* plus *Python Data Science Handbook*. Prefer a tiny, traceable set of licensed real datasets over fictional microscopy or wholesale forks of upstream teaching repositories. Each data example must have provenance, license, scientific caveats and code that actually uses its data. Source of truth is this GitHub repository; Vercel is its deployment target. Don't change BioCompute or AppDeploy ImageLab.

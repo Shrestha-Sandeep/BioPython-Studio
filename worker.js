@@ -55,8 +55,8 @@ def check(lesson, namespace, report, case):
         shape = tuple(namespace['image'].shape)
         return output.replace(' ','') == str(shape).replace(' ',''), 'Print image.shape, not the dimensions of one particular example.'
     if lesson == 'pixel':
-        value = int(namespace['image'][2,3])
-        return close(output_number(), value), 'Read the pixel at row 2, column 3 using image[2, 3].'
+        value = int(namespace['image'][20,25])
+        return close(output_number(), value), 'Read the pixel at row 20, column 25 using image[20, 25].'
     if lesson == 'mask':
         np = namespace['np']; img = namespace['image']; mask = namespace.get('mask')
         if not isinstance(mask, np.ndarray) or mask.shape != img.shape:

@@ -30,11 +30,11 @@
       <p id="mission-goal" class="mission-goal">Use a variable to label the specimen.</p>
       <div class="content-grid">
         <section class="image-panel" aria-label="Scientific dataset display">
-          <div class="panel-top"><div><span class="dot live"></span><strong id="data-title">Microscopy field</strong></div><span class="panel-sub">SYNTHETIC TRAINING DATA</span></div>
-          <div class="image-display" id="image-box"><canvas id="microscope" width="624" height="432" aria-label="Synthetic fluorescence microscopy image, not a real experimental image" role="img"></canvas><span class="image-id" id="sample-label">control_A01</span><div class="pixel-cursor" id="pixel-cursor" hidden>Pixel [2, 3]</div></div>
-          <div class="image-footer"><span id="image-caption">Fluorescent image generated for training</span><label class="toggle-row"><input type="checkbox" id="show-mask" disabled><span>Show Python mask</span></label></div>
+          <div class="panel-top"><div><span class="dot live"></span><strong id="data-title">Microscopy field</strong></div><span class="panel-sub">REAL HPA MICROSCOPY</span></div>
+          <div class="image-display" id="image-box"><canvas id="microscope" width="512" height="512" aria-label="Real Human Protein Atlas fluorescence composite used with attribution; teaching arrays are derived from its resampled blue channel" role="img"></canvas><span class="image-id" id="sample-label">control_A01</span><div class="pixel-cursor" id="pixel-cursor" hidden>Pixel [20, 25]</div></div>
+          <div class="image-footer"><div class="image-source"><span id="image-caption">Loading real fluorescence microscopy data…</span><a id="image-credit" href="https://www.proteinatlas.org/" target="_blank" rel="noopener noreferrer" hidden>Human Protein Atlas · CC BY 4.0 · Source image ↗</a></div><label class="toggle-row"><input type="checkbox" id="show-mask" disabled><span>Show Python mask</span></label></div>
           <div class="data-view" id="data-view"><div class="data-label">Experiment input</div><div id="input-metadata"></div></div>
-          <div class="scientific-note"><span class="note-label">Scientist's note</span><p id="science-caution">Synthetic images are examples, not validated biological measurements.</p></div>
+          <div class="scientific-note"><span class="note-label">Scientist's note</span><p id="science-caution">The displayed HPA photograph is real; decoded JPEG blue-channel values are for learning, not calibrated quantitative measurements.</p></div>
         </section>
         <section class="code-panel" aria-label="Python learning workspace">
           <div class="panel-top"><div><span class="dot code-dot"></span><strong>Python workspace</strong></div><span class="panel-sub" id="runtime-state">Runs in your browser</span></div>
@@ -56,7 +56,7 @@
       </section>
     </section>
   </div>
-  <footer>Original lessons and synthetic datasets · Progress is saved locally in your browser · Nothing is uploaded to a server.</footer>
+  <footer>Real HPA micrographs for image lessons · Illustrative non-image exercise data · Local progress only · See source and license credits.</footer>
 </main>
 <script src="./app.js"></script>
 </body>

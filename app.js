@@ -6,32 +6,63 @@ const STORAGE_KEY = 'biopython_studio_personal_v1';
 const IMAGE_SOURCE = 'https://github.com/guiwitz/PyImageCourse_beginner';
 const HANDBOOK_SOURCE = 'https://jakevdp.github.io/PythonDataScienceHandbook/';
 
-function makeImage(height,width,seed,spots=5){
-  const centers=Array.from({length:spots},(_,i)=>({
-    x:4+((i*13+seed*7)%(width-8)), y:4+((i*9+seed*5)%(height-8)),
-    radius:2.1+(i%3)*0.65
-  }));
-  return Array.from({length:height},(_,y)=>Array.from({length:width},(_,x)=>{
-    let value=10+((x*17+y*13+seed*29)%13);
-    for(const center of centers){
-      const dx=x-center.x,dy=y-center.y;
-      value+=200*Math.exp(-(dx*dx+dy*dy)/(2*center.radius*center.radius));
-    }
-    return Math.min(255,Math.round(value));
-  }));
+// Microscopy assets: verified Human Protein Atlas images, credited at point of use.
+// The blue channel of a browser-decoded RGB composite is a teaching example,
+// NOT a calibrated raw fluorescence intensity measurement.
+const REAL_IMAGE_SOURCES = [
+  {id:'HPA-8346-22-C1-1',path:'./assets/hpa-8346-22-C1-1.jpg',origin:'https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg',size:64},
+  {id:'HPA-46658-784-B12-1',path:'./assets/hpa-46658-784-B12-1.jpg',origin:'https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg',size:56},
+  {id:'HPA-23394-182-H7-1',path:'./assets/hpa-23394-182-H7-1.jpg',origin:'https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg',size:72}
+];
+let loadedMicroscopy = [];
+let imageError = '';
+let imageReady = false;
+function blueArrayFromImage(image, dimension){
+  const canvas = document.createElement('canvas');
+  canvas.width=dimension;canvas.height=dimension;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  ctx.drawImage(image,0,0,dimension,dimension);
+  const pixels=ctx.getImageData(0,0,dimension,dimension).data;
+  return Array.from({length:dimension},(_,row)=>Array.from({length:dimension},(_,col)=>pixels[(row*dimension+col)*4+2]));
 }
-const imgA=makeImage(36,52,1,6);
-const imgB=makeImage(26,44,3,5);
-const imgC=makeImage(32,48,5,7);
-const imgD=makeImage(42,54,7,8);
+function informativeThreshold(arr){
+  const v=arr.flat().sort((a,b)=>a-b);
+  return v[Math.floor(v.length*.78)];
+}
+async function loadMicroscopy(){
+  try {
+    const media=await Promise.all(REAL_IMAGE_SOURCES.map(spec=>new Promise((resolve,reject)=>{
+      const img=new Image();
+      img.onload=()=>{
+        if(img.naturalWidth<256 || img.naturalHeight<256){reject(new Error('Microscopy file is incomplete'));return;}
+        try {resolve({...spec,element:img,blue:blueArrayFromImage(img,spec.size)});}
+        catch(error){reject(error);}
+      };
+      img.onerror=()=>reject(new Error('Could not load ' + spec.id));
+      img.src=spec.path;
+    })));
+    loadedMicroscopy=media;
+    const sets=[['shape',[0,1,2]],['pixel',[0,2,1]],['mask',[0,1,2]]];
+    for(const [skill,indices] of sets){
+      data[skill]=indices.map(i=>({image:media[i].blue,...(skill==='mask'?{threshold:informativeThreshold(media[i].blue)}:{})}));
+    }
+    imageReady=true;
+    imageError='';
+  } catch(error){
+    imageReady=false;
+    imageError=String(error?.message||error);
+    // Never display a fabricated micrograph if a real image cannot load.
+  }
+  render();
+}
 const data = {
   sample:[{sample_id:'control_A01'},{sample_id:'treated_B08'},{sample_id:'replicate_C03'}],
   change:[{control:80,treated:60},{control:120,treated:150},{control:70,treated:56}],
   replicates:[{counts:[4,6,7]},{counts:[6,2,9,1]},{counts:[2,2,2]}],
   function:[{signals:[12,14,18]},{signals:[4,8,12,16]},{signals:[5,7]}],
-  shape:[{image:imgA},{image:imgB},{image:imgD}],
-  pixel:[{image:imgA},{image:imgC},{image:imgD}],
-  mask:[{image:imgA,threshold:92},{image:imgB,threshold:121},{image:imgC,threshold:80}],
+  shape:[],
+  pixel:[],
+  mask:[],
   table:[{rows:[{sample_id:'A01',bright_pixels:54},{sample_id:'A02',bright_pixels:61},{sample_id:'B01',bright_pixels:47}]},
          {rows:[{sample_id:'C01',bright_pixels:11},{sample_id:'D01',bright_pixels:42}]},
          {rows:[{sample_id:'E01',bright_pixels:12},{sample_id:'E02',bright_pixels:25},{sample_id:'F01',bright_pixels:9},{sample_id:'F02',bright_pixels:13}]}],
@@ -47,9 +78,9 @@ const lessons = [
   {id:'replicates',chapter:'01 · Python foundations',name:'Multiple fields',goal:'Combine manually curated counts from an arbitrary number of image fields.',instruction:'Use the Python sum() function on the provided counts list. Store the answer in total and print it.',starter:'total = counts[0]\nprint(total)',why:'Lists and built-in functions let you handle a changing number of measurements with one short script.',caution:'Adding counts across fields does not create additional independent biological replicates.',hints:['counts is already a list of integers; you do not need to write each number.','Use total = sum(counts) and print(total).'],sourceImage:'01-Python_essentials.ipynb'},
   {id:'function',chapter:'01 · Python foundations',name:'Reusable measurement',goal:'Write one function to calculate the mean intensity for different lists of measurements.',instruction:'Define mean_signal(values) so it returns the arithmetic mean; print the result rounded to two decimals.',starter:'def mean_signal(values):\n    return values[0]\n\nprint(round(mean_signal(signals), 2))',why:'A function captures a reusable analysis operation. The same function should work for unfamiliar samples.',caution:'Field-level mean intensity may be affected by acquisition settings, background and sample preparation.',hints:['Mean = sum of measurements ÷ number of measurements.','Inside the function, return sum(values) / len(values).'],sourceImage:'08-Logical_flow.ipynb'},
   {id:'shape',chapter:'02 · Images as NumPy arrays',name:'Discover image dimensions',goal:'Read the height and width of a microscopy image from its actual NumPy array.',instruction:'Print the image shape rather than typing the dimensions manually.',starter:'print((36, 52))',why:'Images are arrays. A 2D shape is (rows, columns), commonly interpreted as (height, width).',caution:'Real multichannel and time-lapse images can have 3–5 axes; shape alone does not tell you axis meaning.',hints:['Each image already exists as a NumPy array named image.','Use print(image.shape).'],sourceImage:'02-Images_as_arrays.ipynb',sourceHandbook:'02.02-the-basics-of-numpy-arrays.html'},
-  {id:'pixel',chapter:'02 · Images as NumPy arrays',name:'Inspect one pixel',goal:'Inspect a numerical fluorescence pixel in a 2D image.',instruction:'Print the integer value at row 2, column 3 using NumPy indexing.',starter:'print(0)',why:'image[row, column] uses zero-based indices; the order is row first, column second.',caution:'Pixel values reflect image acquisition and preprocessing, not direct absolute molecule counts.',hints:['Rows index vertically, columns index horizontally, and indexing starts at zero.','Use print(int(image[2, 3])).'],sourceImage:'02-Images_as_arrays.ipynb',sourceHandbook:'02.02-the-basics-of-numpy-arrays.html'},
+  {id:'pixel',chapter:'02 · Images as NumPy arrays',name:'Inspect one pixel',goal:'Inspect a numerical fluorescence pixel in a 2D image.',instruction:'Print the integer value at row 20, column 25 using NumPy indexing.',starter:'print(0)',why:'image[row, column] uses zero-based indices; the order is row first, column second.',caution:'Pixel values reflect image acquisition and preprocessing, not direct absolute molecule counts.',hints:['Rows index vertically, columns index horizontally, and indexing starts at zero.','Use print(int(image[20, 25])).'],sourceImage:'02-Images_as_arrays.ipynb',sourceHandbook:'02.02-the-basics-of-numpy-arrays.html'},
   {id:'mask',chapter:'02 · Images as NumPy arrays',name:'Threshold bright pixels',goal:'Build a reproducible bright-pixel mask for each microscopy image.',instruction:'Create mask = image > threshold, then print the number of True pixels.',starter:'mask = image > 100\nprint(int(mask.sum()))',why:'NumPy comparisons produce a Boolean mask. The same code can apply to new images and new thresholds.',caution:'Bright-pixel area is not an object or cell count. Touching objects, noise and background change interpretation.',hints:['The provided threshold variable may change between images.','Use mask = image > threshold, followed by print(int(mask.sum())).'],sourceImage:'04-Thresholding.ipynb',sourceHandbook:'02.06-boolean-arrays-and-masks.html'},
-  {id:'table',chapter:'03 · Scientific tables',name:'Create a measurements table',goal:'Build a table from sample identifiers and previously measured bright-pixel counts.',instruction:'Create a Pandas DataFrame named df from rows; print the sum of its bright_pixels column.',starter:'df = pd.DataFrame(rows)\nprint(df["bright_pixels"].iloc[0])',why:'Pandas structures scientific results as labeled columns and rows so they can be checked and combined later.',caution:'The example measurements are synthetic. Real studies must record image provenance, analysis settings and experimental units.',hints:['df = pd.DataFrame(rows) creates the table; then select a column.','Use print(int(df["bright_pixels"].sum())).'],sourceImage:'07-Pipeline.ipynb',sourceHandbook:'03.00-introduction-to-pandas.html'},
+  {id:'table',chapter:'03 · Scientific tables',name:'Create a measurements table',goal:'Build a table from sample identifiers and previously measured bright-pixel counts.',instruction:'Create a Pandas DataFrame named df from rows; print the sum of its bright_pixels column.',starter:'df = pd.DataFrame(rows)\nprint(df["bright_pixels"].iloc[0])',why:'Pandas structures scientific results as labeled columns and rows so they can be checked and combined later.',caution:'These later table exercises still use illustrative counts, not measurements from the displayed HPA image. Record provenance and experimental units in real studies.',hints:['df = pd.DataFrame(rows) creates the table; then select a column.','Use print(int(df["bright_pixels"].sum())).'],sourceImage:'07-Pipeline.ipynb',sourceHandbook:'03.00-introduction-to-pandas.html'},
   {id:'group',chapter:'03 · Scientific tables',name:'Compare conditions',goal:'Compute the mean bright-pixel measurement for each condition.',instruction:'Group the table by condition, then print treated mean minus control mean to two decimals.',starter:'df = pd.DataFrame(rows)\nmeans = df.groupby("condition")["bright_pixels"].mean()\nprint(0)',why:'Groupby makes it possible to summarize data by experimental factors instead of averaging everything together.',caution:'Do not confuse field counts with biological replicate counts. Means across fields can hide pseudoreplication.',hints:['means is a Pandas Series indexed by control and treated.','Use print(round(float(means["treated"] - means["control"]), 2)).'],sourceImage:'07-Pipeline.ipynb',sourceHandbook:'03.08-aggregation-and-grouping.html'},
   {id:'plot',chapter:'04 · Scientific visualization',name:'Plot the measured groups',goal:'Turn control and treated mean measurements into a reproducible figure.',instruction:'Create a Matplotlib bar chart using control_mean and treated_mean; label the y-axis.',starter:'fig, ax = plt.subplots()\nax.bar(["control", "treated"], [control_mean, 0])\nax.set_ylabel("")',why:'A plot is scientific output. Axes, labels and underlying measurements should remain correct when the data changes.',caution:'A bar chart of means without biological-replicate uncertainty is descriptive only. Error bars require appropriate replicate data.',hints:['The group labels are control and treated, and both values are provided.','Set the second bar to treated_mean and write ax.set_ylabel("Bright pixels / field").'],sourceImage:'03-More_on_images.ipynb',sourceHandbook:'04.00-introduction-to-matplotlib.html'},
   {id:'transfer',chapter:'05 · Independent transfer',name:'Your own small analysis',goal:'Create a reusable summary for a previously unseen biological specimen.',instruction:'Write summarize(sample_id, counts) to return a dictionary with sample_id, total and mean. Test it on the supplied sample.',starter:'def summarize(sample_id, counts):\n    # Return sample_id, total and mean\n    return {}\n\nprint(summarize(sample_id, counts))',why:'Transfer means using Python skills on new scientific inputs without copying a single expected answer.',caution:'This is a small reproducibility milestone, not yet an automated image-processing pipeline.',hints:['Compute total = sum(counts), mean = round(total / len(counts), 2).','Return {"sample_id": sample_id, "total": total, "mean": mean}.'],sourceImage:'07-Pipeline.ipynb'}
@@ -84,27 +115,33 @@ function metadataValue(v){
  return String(v);
 }
 function renderMetadata(){
- const lesson=lessons[current],info=data[lesson.id][0];const out=$('input-metadata');out.replaceChildren();
+ const lesson=lessons[current],info=data[lesson.id]?.[0]||{};const out=$('input-metadata');out.replaceChildren();
  const entries=Object.entries(info).filter(([k])=>k!=='image');
- if(info.image)entries.unshift(['image','NumPy array '+info.image.length+' × '+info.image[0].length]);
- if(lesson.id==='table'||lesson.id==='group')entries.splice(0,entries.length,['rows',info.rows.length+' synthetic image measurements']);
+ if(info.image?.length)entries.unshift(['image','NumPy array '+info.image.length+' × '+info.image[0].length]);
+ if(['shape','pixel','mask'].includes(lesson.id) && !imageReady)entries.unshift(['image',imageError||'Loading real microscopy pixels…']);
+ if(lesson.id==='table'||lesson.id==='group')entries.splice(0,entries.length,['rows',info.rows.length+' illustrative numeric measurements']);
  for(const [k,v] of entries){const chip=document.createElement('span');chip.className='value-chip';chip.textContent=k+' = '+metadataValue(v);out.append(chip);}
 }
 function drawImage(){
- const lesson=lessons[current],sample=data[lesson.id][0];
- const arr=sample.image || imgA, height=arr.length,width=arr[0].length;
+ const lesson=lessons[current],sample=data[lesson.id]?.[0]||{};
  const canvas=$('microscope'),ctx=canvas.getContext('2d',{alpha:false});
- const off=document.createElement('canvas');off.width=width;off.height=height;const small=off.getContext('2d',{alpha:false});
- const image=small.createImageData(width,height);
- for(let y=0;y<height;y++)for(let x=0;x<width;x++){
-   const value=arr[y][x],index=4*(y*width+x);
-   image.data[index]=Math.floor(value*.18+4);image.data[index+1]=Math.min(255,Math.floor(value*.92+7));
-   image.data[index+2]=Math.floor(value*.55+6);image.data[index+3]=255;
+ ctx.fillStyle='#0b1820';ctx.fillRect(0,0,canvas.width,canvas.height);
+ if(!imageReady){
+   ctx.fillStyle='#d9f2eb';ctx.font='16px system-ui';
+   ctx.fillText(imageError?'Microscopy images unavailable':'Loading real microscopy images…',24,canvas.height/2);
+   $('image-caption').textContent=imageError?'Image download failed · reload to retry':'Loading source images from Human Protein Atlas…';
+   $('image-credit').hidden=true;
+   $('sample-label').textContent='Image data pending';
+   $('pixel-cursor').hidden=true;
+   $('show-mask').disabled=true;return;
  }
- small.putImageData(image,0,0);
- ctx.clearRect(0,0,canvas.width,canvas.height);
- ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
- ctx.drawImage(off,0,0,canvas.width,canvas.height);
+ const media=loadedMicroscopy[0];
+ // Every teaching array is sampled from one of these same real RGB images.
+ // Lesson previews use the first source image; mask overlays use its sampled blue channel.
+ const arr=sample.image||media.blue, height=arr.length,width=arr[0].length;
+ ctx.imageSmoothingEnabled=true;
+ ctx.imageSmoothingQuality='high';
+ ctx.drawImage(media.element,0,0,canvas.width,canvas.height);
  if(maskVisible&&lastMask){
    const maskCanvas=document.createElement('canvas');maskCanvas.width=width;maskCanvas.height=height;
    const mc=maskCanvas.getContext('2d');const m=mc.createImageData(width,height);
@@ -115,12 +152,13 @@ function drawImage(){
    mc.putImageData(m,0,0);ctx.drawImage(maskCanvas,0,0,canvas.width,canvas.height);
  }
  if(lesson.id==='pixel'){
-   const cx=(3+.5)*canvas.width/width,cy=(2+.5)*canvas.height/height;
+   const cx=(25+.5)*canvas.width/width,cy=(20+.5)*canvas.height/height;
    ctx.strokeStyle='#ffc557';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-13,cy);ctx.lineTo(cx+13,cy);ctx.moveTo(cx,cy-13);ctx.lineTo(cx,cy+13);ctx.stroke();
  }
  $('pixel-cursor').hidden=lesson.id!=='pixel';
- $('sample-label').textContent=lesson.id==='sample'?sample.sample_id:(lesson.id==='shape'||lesson.id==='mask'||lesson.id==='pixel'?'array '+height+' × '+width:'control_A01 · synthetic field');
- $('image-caption').textContent=lesson.id==='mask'?(lastMask?'Orange = pixels selected by your Python mask':'Run correct Python to see selected pixels'):'Simulated fluorescence field · '+height+' × '+width+' pixels';
+ $('sample-label').textContent=media.id+' · blue-channel sample '+height+' × '+width;
+ $('image-caption').textContent=lesson.id==='mask'?(lastMask?'Orange = pixels selected by Python from HPA blue channel':'HPA RGB image · compute a blue-channel mask to overlay'):'Real fluorescence composite · blue-channel data '+height+' × '+width+' · teaching only';
+ $('image-credit').hidden=false;$('image-credit').href=media.origin;
  $('show-mask').disabled=!lastMask;
  $('show-mask').checked=lastMask?maskVisible:false;
 }
@@ -135,6 +173,7 @@ function showLinks(lesson){const dest=$('source-links');dest.replaceChildren();c
  if(lesson.sourceImage)make(IMAGE_SOURCE+'/blob/master/'+lesson.sourceImage,'Image Processing for Beginners');
  else make(IMAGE_SOURCE,'Image Processing for Beginners');
  make(lesson.sourceHandbook?HANDBOOK_SOURCE+lesson.sourceHandbook:HANDBOOK_SOURCE,'Python Data Science Handbook');
+ make('https://www.proteinatlas.org/about/licence','HPA data license');
 }
 function render(){
  const mission=lessons[current];const already=!!saved.completed[mission.id];
@@ -160,7 +199,9 @@ function hint(){const lesson=lessons[current],i=helpCount%lesson.hints.length;$(
 function stopWorker(){if(worker){worker.terminate();worker=null;}}
 async function run(){
  if(running)return;
- const lesson=lessons[current];const code=$('editor').value;
+ const lesson=lessons[current];
+ if(['shape','pixel','mask'].includes(lesson.id) && !imageReady){tell('Real microscopy data not available',imageError||'Image files are still loading. Try again when they appear.','error');return;}
+ const code=$('editor').value;
  if(!code.trim()){tell('Write some Python first','Your code editor is empty.','error');return;}
  saved.drafts[lesson.id]=code;persist();running=true;
  const id=++requestSeq;
@@ -191,7 +232,7 @@ async function run(){
    $('proof-label').className='pill '+(evidence==='guided'?'guided':'verified');
    $('next').disabled=current>=lessons.length-1;
    renderCurriculum();
-   if(current===lessons.length-1)tell('Research milestone complete','You built a reusable, checked Python analysis across unseen synthetic specimens. Next: open real notebooks for image segmentation and experimental data workflows.','success');
+   if(current===lessons.length-1)tell('Research milestone complete','You built a reusable, checked Python analysis across unseen exercise datasets. Next: open real notebooks for image segmentation and experimental data workflows.','success');
  }catch(error){tell('Python runtime problem',String(error?.message||error),'error');$('python-output').textContent='Execution unavailable. No result was simulated.';}
  finally{clearTimeout(timer);running=false;$('run').disabled=false;$('runtime-state').textContent='Ctrl+Enter to run';}
 }
@@ -212,4 +253,5 @@ document.addEventListener('keydown',e=>{
  else if(e.shiftKey){e.preventDefault();switchLesson(current+1);}
 });
 render();
+loadMicroscopy();
 if (window.matchMedia('(max-width: 750px)').matches) $('curriculum-toggle').open = false;
