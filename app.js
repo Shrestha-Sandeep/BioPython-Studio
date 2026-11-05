@@ -255,7 +255,7 @@ const unlocked = () => {let i=0; while(i<lessons.length && saved.completed[lesso
 saved.step=Math.min(Math.max(0,Number(saved.step)||0),Math.min(unlocked(),lessons.length-1));
 let current=saved.step, helpCount=0, running=false,worker=null,requestSeq=0, lastMask=null, maskVisible=true;
 function persist(){saved.step=current;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(saved));}catch(_){}}
-function tell(title,body,type=''){$('feedback').className='feedback'+(type?' '+type:'');$('feedback').replaceChildren();const t=document.createElement('strong');t.textContent=title;const p=document.createElement('p');p.textContent=body;$('feedback').append(t,p);}
+function tell(title,body,type=''){$('feedback').hidden=false;$('feedback').className='feedback'+(type?' '+type:'');$('feedback').replaceChildren();const t=document.createElement('strong');t.textContent=title;const p=document.createElement('p');p.textContent=body;$('feedback').append(t,p);}
 function renderCurriculum(){
  const nav=$('curriculum');nav.replaceChildren();let previous='';const limit=unlocked();
  lessons.forEach((lesson,i)=>{
@@ -342,28 +342,38 @@ function render(){
  $('mission-title').textContent=mission.name;$('mission-goal').textContent=mission.goal;
  const guide=TASK_GUIDES[mission.id];
  $('brief-number').textContent=String(current+1).padStart(2,'0');
- $('instruction-text').textContent=guide.focus;
+ $('instruction-text').textContent=mission.instruction;
  $('task-given').textContent=guide.given;
  const steps=$('task-steps');steps.replaceChildren();
  guide.steps.forEach(instruction=>{const item=document.createElement('li');item.textContent=instruction;steps.append(item);});
  $('task-expected').textContent=guide.expected;
  $('task-check').textContent=guide.check;
+ $('task-details').open=false;$('learn-more').open=false;
  $('why').textContent=mission.why;$('science-caution').textContent=mission.caution;
  $('editor').value=typeof saved.drafts[mission.id]==='string'?saved.drafts[mission.id]:mission.starter;
  $('hint').hidden=true;$('hint-button').textContent='Show a hint';helpCount=0;lastMask=null;
- $('python-output').textContent='Output will appear here.';
+ $('python-output').textContent='';
+ $('output-area').hidden=true;$('feedback').hidden=true;
  $('generated-result').hidden=true;$('generated-result').replaceChildren();
- $('back').disabled=current===0;$('next').disabled=current>=lessons.length-1||!already;
+ $('back').disabled=current===0;$('back').hidden=current===0;
+ $('next').disabled=current>=lessons.length-1||!already;
+ $('next').hidden=current>=lessons.length-1||!already;
+ $('navigation').hidden=$('back').hidden&&$('next').hidden;
  const proof=$('proof-label');proof.className='pill'+(already?(saved.completed[mission.id]==='independent'?' verified':' guided'):'');
- proof.textContent=already?(saved.completed[mission.id]==='independent'?'Independently demonstrated':'Practiced with guidance'):'Ready to practice';
+ proof.textContent=already?(saved.completed[mission.id]==='independent'?'Completed independently':'Completed with a hint'):'Ready';
+ proof.hidden=!already;
  $('runtime-state').textContent='Runs in your browser';
  $('data-title').textContent=['shape','pixel','mask'].includes(mission.id)?'Fluorescence image array':(['table','group','plot'].includes(mission.id)?'Biological measurements':'Microscopy field');
- $('image-role').textContent=['shape','pixel','mask'].includes(mission.id)?'IMAGE USED BY YOUR PYTHON': 'VISUAL CONTEXT · NOT THE TASK DATA';
+ $('image-role').textContent='USED IN THIS TASK';
+ const usesImage=['shape','pixel','mask'].includes(mission.id);
+ $('image-panel').hidden=!usesImage;
+ $('workspace-layout').classList.toggle('has-image',usesImage);
  renderMetadata();renderCurriculum();drawImage();showLinks(mission);
- tell(already?'Previous result saved':'Start here',already?'You can rerun this activity or continue to your next skill.':'Follow the three instructions above, then run the edited Python. The same code must work on changed data.');
+ if(usesImage&&!imageReady&&!imageLoading&&!imageError)loadMicroscopy();
+ // No placeholder feedback: only show results after a code run.
  persist();
 }
-function switchLesson(index){if(running||index<0||index>=lessons.length||index>unlocked())return;current=index;render();if(window.innerWidth<750)$('curriculum-toggle').open=false;window.scrollTo({top:0,behavior:'auto'});}
+function switchLesson(index){if(running||index<0||index>=lessons.length||index>unlocked())return;current=index;render();$('curriculum-toggle').open=false;window.scrollTo({top:0,behavior:'auto'});}
 function hint(){const lesson=lessons[current],i=helpCount%lesson.hints.length;$('hint').textContent=lesson.hints[i];$('hint').hidden=false;helpCount++;saved.hintUsed[lesson.id]=true;persist();$('hint-button').textContent=helpCount%lesson.hints.length===0?'Repeat hints':'Another hint';}
 function stopWorker(){if(worker){worker.terminate();worker=null;}}
 async function run(){
@@ -374,7 +384,7 @@ async function run(){
  if(!code.trim()){tell('Write some Python first','Your code editor is empty.','error');return;}
  saved.drafts[lesson.id]=code;persist();running=true;
  const id=++requestSeq;
- $('run').disabled=true;$('runtime-state').textContent='Starting…';$('python-output').textContent='Evaluating actual Python…';
+ $('run').disabled=true;$('runtime-state').textContent='Starting…';$('output-area').hidden=false;$('python-output').textContent='Evaluating actual Python…';
  tell('Running scientific checks','Your code is being tested with changed specimen data.');
  let timer;
  try{
@@ -399,7 +409,10 @@ async function run(){
    tell('Verified on '+response.cases.length+' datasets',lesson.why+'\n'+(evidence==='guided'?'You used a hint; try again later without one for independent evidence.':'You solved this without opening a hint.'),'success');
    $('proof-label').textContent=evidence==='guided'?'Practiced with guidance':'Independently demonstrated';
    $('proof-label').className='pill '+(evidence==='guided'?'guided':'verified');
+   $('proof-label').hidden=false;
    $('next').disabled=current>=lessons.length-1;
+   $('next').hidden=current>=lessons.length-1;
+   $('navigation').hidden=$('back').hidden&&$('next').hidden;
    renderCurriculum();
    if(current===lessons.length-1)tell('Research milestone complete','You built a reusable, checked Python analysis across unseen exercise datasets. Next: open real notebooks for image segmentation and experimental data workflows.','success');
  }catch(error){tell('Python runtime problem',String(error?.message||error),'error');$('python-output').textContent='Execution unavailable. No result was simulated.';}
@@ -423,5 +436,4 @@ document.addEventListener('keydown',e=>{
  else if(e.shiftKey){e.preventDefault();switchLesson(current+1);}
 });
 render();
-loadMicroscopy();
-if (window.matchMedia('(max-width: 750px)').matches) $('curriculum-toggle').open = false;
+$('curriculum-toggle').open=false;

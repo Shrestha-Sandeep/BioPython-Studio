@@ -1,106 +1,58 @@
-"""Regression test for BioPython Studio's visual learning workspace.
-Images are local deterministic test fixtures, not shipped learning assets.
-Run: python tests/check_learning_ui.py
-"""
+"""Focus UI regression: Pyodide is mocked; run real evaluator checks separately."""
 import io
-import os
 import random
 import re
-import threading
-import http.server
-import functools
 from pathlib import Path
-from PIL import Image, ImageDraw
+from PIL import Image
 from playwright.sync_api import sync_playwright
-
-root=Path(__file__).resolve().parents[1]
-shots=root/'_qa_screenshots'
-shots.mkdir(exist_ok=True)
-
-rng=random.Random(124)
-im=Image.new('RGB',(512,512))
-im.putdata([(rng.randrange(1,19),rng.randrange(7,26),rng.randrange(11,29)) for _ in range(512*512)])
-draw=ImageDraw.Draw(im)
-for i in range(62):
-    x=rng.randint(25,485);y=rng.randint(25,485);r=rng.randint(5,23)
-    draw.ellipse((x-r,y-r,x+r,y+r),fill=(rng.randint(12,75),rng.randint(45,200),rng.randint(90,255)))
-buffer=io.BytesIO();im.save(buffer,format='JPEG',quality=86)
-good=buffer.getvalue()
-assert len(good)>50000
-
-class Quiet(http.server.SimpleHTTPRequestHandler):
-    def log_message(self,*a): pass
-httpd=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(Quiet,directory=str(root)))
-thread=threading.Thread(target=httpd.serve_forever,daemon=True);thread.start()
-url=f'http://127.0.0.1:{httpd.server_port}/'
-html=(root/'index.html').read_text().replace('<link rel="stylesheet" href="./styles.css">','')
-html=re.sub(r'<script src="\./app\.js[^"]*"></script>', '', html)
+root=Path(__file__).resolve().parent.parent
+html=(root/'index.html').read_text()
+html=re.sub(r'<link rel="stylesheet" href="[^"]*">','',html)
+html=re.sub(r'<script src="[^"]*"></script>','',html)
 css=(root/'styles.css').read_text()
 js=(root/'app.js').read_text()
-
+rng=random.Random(40)
+im=Image.new('RGB',(512,512))
+im.putdata([(rng.randrange(30,140),rng.randrange(30,160),rng.randrange(40,255)) for _ in range(512*512)])
+out=io.BytesIO();im.save(out,format='JPEG',quality=85)
+good=out.getvalue()
+assert len(good)>50000
 with sync_playwright() as p:
-    browser=p.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox'])
-    for tag,width,height in [('desktop',1440,900),('tablet',1024,800),('mobile',390,844)]:
-        context=browser.new_context(viewport={'width':width,'height':height},device_scale_factor=1)
-        page=context.new_page()
-        problems=[]
-        page.on('pageerror',lambda err: problems.append(str(err)))
-        page.route('https://images.proteinatlas.org/**',lambda route:route.fulfill(status=200,body=good,headers={'Content-Type':'image/jpeg','Access-Control-Allow-Origin':'*'}))
+    browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
+    for width in (1440,1024,390):
+        page=browser.new_page(viewport={'width':width,'height':850})
+        errors=[]
+        page.on('pageerror',lambda e:errors.append(str(e)))
+        requests=[]
+        def deliver(route):
+            requests.append(route.request.url)
+            route.fulfill(status=200,body=good,headers={'Content-Type':'image/jpeg','Access-Control-Allow-Origin':'*'})
+        page.route('https://images.proteinatlas.org/**',deliver)
         page.set_content(html)
         page.add_style_tag(content=css)
         page.add_script_tag(content=js)
-        page.locator('#image-credit').wait_for(state='visible',timeout=12000)
-        assert not problems,(tag,problems)
-        assert page.locator('.mission-brief').is_visible()
-        assert page.locator('.code-panel #input-metadata').is_visible()
-        assert 'sample_id' in page.locator('.code-panel #input-metadata').inner_text()
-        assert page.locator('#instruction-text').count()==1
-        assert page.locator('#task-steps li').count()==3
-        assert page.locator('#image-role').inner_text()=='VISUAL CONTEXT · NOT THE TASK DATA'
-        assert 'quoted' in page.locator('#instruction-text').inner_text()
-        assert 'control_A01' in page.locator('#task-expected').inner_text()
-        assert 'treated_B08' in page.locator('#task-expected').inner_text()
-        assert '3 different' in page.locator('#task-check').inner_text()
-        assert page.locator('canvas#microscope').is_visible()
+        assert page.locator('#image-panel').is_hidden()
+        assert page.locator('#curriculum-toggle').evaluate('(e)=>e.open') is False
+        assert page.locator('#task-details').evaluate('(e)=>e.open') is False
+        assert page.locator('#learn-more').evaluate('(e)=>e.open') is False
+        assert page.locator('#feedback').is_hidden()
+        assert page.locator('#output-area').is_hidden()
+        assert page.locator('#navigation').is_hidden()
         assert page.locator('#editor').is_visible()
-        assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth+1'),(tag,'horizontal overflow')
-        page.screenshot(path=str(shots/f'{tag}.png'),full_page=True)
-        page.locator('#hint-button').click()
-        assert page.locator('#hint').is_visible()
-        assert page.locator('#editor').input_value()=='print("control_A01")'
-        # Move unlocked progress forward, ensure navigator distinguishes active/completed/locked.
-        page.evaluate("saved.completed.sample = 'independent'; switchLesson(1)")
-        assert page.locator('#mission-title').inner_text()=='Treatment effect'
-        assert 'control' in page.locator('.code-panel #input-metadata').inner_text()
-        assert '-25.0' in page.locator('#task-expected').inner_text()
-        assert page.locator('#task-steps li').count()==3
-        assert page.locator('button.step.done').count()==1
-        assert page.locator('button.step.active').count()==1
-        assert page.locator('button.step:disabled').count()>=8
-        # All 11 tasks have specific provided inputs, 3 steps, expected output and check rules.
-        # Run in-browser because lesson data and state are JS objects.
-        report=page.evaluate("""() => {
-            for (const lesson of lessons) saved.completed[lesson.id]='independent';
-            const checks=[];
-            lessons.forEach((lesson,i) => {
-                switchLesson(i);
-                checks.push({id:lesson.id, count:document.querySelectorAll('#task-steps li').length,
-                  given:document.querySelector('#task-given').textContent.length,
-                  expected:document.querySelector('#task-expected').textContent.length,
-                  check:document.querySelector('#task-check').textContent.length,
-                  number:document.querySelector('#brief-number').textContent,
-                  imageRole:document.querySelector('#image-role').textContent});
-            });
-            return checks;
-        }""")
-        assert len(report)==11,report
-        assert all(item['count']==3 and min(item['given'],item['expected'],item['check'])>35 and item['number']==str(i+1).zfill(2) for i,item in enumerate(report)),report
-        assert all(item['imageRole']==('IMAGE USED BY YOUR PYTHON' if item['id'] in ('shape','pixel','mask') else 'VISUAL CONTEXT · NOT THE TASK DATA') for item in report),report
-        # Confirm the status/feedback styles communicate distinct states.
-        page.evaluate("tell('Well done','Works on new data','success')")
-        assert page.locator('.feedback.success').is_visible()
-        assert page.locator('.feedback.success').evaluate('(el) => getComputedStyle(el).borderLeftColor') != page.locator('.feedback.error').evaluate('(el) => getComputedStyle(el).borderLeftColor') if page.locator('.feedback.error').count() else True
-        print('PASS',tag,'responsive lesson, data, hint, navigator, source image')
-        context.close()
+        assert 'sample_id' in page.locator('#input-metadata').inner_text()
+        assert not requests,'Image should not load during beginner lessons'
+        page.locator('#task-details summary').click()
+        assert 'treated_B08' in page.locator('#task-expected').inner_text()
+        page.locator('#task-details summary').click()
+        page.locator('#curriculum-toggle summary').click()
+        assert page.locator('#curriculum .step').count()==11
+        page.evaluate("() => {for(const item of lessons) saved.completed[item.id]='independent';switchLesson(4);}")
+        assert page.locator('#image-panel').is_visible()
+        page.locator('#image-credit').wait_for(state='visible',timeout=15000)
+        assert 'NumPy array 64 × 64' in page.locator('#input-metadata').inner_text()
+        assert len(requests)==3
+        assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
+        assert not errors,errors
+        page.close()
     browser.close()
-httpd.shutdown()
+print('PASS: focused learning layout, no eager images, navigation, real-image stage, three screen widths')

@@ -3,12 +3,15 @@ Run with Playwright/Chromium and Pillow installed: python tests/check_browser_im
 """
 import io
 import random
+import re
 from pathlib import Path
 from PIL import Image
 from playwright.sync_api import sync_playwright
 
 root=Path(__file__).resolve().parent.parent
-html=(root/'index.html').read_text(encoding='utf-8').replace('<link rel="stylesheet" href="./styles.css">','').replace('<script src="./app.js?v=hpa-loader-20261105"></script>','')
+html=(root/'index.html').read_text(encoding='utf-8')
+html=re.sub(r'<link rel="stylesheet" href="\./styles\.css[^\"]*">','',html)
+html=re.sub(r'<script src="\./app\.js[^\"]*"></script>','',html)
 css=(root/'styles.css').read_text(encoding='utf-8')
 js=(root/'app.js').read_text(encoding='utf-8')
 rng=random.Random(812)
@@ -40,6 +43,8 @@ with sync_playwright() as pw:
         page.route('https://images.proteinatlas.org/**',
             lambda route: route.fulfill(status=200,body=good,headers={'Content-Type':'image/jpeg','Access-Control-Allow-Origin':'*'}))
         boot(page)
+        assert page.locator('#image-panel').is_hidden()
+        page.evaluate("() => {['sample','change','replicates','function'].forEach(x=>saved.completed[x]='independent');switchLesson(4)}")
         page.locator('#image-credit').wait_for(state='visible')
         assert brightness(page)>20000
         assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
@@ -50,6 +55,7 @@ with sync_playwright() as pw:
     page.route('https://images.proteinatlas.org/**',
         lambda route: route.fulfill(status=200,body=bad,headers={'Content-Type':'image/jpeg','Access-Control-Allow-Origin':'*'}))
     boot(page)
+    page.evaluate("() => {['sample','change','replicates','function'].forEach(x=>saved.completed[x]='independent');switchLesson(4)}")
     page.locator('#retry-images').wait_for(state='visible')
     assert 'incomplete or invalid' in page.locator('#image-caption').inner_text()
     page.unroute('https://images.proteinatlas.org/**')

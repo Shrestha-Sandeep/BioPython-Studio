@@ -3,74 +3,64 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Learn scientific Python through real microscopy images, hands-on coding, and immediate feedback.">
-  <title>BioPython Studio — Microscopy-first Python</title>
-  <link rel="stylesheet" href="./styles.css">
+  <meta name="description" content="Learn practical scientific Python one clear exercise at a time.">
+  <title>BioPython Studio — Learn Python with Biology</title>
+  <link rel="stylesheet" href="./styles.css?v=focus-20261105">
 </head>
 <body>
 <header class="sitebar">
-  <a class="brand" href="./index.html" aria-label="BioPython Studio home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>BioPython <strong>Studio</strong></span></a>
-  <div class="sitebar-right"><span class="build-label">SCIENTIFIC PYTHON · LEARNING STUDIO</span><a href="https://guiwitz.github.io/PyImageCourse_beginner/README.html" target="_blank" rel="noopener">Reference course ↗</a></div>
+  <a class="brand" href="./index.html" aria-label="BioPython Studio home"><span class="brand-mark" aria-hidden="true">B</span><span>BioPython <strong>Studio</strong></span></a>
+  <span class="site-progress"><span id="done-count">0</span> of 11 complete</span>
 </header>
 <main class="app">
-  <section class="mission-banner" aria-label="Research learning goal">
-    <div class="banner-copy"><p class="eyebrow"><span class="eyebrow-line"></span> Your research objective</p><h1>From images to <em>evidence.</em></h1><p>Build confident Python skills using real biological data, one experiment at a time.</p></div>
-    <div class="banner-progress"><div class="big-number"><span id="done-count">0</span><span class="over"> / 11</span></div><span class="progress-description">skills demonstrated</span><div class="progress-track"><div id="progress-fill"></div></div></div>
-  </section>
+  <div class="progress-track" aria-label="Course completion"><div id="progress-fill"></div></div>
   <div class="work-layout">
-    <aside class="sidebar" aria-label="Learning plan">
-      <div class="sidebar-head"><div class="sidebar-kicker">COURSE NAVIGATOR</div><div class="sidebar-title">Your learning path</div><p>Biology expert <span aria-hidden="true">·</span> Python beginner</p></div>
-      <details id="curriculum-toggle" open><summary>View missions <span id="curriculum-now">1 / 11</span></summary><nav id="curriculum" aria-label="Mission navigation"></nav></details>
-      <div class="guide-card"><span class="guide-label">YOUR LEARNING LOOP</span><p><strong>Observe</strong> → <strong>Code</strong> → <strong>Verify</strong></p><span>Hints help you learn. They never penalize your progress.</span></div>
-      <a class="sidebar-help" href="./README.md" target="_blank">About this training prototype ↗</a>
+    <aside class="sidebar" aria-label="Course navigation">
+      <details id="curriculum-toggle"><summary><span>All lessons</span><span id="curriculum-now">1 / 11</span><span aria-hidden="true" class="chevron">⌄</span></summary><nav id="curriculum" aria-label="Learning path"></nav></details>
     </aside>
-    <section class="lesson-area" aria-label="Current training task">
-      <div class="lesson-topline"><div class="course-breadcrumb" id="chapter">Foundations · Skill 1</div><span class="pill" id="proof-label">Not demonstrated</span></div>
-      <h2 id="mission-title">Label your first image</h2>
-      <p id="mission-goal" class="mission-goal">Use a variable to label the specimen.</p>
-      <section class="mission-brief" aria-label="Step-by-step Python task instructions">
-        <div class="brief-heading"><div class="brief-icon" id="brief-number" aria-hidden="true">01</div>
-          <div class="brief-content"><span class="brief-kicker">YOUR CODING CHALLENGE</span><p id="instruction-text"></p></div>
-          <div class="brief-flow" aria-hidden="true"><span>Understand</span><span class="brief-arrow">→</span><span>Edit</span><span class="brief-arrow">→</span><span>Check</span></div>
-        </div>
-        <div class="task-guide-grid">
-          <div class="task-guide-cell task-given"><span class="task-guide-title"><span class="task-number">1</span> PROVIDED DATA</span><p id="task-given"></p></div>
-          <div class="task-guide-cell task-actions"><span class="task-guide-title"><span class="task-number">2</span> WHAT TO DO</span><ol id="task-steps"></ol></div>
-          <div class="task-guide-cell task-expected"><span class="task-guide-title"><span class="task-number">3</span> EXPECTED RESULT</span><p id="task-expected"></p></div>
-        </div>
-        <div class="task-check-strip"><strong>HOW TO PASS</strong><span id="task-check"></span><a class="jump-code" href="#editor">Go to editor ↓</a></div>
+    <section class="lesson-area" aria-label="Current lesson">
+      <div class="lesson-topline"><span class="course-breadcrumb" id="chapter"></span><span class="pill" id="proof-label">Ready</span></div>
+      <h1 id="mission-title">Sample identity</h1>
+      <p id="mission-goal" class="sr-only"></p>
+      <section class="mission-brief" aria-label="Coding task">
+        <span class="brief-kicker">YOUR TASK <span id="brief-number" class="sr-only">01</span></span>
+        <p id="instruction-text"></p>
+        <details class="task-details" id="task-details">
+          <summary>Need more detail? <span class="open-hint">Examples &amp; steps</span></summary>
+          <div class="task-guide-grid">
+            <div class="task-guide-cell task-given"><h2>Provided data</h2><p id="task-given"></p></div>
+            <div class="task-guide-cell task-actions"><h2>Steps</h2><ol id="task-steps"></ol></div>
+            <div class="task-guide-cell task-expected"><h2>Expected result</h2><p id="task-expected"></p></div>
+            <div class="task-check-strip"><b>How it's checked</b><p id="task-check"></p></div>
+          </div>
+        </details>
       </section>
-      <div class="content-grid">
-        <section class="image-panel" aria-label="Scientific dataset display">
-          <div class="panel-top"><div><span class="dot live"></span><strong id="data-title">Microscopy field</strong></div><span class="panel-sub" id="image-role">CONTEXT IMAGE · NO IMAGE CODING YET</span></div>
-          <div class="image-display" id="image-box"><canvas id="microscope" width="512" height="512" aria-label="Real Human Protein Atlas fluorescence composite used with attribution; teaching arrays are derived from its resampled blue channel" role="img"></canvas><span class="image-id" id="sample-label">control_A01</span><div class="pixel-cursor" id="pixel-cursor" hidden>Pixel [20, 25]</div></div>
-          <div class="image-footer"><div class="image-source"><span id="image-caption">Loading real fluorescence microscopy data…</span><a id="image-credit" href="https://www.proteinatlas.org/" target="_blank" rel="noopener noreferrer" hidden>Human Protein Atlas · CC BY 4.0 · Source image ↗</a><button class="link-button" id="retry-images" hidden>Retry images</button></div><label class="toggle-row"><input type="checkbox" id="show-mask" disabled><span>Show Python mask</span></label></div>
-          
-          <div class="scientific-note"><span class="note-label">Scientist's note</span><p id="science-caution">The displayed HPA photograph is real; decoded JPEG blue-channel values are for learning, not calibrated quantitative measurements.</p></div>
+      <div class="content-grid" id="workspace-layout">
+        <section class="image-panel" id="image-panel" hidden aria-label="Microscopy image used in this exercise">
+          <div class="panel-top"><strong id="data-title">Microscopy image</strong><span id="image-role" class="panel-sub">USED IN THIS TASK</span></div>
+          <div class="image-display" id="image-box"><canvas id="microscope" width="512" height="512" aria-label="Human Protein Atlas fluorescence microscopy composite" role="img"></canvas><span class="image-id" id="sample-label">Image loading…</span><div class="pixel-cursor" id="pixel-cursor" hidden>Pixel [20, 25]</div></div>
+          <div class="image-footer"><div class="image-source"><span id="image-caption">Loading real microscopy data…</span><a id="image-credit" href="https://www.proteinatlas.org/" target="_blank" rel="noopener noreferrer" hidden>HPA image · Attribution ↗</a><button class="link-button" id="retry-images" hidden>Retry images</button></div><label class="toggle-row"><input type="checkbox" id="show-mask" disabled><span>Show mask</span></label></div>
+          <p class="image-science-note" id="science-caution"></p>
         </section>
-        <section class="code-panel" aria-label="Python learning workspace">
-          <div class="panel-top"><div><span class="dot code-dot"></span><strong>Python workspace</strong></div><span class="panel-sub" id="runtime-state">Runs in your browser</span></div>
-          <div class="editor-intro"><span class="editor-step">02</span><div><b>Write your solution</b><p>The starter code is unfinished or deliberately wrong. Edit it using the task steps above.</p></div></div>
-          <div class="data-view" id="data-view"><div class="data-label">Experiment input</div><div id="input-metadata"></div></div>
-          <div class="code-heading"><label for="editor">PYTHON EDITOR <span class="file-name">analysis.py</span></label><button id="reset-code" class="link-button" title="Reset this mission's code">Reset code</button></div>
+        <section class="code-panel" aria-label="Python code editor and feedback">
+          <div class="data-view" id="data-view"><div class="data-label">Provided to your code</div><div id="input-metadata"></div></div>
+          <div class="code-heading"><label for="editor">Python</label><button id="reset-code" class="link-button" title="Restore starter code">Reset</button></div>
           <textarea id="editor" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" aria-label="Python code editor"></textarea>
-          <div class="editor-actions"><button id="run" class="main-button">▶ Run Python &amp; check</button><button id="hint-button" class="small-button">Show a hint</button><span class="shortcut">Ctrl+Enter</span></div>
+          <div class="editor-actions"><button id="run" class="main-button">Run code <span aria-hidden="true">▶</span></button><button id="hint-button" class="small-button">Hint</button><span class="shortcut">Ctrl+Enter</span></div>
           <div id="hint" class="hint" hidden></div>
-          <div class="feedback" id="feedback" role="status" aria-live="polite"><strong>Start the experiment</strong><p>Change the code, then run it.</p></div>
-          <div class="output-area"><div class="output-head"><span class="output-light" aria-hidden="true"></span> PYTHON CONSOLE <span class="output-sub">Actual interpreter output</span></div><pre id="python-output">Output will appear here.</pre></div>
+          <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+          <div class="output-area" id="output-area" hidden><div class="output-head">Python output <span id="runtime-state">Runs in your browser</span></div><pre id="python-output"></pre></div>
           <div id="generated-result" hidden></div>
-          <div class="navigation"><button id="back" class="nav-button">← Back</button><button id="next" class="main-button" disabled>Continue →</button></div>
-          <div class="keyboard-note">Shift+Enter: continue · Ctrl+Shift+Enter: back</div>
+          <div class="navigation" id="navigation" hidden><button id="back" class="nav-button">← Previous</button><button id="next" class="main-button" hidden>Continue →</button></div>
         </section>
       </div>
-      <section class="lesson-bottom">
-        <div class="teaching"><div class="learning-card-head"><span class="learning-symbol" aria-hidden="true">✦</span><span class="learning-kicker">THE BIG IDEA</span></div><h3>Why this matters</h3><p id="why"></p></div>
-        <div class="sources"><div class="learning-card-head"><span class="learning-symbol" aria-hidden="true">↗</span><span class="learning-kicker">GO DEEPER</span></div><h3>Read alongside the course</h3><p>Original learning resources that explain this technique.</p><div id="source-links"></div></div>
-      </section>
+      <details class="lesson-bottom" id="learn-more"><summary>Why this matters &amp; sources</summary>
+        <div class="teaching"><h2>Why this matters</h2><p id="why"></p></div>
+        <div class="sources"><h2>Original learning resources</h2><div id="source-links"></div></div>
+      </details>
     </section>
   </div>
-  <footer>Real HPA micrographs for image lessons · Illustrative non-image exercise data · Local progress only · See source and license credits.</footer>
 </main>
-<script src="./app.js?v=clear-guidance-20261105"></script>
+<script src="./app.js?v=focus-20261105"></script>
 </body>
 </html>
