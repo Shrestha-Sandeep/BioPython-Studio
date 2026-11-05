@@ -26,7 +26,7 @@ Date: 2026-11-05.
 
 ## Safety and scientific integrity
 
-- All images are deterministic synthetic data. No results claim automated cell/object counting.
+- Microscopy-array lessons use HPA fluorescence composite JPEGs. No results claim automated cell/object counting; non-image examples remain illustrative.
 - Pixel masks count pixels and field-level measurements are not independent biological replicates.
 - All sample data are fictitious; no user files or health data are read or sent to the server.
 - The educational Python Worker is bounded but not a hardened sandbox; untrusted code must not be executed.
@@ -37,3 +37,10 @@ Date: 2026-11-05.
 - Real HPA JPEGs fetched successfully (three intact JPEG files, original resolutions 1728×1728, 2048×2048 and 1728×1728).
 - The browser image loading and actual HPA mask overlay still require a real deployed browser run; do not present them as verified until that is done.
 - Numerical table, arithmetic, percent-change and plot cases intentionally remain illustrative rather than claiming to be derived from those image files.
+
+## Image-loading repair checks (November 5, 2026)
+
+- Confirmed the GitHub JPEG copies were truncated (~1.5 KB). The browser accepted the dimensions but displayed a blank field. Removed the broken copies; the browser now uses direct HPA HTTPS images with CORS.
+- Verified the first HPA origin responds with HTTP 200, `Content-Type: image/jpeg`, `Access-Control-Allow-Origin: *`, and 245,282 bytes. Its decoded RGB image is 1728 × 1728 and nonblank.
+- Verified browser-loading logic using Playwright + deterministic full-size JPEG fixtures: visible microscopy pixels, mobile rendering, incomplete JPEG rejection, Retry recovery, and matching NumPy image dimensions.
+- All 27 CPython harness tests passed; JavaScript syntax check passed. Remote, deployed Pyodide + external HPA integration is a separate final browser check.

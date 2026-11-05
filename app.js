@@ -10,13 +10,14 @@ const HANDBOOK_SOURCE = 'https://jakevdp.github.io/PythonDataScienceHandbook/';
 // The blue channel of a browser-decoded RGB composite is a teaching example,
 // NOT a calibrated raw fluorescence intensity measurement.
 const REAL_IMAGE_SOURCES = [
-  {id:'HPA-8346-22-C1-1',path:'./assets/hpa-8346-22-C1-1.jpg',origin:'https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg',size:64},
-  {id:'HPA-46658-784-B12-1',path:'./assets/hpa-46658-784-B12-1.jpg',origin:'https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg',size:56},
-  {id:'HPA-23394-182-H7-1',path:'./assets/hpa-23394-182-H7-1.jpg',origin:'https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg',size:72}
+  {id:'HPA-8346-22-C1-1',origin:'https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg',size:64},
+  {id:'HPA-46658-784-B12-1',origin:'https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg',size:56},
+  {id:'HPA-23394-182-H7-1',origin:'https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg',size:72}
 ];
 let loadedMicroscopy = [];
 let imageError = '';
 let imageReady = false;
+let imageLoading = false;
 function blueArrayFromImage(image, dimension){
   const canvas = document.createElement('canvas');
   canvas.width=dimension;canvas.height=dimension;
@@ -31,32 +32,69 @@ function informativeThreshold(arr){
 }
 async function loadMicroscopy(){
   try {
-    const media=await Promise.all(REAL_IMAGE_SOURCES.map(spec=>new Promise((resolve,reject)=>{
-      const img=new Image();
-      img.onload=()=>{
-        if(img.naturalWidth<256 || img.naturalHeight<256){reject(new Error('Microscopy file is incomplete'));return;}
-        try {resolve({...spec,element:img,blue:blueArrayFromImage(img,spec.size)});}
-        catch(error){reject(error);}
-      };
-      img.onerror=()=>reject(new Error('Could not load ' + spec.id));
-      img.src=spec.path;
-    })));
-    loadedMicroscopy=media;
-    const sets=[['shape',[0,1,2]],['pixel',[0,2,1]],['mask',[0,1,2]]];
-    for(const [skill,indices] of sets){
-      data[skill]=indices.map(i=>({image:media[i].blue,...(skill==='mask'?{threshold:informativeThreshold(media[i].blue)}:{})}));
-    }
-    imageReady=true;
-    imageError='';
-  } catch(error){
-    imageReady=false;
-    imageError=String(error?.message||error);
-    // Never display a fabricated micrograph if a real image cannot load.
-  }
-  render();
+    const media=await Promise.all(REAL_IMAGE_SOURfunction decodeMicroscopyBlob(blob) {
+  if (typeof createImageBitmap === 'function') return createImageBitmap(blob);
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob), img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('JPEG could not be decoded')); };
+    img.src = url;
+  });
 }
-const data = {
-  sample:[{sample_id:'control_A01'},{sample_id:'treated_B08'},{sample_id:'replicate_C03'}],
+async function fetchMicroscopy(spec) {
+  const abort = new AbortController();
+  const timeout = setTimeout(() => abort.abort(), 30000);
+  try {
+    const response = await fetch(spec.origin, {mode:'cors',cache:'force-cache',signal:abort.signal});
+    if (!response.ok) throw new Error(spec.id + ': HTTP ' + response.status);
+    const blob = await response.blob();
+    // A truncated JPEG may report dimensions while displaying an empty field.
+    if (blob.size < 50000 || !blob.type.startsWith('image/')) {
+      throw new Error(spec.id + ': image incomplete or invalid (' + blob.size + ' bytes)');
+    }
+    const element = await decodeMicroscopyBlob(blob);
+    const width = element.width || element.naturalWidth;
+    const height = element.height || element.naturalHeight;
+    if (width < 256 || height < 256) throw new Error(spec.id + ': unexpected image dimensions');
+    const blue = blueArrayFromImage(element, spec.size);
+    const values = blue.flat();
+    if (new Set(values).size < 3 || Math.max(...values) < 8) {
+      throw new Error(spec.id + ': decoded image contains no readable blue-channel variation');
+    }
+    return {...spec,element,blue,width,height,byteSize:blob.size};
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+async function loadMicroscopy() {
+  if (imageLoading) return;
+  imageLoading = true;
+  $('retry-images').hidden = true;
+  try {
+    const media = await Promise.all(REAL_IMAGE_SOURCES.map(fetchMicroscopy));
+    loadedMicroscopy = media;
+    const sets = [['shape',[0,1,2]],['pixel',[0,2,1]],['mask',[0,1,2]]];
+    for (const [skill,indices] of sets) {
+      data[skill] = indices.map(i => ({
+        image:media[i].blue,
+        ...(skill === 'mask' ? {threshold:informativeThreshold(media[i].blue)} : {})
+      }));
+    }
+    imageReady = true;
+    imageError = '';
+  } catch (error) {
+    imageReady = false;
+    imageError = error?.name === 'AbortError' ? 'Image request timed out. Please retry.' : String(error?.message || error);
+    // Never invent microscopy pixels when the published source is unavailable.
+  } finally {
+    imageLoading = false;
+    $('retry-images').hidden = imageReady;
+    // Preserve the learner's editor, output and feedback during image loading.
+    renderMetadata();
+    drawImage();
+  }
+}
+replicate_C03'}],
   change:[{control:80,treated:60},{control:120,treated:150},{control:70,treated:56}],
   replicates:[{counts:[4,6,7]},{counts:[6,2,9,1]},{counts:[2,2,2]}],
   function:[{signals:[12,14,18]},{signals:[4,8,12,16]},{signals:[5,7]}],
@@ -129,7 +167,7 @@ function drawImage(){
  if(!imageReady){
    ctx.fillStyle='#d9f2eb';ctx.font='16px system-ui';
    ctx.fillText(imageError?'Microscopy images unavailable':'Loading real microscopy images…',24,canvas.height/2);
-   $('image-caption').textContent=imageError?'Image download failed · reload to retry':'Loading source images from Human Protein Atlas…';
+   $('image-caption').textContent=imageError?'Image unavailable: '+imageError:'Loading source images from Human Protein Atlas…';
    $('image-credit').hidden=true;
    $('sample-label').textContent='Image data pending';
    $('pixel-cursor').hidden=true;
@@ -246,6 +284,7 @@ $('editor').addEventListener('keydown',event=>{
  if(event.key==='Tab'){event.preventDefault();const e=event.currentTarget;e.setRangeText('    ',e.selectionStart,e.selectionEnd,'end');saved.drafts[lessons[current].id]=e.value;persist();}
 });
 $('show-mask').addEventListener('change',e=>{maskVisible=e.target.checked;drawImage()});
+$('retry-images').addEventListener('click',loadMicroscopy);
 document.addEventListener('keydown',e=>{
  if(e.key!=='Enter'||e.isComposing||e.altKey)return;
  if(e.shiftKey&&(e.ctrlKey||e.metaKey)){e.preventDefault();switchLesson(current-1);}
