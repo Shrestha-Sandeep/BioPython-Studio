@@ -30,9 +30,7 @@ function informativeThreshold(arr){
   const v=arr.flat().sort((a,b)=>a-b);
   return v[Math.floor(v.length*.78)];
 }
-async function loadMicroscopy(){
-  try {
-    const media=await Promise.all(REAL_IMAGE_SOURfunction decodeMicroscopyBlob(blob) {
+function decodeMicroscopyBlob(blob) {
   if (typeof createImageBitmap === 'function') return createImageBitmap(blob);
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(blob), img = new Image();
@@ -94,7 +92,9 @@ async function loadMicroscopy() {
     drawImage();
   }
 }
-replicate_C03'}],
+
+const data = {
+  sample:[{sample_id:'control_A01'},{sample_id:'treated_B08'},{sample_id:'replicate_C03'}],
   change:[{control:80,treated:60},{control:120,treated:150},{control:70,treated:56}],
   replicates:[{counts:[4,6,7]},{counts:[6,2,9,1]},{counts:[2,2,2]}],
   function:[{signals:[12,14,18]},{signals:[4,8,12,16]},{signals:[5,7]}],
