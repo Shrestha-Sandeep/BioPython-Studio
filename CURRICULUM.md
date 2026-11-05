@@ -1,112 +1,111 @@
-# BioPython Studio — personalized learning plan
+# BioPython Studio — Authoritative course and completion map
 
-## Design decision
+**Product goal:** Enable a molecular biologist with advanced microscopy knowledge but beginner Python skills to go from basic scripts to traceable biological image analysis, reproducible experiment summaries and starter bioinformatics/ML workflows. All tasks should teach real transferable programming—not trivia or gameplay.
 
-Target **scientific Python competence**, not completion of a game. The user's expertise in biological experiments and microscopy is treated as an asset: no elementary biology quizzes, no fictional lab safety claims, no XP/streak system, and no arbitrary robot puzzles. Every task should transfer to an actual analysis script or notebook.
+**Scope:** 61 completed executable lesson designs, browser app, editable Python, iterative feedback, progress, real HPA fluorescence JPEGs, and a separate reproducible Jupyter companion notebook. More specialized research methods remain explicitly out of scope.
 
-Two sources provide complementary structure:
+## Curriculum inventory
 
-- [Guillaume Witz — Image Processing for Beginners](https://guiwitz.github.io/PyImageCourse_beginner/README.html): fast entry from Python basics to real image processing, focusing on selected Python essentials, NumPy arrays, thresholding, filtering, regions and pipelines.
-- [Jake VanderPlas — Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/): deep, more general reference for IPython/Jupyter, NumPy, Pandas, Matplotlib and scikit-learn, with Python fundamentals as an assumed prerequisite.
+| # | Lesson ID | Lesson |
+|---:|---|---|
+| 1 | `sample` | Sample identity |
+| 2 | `change` | Treatment effect |
+| 3 | `replicates` | Multiple fields |
+| 4 | `function` | Reusable measurement |
+| 5 | `shape` | Discover image dimensions |
+| 6 | `pixel` | Inspect one pixel |
+| 7 | `mask` | Threshold bright pixels |
+| 8 | `table` | Create a measurements table |
+| 9 | `group` | Compare conditions |
+| 10 | `plot` | Plot the measured groups |
+| 11 | `transfer` | Your own small analysis |
+| 12 | `sample_parts` | Decode a sample ID |
+| 13 | `gc_fraction` | DNA GC percentage |
+| 14 | `quality_filter` | Filter low-quality fields |
+| 15 | `metadata_dict` | Build a metadata record |
+| 16 | `roi_crop` | Crop a region of interest |
+| 17 | `roi_mean` | Mean signal in an ROI |
+| 18 | `bright_fraction` | Fraction of bright pixels |
+| 19 | `background_subtract` | Subtract background safely |
+| 20 | `intensity_hist` | Make an intensity histogram |
+| 21 | `candidate_regions` | Find connected regions |
+| 22 | `missing_records` | Handle missing measurements |
+| 23 | `join_metadata` | Join image and sample metadata |
+| 24 | `replicate_means` | Respect biological replicates |
+| 25 | `field_report` | Reusable microscopy report |
+| 26 | `dtype_conversion` | Understand pixel bit depth |
+| 27 | `axis_selection` | Understand stacked image axes |
+| 28 | `pixel_area` | Convert pixels to physical area |
+| 29 | `percentile_mask` | Adapt threshold to each field |
+| 30 | `gaussian_smooth` | Reduce image noise |
+| 31 | `percentile_background` | Subtract an estimated background |
+| 32 | `morphological_open` | Clean a binary mask |
+| 33 | `skimage_label` | Label candidate regions |
+| 34 | `remove_small` | Filter small connected regions |
+| 35 | `region_table` | Measure each segmented region |
+| 36 | `segmentation_precision` | Evaluate a segmentation mask |
+| 37 | `imaging_pipeline` | Build an image-measurement function |
+| 38 | `csv_import` | Read a measurements CSV |
+| 39 | `clean_ids` | Standardize sample identifiers |
+| 40 | `schema_missing` | Flag incomplete sample metadata |
+| 41 | `duplicate_ids` | Detect duplicate records |
+| 42 | `batch_normalize` | Normalize within acquisition batches |
+| 43 | `paired_change` | Analyze paired biological samples |
+| 44 | `bio_replicate_n` | Count true biological replicates |
+| 45 | `standard_error` | Calculate biological-replicate SEM |
+| 46 | `confidence_interval` | Estimate a 95% confidence interval |
+| 47 | `robust_median` | Use a robust summary when appropriate |
+| 48 | `errorbar_plot` | Plot replicates with uncertainty |
+| 49 | `reproducible_report` | Build a reproducible experiment summary |
+| 50 | `reverse_complement` | Reverse-complement a DNA sequence |
+| 51 | `fasta_parse` | Read a FASTA file |
+| 52 | `trim_quality` | Trim low-quality read tails |
+| 53 | `fastq_qc` | Inspect FASTQ quality |
+| 54 | `kmer_counts` | Count short DNA motifs |
+| 55 | `read_coverage` | Compute reference coverage |
+| 56 | `count_cpm` | Normalize NGS counts to CPM |
+| 57 | `puncta_peaks` | Detect candidate fluorescence peaks |
+| 58 | `track_displacement` | Estimate motion from paired coordinates |
+| 59 | `group_safe_split` | Prevent biological-replicate data leakage |
+| 60 | `ml_classifier` | Train a transparent baseline classifier |
+| 61 | `final_research_pipeline` | Complete your independent research workflow |
 
-The material is referenced by topic and linked directly, not copied. Library APIs are updated and exercises are original.
+## Learning sources
 
-## Implemented v0.1: eleven progressive skills
+Primary: [Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner) and [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/).
+Imaging: [Introduction to Bioimage Analysis](https://bioimagebook.github.io/), [Bio-image Analysis Notebooks](https://haesleinhuepf.github.io/BioImageAnalysisNotebooks/), [The Carpentries Image Processing](https://datacarpentry.github.io/image-processing/), [scikit-image](https://scikit-image.org/docs/stable/).
+Biological and computational: [Python for Biologists](https://www.pythonforbiologists.org/), [Biopython](https://biopython.org/DIST/docs/tutorial/Tutorial.html), [scikit-learn](https://scikit-learn.org/stable/user_guide.html).
 
-| Stage | Skill | Python capability | Scientific proof | Sources |
-|---|---|---|---|---|
-| F01 | Sample identity | variables, printing | correct label for unknown specimen IDs | Witz 01 |
-| F02 | Treatment effect | arithmetic, percentages, rounding | correct calculation with changed controls | Witz 01 |
-| F03 | Multiple fields | lists, `sum` | sums lists of varying length | Witz 01 |
-| F04 | Reusable measurement | function with return | calculates mean for different lists | Witz 08 |
-| N01 | Discover image dimensions | NumPy arrays, shape | handles unknown 2D shapes | Witz 02; Handbook NumPy |
-| N02 | Inspect one pixel | zero-based NumPy indexing | reads real pixel array values | Witz 02; Handbook NumPy |
-| N03 | Threshold bright pixels | Boolean masks, aggregation | correct mask on varied images/thresholds; orange overlay | Witz 04; Handbook NumPy |
-| D01 | Create measurements table | Pandas DataFrames | constructs and sums real tabular data | Witz 07; Handbook Pandas |
-| D02 | Compare conditions | groupby and means | correct condition-level aggregation on varied rows | Witz 07; Handbook Pandas |
-| V01 | Plot measured groups | Matplotlib axes and labels | renders a real Python-generated figure on changed group means | Witz 03; Handbook Matplotlib |
-| T01 | Your own analysis | functions, lists, dictionaries | reusable independent per-specimen summary on changed cases | Witz 07 |
+## Learning system and acceptance criteria
 
-### Required feedback semantics
+- One task, supplied data, editor, Run and feedback on the default screen; course map and extended guidance collapsed. A microscope image is shown only when used in the current task.
+- Every new lesson evaluates code on three changing datasets; wrong/hardcoded answers fail. Correct independently solved lessons and guided solutions are recorded distinctly.
+- Each lesson has three explanatory steps, expected result, check semantics, two hints, scientific relevance and a scientifically honest caution.
+- Preserve earlier `id` keys, `localStorage` key and lesson order through future changes. Never move or remove the original 25 without an explicit migration.
+- Browser image arrays must come from actual decoded HPA source JPEGs; no fake fallback masquerading as real data. Show errors/retry on corrupted or inaccessible source files.
+- Python evaluation uses a real interpreter and bounded educational source/step limits. This is NOT an adversarial multi-tenant sandbox.
 
-- **Taught** — correct example, clear biological motivation and a simple interaction.
-- **Practiced** — learner writes or modifies executable Python and receives actionable checks.
-- **Independently demonstrated** — their code works on unseen changed inputs without opening the hint.
-- **Guided** — the same correct performance after a hint; valuable learning, not failure.
-- **Not demonstrated** — script, scientific semantics, or execution still incorrect.
+## Scientific evidence boundaries
 
-## Roadmap beyond v0.1 — deliberately not marked implemented
+- RGB JPEG intensity is not quantitative raw microscope intensity, nor does an integer array cast recover original bit depth.
+- Exercise pixel_size_um numbers, FASTA/FASTQ examples, tracking coordinates, replicate tables, ML feature vectors and comparison masks are constructed teaching data—not actual scientific observations.
+- Connected-component counts, selected mask pixels and local maxima do not establish biological object identity. Evaluation against manually annotated truth is required for cells, exophers or puncta.
+- Report the number of **independent biological replicates**, distinct from the number of microscope fields. Do not claim treatment effects from illustrative sample values.
+- The optional notebook demonstrates real image decoding, masks, candidate measurements, provenance and a real-TIFF inspection workflow when a local TIFF is supplied. It does not automatically provide a calibrated original TIFF.
 
-### Phase 2: Real image fundamentals
+## Release criteria
 
-- Open a TIFF through a reproducible path in a real notebook.
-- Bit depth/dtype, channels, axes, calibration, intensity ranges and safe conversion.
-- Histogram visualization and scientifically honest threshold selection.
-- Noise, filtering, background subtraction, morphology; explain assumptions and artifacts.
-- Thresholded pixel area versus connected component object count versus true biological count.
-- Manual reference annotations, uncertainty, overlap and double counting.
+- Python: original and new cases pass; code repair, updated NumPy indexing and overfitting rejection tested across 61 lessons.
+- Browser: minimum three viewport sizes, all lesson navigation, progress persistence, live image view, corrupt-image retry and final notebook download link.
+- Deployment: preview branch exact SHA + test results before promotion; production alias and SHA inspected afterwards.
+- Runtime: verify a cold Pyodide load and a heavy advanced package import in an actual deployed browser. Log this as **unverified** if network or protected deployments prevent it.
 
-### Phase 3: Robust microscopy measurement
+## Not currently in the app
 
-- Use `scikit-image` to label objects and measure region properties.
-- ROI definitions, image crop/scale, pixel units and per-object tables.
-- 2D vs 3D; multichannel and time-lapse cases; tracking caution.
-- Compare segmentation to annotated truth, evaluate false positives/negatives and boundary errors.
-- Perform a dry-run replication using public image datasets with provenance.
+- Live user-supplied raw TIFF/OME-TIFF upload and decoding in the web app; arbitrary microscopy upload requires security, file-size/axes/metadata and performance handling.
+- Manually annotated HPA object boundaries, validated exopher detection, complete segmentation model QA or a trained model ready for research inference.
+- Full NGS analysis stack (FASTQ to alignment and variant calls), advanced statistics, interactive conversational AI tutor, or cloud progress synchronization.
 
-### Phase 4: Experimental data handling and defensible inference
+## Development organization
 
-- Pandas joins between measurements and sample metadata, missingness, validation, identifiers, and batch conditions.
-- Biological versus technical replicates; confidence and pseudoreplication.
-- Accurate effect sizes and uncertainty, clear Matplotlib plots and reproducible reports.
-- Real Jupyter/IPython workflow: restart kernel, rerun all cells, handle paths and environments.
-
-### Phase 5: Reproducible scientific analysis
-
-- Create independent analysis functions, scripts and notebooks from real inputs.
-- Versioning, environments, fixed input/output paths and source provenance.
-- Automated quality tests using manually curated expected outputs.
-- Project: annotated images → measured objects → tables → descriptive/inferential results → documented limitations.
-
-### Phase 6: Optional specialization
-
-- Fluorescence puncta, C. elegans images, neuronal aggregates and exopher-like structures with domain-specific ground truth.
-- Machine learning and scikit-learn for feature-based baselines; train/test leakage, nested replicates, validation errors and model limitations.
-- Optional NGS/bioinformatics branch and additional data science projects from the Handbook.
-
-## Release gate for the next version
-
-Before new content: test live Pyodide loading (cold and warm); confirm NumPy/Pandas/Matplotlib packages load from CDN; test different browsers, mobile, accessibility and saved progress; verify all skill checks and exported code. Do not confuse local CPython or mocked-Worker tests with live browser execution.
-
-### Real-image teaching source (2026-11-05)
-The NumPy array/shape, pixel reading and mask lessons now use resampled blue-channel pixel values from three **real HPA fluorescence composite images**, not synthetic Gaussian spots. The visible microscopy photograph matches the array from which the mask is derived. This remains a beginner *JPEG-array demonstration*, not calibrated measurement of raw microscopy data. Other numeric and table cases are illustrative until a later verified dataset-based module. See README for exact source image links, attribution, license and future raw-data requirements. This replaces previous synthetic-imaging guidance without changing the Handbook/PyImageCourse skill order. Do not fork whole upstream educational repositories merely to borrow examples; link to lessons and fetch only appropriately licensed and attributed necessary images from their publisher, with integrity checks.
-
-## Chunk 1 completed — Applied Python and image measurements (2026-11-05)
-
-The original 11 lessons remain in the same order and retain their IDs and save-state keys. The 14 new lessons are appended, giving **25 executable activities**. These new lessons check code on three independent inputs each rather than comparing only a displayed sample output.
-
-| Stage | Lesson IDs | Capability | Primary external teaching reference |
-|---|---|---|---|
-| 06: Scientific Python in the lab | `sample_parts`, `gc_fraction`, `quality_filter`, `metadata_dict` | String parsing, sequence arithmetic, conditional filtering, experimental metadata | Python for Biologists; VanderPlas |
-| 07: Quantitative microscopy | `roi_crop`, `roi_mean`, `bright_fraction`, `background_subtract`, `intensity_hist`, `candidate_regions` | NumPy ROI, intensity, masks, uint8-safe subtraction, histograms, SciPy connected components | Bankhead; Carpentries; Haase; Witz; VanderPlas |
-| 08: Data integrity and replication | `missing_records`, `join_metadata`, `replicate_means` | Missingness, merge identity, field-to-replicate grouping | VanderPlas; Haase; Bankhead |
-| 09: Imaging project | `field_report` | Reusable real-image blue-channel report across unfamiliar images | Haase; Carpentries; Bankhead |
-
-**Scientific limitations:** Source images are Human Protein Atlas RGB composite JPEGs, not calibrated raw microscopy files. Array values are decoded, resized 8-bit blue-channel pixels. Connected regions are candidate components, NOT biological cell counts. The metadata, sequence and Pandas exercise data are original illustrative records; they are not claimed as experimental results. Where metadata input is used, it is supplied by the task rather than inferred from images. Every added lesson links relevant external source(s) under the optional reference section. No book text or image from other sources is copied.
-
-**Further chunk roadmap (update this section, do not create duplicate planning files):**
-
-- **Chunk 2:** Raw TIFF/OME axes, pixel calibration, image loading and provenance, scikit-image filters, threshold selection, morphology, labeling, regionprops and segmentation validation against known truth. Require a genuinely licensed dataset with annotations and a review of each scientific assumption.
-- **Chunk 3:** Real scientific tables, biological vs technical replicate structure, missingness policies, plotting uncertainty, descriptive statistics, Jupyter/Colab reproducibility, documented environment and exported notebook/script pipeline.
-- **Chunk 4:** Bioinformatics/NGS file processing, qPCR or experimental assay data, time-series and C. elegans puncta / exopher-like imaging, introductory classification with independent train/test assessment. Distinguish technical potential from scientifically validated identification.
-
-**Validation gate:** Existing 27 Python harness checks must stay green. New lessons need good/bad executable Python cases, image loading and science checks, JS syntax, browser navigation, and a GitHub-connected Vercel preview before promotion. Live Pyodide + SciPy browser execution should be verified separately from local CPython tests.
-
-### Additional source links
-
-- Python for Biologists: https://www.pythonforbiologists.org/
-- Pete Bankhead, Introduction to Bioimage Analysis: https://bioimagebook.github.io/
-- Robert Haase et al., Bio-image Analysis Notebooks: https://haesleinhuepf.github.io/BioImageAnalysisNotebooks/
-- The Carpentries Image Processing with Python: https://datacarpentry.github.io/image-processing/
-- Guillaume Witz, Image Processing for Beginners: https://guiwitz.github.io/PyImageCourse_beginner/README.html
-- Jake VanderPlas, Python Data Science Handbook: https://jakevdp.github.io/PythonDataScienceHandbook/
+All previous planning chunks are consolidated into this map and [README.md](README.md); do not create redundant one-off blueprints. Source truth: GitHub `main`; deployment: connected Vercel project `biopython`. Keep independent BioCompute and AppDeploy ImageLab unchanged.

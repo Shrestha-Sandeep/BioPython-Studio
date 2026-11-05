@@ -16,7 +16,8 @@ namespace = {}
 exec(MATCH.group(1), namespace)
 evaluate = namespace['evaluate']
 
-big_images = [(np.arange(40*48,dtype=np.uint16).reshape(40,48)%256).astype(np.uint8).tolist(), (np.arange(38*45,dtype=np.uint16).reshape(38,45)*3%256).astype(np.uint8).tolist()]
+big_images = [(np.arange(40*48,dtype=np.uint16).reshape(40,48)%256).astype(np.uint8).tolist(),
+              (np.arange(38*45,dtype=np.uint16).reshape(38,45)*3%256).astype(np.uint8).tolist()]
 
 images = [
     np.arange(35, dtype=np.uint8).reshape(5,7).tolist(),
