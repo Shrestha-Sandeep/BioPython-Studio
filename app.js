@@ -6,9 +6,10 @@ const STORAGE_KEY = 'biopython_studio_personal_v1';
 const IMAGE_SOURCE = 'https://github.com/guiwitz/PyImageCourse_beginner';
 const HANDBOOK_SOURCE = 'https://jakevdp.github.io/PythonDataScienceHandbook/';
 
-// Microscopy assets: verified Human Protein Atlas images, credited at point of use.
-// The blue channel of a browser-decoded RGB composite is a teaching example,
-// NOT a calibrated raw fluorescence intensity measurement.
+// Real Human Protein Atlas fluorescence composites, credited at point of use.
+// Images are fetched directly from the publisher with CORS, not from truncated
+// GitHub binary copies. Resampled JPEG blue-channel pixels are teaching data,
+// NOT calibrated raw fluorescence intensity measurements.
 const REAL_IMAGE_SOURCES = [
   {id:'HPA-8346-22-C1-1',origin:'https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg',size:64},
   {id:'HPA-46658-784-B12-1',origin:'https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg',size:56},
@@ -32,62 +33,60 @@ function informativeThreshold(arr){
 }
 function decodeMicroscopyBlob(blob) {
   if (typeof createImageBitmap === 'function') return createImageBitmap(blob);
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(blob), img = new Image();
-    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('JPEG could not be decoded')); };
-    img.src = url;
+  return new Promise((resolve,reject) => {
+    const url=URL.createObjectURL(blob);
+    const img=new Image();
+    img.onload=() => {URL.revokeObjectURL(url);resolve(img);};
+    img.onerror=() => {URL.revokeObjectURL(url);reject(new Error('JPEG could not be decoded'));};
+    img.src=url;
   });
 }
 async function fetchMicroscopy(spec) {
-  const abort = new AbortController();
-  const timeout = setTimeout(() => abort.abort(), 30000);
+  const abort=new AbortController();
+  const timeout=setTimeout(()=>abort.abort(),30000);
   try {
-    const response = await fetch(spec.origin, {mode:'cors',cache:'force-cache',signal:abort.signal});
-    if (!response.ok) throw new Error(spec.id + ': HTTP ' + response.status);
-    const blob = await response.blob();
-    // A truncated JPEG may report dimensions while displaying an empty field.
-    if (blob.size < 50000 || !blob.type.startsWith('image/')) {
-      throw new Error(spec.id + ': image incomplete or invalid (' + blob.size + ' bytes)');
+    const response=await fetch(spec.origin,{mode:'cors',cache:'force-cache',signal:abort.signal});
+    if(!response.ok) throw new Error(spec.id+': HTTP '+response.status);
+    const blob=await response.blob();
+    // A 1.5 KB truncated JPEG can report dimensions and fire an image load
+    // event while rendering an empty field. Never accept that as a real image.
+    if(blob.size<50000 || !blob.type.startsWith('image/')) {
+      throw new Error(spec.id+': image incomplete or invalid ('+blob.size+' bytes)');
     }
-    const element = await decodeMicroscopyBlob(blob);
-    const width = element.width || element.naturalWidth;
-    const height = element.height || element.naturalHeight;
-    if (width < 256 || height < 256) throw new Error(spec.id + ': unexpected image dimensions');
-    const blue = blueArrayFromImage(element, spec.size);
-    const values = blue.flat();
-    if (new Set(values).size < 3 || Math.max(...values) < 8) {
-      throw new Error(spec.id + ': decoded image contains no readable blue-channel variation');
+    const element=await decodeMicroscopyBlob(blob);
+    const width=element.width||element.naturalWidth;
+    const height=element.height||element.naturalHeight;
+    if(width<256 || height<256) throw new Error(spec.id+': unexpected image dimensions');
+    const blue=blueArrayFromImage(element,spec.size);
+    const values=blue.flat();
+    if(new Set(values).size<3 || Math.max(...values)<8) {
+      throw new Error(spec.id+': decoded image contains no readable blue-channel variation');
     }
     return {...spec,element,blue,width,height,byteSize:blob.size};
-  } finally {
-    clearTimeout(timeout);
-  }
+  } finally {clearTimeout(timeout);}
 }
-async function loadMicroscopy() {
-  if (imageLoading) return;
-  imageLoading = true;
-  $('retry-images').hidden = true;
+async function loadMicroscopy(){
+  if(imageLoading)return;
+  imageLoading=true;
+  $('retry-images').hidden=true;
   try {
-    const media = await Promise.all(REAL_IMAGE_SOURCES.map(fetchMicroscopy));
-    loadedMicroscopy = media;
-    const sets = [['shape',[0,1,2]],['pixel',[0,2,1]],['mask',[0,1,2]]];
-    for (const [skill,indices] of sets) {
-      data[skill] = indices.map(i => ({
-        image:media[i].blue,
-        ...(skill === 'mask' ? {threshold:informativeThreshold(media[i].blue)} : {})
-      }));
+    const media=await Promise.all(REAL_IMAGE_SOURCES.map(fetchMicroscopy));
+    loadedMicroscopy=media;
+    const sets=[['shape',[0,1,2]],['pixel',[0,2,1]],['mask',[0,1,2]]];
+    for(const [skill,indices] of sets){
+      data[skill]=indices.map(i=>({image:media[i].blue,...(skill==='mask'?{threshold:informativeThreshold(media[i].blue)}:{})}));
     }
-    imageReady = true;
-    imageError = '';
-  } catch (error) {
-    imageReady = false;
-    imageError = error?.name === 'AbortError' ? 'Image request timed out. Please retry.' : String(error?.message || error);
-    // Never invent microscopy pixels when the published source is unavailable.
+    imageReady=true;
+    imageError='';
+  } catch(error){
+    imageReady=false;
+    imageError=error?.name==='AbortError'?'Image request timed out. Please retry.':String(error?.message||error);
+    // Do not invent microscopy pixels if the published source is unavailable.
   } finally {
-    imageLoading = false;
-    $('retry-images').hidden = imageReady;
-    // Preserve the learner's editor, output and feedback during image loading.
+    imageLoading=false;
+    $('retry-images').hidden=imageReady;
+    // Update just the microscopy panel: do not erase a learner's current
+    // Python output, editor contents, or feedback while images download.
     renderMetadata();
     drawImage();
   }
@@ -123,6 +122,130 @@ const lessons = [
   {id:'plot',chapter:'04 · Scientific visualization',name:'Plot the measured groups',goal:'Turn control and treated mean measurements into a reproducible figure.',instruction:'Create a Matplotlib bar chart using control_mean and treated_mean; label the y-axis.',starter:'fig, ax = plt.subplots()\nax.bar(["control", "treated"], [control_mean, 0])\nax.set_ylabel("")',why:'A plot is scientific output. Axes, labels and underlying measurements should remain correct when the data changes.',caution:'A bar chart of means without biological-replicate uncertainty is descriptive only. Error bars require appropriate replicate data.',hints:['The group labels are control and treated, and both values are provided.','Set the second bar to treated_mean and write ax.set_ylabel("Bright pixels / field").'],sourceImage:'03-More_on_images.ipynb',sourceHandbook:'04.00-introduction-to-matplotlib.html'},
   {id:'transfer',chapter:'05 · Independent transfer',name:'Your own small analysis',goal:'Create a reusable summary for a previously unseen biological specimen.',instruction:'Write summarize(sample_id, counts) to return a dictionary with sample_id, total and mean. Test it on the supplied sample.',starter:'def summarize(sample_id, counts):\n    # Return sample_id, total and mean\n    return {}\n\nprint(summarize(sample_id, counts))',why:'Transfer means using Python skills on new scientific inputs without copying a single expected answer.',caution:'This is a small reproducibility milestone, not yet an automated image-processing pipeline.',hints:['Compute total = sum(counts), mean = round(total / len(counts), 2).','Return {"sample_id": sample_id, "total": total, "mean": mean}.'],sourceImage:'07-Pipeline.ipynb'}
 ];
+// Short learner-facing task contract for each original exercise. No change to evaluator.
+const TASK_GUIDES = {
+  "sample": {
+    "focus": "A quoted specimen name never updates. Your code must read the variable.",
+    "given": "Python already supplies sample_id = \"control_A01\". The next test specimen has a different ID. You do not need to create the variable.",
+    "steps": [
+      "Find the fixed specimen name inside print(...).",
+      "Change print(...) so it uses sample_id as a variable instead of quoted text.",
+      "Click Run Python & check."
+    ],
+    "expected": "First sample prints control_A01. Another sample must print treated_B08 using the same code.",
+    "check": "Your code is run with 3 different sample IDs. A fixed answer will fail."
+  },
+  "change": {
+    "focus": "Calculate percentage change, not simply the difference between two measurements.",
+    "given": "Python gives control = 80 and treated = 60 for the first example. Both values change in later tests.",
+    "steps": [
+      "Compute treated minus control, then divide by control and multiply by 100.",
+      "Store the percentage in a variable named change_pct.",
+      "Round the answer to one decimal place and print it."
+    ],
+    "expected": "For control 80 and treated 60, the printed percentage is -25.0 (a 25% decrease).",
+    "check": "We check change_pct and the printed percentage on 3 sets of values. This is arithmetic practice, not a biological conclusion."
+  },
+  "replicates": {
+    "focus": "Total the values in a list, even when the list length changes.",
+    "given": "A list named counts is ready. For example counts = [4, 6, 7] are manually recorded counts from three fields.",
+    "steps": [
+      "Use a Python operation that adds every number in counts.",
+      "Save that number in a variable named total.",
+      "Print total; do not type a fixed number or use only the first field."
+    ],
+    "expected": "For [4, 6, 7], the total printed is 17. A longer or shorter list must also work.",
+    "check": "We check the total variable and output for different lists, not just the first sample."
+  },
+  "function": {
+    "focus": "Create a reusable function that works for lists of any length.",
+    "given": "Python supplies signals = [12, 14, 18] for the first example. Your starter already defines mean_signal(values), but it returns only the first value.",
+    "steps": [
+      "Inside mean_signal(values), calculate the sum of values divided by their length.",
+      "Return the calculated mean rather than a single list element.",
+      "Call mean_signal(signals), round to 2 decimals, and print it."
+    ],
+    "expected": "For signals [12, 14, 18], output is 14.67. Different lists give different averages.",
+    "check": "We call your function on changing signal lists and check the returned mean and printed result."
+  },
+  "shape": {
+    "focus": "Ask the NumPy image for its dimensions; do not guess them.",
+    "given": "A real fluorescence image has been converted to a 2D NumPy array named image. The first array is 64 rows × 64 columns.",
+    "steps": [
+      "Look at the code editor: the fixed tuple is not a measurement.",
+      "Use the NumPy array attribute that reports its shape.",
+      "Print that shape, not a manually typed pair of dimensions."
+    ],
+    "expected": "The first image prints (64, 64). Later images may print (56, 56) or (72, 72).",
+    "check": "We verify the output matches each real image array, including images with other sizes."
+  },
+  "pixel": {
+    "focus": "Look up one pixel by its row and column index.",
+    "given": "A 2D NumPy array image is ready. Read row 20, column 25. Python indexes start at 0 and use image[row, column].",
+    "steps": [
+      "Access the element at row 20 and column 25 from image.",
+      "Convert the NumPy pixel value to an ordinary Python integer.",
+      "Print the integer instead of the starter zero."
+    ],
+    "expected": "One integer from 0 to 255, taken from the supplied image. The value changes with the image.",
+    "check": "We check that the printed pixel value matches the value at [20, 25] in each of 3 images."
+  },
+  "mask": {
+    "focus": "Use a changing fluorescence threshold to make a Boolean image mask.",
+    "given": "You have image, a 2D NumPy array, and threshold, a number chosen for that image. The threshold changes in different test images.",
+    "steps": [
+      "Compare every image pixel against the supplied threshold using >.",
+      "Store the resulting True/False array in mask.",
+      "Count how many pixels are True and print the number."
+    ],
+    "expected": "A Boolean array named mask with the same dimensions as image, plus one printed bright-pixel count. The orange overlay shows your mask after a correct run.",
+    "check": "Both mask and the printed count must match all test images. Bright pixels are not a count of cells."
+  },
+  "table": {
+    "focus": "Turn supplied measurement records into a Pandas table.",
+    "given": "Python supplies rows, a list of records. The first example has bright_pixels values 54, 61 and 47. These are illustrative measurements.",
+    "steps": [
+      "Create a Pandas DataFrame named df using the rows list (starter line is already correct).",
+      "Select the bright_pixels column of df.",
+      "Print the sum of all values in that column, not just the first row."
+    ],
+    "expected": "First dataset prints 162. The same code must work when the number of rows changes.",
+    "check": "We check both the DataFrame content and the printed total against multiple sets of records."
+  },
+  "group": {
+    "focus": "Compare control and treated means without mixing the groups.",
+    "given": "The rows records have condition and bright_pixels columns. In the first example, control values are 41 and 39; treated values are 54 and 50.",
+    "steps": [
+      "Build df from rows and calculate the mean for each condition using groupby (already shown in starter).",
+      "Get the treated mean and subtract the control mean.",
+      "Print the difference rounded to two decimals. Replace print(0)."
+    ],
+    "expected": "Control mean = 40, treated mean = 52. The printed treated-minus-control difference is 12.0.",
+    "check": "We verify the grouped means and difference for 3 datasets. Multiple fields are not automatically biological replicates."
+  },
+  "plot": {
+    "focus": "Make a figure that changes when the measurements change.",
+    "given": "Python supplies control_mean = 40 and treated_mean = 52 for the first example. You already have Matplotlib as plt.",
+    "steps": [
+      "Create two bars labelled control and treated.",
+      "Replace the fixed 0 in the starter with treated_mean so each bar uses the correct value.",
+      "Label the y-axis with the measurement and its units."
+    ],
+    "expected": "A bar plot with heights 40 and 52 for the first example, plus a non-empty y-axis label.",
+    "check": "We inspect both bar heights and the y-axis label over different input values, not the image appearance alone."
+  },
+  "transfer": {
+    "focus": "Combine what you learned into a reusable function for unseen specimens.",
+    "given": "Python supplies sample_id = \"sample_F07\" and counts = [4, 6, 3] for the first example. Later tests provide different IDs and list lengths.",
+    "steps": [
+      "Write summarize(sample_id, counts) so it computes total and mean from counts.",
+      "Return a dictionary with keys sample_id, total and mean; round mean to 2 decimals.",
+      "Call the function on the given inputs and print the returned dictionary."
+    ],
+    "expected": "For sample_F07: sample_id is sample_F07, total is 13 and mean is 4.33.",
+    "check": "We evaluate the function with unfamiliar specimen IDs and counts. A hardcoded report will fail."
+  }
+};
 const chapterTitles = ['01 · Python foundations','02 · Images as NumPy arrays','03 · Scientific tables','04 · Scientific visualization','05 · Independent transfer'];
 const initial = {step:0,completed:{},drafts:{},hintUsed:{}};
 let saved = {...initial};
@@ -217,7 +340,14 @@ function render(){
  const mission=lessons[current];const already=!!saved.completed[mission.id];
  $('chapter').textContent=mission.chapter+' · Skill '+(current+1)+' of '+lessons.length;
  $('mission-title').textContent=mission.name;$('mission-goal').textContent=mission.goal;
- $('instruction-text').textContent=mission.instruction;
+ const guide=TASK_GUIDES[mission.id];
+ $('brief-number').textContent=String(current+1).padStart(2,'0');
+ $('instruction-text').textContent=guide.focus;
+ $('task-given').textContent=guide.given;
+ const steps=$('task-steps');steps.replaceChildren();
+ guide.steps.forEach(instruction=>{const item=document.createElement('li');item.textContent=instruction;steps.append(item);});
+ $('task-expected').textContent=guide.expected;
+ $('task-check').textContent=guide.check;
  $('why').textContent=mission.why;$('science-caution').textContent=mission.caution;
  $('editor').value=typeof saved.drafts[mission.id]==='string'?saved.drafts[mission.id]:mission.starter;
  $('hint').hidden=true;$('hint-button').textContent='Show a hint';helpCount=0;lastMask=null;
@@ -228,8 +358,9 @@ function render(){
  proof.textContent=already?(saved.completed[mission.id]==='independent'?'Independently demonstrated':'Practiced with guidance'):'Ready to practice';
  $('runtime-state').textContent='Runs in your browser';
  $('data-title').textContent=['shape','pixel','mask'].includes(mission.id)?'Fluorescence image array':(['table','group','plot'].includes(mission.id)?'Biological measurements':'Microscopy field');
+ $('image-role').textContent=['shape','pixel','mask'].includes(mission.id)?'IMAGE USED BY YOUR PYTHON': 'VISUAL CONTEXT · NOT THE TASK DATA';
  renderMetadata();renderCurriculum();drawImage();showLinks(mission);
- tell(already?'Previous result saved':'Start here',already?'You can rerun this activity or continue to your next skill.':'Modify the code, then check your result on more than one dataset.');
+ tell(already?'Previous result saved':'Start here',already?'You can rerun this activity or continue to your next skill.':'Follow the three instructions above, then run the edited Python. The same code must work on changed data.');
  persist();
 }
 function switchLesson(index){if(running||index<0||index>=lessons.length||index>unlocked())return;current=index;render();if(window.innerWidth<750)$('curriculum-toggle').open=false;window.scrollTo({top:0,behavior:'auto'});}

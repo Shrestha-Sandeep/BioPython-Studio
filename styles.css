@@ -167,3 +167,39 @@ pre{background:#102b36;color:#d2ffe7;padding:12px 14px;min-height:45px;border-ra
   .output-sub{display:none}.feedback,.output-area{margin-left:12px;margin-right:12px}.navigation{padding:12px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+
+/* A task contract has one obvious workflow: inspect inputs, edit code, check output. */
+.mission-brief{display:block;padding:0;overflow:hidden;background:#f8f9ff}
+.brief-heading{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid #dce0f8}
+.task-guide-grid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.4fr) minmax(0,1.0fr);gap:0;background:#fff}
+.task-guide-cell{padding:16px 17px;min-width:0;border-right:1px solid #e4e9f2}
+.task-guide-cell:last-child{border-right:0}
+.task-guide-title{font-size:10px;letter-spacing:.09em;font-weight:900;color:#546579;display:flex;align-items:center;gap:7px}
+.task-number{height:22px;min-width:22px;border-radius:7px;display:inline-grid;place-items:center;background:#e4eaf3;color:#2e4764;font-size:11px;letter-spacing:0}
+.task-guide-cell p{font-size:13px;line-height:1.56;margin:10px 0 0;color:#30455a}
+.task-actions{background:#eff5ff;border-right-color:#ceddf3;border-left:1px solid #d5e2f5}
+.task-actions .task-guide-title{color:#384bc4}
+.task-actions .task-number{background:#6251df;color:white}
+.task-guide-cell ol{padding-left:21px;margin:10px 0 0;color:#263850;font-size:13px;line-height:1.52}
+.task-guide-cell li{padding-left:3px;margin:0 0 7px}.task-guide-cell li:last-child{margin-bottom:0}
+.task-expected{background:#f0faf5}.task-expected .task-guide-title{color:#08764d}.task-expected .task-number{background:#c6f2db;color:#075f3b}
+.task-check-strip{display:flex;align-items:center;gap:12px;background:#f9f7ea;border-top:1px solid #e8e2bf;padding:10px 17px;color:#56522f;font-size:12px;line-height:1.48}
+.task-check-strip strong{color:#6c5421;font-size:10px;letter-spacing:.06em;white-space:nowrap}
+.task-check-strip span{flex:1;min-width:0}
+.task-check-strip .jump-code{display:none}
+@media(max-width:1150px){
+ .task-guide-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
+ .task-expected{grid-column:1/-1;border-right:0;border-top:1px solid #dfebe0}
+ .task-guide-cell{padding:12px 15px}
+}
+@media(max-width:760px){
+ .brief-heading{padding:12px 13px}
+ .task-guide-grid{grid-template-columns:minmax(0,1fr)}
+ .task-given,.task-actions,.task-expected{grid-column:auto;border:0;border-top:1px solid #e2e8f3;padding:12px 14px}
+ .task-actions{border-left:0}
+ .task-guide-cell p,.task-guide-cell ol{font-size:12px;margin-top:7px}
+ .task-guide-cell li{margin-bottom:5px}
+ .task-check-strip{display:flex;flex-wrap:wrap;align-items:center;padding:12px 14px;gap:7px}
+ .task-check-strip strong{width:100%}
+ .task-check-strip .jump-code{display:inline-flex;margin:3px 0 0;padding:7px 11px;flex-basis:auto;white-space:nowrap}
+}

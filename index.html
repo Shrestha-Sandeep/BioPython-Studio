@@ -28,15 +28,21 @@
       <div class="lesson-topline"><div class="course-breadcrumb" id="chapter">Foundations · Skill 1</div><span class="pill" id="proof-label">Not demonstrated</span></div>
       <h2 id="mission-title">Label your first image</h2>
       <p id="mission-goal" class="mission-goal">Use a variable to label the specimen.</p>
-      <section class="mission-brief" aria-label="Your current coding objective">
-        <div class="brief-icon" aria-hidden="true">01</div>
-        <div class="brief-content"><span class="brief-kicker">MISSION BRIEF · YOUR NEXT ACTION</span><p id="instruction-text"></p></div>
-        <div class="brief-flow" aria-hidden="true"><span>Read</span><span class="brief-arrow">→</span><span>Code</span><span class="brief-arrow">→</span><span>Run</span></div>
-        <a class="jump-code" href="#editor">Jump to Python editor ↓</a>
+      <section class="mission-brief" aria-label="Step-by-step Python task instructions">
+        <div class="brief-heading"><div class="brief-icon" id="brief-number" aria-hidden="true">01</div>
+          <div class="brief-content"><span class="brief-kicker">YOUR CODING CHALLENGE</span><p id="instruction-text"></p></div>
+          <div class="brief-flow" aria-hidden="true"><span>Understand</span><span class="brief-arrow">→</span><span>Edit</span><span class="brief-arrow">→</span><span>Check</span></div>
+        </div>
+        <div class="task-guide-grid">
+          <div class="task-guide-cell task-given"><span class="task-guide-title"><span class="task-number">1</span> PROVIDED DATA</span><p id="task-given"></p></div>
+          <div class="task-guide-cell task-actions"><span class="task-guide-title"><span class="task-number">2</span> WHAT TO DO</span><ol id="task-steps"></ol></div>
+          <div class="task-guide-cell task-expected"><span class="task-guide-title"><span class="task-number">3</span> EXPECTED RESULT</span><p id="task-expected"></p></div>
+        </div>
+        <div class="task-check-strip"><strong>HOW TO PASS</strong><span id="task-check"></span><a class="jump-code" href="#editor">Go to editor ↓</a></div>
       </section>
       <div class="content-grid">
         <section class="image-panel" aria-label="Scientific dataset display">
-          <div class="panel-top"><div><span class="dot live"></span><strong id="data-title">Microscopy field</strong></div><span class="panel-sub">01 · EXPLORE DATA</span></div>
+          <div class="panel-top"><div><span class="dot live"></span><strong id="data-title">Microscopy field</strong></div><span class="panel-sub" id="image-role">CONTEXT IMAGE · NO IMAGE CODING YET</span></div>
           <div class="image-display" id="image-box"><canvas id="microscope" width="512" height="512" aria-label="Real Human Protein Atlas fluorescence composite used with attribution; teaching arrays are derived from its resampled blue channel" role="img"></canvas><span class="image-id" id="sample-label">control_A01</span><div class="pixel-cursor" id="pixel-cursor" hidden>Pixel [20, 25]</div></div>
           <div class="image-footer"><div class="image-source"><span id="image-caption">Loading real fluorescence microscopy data…</span><a id="image-credit" href="https://www.proteinatlas.org/" target="_blank" rel="noopener noreferrer" hidden>Human Protein Atlas · CC BY 4.0 · Source image ↗</a><button class="link-button" id="retry-images" hidden>Retry images</button></div><label class="toggle-row"><input type="checkbox" id="show-mask" disabled><span>Show Python mask</span></label></div>
           
@@ -44,7 +50,7 @@
         </section>
         <section class="code-panel" aria-label="Python learning workspace">
           <div class="panel-top"><div><span class="dot code-dot"></span><strong>Python workspace</strong></div><span class="panel-sub" id="runtime-state">Runs in your browser</span></div>
-          <div class="editor-intro"><span class="editor-step">02</span><div><b>Write your solution</b><p>Change the starter code, then run it against new data.</p></div></div>
+          <div class="editor-intro"><span class="editor-step">02</span><div><b>Write your solution</b><p>The starter code is unfinished or deliberately wrong. Edit it using the task steps above.</p></div></div>
           <div class="data-view" id="data-view"><div class="data-label">Experiment input</div><div id="input-metadata"></div></div>
           <div class="code-heading"><label for="editor">PYTHON EDITOR <span class="file-name">analysis.py</span></label><button id="reset-code" class="link-button" title="Reset this mission's code">Reset code</button></div>
           <textarea id="editor" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" aria-label="Python code editor"></textarea>
@@ -65,6 +71,6 @@
   </div>
   <footer>Real HPA micrographs for image lessons · Illustrative non-image exercise data · Local progress only · See source and license credits.</footer>
 </main>
-<script src="./app.js?v=hpa-loader-20261105"></script>
+<script src="./app.js?v=clear-guidance-20261105"></script>
 </body>
 </html>
