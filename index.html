@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Personalized scientific Python training: learn by analysing simulated biological microscopy data.">
+  <title>BioPython Studio — Microscopy-first Python</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header class="sitebar">
+  <a class="brand" href="./index.html" aria-label="BioPython Studio home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>BioPython <strong>Studio</strong></span></a>
+  <div class="sitebar-right"><span class="build-label">SCIENTIFIC PYTHON · TRAINING V0.1</span><a href="https://guiwitz.github.io/PyImageCourse_beginner/README.html" target="_blank" rel="noopener">Reference course ↗</a></div>
+</header>
+<main class="app">
+  <section class="mission-banner">
+    <div><p class="eyebrow">Your research objective</p><h1>From fluorescence images to trustworthy measurements.</h1><p>Learn real Python by analysing biological data—not by answering programming trivia.</p></div>
+    <div class="banner-progress"><div class="big-number"><span id="done-count">0</span><span class="over"> / 11</span></div><span>skills demonstrated</span><div class="progress-track"><div id="progress-fill"></div></div></div>
+  </section>
+  <div class="work-layout">
+    <aside class="sidebar" aria-label="Learning plan">
+      <div class="sidebar-head"><div class="sidebar-title">Your learning path</div><p>Biology expert · Python beginner</p></div>
+      <details id="curriculum-toggle" open><summary>View missions <span id="curriculum-now">1 / 11</span></summary><nav id="curriculum" aria-label="Mission navigation"></nav></details>
+      <div class="guide-card"><b>How this course works</b><p>Observe → write Python → check on new data → understand the result. Hints are optional and never penalized.</p></div>
+      <a class="sidebar-help" href="./README.md" target="_blank">About this training prototype ↗</a>
+    </aside>
+    <section class="lesson-area" aria-label="Current training task">
+      <div class="lesson-topline"><div class="course-breadcrumb" id="chapter">Foundations · Skill 1</div><span class="pill" id="proof-label">Not demonstrated</span></div>
+      <h2 id="mission-title">Label your first image</h2>
+      <p id="mission-goal" class="mission-goal">Use a variable to label the specimen.</p>
+      <div class="content-grid">
+        <section class="image-panel" aria-label="Scientific dataset display">
+          <div class="panel-top"><div><span class="dot live"></span><strong id="data-title">Microscopy field</strong></div><span class="panel-sub">SYNTHETIC TRAINING DATA</span></div>
+          <div class="image-display" id="image-box"><canvas id="microscope" width="624" height="432" aria-label="Synthetic fluorescence microscopy image, not a real experimental image" role="img"></canvas><span class="image-id" id="sample-label">control_A01</span><div class="pixel-cursor" id="pixel-cursor" hidden>Pixel [2, 3]</div></div>
+          <div class="image-footer"><span id="image-caption">Fluorescent image generated for training</span><label class="toggle-row"><input type="checkbox" id="show-mask" disabled><span>Show Python mask</span></label></div>
+          <div class="data-view" id="data-view"><div class="data-label">Experiment input</div><div id="input-metadata"></div></div>
+          <div class="scientific-note"><span class="note-label">Scientist's note</span><p id="science-caution">Synthetic images are examples, not validated biological measurements.</p></div>
+        </section>
+        <section class="code-panel" aria-label="Python learning workspace">
+          <div class="panel-top"><div><span class="dot code-dot"></span><strong>Python workspace</strong></div><span class="panel-sub" id="runtime-state">Runs in your browser</span></div>
+          <div class="instruction"><div class="mini-heading">Your task</div><p id="instruction-text"></p></div>
+          <div class="code-heading"><label for="editor">Write or edit Python</label><button id="reset-code" class="link-button" title="Reset this mission's code">Reset code</button></div>
+          <textarea id="editor" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" aria-label="Python code editor"></textarea>
+          <div class="editor-actions"><button id="run" class="main-button">▶ Run Python &amp; check</button><button id="hint-button" class="small-button">Show a hint</button><span class="shortcut">Ctrl+Enter</span></div>
+          <div id="hint" class="hint" hidden></div>
+          <div class="feedback" id="feedback" role="status" aria-live="polite"><strong>Start the experiment</strong><p>Change the code, then run it.</p></div>
+          <div class="output-area"><div class="output-head">Real Python output</div><pre id="python-output">Output will appear here.</pre></div>
+          <div id="generated-result" hidden></div>
+          <div class="navigation"><button id="back" class="nav-button">← Back</button><button id="next" class="main-button" disabled>Continue →</button></div>
+          <div class="keyboard-note">Shift+Enter: continue · Ctrl+Shift+Enter: back</div>
+        </section>
+      </div>
+      <section class="lesson-bottom">
+        <div class="teaching"><h3>Why this matters</h3><p id="why"></p></div>
+        <div class="sources"><h3>Read alongside the course</h3><p>Original lessons in the linked learning resources.</p><div id="source-links"></div></div>
+      </section>
+    </section>
+  </div>
+  <footer>Original lessons and synthetic datasets · Progress is saved locally in your browser · Nothing is uploaded to a server.</footer>
+</main>
+<script src="./app.js"></script>
+</body>
+</html>
