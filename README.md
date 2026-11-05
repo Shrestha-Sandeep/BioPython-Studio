@@ -1,6 +1,6 @@
 # BioPython Studio — microscopy-first scientific Python trainer
 
-**Status:** Standalone **v0.1 prototype** with an executable, eleven-skill learning route. This is original software, not a reproduction of either reference course. The live AppDeploy ImageLab and ImageLab Arcade were **not modified**.
+**Status:** Standalone training app with **25 executable lessons** (11 original + 14 applied-science extensions). This is original software, not a reproduction of either reference course. The live AppDeploy ImageLab and ImageLab Arcade were **not modified**.
 
 ## Purpose
 
@@ -101,3 +101,7 @@ For the NumPy shape, pixel and threshold exercises, the app draws the real HPA c
 The original GitHub image upload inadvertently stored JPEGs truncated to approximately 1.5 KB. Some browsers read the JPEG dimensions but displayed a blank microscopy canvas. We removed these broken copies. The app now fetches full-resolution JPEGs from the HPA publisher over CORS (`Access-Control-Allow-Origin: *` confirmed for the source) and rejects short, invalid or visually empty images. Image failure is visible and retryable without resetting Python output or drafts. This adds a dependency on HPA image hosting and internet connectivity; if HPA is unreachable, the app explains the failure instead of simulating data.
 
 Image browser test with deterministic local JPEG fixtures: `python tests/check_browser_images.py` (requires Playwright/Chromium and Pillow). Real HPA source bytes and headers were checked separately; deployed Pyodide execution still requires a live browser check after new deployments.
+
+## Applied-science expansion (Chunk 1)
+
+After the original 11 exercises, 14 additional lessons cover biological sequence/metadata handling, quality filters, real HPA image ROI, intensity, thresholds, background subtraction, histogram, SciPy candidate connected regions, Pandas missingness/joins/replicate-aware means, and a reusable field report. **25 total lessons; old progress remains intact.** See the single canonical `CURRICULUM.md` for source-by-source mapping and scientific caveats. A `scipy` wheel is loaded on demand only for connected-components and the final field report (Pyodide 0.28.3 supported package). These sources are instructional references, not republished books.

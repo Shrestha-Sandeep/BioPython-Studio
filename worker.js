@@ -12,7 +12,7 @@ import base64
 import contextlib
 import traceback
 
-SAFE_MODULES = {'numpy', 'pandas', 'matplotlib', 'math'}
+SAFE_MODULES = {'numpy', 'pandas', 'matplotlib', 'math', 'scipy'}
 
 def restricted_import(name, globals=None, locals=None, fromlist=(), level=0):
     if name.split('.')[0] not in SAFE_MODULES:
@@ -103,6 +103,103 @@ def check(lesson, namespace, report, case):
         if correct:
             report['table'] = [{'sample_id':result['sample_id'], 'total':result['total'], 'mean':result['mean']}]
         return correct, 'Return a dictionary with sample_id, total and mean computed from the function arguments.'
+
+    # Chunk 1: applied scientific Python & real-image field work.
+    if lesson == 'sample_parts':
+        expected = case['sample_id'].split('-')[0]
+        return namespace.get('group') == expected and output == expected, 'Use sample_id.split("-")[0]; store it in group and print group.'
+    if lesson == 'gc_fraction':
+        seq = case['sequence']
+        expected = round(100 * (seq.count('G') + seq.count('C')) / len(seq), 1)
+        return close(namespace.get('gc_pct'), expected, .01) and close(output_number(), expected, .01), 'Use the changing sequence string; calculate G+C over length, multiply by 100 and round once.'
+    if lesson == 'quality_filter':
+        expected = [v for v in case['signals'] if v >= case['minimum']]
+        kept = namespace.get('kept')
+        return isinstance(kept, list) and kept == expected and close(output_number(), len(expected)), 'Filter signals using the supplied minimum; keep every qualifying value and print the length.'
+    if lesson == 'metadata_dict':
+        expected = {k:case[k] for k in ('sample_id','condition','bio_rep')}
+        record = namespace.get('record')
+        return isinstance(record, dict) and all(record.get(k)==v for k,v in expected.items()) and output == f"{expected['condition']}:{expected['bio_rep']}", 'Build record with all 3 supplied fields, then print condition:bio_rep using record.'
+    if lesson == 'roi_crop':
+        np = namespace['np']; img=namespace['image']; roi=namespace.get('roi')
+        actual = img[case['r0']:case['r1'],case['c0']:case['c1']]
+        correct = isinstance(roi,np.ndarray) and roi.shape==actual.shape and np.array_equal(roi, actual)
+        return correct and output.replace(' ','') == str(actual.shape).replace(' ',''), 'Use both supplied row and column slice boundaries; print roi.shape.'
+    if lesson == 'roi_mean':
+        np=namespace['np']; img=namespace['image']; roi=namespace.get('roi')
+        actual=img[case['r0']:case['r1'],case['c0']:case['c1']]
+        expected=float(actual.mean())
+        if not isinstance(roi,np.ndarray) or not np.array_equal(roi,actual):
+            return False, 'Crop the precise ROI with the changing boundaries first.'
+        return close(namespace.get('mean_intensity'),expected,.0001) and close(output_number(),round(expected,2),.015), 'Save float(roi.mean()) in mean_intensity, then print round(mean_intensity,2).'
+    if lesson == 'bright_fraction':
+        np=namespace['np'];img=namespace['image']; mask=namespace.get('mask')
+        truth=img>case['threshold']; expected=float(truth.mean())
+        if not isinstance(mask,np.ndarray) or mask.dtype.kind!='b' or not np.array_equal(mask,truth):
+            return False, 'Your mask must be a Boolean image > the supplied changing threshold.'
+        correct = close(namespace.get('fraction'),expected,.0001) and close(output_number(),round(expected,3),.0011)
+        if correct:report['mask']=mask.astype('uint8').tolist()
+        return correct, 'Compute float(mask.mean()) and print it rounded to three decimals.'
+    if lesson == 'background_subtract':
+        np=namespace['np']; img=namespace['image']; arr=namespace.get('corrected')
+        expected=np.maximum(img.astype(np.int16)-case['background'],0)
+        valid=isinstance(arr,np.ndarray) and arr.shape==img.shape and arr.dtype.kind in 'if' and np.array_equal(arr,expected)
+        return valid and close(output_number(),int(expected.sum())), 'Cast uint8 to a signed or floating type BEFORE subtraction; clip negative values at zero.'
+    if lesson == 'intensity_hist':
+        np=namespace['np']; hist=namespace.get('hist')
+        expected,_ = np.histogram(namespace['image'],bins=4,range=(0,256))
+        valid=isinstance(hist,np.ndarray) and hist.shape==(4,) and np.array_equal(hist,expected)
+        return valid and close(output_number(),int(expected[-1])), 'Use np.histogram(image, bins=4, range=(0,256)) and print the final bin count.'
+    if lesson == 'candidate_regions':
+        np=namespace['np'];img=namespace['image'];mask=namespace.get('mask');labels=namespace.get('labels')
+        truth=img>case['threshold']
+        from scipy import ndimage as ndi
+        target,n=ndi.label(truth)
+        valid=(isinstance(mask,np.ndarray) and mask.dtype.kind=='b' and np.array_equal(mask,truth)
+             and isinstance(labels,np.ndarray) and np.array_equal(labels,target)
+             and namespace.get('region_count')==n and close(output_number(),n))
+        if valid:report['mask']=mask.astype('uint8').tolist()
+        return valid, 'Use labels, region_count = ndi.label(mask). Candidate regions are not necessarily individual cells.'
+    if lesson == 'missing_records':
+        pd=namespace['pd'];df=namespace.get('df');clean=namespace.get('clean')
+        expected=pd.DataFrame(case['rows']);want=expected.dropna(subset=['bright_pixels'])
+        valid=(isinstance(df,pd.DataFrame) and isinstance(clean,pd.DataFrame)
+          and df.equals(expected) and clean.equals(want) and close(output_number(),len(want)))
+        if valid:report['table']=clean.head(8).to_dict('records')
+        return valid, 'Build df from rows, then clean = df.dropna(subset=["bright_pixels"]). Keep measured zeros.'
+    if lesson == 'join_metadata':
+        pd=namespace['pd'];merged=namespace.get('merged')
+        expected=pd.DataFrame(case['measurements']).merge(pd.DataFrame(case['metadata']),on='sample_id',validate='many_to_one')
+        valid=isinstance(merged,pd.DataFrame) and merged.equals(expected) and close(output_number(),len(expected))
+        if valid:report['table']=merged.head(8).to_dict('records')
+        return valid, 'Merge measurements with metadata on sample_id using validate="many_to_one"; print the number of merged rows.'
+    if lesson == 'replicate_means':
+        pd=namespace['pd'];df=namespace.get('df');rep=namespace.get('rep_means');cond=namespace.get('condition_means')
+        expected_df=pd.DataFrame(case['rows'])
+        expected_rep=expected_df.groupby(['condition','bio_rep'])['bright_pixels'].mean()
+        expected_cond=expected_rep.groupby(level='condition').mean()
+        delta=round(float(expected_cond['treated']-expected_cond['control']),2)
+        valid=(isinstance(df,pd.DataFrame) and df.equals(expected_df) and isinstance(rep,pd.Series)
+             and isinstance(cond,pd.Series) and rep.equals(expected_rep) and cond.equals(expected_cond)
+             and close(output_number(),delta,.011))
+        if valid:report['table']=[{'condition':str(k),'mean_per_biological_replicate':float(v)} for k,v in cond.items()]
+        return valid, 'First average fields within condition and bio_rep, THEN average biological replicates per condition.'
+    if lesson == 'field_report':
+        np=namespace['np'];fun=namespace.get('analyze');img=namespace['image']
+        if not callable(fun):return False, 'Define analyze(sample_id, image, threshold) as a reusable function.'
+        try:result=fun(case['sample_id'],img,case['threshold'])
+        except Exception as e:return False, 'Your analysis failed for a new image: '+str(e)[:200]
+        from scipy import ndimage as ndi
+        mask=img>case['threshold'];region_count=int(ndi.label(mask)[1])
+        expected={'sample_id':case['sample_id'],'bright_pixels':int(mask.sum()),'bright_fraction':round(float(mask.mean()),3),'regions':region_count}
+        good=(isinstance(result,dict) and result.get('sample_id')==expected['sample_id']
+             and result.get('bright_pixels')==expected['bright_pixels']
+             and close(result.get('bright_fraction'),expected['bright_fraction'],.0005)
+             and result.get('regions')==expected['regions'] and close(output_number(),expected['bright_pixels']))
+        if good:
+            report['mask']=mask.astype('uint8').tolist()
+            report['table']=[result]
+        return good, 'Return the actual sample ID, bright pixel count, fraction and connected-region count from the function arguments.'
     return False, 'Unknown learning task.'
 
 def evaluate(lesson, source, cases, make_plot=True):
@@ -125,12 +222,12 @@ def evaluate(lesson, source, cases, make_plot=True):
     for number, case in enumerate(cases):
         namespace={'__builtins__':BUILTINS}
         namespace.update({k:v for k,v in case.items() if k!='image'})
-        if lesson in ('shape','pixel','mask','table','group','plot'):
+        if lesson in ('shape', 'pixel', 'mask', 'roi_crop', 'roi_mean', 'bright_fraction', 'background_subtract', 'intensity_hist', 'candidate_regions', 'field_report', 'table', 'group', 'plot', 'missing_records', 'join_metadata', 'replicate_means'):
             import numpy as np
             namespace['np'] = np
             if 'image' in case:
                 namespace['image'] = np.asarray(case['image'], dtype=np.uint8)
-        if lesson in ('table','group','plot'):
+        if lesson in ('table', 'group', 'plot', 'missing_records', 'join_metadata', 'replicate_means'):
             import pandas as pd
             namespace['pd']=pd
         if lesson=='plot':
@@ -139,6 +236,9 @@ def evaluate(lesson, source, cases, make_plot=True):
             import matplotlib.pyplot as plt
             plt.close('all')
             namespace['plt']=plt
+        if lesson in ('candidate_regions', 'field_report'):
+            from scipy import ndimage as ndi
+            namespace['ndi']=ndi
         output=io.StringIO()
         report={'input_index':number,'output':'','error':None}
         counter=[0]
@@ -196,9 +296,10 @@ async function loadRuntime() {
 }
 async function loadForLesson(py,lesson) {
   const need = [];
-  if (['shape','pixel','mask','table','group','plot'].includes(lesson) && !loaded.has('numpy')) need.push('numpy');
-  if (['table','group','plot'].includes(lesson) && !loaded.has('pandas')) need.push('pandas');
+  if (["shape","pixel","mask","roi_crop","roi_mean","bright_fraction","background_subtract","intensity_hist","candidate_regions","field_report","table","group","plot","missing_records","join_metadata","replicate_means"].includes(lesson) && !loaded.has('numpy')) need.push('numpy');
+  if (["table","group","plot","missing_records","join_metadata","replicate_means"].includes(lesson) && !loaded.has('pandas')) need.push('pandas');
   if (lesson==='plot' && !loaded.has('matplotlib')) need.push('matplotlib');
+  if (["candidate_regions","field_report"].includes(lesson) && !loaded.has('scipy')) need.push('scipy');
   if(need.length){
     sendStatus('Loading scientific Python packages: '+need.join(', ')+'…');
     await py.loadPackage(need);

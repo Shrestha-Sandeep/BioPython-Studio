@@ -80,3 +80,33 @@ Before new content: test live Pyodide loading (cold and warm); confirm NumPy/Pan
 
 ### Real-image teaching source (2026-11-05)
 The NumPy array/shape, pixel reading and mask lessons now use resampled blue-channel pixel values from three **real HPA fluorescence composite images**, not synthetic Gaussian spots. The visible microscopy photograph matches the array from which the mask is derived. This remains a beginner *JPEG-array demonstration*, not calibrated measurement of raw microscopy data. Other numeric and table cases are illustrative until a later verified dataset-based module. See README for exact source image links, attribution, license and future raw-data requirements. This replaces previous synthetic-imaging guidance without changing the Handbook/PyImageCourse skill order. Do not fork whole upstream educational repositories merely to borrow examples; link to lessons and fetch only appropriately licensed and attributed necessary images from their publisher, with integrity checks.
+
+## Chunk 1 completed — Applied Python and image measurements (2026-11-05)
+
+The original 11 lessons remain in the same order and retain their IDs and save-state keys. The 14 new lessons are appended, giving **25 executable activities**. These new lessons check code on three independent inputs each rather than comparing only a displayed sample output.
+
+| Stage | Lesson IDs | Capability | Primary external teaching reference |
+|---|---|---|---|
+| 06: Scientific Python in the lab | `sample_parts`, `gc_fraction`, `quality_filter`, `metadata_dict` | String parsing, sequence arithmetic, conditional filtering, experimental metadata | Python for Biologists; VanderPlas |
+| 07: Quantitative microscopy | `roi_crop`, `roi_mean`, `bright_fraction`, `background_subtract`, `intensity_hist`, `candidate_regions` | NumPy ROI, intensity, masks, uint8-safe subtraction, histograms, SciPy connected components | Bankhead; Carpentries; Haase; Witz; VanderPlas |
+| 08: Data integrity and replication | `missing_records`, `join_metadata`, `replicate_means` | Missingness, merge identity, field-to-replicate grouping | VanderPlas; Haase; Bankhead |
+| 09: Imaging project | `field_report` | Reusable real-image blue-channel report across unfamiliar images | Haase; Carpentries; Bankhead |
+
+**Scientific limitations:** Source images are Human Protein Atlas RGB composite JPEGs, not calibrated raw microscopy files. Array values are decoded, resized 8-bit blue-channel pixels. Connected regions are candidate components, NOT biological cell counts. The metadata, sequence and Pandas exercise data are original illustrative records; they are not claimed as experimental results. Where metadata input is used, it is supplied by the task rather than inferred from images. Every added lesson links relevant external source(s) under the optional reference section. No book text or image from other sources is copied.
+
+**Further chunk roadmap (update this section, do not create duplicate planning files):**
+
+- **Chunk 2:** Raw TIFF/OME axes, pixel calibration, image loading and provenance, scikit-image filters, threshold selection, morphology, labeling, regionprops and segmentation validation against known truth. Require a genuinely licensed dataset with annotations and a review of each scientific assumption.
+- **Chunk 3:** Real scientific tables, biological vs technical replicate structure, missingness policies, plotting uncertainty, descriptive statistics, Jupyter/Colab reproducibility, documented environment and exported notebook/script pipeline.
+- **Chunk 4:** Bioinformatics/NGS file processing, qPCR or experimental assay data, time-series and C. elegans puncta / exopher-like imaging, introductory classification with independent train/test assessment. Distinguish technical potential from scientifically validated identification.
+
+**Validation gate:** Existing 27 Python harness checks must stay green. New lessons need good/bad executable Python cases, image loading and science checks, JS syntax, browser navigation, and a GitHub-connected Vercel preview before promotion. Live Pyodide + SciPy browser execution should be verified separately from local CPython tests.
+
+### Additional source links
+
+- Python for Biologists: https://www.pythonforbiologists.org/
+- Pete Bankhead, Introduction to Bioimage Analysis: https://bioimagebook.github.io/
+- Robert Haase et al., Bio-image Analysis Notebooks: https://haesleinhuepf.github.io/BioImageAnalysisNotebooks/
+- The Carpentries Image Processing with Python: https://datacarpentry.github.io/image-processing/
+- Guillaume Witz, Image Processing for Beginners: https://guiwitz.github.io/PyImageCourse_beginner/README.html
+- Jake VanderPlas, Python Data Science Handbook: https://jakevdp.github.io/PythonDataScienceHandbook/

@@ -44,3 +44,10 @@ Date: 2026-11-05.
 - Verified the first HPA origin responds with HTTP 200, `Content-Type: image/jpeg`, `Access-Control-Allow-Origin: *`, and 245,282 bytes. Its decoded RGB image is 1728 × 1728 and nonblank.
 - Verified browser-loading logic using Playwright + deterministic full-size JPEG fixtures: visible microscopy pixels, mobile rendering, incomplete JPEG rejection, Retry recovery, and matching NumPy image dimensions.
 - All 27 CPython harness tests passed; JavaScript syntax check passed. Remote, deployed Pyodide + external HPA integration is a separate final browser check.
+
+## Chunk 1: applied-science curriculum expansion
+
+- **25 executable lessons**, including 14 new and 11 original with unchanged identifiers and saved-progress key.
+- **64 passing local CPython evaluations**, with correct and incorrect implementations on changed scientific inputs.
+- Browser smoke: 25 lesson cards, sources, derived real-image NumPy arrays and responsive widths 1440, 1024, 390 using controlled JPEG fixtures.
+- Pyodide package and production image integration still require an independent end-to-end browser test; CPython tests alone do not establish deployed runtime operation.
