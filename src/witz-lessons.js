@@ -21,9 +21,9 @@ const MODERNIZED = Object.freeze({
   "e06:2":"Load Witz's image images/46658_784_B12_1.tif for region measurements; inspect its channel order before applying a mask."
 });
 export const SUPPLEMENTS = Object.freeze({
-  "py-01":{title:"Python for Biologists · beginner Python",url:"https://www.pythonforbiologists.org/",enhancement:"Supporting practice: use descriptive sample names and explain the printed value rather than copying a fixed output."},
-  "py-02":{title:"Python for Biologists · scientific coding",url:"https://www.pythonforbiologists.org/",enhancement:"Biological extension: compare relative changes only when the baseline is valid and denominators are defined."},
-  "py-03":{title:"Python for Biologists · loop practice",url:"https://www.pythonforbiologists.org/",enhancement:"Transfer: replace generic number lists with per-field measurements while keeping biological replicate IDs separate."},
+  "py-01":{title:"Python for Biologists · beginner Python",url:"https://pythonforbiologists.com/",enhancement:"Supporting practice: use descriptive sample names and explain the printed value rather than copying a fixed output."},
+  "py-02":{title:"Python for Biologists · scientific coding",url:"https://pythonforbiologists.com/",enhancement:"Biological extension: compare relative changes only when the baseline is valid and denominators are defined."},
+  "py-03":{title:"Python for Biologists · loop practice",url:"https://pythonforbiologists.com/",enhancement:"Transfer: replace generic number lists with per-field measurements while keeping biological replicate IDs separate."},
   "py-04":{title:"Python Data Science Handbook · scientific Python",url:"https://jakevdp.github.io/PythonDataScienceHandbook/"},
   "im-01":{title:"Python Data Science Handbook · NumPy",url:"https://jakevdp.github.io/PythonDataScienceHandbook/",enhancement:"NumPy extension: inspect dtype, shape and axis meaning before doing arithmetic on image pixels."},
   "im-02":{title:"Introduction to Bioimage Analysis · image pixels",url:"https://bioimagebook.github.io/",enhancement:"Reproducibility check: record ROI coordinates and confirm a crop does not silently modify the source array."},
