@@ -4,7 +4,19 @@ A focused, beginner-to-applied **scientific Python training app for a biologist 
 
 **[Open the current GitHub-connected app](https://biopython-two.vercel.app/)** · [Complete curriculum](CURRICULUM.md) · [Companion research notebook](notebooks/BioPython_Research_Companion.ipynb)
 
-## What is implemented
+## v3 development preview
+
+The `feature/v3-learning-engine-pilot` branch builds on the unchanged frozen design in [PR #1](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/1), above the 61-lesson baseline. This work is a development preview; production and the curriculum PR remain unmerged.
+
+- The preview home implements **15 activities**, exactly the manifest’s `recommended_first_15`: predict → run → investigate → modify → blank-editor write → debug. Authentic HPA microscopy is visible from the first activity.
+- A real Pyodide Worker executes examples and assessments, including traceback/help behavior, changed-input and edge checks, explicit floating-point input types, bounded loops, and progressive hints.
+- Evidence distinguishes explored, guided, independent, needs review and retained. Independent evidence requires a successful blank-editor check without hints. Delayed transfer opens after 24 hours, uses one of three fresh input sets, and cannot award retention from a corrected failed attempt or a repeated prompt. Automated clock advancement tests the mechanism; it is not evidence of actual learner retention.
+- The full **156-competency prerequisite graph** drives readiness. The 127-skill microscopy route remains the default; the 17-skill sequence/NGS and 12-skill ML branches are optional. Skills outside the pilot are labeled planned. Historical lessons remain accessible rather than being counted as new v3 implementations.
+- V3 state lives in `biopython_studio_v3`. The original `biopython_studio_personal_v1` key stays intact; complete raw legacy snapshots, aliases, drafts and hint history are preserved. Legacy completion never awards v3 mastery. Export/import keeps conflicting records in an archive rather than overwriting local drafts. On another device, the [legacy page](legacy.html) can reopen imported historical drafts when the original key is absent.
+
+The frozen syllabus and [manifest](curriculum/v3_manifest.json) remain authoritative. Activity content is in `curriculum/v3_pilot.json`; state/graph rules are in `learning-state.js`; the UI is `pilot.js`; both old and new Python assessments execute in `worker.js`. No framework, backend account or AI service was introduced.
+
+## Existing 61-lesson implementation
 
 - **61 sequential, executable exercises:** 25 original lessons followed by 36 additional intermediate/specialist exercises. Each has a specific task, preloaded variables, editable real Python, hints, verified outputs and changed-input evaluation. The course navigator stays collapsed by default.
 - **Real HPA microscopy photographs** fetched from the publisher as needed, with image arrays derived from the decoded blue channel. The visually displayed field matches the inspected teaching array. Truncated downloads are rejected with a Retry control.
@@ -30,9 +42,11 @@ Static deployment: host this repository as files (Vercel, GitHub Pages or a loca
 
 ```bash
 python -m pip install numpy pandas scipy scikit-image scikit-learn biopython matplotlib pytest pillow playwright nbformat requests ipython
-python -m pytest -q tests/test_harness.py tests/test_chunk1.py tests/test_full.py tests/test_notebook.py
+python -m pytest -q tests/test_harness.py tests/test_chunk1.py tests/test_full.py tests/test_notebook.py tests/test_curriculum_v3_contract.py tests/test_pilot.py
+node --test tests/test_learning_state.cjs
 python -m playwright install chromium
 python tests/test_complete_ui.py
+python tests/test_pilot_ui.py  # live CDN + HPA access; no mocked runtime
 ```
 
-See [TEST_REPORT.md](TEST_REPORT.md) for verification status and outstanding live-browser checks. GitHub `main` is authoritative; Vercel is the deployment target. Keep app UI minimal, maintain this README/CURRICULUM rather than spawning blueprints, and preserve the original 25 lesson IDs. BioCompute and AppDeploy ImageLab are separate projects.
+See [TEST_REPORT.md](TEST_REPORT.md) for verification status and outstanding live-browser checks. The frozen v3 design is authoritative for development; GitHub `main` remains the production line and Vercel is the deployment target. Keep app UI minimal, maintain this README/CURRICULUM rather than spawning blueprints, and preserve the original 25 lesson IDs. BioCompute and AppDeploy ImageLab are separate projects.

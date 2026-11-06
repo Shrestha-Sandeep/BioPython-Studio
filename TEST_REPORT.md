@@ -1,21 +1,47 @@
 # BioPython Studio — QA status
 
-**Release target:** 61 sequential original coding lessons (25 existing plus 36 new), 3 changed-input cases per new lesson, real HPA microscopy image loading, and independently runnable companion notebook.
+**Verified:** 6 November 2026. **Scope:** development branch `feature/v3-learning-engine-pilot`, based on frozen v3 commit `87b87a9` and 61-lesson baseline `c6aaae5`. Production and curriculum PR #1 remain unmerged.
 
-## Verified during development
+## Repository reconciliation
 
-- **155 CPython test assertions passed**: original 11, Chunk 1 additions, 36 additional advanced tasks, hardcoded/wrong solution rejection, real Matplotlib PNG output and notebook execution with a controlled image response.
-- JavaScript syntax checks passed for `app.js` and `worker.js`.
-- Playwright UI walkthrough passed at 1440, 1024 and 390 pixels: 61 distinct lesson IDs, navigation, input metadata, sources, conditional microscopy, notebook link and no horizontal overflow.
-- The same UI tests deliberately supplied a truncated JPEG and verified error detection plus Retry recovery, and confirmed the Run/Continue feedback flow with a **mock Worker**. This does not prove Pyodide execution.
-- Notebook code cells ran end-to-end in local CPython with the HPA transfer mocked by an in-memory JPEG of comparable dimensions/content. The analytical code and CSV/JSON outputs were real.
+- `main` is `615f59b`, the earlier applied-Python implementation.
+- `feature/complete-61-lesson-curriculum` is `c6aaae5`.
+- Draft PR #1 targets that 61-lesson branch from `docs/frozen-v3-curriculum` (`87b87a9`). Its quality run #8 and Vercel check succeeded before implementation.
+- The existing pilot branch initially pointed to the exact frozen-design commit. Development continues there. No syllabus, competency ID, prerequisite or optional-route change was required.
 
-## Release gate still requiring independent verification
+## Automated verification
 
-- Fresh Pyodide download and package loading of SciPy, scikit-image, Biopython and scikit-learn in the **deployed** browser. Browser testing with a mocked Worker cannot certify this path.
-- Actual publisher-hosted HPA images should load over CORS for a normal user and scientific-case code should execute in the browser across changed HPA images.
-- If any of these checks fails, do not describe the app as fully verified. Correct the defect on a preview branch before release.
+- **209 CPython tests passed**, covering all historical assessments, wrong-answer rejection, actual Matplotlib output, companion notebook execution with a controlled image response, frozen 156-node graph, 15 pilot activities and all three delayed-transfer input sets. Notebook mocking is limited to its existing controlled image response; it is not evidence of a live notebook HPA download.
+- **8 Node state tests passed:** complete 25/61 legacy fixtures, byte-preserved snapshots, no inferred mastery, real local prerequisites for optional paths, assistance-aware evidence, delayed review, fresh-prompt requirements, and lossless conflict archives.
+- JavaScript syntax and whitespace checks passed.
+- **Live Chromium pilot walkthrough passed all 15 activities** using a real Web Worker and Pyodide 0.28.3, including real `help`, intentional traceback, NumPy import and execution. There is no mocked Worker or simulated Python in this test.
+- Live pilot QA passed saved-state reload, hint-assisted versus independent evidence, delayed review with an advanced test clock, a second fresh transfer, completed-prompt replay prevention, genuine HPA image retry without draft loss, 1440/1024/390-pixel overflow checks and a 61-ID export/import → legacy-editor handoff. Clock advancement tests scheduling mechanics, not actual human retention.
+- Existing 61-lesson UI regression tests passed at 1440/1024/390 pixels, including truncated-image rejection/recovery. Those older UI tests intentionally mock their Worker and image fixtures; they are supplementary to the live pilot test.
 
-## Known constraints
+Reproduce with the commands in [README.md](README.md). CI includes both the deterministic assessment tests and the live pilot browser walkthrough. The live test depends on CDN/publisher network availability.
 
-Scientific data sources and validation boundaries are described in [README.md](README.md) and [CURRICULUM.md](CURRICULUM.md). This is a teaching platform, not a validated research-grade segmentation system or clinical/diagnostic classifier.
+## Baseline deployed-runtime and microscopy evidence
+
+The protected Vercel preview associated with PR #1 was tested in Chromium. The authenticated Vercel connector retrieved its deployed HTML, CSS and JavaScript; those exact assets were relayed to Chromium at the deployment origin because unauthenticated navigation redirects to Vercel login. Runtime and package CDN downloads, Worker execution and HPA CORS requests remained real, without synthetic replacements.
+
+- Cold-start specimen task executed successfully across three inputs; completion survived reload.
+- Real shape, Gaussian filtering, connected-component labeling, FASTA parsing and logistic-classifier tasks succeeded across their three changed inputs, exercising NumPy, SciPy, scikit-image, Biopython and scikit-learn.
+- Original publisher images decoded over CORS:
+
+| HPA source | Bytes | Decoded dimensions |
+|---|---:|---:|
+| 8346 / 22_C1_1 | 245,282 | 1728 × 1728 |
+| 46658 / 784_B12_1 | 266,575 | 2048 × 2048 |
+| 23394 / 182_H7_1 | 375,883 | 1728 × 1728 |
+
+The live pilot separately loaded and decoded the first original HPA image and recovered after an intentionally failed request. Managed-browser TLS trust was scoped to the environment’s installed proxy CA public keys; general TLS validation was not disabled.
+
+## Release limits and next increment
+
+- Direct authenticated browser navigation to the protected Vercel preview remains an access limitation. The artifact-relay test verifies deployed application assets and execution, but is not an unrestricted deployment-navigation sign-off.
+- Pilot effectiveness and real elapsed delayed retention still need learner evaluation. Three finite transfer prompts are available per activity; exhausted prompts do not recycle into new retention claims.
+- The other 141 competencies remain planned. Optional sequence/NGS and ML readiness is implemented from the graph; those v3 lessons are not claimed as shipped.
+- Existing scikit-image deprecation warnings concern the historical `min_size` API. They do not fail the current checks; migration should be a separate compatibility increment because the replacement has different boundary semantics.
+- Next: evaluate the pilot, finish G2 migration/prerequisite UX with learner feedback, then extend foundations and the notebook/venv/Git handoff in the unchanged default route. Calibrated/annotated microscopy and scientific inference remain later release gates.
+
+HPA JPEG composites are visualization/array teaching assets, not calibrated raw fluorescence. Candidate regions are not validated biological objects. BioCompute and AppDeploy ImageLab were not changed.

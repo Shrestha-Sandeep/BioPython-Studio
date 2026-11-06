@@ -20,3 +20,30 @@ h1{font-size:clamp(29px,3.7vw,43px);line-height:1.14;letter-spacing:-.042em;marg
 
 /* Guard against fractional-pixel horizontal scrolling at narrow viewports. */
 html,body{overflow-x:clip}
+/* v3 pilot keeps a single next action and collapses catalog/progress controls. */
+.pilot-app { max-width: 1250px; }
+.phase-track { display:flex; gap:8px; list-style:none; padding:0; margin:22px 0; flex-wrap:wrap; }
+.phase-track li { color:#566471; font-size:12px; padding:6px 10px; border-radius:20px; background:#eef2f2; }
+.phase-track li[aria-current=step] { color:#064d42; background:#dcf2e9; font-weight:700; }
+.phase-track li.phase-done::before { content:'✓ '; }
+.pilot-workspace { padding:20px; }
+.pilot-workspace pre { white-space:pre-wrap; overflow-wrap:anywhere; }
+.pilot-workspace textarea { width:100%; box-sizing:border-box; border:1px solid #cdd8da; border-radius:8px; padding:14px; font:14px/1.7 ui-monospace,monospace; background:#f9fbfb; color:#142e36; }
+#pilot-editor { min-height:230px; resize:vertical; tab-size:4; }
+#prediction { display:block; margin:12px 0; }
+.pilot-workspace fieldset { border:0; margin:0; padding:0; }
+#investigate-options label { display:flex; align-items:flex-start; gap:10px; margin:12px 0; padding:12px; border:1px solid #d5e0df; border-radius:8px; }
+#investigate-options input { margin-top:4px; }
+.pilot-image { display:grid; grid-template-columns:180px 1fr; column-gap:18px; margin:18px 0; padding:16px; border:1px solid #d5e0df; border-radius:12px; font-size:12px; color:#435e65; }
+.pilot-image[hidden] { display:none; }
+.pilot-image figure { margin:0; grid-row:span 3; }
+.pilot-image img { width:100%; max-height:180px; object-fit:contain; border-radius:8px; background:#091820; }
+.pilot-image figcaption { overflow-wrap:anywhere; font-size:11px; }
+.backup-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+#pathway { display:block; width:100%; margin:12px 0; padding:8px; }
+.path-item { border-top:1px solid #dde5e5; padding:9px 0; font-size:12px; }
+#path-readiness { max-height:290px; overflow:auto; }
+.traceback { color:#9f2f21; background:#fff3f0; padding:12px; }
+#activity-complete .small-button { margin:8px; }
+.pilot-app button:focus-visible,.pilot-app a:focus-visible,.pilot-app select:focus-visible,.pilot-app textarea:focus-visible { outline:3px solid #227b91; outline-offset:3px; }
+@media(max-width:600px) { .pilot-image { grid-template-columns:100px 1fr; padding:12px; gap:12px; } .pilot-workspace { padding:14px; } .phase-track {gap:5px;} .phase-track li {font-size:11px;padding:5px 7px;} }
