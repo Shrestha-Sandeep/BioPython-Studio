@@ -95,6 +95,10 @@ def main():
                 page.locator("#image-upload").set_input_files(str(SAMPLE))
                 page.wait_for_function("document.getElementById('image-preview').naturalWidth > 0")
                 assert "px" in page.locator("#image-meta").inner_text()
+                assert page.get_by_role("heading", name="Image analysis workspace").is_visible()
+                assert not page.locator("#volume-controls").is_visible()
+                if width == 1440:
+                    page.wait_for_function("document.getElementById('image-preview').getBoundingClientRect().width > 320")
                 page.get_by_role("button", name="Zoom in").click()
                 assert page.locator("#image-zoom").inner_text() == "125%"
                 page.get_by_role("button", name="Fit").click()
@@ -111,7 +115,9 @@ def main():
                 page.locator("#comparison-upload").set_input_files(str(SAMPLE))
                 page.wait_for_function("document.getElementById('comparison-preview').naturalWidth > 0")
                 assert page.locator("#comparison-mode").is_enabled()
+                assert not page.locator("#opacity-tools").is_visible()
                 page.locator("#comparison-mode").select_option("overlay")
+                assert page.locator("#opacity-tools").is_visible()
                 assert "comparison-overlay" in page.locator("#image-canvas").get_attribute("class")
                 page.locator("#comparison-opacity").evaluate("el => { el.value = 65; el.dispatchEvent(new Event('input', { bubbles: true })); }")
                 assert page.locator("#comparison-opacity-value").inner_text() == "65%"
@@ -119,6 +125,7 @@ def main():
                 page.locator("#comparison-mode").select_option("wipe")
                 assert "comparison-wipe" in page.locator("#image-canvas").get_attribute("class")
                 page.locator("#comparison-mode").select_option("side")
+                assert not page.locator("#opacity-tools").is_visible()
                 assert "comparison-side" in page.locator("#image-canvas").get_attribute("class")
                 if width in (390, 1440):
                     page.screenshot(path=str(SHOTS / f"microscopy-{width}.png"), full_page=True)
