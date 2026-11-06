@@ -49,6 +49,31 @@ try:
         page.locator('#prediction').fill('I expect the recorded metadata and the documented result.')
         page.locator('#save-prediction').click()
         if i==1:page.wait_for_function('imageLoaded',timeout=45000)
+        if a['number']=='004':
+            page.locator('#notebook-lab summary').click()
+            def cell(button):
+                page.locator(button).click();page.wait_for_function('!busy',timeout=150000)
+                return page.locator('#notebook-output').inner_text()
+            assert 'NameError' in cell('#run-analysis')
+            cell('#run-setup');assert cell('#run-analysis').endswith('3')
+            page.locator('#notebook-setup').fill('specimen = "CTRL-A01"\nfield_count = 7')
+            assert cell('#run-analysis').endswith('3'), 'Editing text must not execute a cell'
+            cell('#run-setup');page.locator('#notebook-analysis').focus();page.keyboard.press('Control+Enter');page.wait_for_function('!busy',timeout=150000)
+            assert page.locator('#notebook-output').inner_text().endswith('7')
+            assert 'restarted' in cell('#restart-kernel')
+            assert 'NameError' in cell('#run-analysis')
+            cell('#run-setup');assert cell('#run-analysis').endswith('7')
+            with page.expect_download() as downloaded:page.locator('#download-notebook').click()
+            notebook=json.loads(Path(downloaded.value.path()).read_text())
+            import nbformat
+            nbformat.validate(nbformat.from_dict(notebook))
+            namespace={}
+            for c in notebook['cells']:
+                if c['cell_type']=='code':
+                    assert c['execution_count'] is None and c['outputs']==[]
+                    exec(''.join(c['source']),namespace)
+            assert namespace['field_count']==7
+            print('PASS genuine two-cell state, stale output, restart, notebook export and clean execution',flush=True)
         run(page)
         page.locator('#phase-next').click()
         page.locator('input[name=explanation][value="0"]').check()
@@ -65,6 +90,10 @@ try:
         assert page.locator('#evidence').inner_text()==('guided' if i==0 else 'independent')
         assert page.locator('#start-review').is_hidden()
         print('PASS live activity',a['number'],a['title'],flush=True)
+        if i==14:
+            saved=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
+            page.reload();page.wait_for_function('!!activity')
+            assert page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')==saved
         if i<len(CAT)-1:page.locator('#next-activity').click()
     assert not errors,errors
     page.evaluate("() => { select(catalog.activities[0].id);skill.stage='modify';render(); }")
@@ -73,11 +102,19 @@ try:
     assert 'NameError' in page.locator('#pilot-traceback').inner_text()
     assert 'Input 2:' in page.locator('#output-case').inner_text()
     assert 'Field B07' in page.locator('#output-case').inner_text()
+    page.locator('#activity-feedback summary').click()
+    page.locator('#feedback-clarity').select_option('needs-example')
+    page.locator('#feedback-note').fill('Automated fixture: explain the variable naming step.')
+    evidence=page.locator('#evidence').inner_text()
+    page.locator('#save-activity-feedback').click()
+    assert page.locator('#evidence').inner_text()==evidence
+    assert page.evaluate('skill.feedback.clarity')=='needs-example'
     # All activity drafts, hint use and position persist across a reload.
     before=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
     page.reload();page.wait_for_function('!!activity')
     after=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
     assert before==after
+    assert page.locator('#feedback-note').input_value()=='Automated fixture: explain the variable naming step.'
     # Advancing the test clock exercises the real delayed-transfer UI, not a 24h sleep.
     page.evaluate('''() => { const a=catalog.activities[1];state.skills[a.id].reviewAt=Date.now()-1;select(a.id); }''')
     assert page.locator('#review-reminder').is_visible()

@@ -52,3 +52,13 @@ html,body{overflow-x:clip}
 .review-reminder span { min-width:0; }
 #output-case { overflow-wrap:anywhere; }
 @media(max-width:600px) { .review-reminder { align-items:flex-start; flex-direction:column; } }
+
+.notebook-lab { border:1px solid #cbded9; border-radius:12px; padding:16px; margin:18px 0; background:#f5faf8; }
+.notebook-lab summary { cursor:pointer; font-weight:650; }
+.notebook-lab label { display:block; margin:14px 0 6px; }
+.notebook-lab textarea { width:100%; margin:0 0 8px; min-height:95px; padding:12px; font:14px/1.6 ui-monospace,monospace; border:1px solid #cbded9; border-radius:8px; }
+.notebook-lab pre { white-space:pre-wrap; overflow-wrap:anywhere; padding:12px; background:white; }
+
+#activity-feedback label { display:block; margin:10px 0 6px; }
+#feedback-clarity { width:100%; max-width:420px; padding:8px; }
+#feedback-note { width:100%; min-height:90px; margin:0 0 10px; padding:12px; border:1px solid #cbded9; border-radius:8px; }

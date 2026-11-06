@@ -73,7 +73,7 @@
     return aliases;
   }
   function untouched(skill) {
-    return skill && skill.stage==='predict' && !skill.prediction && !skill.guidedAt && !skill.independentAt && !skill.retainedAt && !skill.needsReview && !Object.keys(skill.drafts).length && !Object.keys(skill.passed).length && !Object.keys(skill.hints).length && !skill.attempts.length;
+    return skill && skill.stage==='predict' && !skill.prediction && !skill.guidedAt && !skill.independentAt && !skill.retainedAt && !skill.needsReview && !skill.feedback && !Object.keys(skill.drafts).length && !Object.keys(skill.passed).length && !Object.keys(skill.hints).length && !skill.attempts.length;
   }
   function merge(local, incoming) {
     validate(incoming);

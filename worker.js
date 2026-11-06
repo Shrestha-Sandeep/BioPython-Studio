@@ -543,6 +543,7 @@ def evaluate_json(lesson,code,cases_json):
 # v3 pilot: browser and CPython use this same evaluator and trusted task specs.
 def pilot_feedback(error):
     explanations = {
+        'KeyError': 'This key is missing at the level you accessed. Check the key spelling and follow each level of the documented record.',
         'NameError': 'Check the spelling and assignment of the name on the reported line. Quoted text is different from a variable.',
         'TypeError': 'Inspect the value types on this line and the arguments expected by the function.',
         'AttributeError': 'This object does not provide that attribute. Check its type and the conversion you intended.',
@@ -551,7 +552,7 @@ def pilot_feedback(error):
         'SyntaxError': 'Check the indicated line for a missing colon, bracket, quote, or indentation.'}
     return explanations.get(type(error).__name__, 'Read the failing line and exception, then compare the operation with the task.')
 
-def pilot_evaluate(source, spec, example=False):
+def pilot_evaluate(source, spec, example=False, session_namespace=None):
     if not isinstance(source,str) or not source.strip() or len(source)>5000:
         return {'ok':False,'message':'Write 1–5,000 characters of Python first.','cases':[]}
     try:
@@ -569,6 +570,16 @@ def pilot_evaluate(source, spec, example=False):
         try: return abs(float(output.strip())-expected)<1e-7
         except (TypeError,ValueError): return False
     def has_node(tree,kind): return any(isinstance(n,kind) for n in ast.walk(tree))
+    def has_call(tree,name):
+        return any(isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id==name for n in ast.walk(tree))
+    def has_method(tree,name):
+        return any(isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr==name for n in ast.walk(tree))
+    def sentinel_total(values):
+        total=0
+        for value in values:
+            if value == -1: break
+            if value >= 0: total += value
+        return total
     cases=spec['cases']
     if not cases: return {'ok':False,'message':'Activity inputs are missing. Reload the page.','cases':[]}
     reports=[]
@@ -576,10 +587,12 @@ def pilot_evaluate(source, spec, example=False):
         import copy
         case=copy.deepcopy(original)
         # Separate copies keep mutations in learner code from changing oracle inputs.
-        ns={'__builtins__':{**BUILTINS,'type':type,'help':help}}
+        ns=session_namespace if session_namespace is not None else {}
+        ns.setdefault('__builtins__',{**BUILTINS,'type':type,'help':help})
         ns.update(copy.deepcopy(case))
         for key,kind in spec.get('input_types',{}).items():
             if kind == 'float': ns[key] = float(ns[key])
+            elif kind == 'tuple': ns[key] = tuple(ns[key])
         stream=io.StringIO();counter=[0]
         def tracer(frame,event,arg):
             if event=='line' and frame.f_code.co_filename=='<training>':
@@ -591,7 +604,7 @@ def pilot_evaluate(source, spec, example=False):
             sys.settrace(tracer)
             with contextlib.redirect_stdout(stream): exec(compile(tree,'<training>','exec'),ns,ns)
         except Exception as error:
-            lines=[f'  line {f.lineno}: {f.line or source.splitlines()[f.lineno-1]}' for f in traceback.extract_tb(error.__traceback__) if f.filename=='<training>']
+            lines=[f'  line {f.lineno}: {f.line or (source.splitlines()[f.lineno-1] if 0<f.lineno<=len(source.splitlines()) else 'code from an earlier cell')}' for f in traceback.extract_tb(error.__traceback__) if f.filename=='<training>']
             report['error']='Traceback (most recent call last):\n'+'\n'.join(lines)+'\n'+type(error).__name__+': '+str(error)[:250]
             report['explanation']=pilot_feedback(error)
         finally: sys.settrace(None)
@@ -600,7 +613,7 @@ def pilot_evaluate(source, spec, example=False):
             return {'ok':False,'message':report['explanation'],'cases':reports}
         if not example:
             try:
-                env=dict(ns=ns,case=case,output=output,tree=tree,ast=ast,number=number,printed_number=printed_number,has_node=has_node)
+                env=dict(ns=ns,case=case,output=output,tree=tree,ast=ast,number=number,printed_number=printed_number,has_node=has_node,has_call=has_call,has_method=has_method,sentinel_total=sentinel_total)
                 if 'numpy' in sys.modules: env['np']=sys.modules['numpy']
                 for check in spec['checks']:
                     if not eval(check,env):
@@ -611,6 +624,15 @@ def pilot_evaluate(source, spec, example=False):
 
 def pilot_json(source,spec_json,example):
     return json.dumps(pilot_evaluate(source,json.loads(spec_json),example))
+
+
+NOTEBOOK_NAMESPACE={}
+def notebook_json(source,reset=False):
+    global NOTEBOOK_NAMESPACE
+    if reset:
+        NOTEBOOK_NAMESPACE={}
+        return json.dumps({'ok':True,'message':'Kernel restarted. Run the setup cell before dependent cells.','cases':[]})
+    return json.dumps(pilot_evaluate(source,{'cases':[{}],'checks':[]},True,NOTEBOOK_NAMESPACE))
 
 `;
 
@@ -677,6 +699,16 @@ async function runPilot(payload) {
   postMessage({type:'result',requestId,...JSON.parse(result)});
 }
 onmessage=async event => {
+  if(event.data?.type==='notebook') {
+    const {requestId,source,reset}=event.data;
+    try {
+      const py=await loadRuntime();
+      py.globals.set('notebook_source',source||'');py.globals.set('notebook_reset',!!reset);
+      const result=py.runPython('notebook_json(notebook_source,notebook_reset)');
+      postMessage({type:'result',requestId,...JSON.parse(result)});
+    }catch(error){postMessage({type:'error',requestId,message:String(error?.message||error)});}
+    return;
+  }
   if (event.data?.type === 'pilot') {
     try { await runPilot(event.data); }
     catch (error) { postMessage({type:'error',requestId:event.data.requestId,message:String(error?.message||error)}); }

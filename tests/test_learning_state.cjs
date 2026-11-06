@@ -74,3 +74,10 @@ test('import replaces an untouched landing record and restores the saved positio
  local.skills.a.prediction='my own prediction';
  const conflicted=S.merge(local,incoming);assert.equal(conflicted.skills.a.prediction,'my own prediction');assert.equal(conflicted.importArchive[0].record.drafts.write,'saved draft');
 });
+test('learner feedback survives export/import and makes a record substantive',()=>{
+ const local=S.fresh(),incoming=S.fresh(),skill=S.record(local,'a');
+ skill.feedback={clarity:'needs-example',note:'Explain the boundary',at:100};S.record(incoming,'a').drafts.write='imported';
+ const merged=S.merge(local,incoming);assert.deepEqual(merged.skills.a.feedback,skill.feedback);
+ assert.equal(merged.importArchive[0].record.drafts.write,'imported');
+ const restored=S.merge(S.fresh(),JSON.parse(JSON.stringify(local)));assert.deepEqual(restored.skills.a.feedback,skill.feedback);
+});
