@@ -89,4 +89,4 @@ Use the prior 156 competencies as a **coverage checklist**, not a target number 
 
 ## Current implementation status
 
-Only **Step 0 and the initial Step 1 frontend scaffold** are present. The design-preview Run button is intentionally disabled. The 18 listed mission cards are placeholders for selecting a clear visual system, **not a claim that all Witz exercises have been extracted, shipped or assessed**.
+Only **Steps 0 and 1 plus first Witz source-ingestion slice** are present. The design-preview Run button is intentionally disabled. The 18 listed mission cards remain previews. Witz's 54 numbered source exercises are indexed, 47 surfaced step-by-step, and six Witz/HPA-derived figures bundled. **No new source-exercise assessments or real scientific image-array processing are complete** until the Pyodide worker and scientific datasets are implemented.
