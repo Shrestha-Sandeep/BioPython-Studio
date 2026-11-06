@@ -29,3 +29,5 @@
  .learn-step-actions{justify-content:space-between;width:100%}
  .learn-step-actions button{font-size:13px;padding:9px 12px}
 }
+
+#raw-tiff-link[hidden], #supplement-wrapper[hidden], #learn-step-controls[hidden], #image-figure[hidden]{display:none!important}
