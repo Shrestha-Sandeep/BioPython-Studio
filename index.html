@@ -39,7 +39,18 @@
             <div class="task-column">
               <h2 id="step-title">Understand one useful idea</h2>
               <p class="step-description" id="step-text"></p>
+              <div id="learn-step-controls" class="learn-step-controls" hidden>
+                <span id="learn-step-position">Follow the Witz exercises in order.</span>
+                <div class="learn-step-actions">
+                  <button type="button" id="learn-step-prev" aria-label="Previous source exercise">Back</button>
+                  <button type="button" id="learn-step-next">Next exercise</button>
+                </div>
+              </div>
               <div class="source-row"><span>Primary source</span><a id="source-link" href="https://github.com/guiwitz/PyImageCourse_beginner" target="_blank" rel="noopener noreferrer">Witz · Image Processing for Beginners</a></div>
+              <details class="supplement" id="supplement-wrapper" hidden>
+                <summary>Optional supporting reference</summary>
+                <a id="support-source" target="_blank" rel="noopener noreferrer">Supporting material</a>
+              </details>
               <div class="code-box">
                 <div class="code-topline"><label for="code-editor">Your Python</label><span class="code-status">Draft saved on this device</span></div>
                 <textarea id="code-editor" spellcheck="false" aria-label="Editable Python code" rows="11"></textarea>
@@ -54,9 +65,9 @@
               <p id="science-context"></p>
               <figure id="image-figure" hidden>
                 <img id="context-image" alt="Human Protein Atlas RGB fluorescence microscopy composite" loading="lazy">
-                <figcaption>Human Protein Atlas · teaching RGB composite, not calibrated fluorescence. <a href="https://www.proteinatlas.org/" target="_blank" rel="noopener noreferrer">Original source</a></figcaption>
+                <figcaption><span id="image-caption"></span> <a id="figure-source" target="_blank" rel="noopener noreferrer">Witz notebook</a> <a id="raw-tiff-link" target="_blank" rel="noopener noreferrer" hidden>Original Witz TIFF</a></figcaption>
               </figure>
-              <p id="image-fallback" class="image-fallback" hidden>Publisher image unavailable. The final imaging course will include attributed local datasets.</p>
+              <p id="image-fallback" class="image-fallback" hidden>Bundled Witz figure could not be displayed; check the source notebook link.</p>
               <div class="next-note" id="preview-note">This is a frontend preview. No exercise is marked complete without executing and assessing real Python.</div>
             </aside>
           </div>
