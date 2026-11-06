@@ -9,7 +9,8 @@ test("IDE-first shell has compact learning controls, real editor integration and
    "sidebar", "course-nav", "mode-python", "mode-image", "phase-panel", "lesson-toggle",
    "code-editor", "line-numbers", "run-button", "image-panel", "image-upload", "image-preview",
    "image-zoom", "pixel-readout", "preview-channel", "z-plane", "time-point",
-   "horizontal-resizer", "vertical-resizer", "focus-toggle", "output-body", "reference", "theme-toggle"
+   "horizontal-resizer", "vertical-resizer", "focus-toggle", "output-body", "reference", "theme-toggle",
+   "compare-toggle", "comparison-tools", "comparison-upload", "comparison-mode", "comparison-opacity", "comparison-preview"
  ]) assert.ok(html.includes('id="' + id + '"'), "Missing " + id);
  for (const stage of ["Python foundations", "Microscopy", "Sequence analysis", "Machine learning"])
    assert.match(html, new RegExp(stage));
@@ -22,8 +23,12 @@ test("IDE-first shell has compact learning controls, real editor integration and
 test("editor is genuine CodeMirror, with accessible offline fallback and saved drafts", () => {
  const html = read("index.html");
  const js = read("src/ui-first.js");
- assert.match(html, /codemirror@5\.65\.21\/lib\/codemirror\.min\.js/);
- assert.match(html, /codemirror@5\.65\.21\/mode\/python\/python\.min\.js/);
+ assert.match(html, /vendor\/codemirror5\/codemirror\.js/);
+ assert.match(html, /vendor\/codemirror5\/python\.js/);
+ assert.doesNotMatch(html, /https?:\/\/cdn\./);
+ for (const asset of ["codemirror.js","codemirror.css","python.js","closebrackets.js","matchbrackets.js","LICENSE"])
+   assert.ok(fs.statSync(new URL("../vendor/codemirror5/" + asset, import.meta.url)).size > 1000, "Missing locally bundled editor asset: " + asset);
+ assert.match(read("vendor/codemirror5/LICENSE"), /MIT License/);
  assert.match(js, /CodeMirror\.fromTextArea/);
  assert.match(js, /indentUnit: 4/);
  assert.match(js, /cm\.getValue/);
@@ -41,6 +46,10 @@ test("viewer provides RGB-only local preview, with disabled scientific processin
  assert.match(js, /getImageData/);
  assert.match(js, /naturalWidth/);
  assert.match(js, /renderChannel/);
+ assert.match(js, /openComparison/);
+ assert.match(js, /updateComparison/);
+ assert.match(js, /originalImage\.width === comparisonImage\.width/);
+ assert.match(html, /Comparison/);
  assert.match(js, /imageX/);
  assert.match(js, /pointermove/);
  assert.match(html, /TIFF\/OME support will be added/);
