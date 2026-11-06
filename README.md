@@ -4,6 +4,12 @@ A focused, beginner-to-applied **scientific Python training app for a biologist 
 
 **[Open the current GitHub-connected app](https://biopython-two.vercel.app/)** · [Complete curriculum](CURRICULUM.md) · [Companion research notebook](notebooks/BioPython_Research_Companion.ipynb)
 
+## Witz-first scientific learning route (development branch)
+
+[Witz-first source and mini-mission contract](docs/WITZ_FIRST_LEARNING_SPINE.md) · [Machine-readable source exercises and route](curriculum/witz_spine.json)
+
+The learning *presentation* now follows Guillaume Witz's **Image Processing for Beginners** as the primary teaching reference: **Python (36 skills) → Microscopy (91) → NGS (17) → ML (12)**. The 156 stable competencies are organized into **26 mini-missions**, each with one scientific outcome and a separate independent transfer target. No lesson is locked; historical progress is preserved. The course map references actual Witz notebook/exercise cells with source attribution; references do not imply that all source exercises are already implemented or scientifically validated. A standalone HTML version should be built from this same GitHub source, not maintained separately.
+
 ## Goal and current development focus
 
 **Goal:** enable a biologist with little Python experience to independently write, debug and explain a reproducible microscopy analysis using real, appropriately documented data.

@@ -26,11 +26,11 @@ jobs:
           node --check pilot.js
           node --check milestones.js
           node --check course-path.js
-          node --test tests/test_learning_state.cjs tests/test_milestones.cjs tests/test_course_path.cjs
+          node --test tests/test_learning_state.cjs tests/test_milestones.cjs tests/test_course_path.cjs tests/test_witz_spine.cjs
       - name: Run all Python evaluations and companion notebook
         run: python -m pytest -q tests/test_harness.py tests/test_chunk1.py tests/test_full.py tests/test_notebook.py
       - name: Validate frozen v3 curriculum contract
-        run: python -m pytest -q tests/test_curriculum_v3_contract.py tests/test_pilot.py
+        run: python -m pytest -q tests/test_curriculum_v3_contract.py tests/test_pilot.py tests/test_witz_spine.py
       - name: Browser lesson flow and image recovery
         run: python tests/test_complete_ui.py
 

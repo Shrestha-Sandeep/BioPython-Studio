@@ -540,7 +540,7 @@ render();
 $('curriculum-toggle').open=false;
 const requestedLesson=new URLSearchParams(location.search).get('lesson');
 if(requestedLesson&&lessons.some(l=>l.id===requestedLesson))switchLesson(lessons.findIndex(l=>l.id===requestedLesson));
-if(window.CoursePath)Promise.all([fetch('./curriculum/v3_manifest.json').then(r=>r.json()),fetch('./curriculum/v3_pilot.json').then(r=>r.json())]).then(([manifest,catalog])=>{courseManifest=manifest;unifiedPath=CoursePath.build(manifest,catalog);renderCurriculum();renderCourseControls();showLinks(lessons[current]);}).catch(()=>{});
+if(window.CoursePath)Promise.all([fetch('./curriculum/v3_manifest.json').then(r=>r.json()),fetch('./curriculum/v3_pilot.json').then(r=>r.json()),fetch('./curriculum/witz_spine.json').then(r=>r.json())]).then(([manifest,catalog,spine])=>{courseManifest=manifest;unifiedPath=CoursePath.build(manifest,catalog,spine);renderCurriculum();renderCourseControls();showLinks(lessons[current]);}).catch(()=>{});
 
 function moveCourse(offset){
  if(running)return;
@@ -553,7 +553,8 @@ function renderCourseControls(){
  if(!unifiedPath)return;
  const id=unifiedPath.find(c=>c.legacyIds.includes(lessons[current].id))?.id;
  const entries=CoursePath.available(unifiedPath),position=entries.findIndex(c=>c.id===id)+1;
- $('chapter').textContent=(unifiedPath.find(c=>c.id===id)?.stage||lessons[current].chapter)+' · Exercise '+position+' of '+entries.length;
+ const entry=unifiedPath.find(c=>c.id===id);
+ $('chapter').textContent=(entry?.stage||lessons[current].chapter)+' · '+(entry?.mission?.title||'Scientific Python')+' · '+position+'/'+entries.length;
  $('curriculum-now').textContent=position+' / '+entries.length;
  for(const [button,offset] of [['back',-1],['next',1]]){const next=CoursePath.adjacent(unifiedPath,id,offset);$(button).hidden=!next;$(button).disabled=!next;}
  $('navigation').hidden=false;
