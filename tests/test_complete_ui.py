@@ -11,7 +11,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
-html=(ROOT/'index.html').read_text()
+html=(ROOT/'legacy.html').read_text()
 css=(ROOT/'styles.css').read_text()
 js=(ROOT/'app.js').read_text()
 rng=random.Random(425)

@@ -341,7 +341,7 @@ const MASK_LESSONS = new Set(["mask","bright_fraction","candidate_regions","fiel
 const chapterTitles = ['01 · Python foundations','02 · Images as NumPy arrays','03 · Scientific tables','04 · Scientific visualization','05 · Independent transfer',"06 · Scientific Python in the lab","07 · Quantitative microscopy","08 · Data integrity and replication","09 · Imaging project"];
 const initial = {step:0,completed:{},drafts:{},hintUsed:{}};
 let saved = {...initial};
-try { const restored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); if(restored && typeof restored==='object') saved={...initial,...restored}; } catch(_) {}
+try { const restored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.parse(localStorage.getItem('biopython_studio_v3') || '{}').legacySnapshots?.at(-1) || 'null'); if(restored && typeof restored==='object') saved={...initial,...restored}; } catch(_) {}
 saved.completed ||= {}; saved.drafts ||= {}; saved.hintUsed ||= {};
 const unlocked = () => {let i=0; while(i<lessons.length && saved.completed[lessons[i].id])i++;return i;};
 saved.step=Math.min(Math.max(0,Number(saved.step)||0),Math.min(unlocked(),lessons.length-1));

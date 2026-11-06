@@ -540,6 +540,78 @@ def evaluate(lesson, source, cases, make_plot=True):
 
 def evaluate_json(lesson,code,cases_json):
     return json.dumps(evaluate(lesson,code,json.loads(cases_json)))
+# v3 pilot: browser and CPython use this same evaluator and trusted task specs.
+def pilot_feedback(error):
+    explanations = {
+        'NameError': 'Check the spelling and assignment of the name on the reported line. Quoted text is different from a variable.',
+        'TypeError': 'Inspect the value types on this line and the arguments expected by the function.',
+        'AttributeError': 'This object does not provide that attribute. Check its type and the conversion you intended.',
+        'IndexError': 'The index is outside this input. Python starts list indexing at zero; check the list length.',
+        'ZeroDivisionError': 'The denominator is zero for this input. Decide how this edge case should be handled.',
+        'SyntaxError': 'Check the indicated line for a missing colon, bracket, quote, or indentation.'}
+    return explanations.get(type(error).__name__, 'Read the failing line and exception, then compare the operation with the task.')
+
+def pilot_evaluate(source, spec, example=False):
+    if not isinstance(source,str) or not source.strip() or len(source)>5000:
+        return {'ok':False,'message':'Write 1–5,000 characters of Python first.','cases':[]}
+    try:
+        tree = ast.parse(source, '<training>')
+    except SyntaxError as error:
+        return {'ok':False,'message':f'SyntaxError on line {error.lineno}: {error.msg}. '+pilot_feedback(error),'cases':[]}
+    nodes = list(ast.walk(tree))
+    if len(nodes)>500 or any(isinstance(n,(ast.ClassDef,ast.AsyncFunctionDef,ast.Global,ast.Nonlocal,ast.With,ast.Try)) for n in nodes):
+        return {'ok':False,'message':'Use short, direct statements and functions for this activity.','cases':[]}
+    if any(isinstance(n,ast.Attribute) and n.attr.startswith('_') and n.attr != '__name__' for n in nodes) or any(isinstance(n,ast.Name) and n.id.startswith('__') for n in nodes):
+        return {'ok':False,'message':'Python internal attributes are outside this activity.','cases':[]}
+    def number(actual,expected):
+        return type(actual) in (int,float) and abs(actual-expected)<1e-7
+    def printed_number(output,expected):
+        try: return abs(float(output.strip())-expected)<1e-7
+        except (TypeError,ValueError): return False
+    def has_node(tree,kind): return any(isinstance(n,kind) for n in ast.walk(tree))
+    cases=spec['cases']
+    if not cases: return {'ok':False,'message':'Activity inputs are missing. Reload the page.','cases':[]}
+    reports=[]
+    for index,original in enumerate(cases):
+        import copy
+        case=copy.deepcopy(original)
+        # Separate copies keep mutations in learner code from changing oracle inputs.
+        ns={'__builtins__':{**BUILTINS,'type':type,'help':help}}
+        ns.update(copy.deepcopy(case))
+        for key,kind in spec.get('input_types',{}).items():
+            if kind == 'float': ns[key] = float(ns[key])
+        stream=io.StringIO();counter=[0]
+        def tracer(frame,event,arg):
+            if event=='line' and frame.f_code.co_filename=='<training>':
+                counter[0]+=1
+                if counter[0]>3000: raise ValueError('Too many code steps. Check for a loop that never finishes.')
+            return tracer
+        report={'input_index':index,'output':'','error':None}
+        try:
+            sys.settrace(tracer)
+            with contextlib.redirect_stdout(stream): exec(compile(tree,'<training>','exec'),ns,ns)
+        except Exception as error:
+            lines=[f'  line {f.lineno}: {f.line or source.splitlines()[f.lineno-1]}' for f in traceback.extract_tb(error.__traceback__) if f.filename=='<training>']
+            report['error']='Traceback (most recent call last):\n'+'\n'.join(lines)+'\n'+type(error).__name__+': '+str(error)[:250]
+            report['explanation']=pilot_feedback(error)
+        finally: sys.settrace(None)
+        output=stream.getvalue()[:4000];report['output']=output;reports.append(report)
+        if report['error']:
+            return {'ok':False,'message':report['explanation'],'cases':reports}
+        if not example:
+            try:
+                env=dict(ns=ns,case=case,output=output,tree=tree,ast=ast,number=number,printed_number=printed_number,has_node=has_node)
+                if 'numpy' in sys.modules: env['np']=sys.modules['numpy']
+                for check in spec['checks']:
+                    if not eval(check,env):
+                        return {'ok':False,'message':f'Check {index+1} did not match the requested behavior. '+spec.get('feedback','Re-read the task and test the boundary or changed input.'),'cases':reports}
+            except Exception:
+                return {'ok':False,'message':f'Check {index+1} could not inspect the requested result. Create every named result in the task and print it as requested.','cases':reports}
+    return {'ok':True,'message':'Example executed.' if example else f'Passed {len(reports)} changed-input and edge checks.','cases':reports}
+
+def pilot_json(source,spec_json,example):
+    return json.dumps(pilot_evaluate(source,json.loads(spec_json),example))
+
 `;
 
 let runtimePromise = null;
@@ -555,7 +627,7 @@ async function loadRuntime() {
       return py;
     })();
   }
-  return runtimePromise;
+  try { return await runtimePromise; } catch (error) { runtimePromise = null; loaded.clear(); throw error; }
 }
 async function loadForLesson(py,lesson) {
   const need = [];
@@ -582,7 +654,34 @@ async function loadForLesson(py,lesson) {
     for (const name of need) loaded.add(name);
   }
 }
+let pilotCatalog = null;
+async function runPilot(payload) {
+  const {requestId,activity,stage,source} = payload;
+  if (!pilotCatalog) {
+    const response = await fetch('./curriculum/v3_pilot.json');
+    if (!response.ok) throw new Error('Activity catalog unavailable. Reload and retry.');
+    pilotCatalog = await response.json();
+  }
+  const item = pilotCatalog.activities.find(a => a.id === activity);
+  if (!item || !['run','modify','write','debug','transfer'].includes(stage)) throw new Error('Unknown pilot activity or stage.');
+  const py = await loadRuntime();
+  if (['037','038'].includes(item.number) && !loaded.has('numpy')) {
+    sendStatus('Loading NumPy…'); await py.loadPackage('numpy'); loaded.add('numpy');
+  }
+  const spec = stage === 'run' ? {cases:[item.example.case],checks:[],input_types:item.example.input_types||{}} : stage==='transfer' ? item.transfers[payload.reviewIndex] : item.stages[stage];
+  if(!spec)throw new Error('No fresh transfer prompt is available.');
+  py.globals.set('pilot_source',stage === 'run' ? item.example.source : source);
+  py.globals.set('pilot_spec',JSON.stringify(spec));
+  py.globals.set('pilot_example',stage === 'run');
+  const result = py.runPython('pilot_json(pilot_source, pilot_spec, pilot_example)');
+  postMessage({type:'result',requestId,...JSON.parse(result)});
+}
 onmessage=async event => {
+  if (event.data?.type === 'pilot') {
+    try { await runPilot(event.data); }
+    catch (error) { postMessage({type:'error',requestId:event.data.requestId,message:String(error?.message||error)}); }
+    return;
+  }
   const {requestId,lesson,source,cases}=event.data||{};
   if (typeof requestId!=='number'||!lesson||typeof source!=='string')return;
   try{

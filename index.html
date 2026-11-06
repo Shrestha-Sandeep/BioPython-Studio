@@ -1,66 +1,54 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Learn practical scientific Python one clear exercise at a time.">
-  <title>BioPython Studio — Learn Python with Biology</title>
-  <link rel="stylesheet" href="./styles.css?v=curriculum-61-20261105">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Learn scientific Python through prediction, investigation and independent practice.">
+<title>BioPython Studio — Scientific Python</title>
+<link rel="stylesheet" href="./styles.css?v=v3-pilot-2">
 </head>
 <body>
-<header class="sitebar">
-  <a class="brand" href="./index.html" aria-label="BioPython Studio home"><span class="brand-mark" aria-hidden="true">B</span><span>BioPython <strong>Studio</strong></span></a>
-  <span class="site-progress"><span id="done-count">0</span> of 61 complete</span>
-</header>
-<main class="app">
-  <div class="progress-track" aria-label="Course completion"><div id="progress-fill"></div></div>
-  <div class="work-layout">
-    <aside class="sidebar" aria-label="Course navigation">
-      <details id="curriculum-toggle"><summary><span>All lessons</span><span id="curriculum-now">1 / 11</span><span aria-hidden="true" class="chevron">⌄</span></summary><nav id="curriculum" aria-label="Learning path"></nav></details>
-    </aside>
-    <section class="lesson-area" aria-label="Current lesson">
-      <div class="lesson-topline"><span class="course-breadcrumb" id="chapter"></span><span class="pill" id="proof-label">Ready</span></div>
-      <h1 id="mission-title">Sample identity</h1>
-      <p id="mission-goal" class="sr-only"></p>
-      <section class="mission-brief" aria-label="Coding task">
-        <span class="brief-kicker">YOUR TASK <span id="brief-number" class="sr-only">01</span></span>
-        <p id="instruction-text"></p>
-        <details class="task-details" id="task-details">
-          <summary>Need more detail? <span class="open-hint">Examples &amp; steps</span></summary>
-          <div class="task-guide-grid">
-            <div class="task-guide-cell task-given"><h2>Provided data</h2><p id="task-given"></p></div>
-            <div class="task-guide-cell task-actions"><h2>Steps</h2><ol id="task-steps"></ol></div>
-            <div class="task-guide-cell task-expected"><h2>Expected result</h2><p id="task-expected"></p></div>
-            <div class="task-check-strip"><b>How it's checked</b><p id="task-check"></p></div>
-          </div>
-        </details>
-      </section>
-      <div class="content-grid" id="workspace-layout">
-        <section class="image-panel" id="image-panel" hidden aria-label="Microscopy image used in this exercise">
-          <div class="panel-top"><strong id="data-title">Microscopy image</strong><span id="image-role" class="panel-sub">USED IN THIS TASK</span></div>
-          <div class="image-display" id="image-box"><canvas id="microscope" width="512" height="512" aria-label="Human Protein Atlas fluorescence microscopy composite" role="img"></canvas><span class="image-id" id="sample-label">Image loading…</span><div class="pixel-cursor" id="pixel-cursor" hidden>Pixel [20, 25]</div></div>
-          <div class="image-footer"><div class="image-source"><span id="image-caption">Loading real microscopy data…</span><a id="image-credit" href="https://www.proteinatlas.org/" target="_blank" rel="noopener noreferrer" hidden>HPA image · Attribution ↗</a><button class="link-button" id="retry-images" hidden>Retry images</button></div><label class="toggle-row"><input type="checkbox" id="show-mask" disabled><span>Show mask</span></label></div>
-          <p class="image-science-note" id="science-caution"></p>
-        </section>
-        <section class="code-panel" aria-label="Python code editor and feedback">
-          <div class="data-view" id="data-view"><div class="data-label">Provided to your code</div><div id="input-metadata"></div></div>
-          <div class="code-heading"><label for="editor">Python</label><button id="reset-code" class="link-button" title="Restore starter code">Reset</button></div>
-          <textarea id="editor" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" aria-label="Python code editor"></textarea>
-          <div class="editor-actions"><button id="run" class="main-button">Run code <span aria-hidden="true">▶</span></button><button id="hint-button" class="small-button">Hint</button><span class="shortcut">Ctrl+Enter</span></div>
-          <div id="hint" class="hint" hidden></div>
-          <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
-          <div class="output-area" id="output-area" hidden><div class="output-head">Python output <span id="runtime-state">Runs in your browser</span></div><pre id="python-output"></pre></div>
-          <div id="generated-result" hidden></div>
-          <div class="navigation" id="navigation" hidden><button id="back" class="nav-button">← Previous</button><button id="next" class="main-button" hidden>Continue →</button></div>
-        </section>
-      </div>
-      <details class="lesson-bottom" id="learn-more"><summary>Why this matters &amp; sources</summary>
-        <div class="teaching"><h2>Why this matters</h2><p id="why"></p></div>
-        <div class="sources"><h2>Original learning resources</h2><div id="source-links"></div></div>
-      </details>
-    </section>
-  </div>
+<header class="sitebar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">B</span><span>BioPython <strong>Studio</strong></span></a><span class="site-progress" id="pilot-progress">15-activity pilot</span></header>
+<main class="app pilot-app">
+<p id="storage-warning" class="feedback error" role="alert" hidden></p>
+<div class="work-layout">
+<aside class="sidebar" aria-label="Learning navigation">
+<details id="path-menu"><summary>Learning path</summary><nav id="activity-list" aria-label="Pilot activities"></nav></details>
+<details class="lesson-bottom"><summary>Optional pathways &amp; progress</summary>
+<label for="pathway">Explore a pathway</label><select id="pathway"><option value="microscopy">Microscopy · recommended</option><option value="sequence">Sequence / NGS · optional</option><option value="ml">Machine learning · optional</option></select>
+<p>156 competencies are planned. This preview implements the first 15. Readiness follows each skill’s prerequisites.</p><div id="path-readiness"></div>
+<p id="legacy-summary"></p><a href="./legacy.html">Open the existing 61 lessons and drafts →</a>
+<div class="backup-actions"><button id="export-progress" class="small-button">Export progress</button><label class="small-button" for="import-progress">Import progress</label><input id="import-progress" type="file" accept="application/json" hidden></div>
+<p id="backup-status" role="status"></p>
+</details>
+</aside>
+<section class="lesson-area" aria-label="Learning activity">
+<div id="review-reminder" class="review-reminder" hidden><span id="review-summary"></span><button id="open-review" class="small-button">Open due review</button></div>
+<div class="lesson-topline"><span class="course-breadcrumb" id="activity-position"></span><span class="pill" id="evidence">Unseen</span></div>
+<h1 id="activity-title">Loading your learning path…</h1><p id="activity-context"></p>
+<ol class="phase-track" id="phase-track" aria-label="Activity stages"></ol>
+<section class="mission-brief"><span class="brief-kicker" id="phase-title"></span><p id="phase-task"></p></section>
+<aside id="context-image" class="pilot-image" hidden aria-label="Authentic microscopy context">
+<figure><img id="hpa-image" alt="Human Protein Atlas RGB fluorescence microscopy composite" hidden><figcaption id="image-status">Loading original publisher image…</figcaption></figure>
+<p>Human Protein Atlas · Thul et al., Science (2017) · <a href="https://www.proteinatlas.org/about/licence" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. RGB JPEG visualization; no raw calibration or validated object labels.</p>
+<a id="image-source" target="_blank" rel="noopener noreferrer">Original publisher image ↗</a> <button id="image-retry" class="small-button" hidden>Retry image</button>
+</aside>
+<section class="code-panel pilot-workspace" aria-label="Activity workspace">
+<div id="prediction-panel" hidden><pre id="prediction-code"></pre><label for="prediction">Your prediction (saved before you run)</label><textarea id="prediction" rows="3" maxlength="2000"></textarea><button id="save-prediction" class="main-button">Save prediction →</button></div>
+<div id="investigate-panel" hidden><fieldset><legend id="investigate-question"></legend><div id="investigate-options"></div></fieldset><button id="check-explanation" class="main-button">Check explanation</button></div>
+<div id="coding-panel" hidden>
+<div class="data-view"><div class="data-label">Provided to your Python code</div><pre id="provided-data"></pre></div>
+<div class="code-heading"><label for="pilot-editor">Python</label><button id="restore-starter" class="link-button">Restore starter</button></div>
+<textarea id="pilot-editor" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-label="Python code editor"></textarea>
+<div class="editor-actions"><button id="pilot-run" class="main-button">Run Python ▶</button><button id="pilot-hint" class="small-button">Hint 1 of 3</button><span class="shortcut">Ctrl+Enter</span></div>
+<p id="pilot-hint-text" class="hint" hidden></p>
+<div class="output-area" id="pilot-output-area" hidden><div class="output-head">Actual Python output <span id="pilot-runtime"></span></div><p id="output-case" class="panel-sub"></p><pre id="pilot-output"></pre><pre id="pilot-traceback" class="traceback" hidden></pre></div>
+</div>
+<div id="pilot-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+<div class="navigation"><button id="phase-back" class="nav-button">← Back</button><button id="phase-next" class="main-button" hidden>Continue →</button></div>
+</section>
+<section id="activity-complete" class="mission-brief" hidden><p id="completion-message"></p><button id="next-activity" class="main-button">Next activity →</button><button id="start-review" class="small-button" hidden>Try delayed transfer</button></section>
+<details class="lesson-bottom"><summary>Learning notes &amp; sources</summary><p id="learning-note"></p><p id="legacy-history"></p><a href="https://www.pythonforbiologists.org/" target="_blank" rel="noopener noreferrer">Python for Biologists</a> · <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener noreferrer">Python Data Science Handbook</a> · <a href="./docs/CURRICULUM_V3_FROZEN.md">Frozen v3 curriculum</a></details>
+</section></div>
 </main>
-<script src="./app.js?v=curriculum-61-20261105"></script>
-</body>
-</html>
+<script src="./learning-state.js?v=v3-pilot-2"></script><script src="./pilot.js?v=v3-pilot-2"></script>
+</body></html>

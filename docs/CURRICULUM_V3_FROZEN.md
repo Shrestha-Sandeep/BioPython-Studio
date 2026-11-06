@@ -381,3 +381,12 @@ A Human Protein Atlas fluorescence RGB JPEG is an authentic visualization and an
 - [scikit-image](https://scikit-image.org/docs/stable/), [scikit-learn](https://scikit-learn.org/stable/user_guide.html): tested implementation and defensible evaluation.
 
 **Freeze policy:** no more whole-course theoretical redesigns. Amend specific competencies only after pilot evidence, a demonstrated scientific gap, material changed learner goals or a technical blocker. Changes require an ID impact, prerequisite diff, migration and tests. Keep this documentation branch unmerged until the technical release strategy is agreed; **do not alter the production deployment**.
+
+
+## Implementation evidence — development pilot, 6 November 2026
+
+The syllabus, graph, competency IDs and preservation map above are unchanged. The development branch `feature/v3-learning-engine-pilot` now contains 15 pilot activities matching `recommended_first_15`, with progressive scaffolding, real Python assessments and separate guided/independent/delayed-transfer evidence. The default page is the pilot; `legacy.html` preserves access to all 61 historical lessons. Optional-path readiness uses the complete manifest DAG; remaining competencies are explicitly planned, not claimed as implemented.
+
+The Python runtime and source-image portions of G0 have browser evidence: cold Pyodide execution, reload persistence, original HPA CORS images and NumPy/SciPy/scikit-image/Biopython/scikit-learn tasks ran successfully. The Vercel preview requires authentication; deployed HTML/JS/CSS were retrieved through the authenticated Vercel connector and relayed unchanged into Chromium at that origin. Worker execution, runtime/package downloads and publisher image requests were real and unmocked. Direct authenticated navigation to the protected preview remains an access limitation; this is not a production release sign-off.
+
+Automated pilot walkthrough and 25/61-record preservation fixtures exercise G1/G2 mechanics. Evaluation with a real learner and genuinely elapsed delayed transfer is still required. The three transfer prompts are finite; after they have been attempted the UI does not recycle them into new retention claims. Future expansion follows the unchanged graph and G3–G5 gates. See [TEST_REPORT.md](../TEST_REPORT.md) for reproducible verification and remaining release limits.

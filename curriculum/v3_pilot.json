@@ -1,0 +1,3624 @@
+{
+  "schema_version": 1,
+  "activities": [
+    {
+      "id": "bps3.m00.run_a_scientific_python_cell",
+      "number": "001",
+      "title": "Run a scientific Python cell",
+      "context": "You are recording a microscope session. Python runs statements from top to bottom.",
+      "example": {
+        "source": "print(\"Microscope ready\")\nprint(\"Field A01\")",
+        "case": {
+          "field_name": "Field A01"
+        }
+      },
+      "predict": "Predict the two lines Python will print.",
+      "investigate": {
+        "question": "Why are there two output lines?",
+        "options": [
+          "Each print statement writes one line, in order.",
+          "Python prints only the last statement.",
+          "The microscope creates the output."
+        ],
+        "answer": 0,
+        "explanation": "print displays its argument. Running a cell executes each statement in order."
+      },
+      "stages": {
+        "modify": {
+          "task": "Print the provided field_name, then print \"Recorded\" on a second line.",
+          "starter": "print(\"Field A01\")\nprint(\"Recorded\")",
+          "cases": [
+            {
+              "field_name": "Field A01"
+            },
+            {
+              "field_name": "Field B07"
+            },
+            {
+              "field_name": "Blank control"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
+          ],
+          "reference": "print(field_name)\nprint(\"Recorded\")",
+          "feedback": "print displays its argument. Running a cell executes each statement in order."
+        },
+        "write": {
+          "task": "Print the provided field_name, then print \"Recorded\" on a second line. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "field_name": "Culture C04"
+            },
+            {
+              "field_name": "Medium only"
+            },
+            {
+              "field_name": "Yeast Y12"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
+          ],
+          "reference": "print(field_name)\nprint(\"Recorded\")",
+          "feedback": "print displays its argument. Running a cell executes each statement in order."
+        },
+        "debug": {
+          "task": "The script prints a variable name as literal text. Fix that behavior. Print the provided field_name, then print \"Recorded\" on a second line.",
+          "starter": "print(\"field_name\")\nprint(\"Recorded\")",
+          "cases": [
+            {
+              "field_name": "Field A01"
+            },
+            {
+              "field_name": "Field B07"
+            },
+            {
+              "field_name": "Blank control"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
+          ],
+          "reference": "print(field_name)\nprint(\"Recorded\")",
+          "feedback": "print displays its argument. Running a cell executes each statement in order."
+        },
+        "transfer": {
+          "task": "A colleague is logging new culture fields. Produce a two-line record without copying a field ID. Print the provided field_name, then print \"Recorded\" on a second line.",
+          "starter": "",
+          "cases": [
+            {
+              "field_name": "Root R09"
+            },
+            {
+              "field_name": "Control C17"
+            },
+            {
+              "field_name": "Field Z00"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
+          ],
+          "reference": "print(field_name)\nprint(\"Recorded\")",
+          "feedback": "print displays its argument. Running a cell executes each statement in order."
+        }
+      },
+      "hints": [
+        "Read the provided field_name rather than copying the example text.",
+        "Call print twice; the first argument is an unquoted variable.",
+        "print(field_name)\nprint(\"Recorded\")"
+      ],
+      "transfers": [
+        {
+          "task": "A colleague is logging new culture fields. Produce a two-line record without copying a field ID. Print the provided field_name, then print \"Recorded\" on a second line.",
+          "starter": "",
+          "cases": [
+            {
+              "field_name": "Root R09"
+            },
+            {
+              "field_name": "Control C17"
+            },
+            {
+              "field_name": "Field Z00"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
+          ],
+          "reference": "print(field_name)\nprint(\"Recorded\")",
+          "feedback": "print displays its argument. Running a cell executes each statement in order."
+        },
+        {
+          "task": "Fresh acquisition batch 31. A colleague is logging new culture fields. Produce a two-line record without copying a field ID. Print the provided field_name, then print \"Recorded\" on a second line.",
+          "starter": "",
+          "cases": [
+            {
+              "field_name": "Root R09 \u00b7 batch 31"
+            },
+            {
+              "field_name": "Control C17 \u00b7 batch 31"
+            },
+            {
+              "field_name": "Field Z00 \u00b7 batch 31"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
+          ],
+          "reference": "print(field_name)\nprint(\"Recorded\")",
+          "feedback": "print displays its argument. Running a cell executes each statement in order."
+        },
+        {
+          "task": "Fresh acquisition batch 67. A colleague is logging new culture fields. Produce a two-line record without copying a field ID. Print the provided field_name, then print \"Recorded\" on a second line.",
+          "starter": "",
+          "cases": [
+            {
+              "field_name": "Root R09 \u00b7 batch 67"
+            },
+            {
+              "field_name": "Control C17 \u00b7 batch 67"
+            },
+            {
+              "field_name": "Field Z00 \u00b7 batch 67"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
+          ],
+          "reference": "print(field_name)\nprint(\"Recorded\")",
+          "feedback": "print displays its argument. Running a cell executes each statement in order."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m07.document_a_real_source_image",
+      "number": "071",
+      "title": "Document a real source image",
+      "context": "This fluorescence photograph comes from Human Protein Atlas. It is an RGB JPEG visualization, not calibrated raw fluorescence. Credit: HPA; Thul et al., Science (2017), CC BY 4.0. Image IDs are metadata, not specimen identities.",
+      "example": {
+        "source": "print(source_name)\nprint(image_id)",
+        "case": {
+          "source_name": "Human Protein Atlas",
+          "image_id": "HPA-8346",
+          "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
+        }
+      },
+      "predict": "Which source name and image identifier will appear?",
+      "investigate": {
+        "question": "What can this RGB JPEG alone support?",
+        "options": [
+          "Teaching image provenance and array handling.",
+          "An absolute calibrated protein concentration.",
+          "A confirmed cell count without annotations."
+        ],
+        "answer": 0,
+        "explanation": "An authentic image is useful context. Quantitative claims also need calibration, acquisition metadata and reference annotations."
+      },
+      "stages": {
+        "modify": {
+          "task": "Print source_name, then image_url on a second line to document the source and original URL.",
+          "starter": "print(source_name)\nprint(\"image_url\")",
+          "cases": [
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-8346",
+              "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-46658",
+              "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-23394",
+              "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"source_name\"],case[\"image_url\"]]"
+          ],
+          "reference": "print(source_name)\nprint(image_url)",
+          "feedback": "An authentic image is useful context. Quantitative claims also need calibration, acquisition metadata and reference annotations."
+        },
+        "write": {
+          "task": "Print source_name, then image_url on a second line to document the source and original URL. Start from a blank editor.",
+          "starter": "",
+          "cases": [
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-23394",
+              "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-8346",
+              "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-46658",
+              "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"source_name\"],case[\"image_url\"]]"
+          ],
+          "reference": "print(source_name)\nprint(image_url)",
+          "feedback": "An authentic image is useful context. Quantitative claims also need calibration, acquisition metadata and reference annotations."
+        },
+        "debug": {
+          "task": "Print source_name, then image_url on a second line to document the source and original URL.",
+          "starter": "print(source_name)\nprint(image_id)",
+          "cases": [
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-8346",
+              "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-46658",
+              "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas",
+              "image_id": "HPA-23394",
+              "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"source_name\"],case[\"image_url\"]]"
+          ],
+          "reference": "print(source_name)\nprint(image_url)",
+          "feedback": "An authentic image is useful context. Quantitative claims also need calibration, acquisition metadata and reference annotations."
+        },
+        "transfer": {
+          "task": "Print source_name, then image_url on a second line to document the source and original URL. Start from a blank editor.",
+          "starter": "",
+          "cases": [
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "image_id": "HPA-46658",
+              "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "image_id": "HPA-8346",
+              "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "image_id": "HPA-23394",
+              "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"source_name\"],case[\"image_url\"]]"
+          ],
+          "reference": "print(source_name)\nprint(image_url)",
+          "feedback": "An authentic image is useful context. Quantitative claims also need calibration, acquisition metadata and reference annotations."
+        }
+      },
+      "hints": [
+        "A provenance record must retain both credit and the original source URL.",
+        "Pass the supplied image_url to the second print statement, without quotation marks.",
+        "print(source_name)\nprint(image_url)"
+      ],
+      "transfers": [
+        {
+          "task": "Print source_name, then image_url on a second line to document the source and original URL. Start from a blank editor.",
+          "starter": "",
+          "cases": [
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "image_id": "HPA-46658",
+              "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "image_id": "HPA-8346",
+              "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "image_id": "HPA-23394",
+              "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"source_name\"],case[\"image_url\"]]"
+          ],
+          "reference": "print(source_name)\nprint(image_url)",
+          "feedback": "An authentic image is useful context. Quantitative claims also need calibration, acquisition metadata and reference annotations."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Print source_name, then image_url on a second line to document the source and original URL. Start from a blank editor.",
+          "starter": "",
+          "cases": [
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 31",
+              "image_id": "HPA-46658 \u00b7 batch 31",
+              "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 31",
+              "image_id": "HPA-8346 \u00b7 batch 31",
+              "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 31",
+              "image_id": "HPA-23394 \u00b7 batch 31",
+              "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"source_name\"],case[\"image_url\"]]"
+          ],
+          "reference": "print(source_name)\nprint(image_url)",
+          "feedback": "An authentic image is useful context. Quantitative claims also need calibration, acquisition metadata and reference annotations."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Print source_name, then image_url on a second line to document the source and original URL. Start from a blank editor.",
+          "starter": "",
+          "cases": [
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 67",
+              "image_id": "HPA-46658 \u00b7 batch 67",
+              "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 67",
+              "image_id": "HPA-8346 \u00b7 batch 67",
+              "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
+            },
+            {
+              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 67",
+              "image_id": "HPA-23394 \u00b7 batch 67",
+              "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
+            }
+          ],
+          "checks": [
+            "output.strip().splitlines() == [case[\"source_name\"],case[\"image_url\"]]"
+          ],
+          "reference": "print(source_name)\nprint(image_url)",
+          "feedback": "An authentic image is useful context. Quantitative claims also need calibration, acquisition metadata and reference annotations."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.name_a_specimen_using_variables",
+      "number": "005",
+      "title": "Name a specimen using variables",
+      "context": "A specimen identifier travels with each culture. Assignment binds a name to a value; it does not put quotation marks around the name.",
+      "example": {
+        "source": "specimen = sample_id\nprint(specimen)",
+        "case": {
+          "sample_id": "CTRL-A01"
+        }
+      },
+      "predict": "What identifier will specimen contain?",
+      "investigate": {
+        "question": "What changes when sample_id changes?",
+        "options": [
+          "specimen receives the new input value each run.",
+          "specimen always contains the word sample_id.",
+          "Python changes the biological specimen."
+        ],
+        "answer": 0,
+        "explanation": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+      },
+      "stages": {
+        "modify": {
+          "task": "Assign sample_id to specimen, then print specimen.",
+          "starter": "specimen = \"sample_id\"\nprint(specimen)",
+          "cases": [
+            {
+              "sample_id": "CTRL-A01"
+            },
+            {
+              "sample_id": "TREAT-B07"
+            },
+            {
+              "sample_id": "NEG-00"
+            }
+          ],
+          "checks": [
+            "ns.get(\"specimen\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "specimen = sample_id\nprint(specimen)",
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+        },
+        "write": {
+          "task": "Assign sample_id to specimen, then print specimen. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "YEAST-Y9"
+            },
+            {
+              "sample_id": "MEDIA-ONLY"
+            },
+            {
+              "sample_id": "CULTURE-C2"
+            }
+          ],
+          "checks": [
+            "ns.get(\"specimen\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "specimen = sample_id\nprint(specimen)",
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+        },
+        "debug": {
+          "task": "An equality comparison was used where an assignment is needed. Assign sample_id to specimen, then print specimen.",
+          "starter": "specimen == sample_id\nprint(specimen)",
+          "cases": [
+            {
+              "sample_id": "CTRL-A01"
+            },
+            {
+              "sample_id": "TREAT-B07"
+            },
+            {
+              "sample_id": "NEG-00"
+            }
+          ],
+          "checks": [
+            "ns.get(\"specimen\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "specimen = sample_id\nprint(specimen)",
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+        },
+        "transfer": {
+          "task": "Label new yeast cultures from their supplied metadata. Assign sample_id to specimen, then print specimen.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-R4"
+            },
+            {
+              "sample_id": "LIVER-L2"
+            },
+            {
+              "sample_id": "DYE-ONLY"
+            }
+          ],
+          "checks": [
+            "ns.get(\"specimen\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "specimen = sample_id\nprint(specimen)",
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+        }
+      },
+      "hints": [
+        "A variable takes the value supplied for this run.",
+        "Leave sample_id unquoted on the right of =.",
+        "specimen = sample_id\nprint(specimen)"
+      ],
+      "transfers": [
+        {
+          "task": "Label new yeast cultures from their supplied metadata. Assign sample_id to specimen, then print specimen.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-R4"
+            },
+            {
+              "sample_id": "LIVER-L2"
+            },
+            {
+              "sample_id": "DYE-ONLY"
+            }
+          ],
+          "checks": [
+            "ns.get(\"specimen\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "specimen = sample_id\nprint(specimen)",
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Label new yeast cultures from their supplied metadata. Assign sample_id to specimen, then print specimen.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-R4 \u00b7 batch 31"
+            },
+            {
+              "sample_id": "LIVER-L2 \u00b7 batch 31"
+            },
+            {
+              "sample_id": "DYE-ONLY \u00b7 batch 31"
+            }
+          ],
+          "checks": [
+            "ns.get(\"specimen\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "specimen = sample_id\nprint(specimen)",
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Label new yeast cultures from their supplied metadata. Assign sample_id to specimen, then print specimen.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-R4 \u00b7 batch 67"
+            },
+            {
+              "sample_id": "LIVER-L2 \u00b7 batch 67"
+            },
+            {
+              "sample_id": "DYE-ONLY \u00b7 batch 67"
+            }
+          ],
+          "checks": [
+            "ns.get(\"specimen\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "specimen = sample_id\nprint(specimen)",
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.build_informative_strings",
+      "number": "008",
+      "title": "Build informative strings",
+      "context": "An informative field label contains both the specimen identifier and the acquisition channel.",
+      "example": {
+        "source": "label = f\"{sample_id} | {channel}\"\nprint(label)",
+        "case": {
+          "sample_id": "A01",
+          "channel": "blue"
+        }
+      },
+      "predict": "Predict the exact label, including the separator.",
+      "investigate": {
+        "question": "What do braces do in an f-string?",
+        "options": [
+          "Insert the current values of expressions.",
+          "Print the brace names unchanged.",
+          "Convert fluorescence to concentration."
+        ],
+        "answer": 0,
+        "explanation": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+      },
+      "stages": {
+        "modify": {
+          "task": "Create label with the exact format sample_id | channel using the supplied values; print it.",
+          "starter": "label = \"{sample_id} | {channel}\"\nprint(label)",
+          "cases": [
+            {
+              "sample_id": "A01",
+              "channel": "blue"
+            },
+            {
+              "sample_id": "B07",
+              "channel": "green"
+            },
+            {
+              "sample_id": "blank",
+              "channel": "red"
+            }
+          ],
+          "checks": [
+            "ns.get(\"label\") == case[\"sample_id\"]+\" | \"+case[\"channel\"]",
+            "output.strip() == ns[\"label\"]"
+          ],
+          "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+        },
+        "write": {
+          "task": "Create label with the exact format sample_id | channel using the supplied values; print it. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "MITO-C3",
+              "channel": "far-red"
+            },
+            {
+              "sample_id": "NUC-D4",
+              "channel": "blue"
+            },
+            {
+              "sample_id": "CTRL-0",
+              "channel": "green"
+            }
+          ],
+          "checks": [
+            "ns.get(\"label\") == case[\"sample_id\"]+\" | \"+case[\"channel\"]",
+            "output.strip() == ns[\"label\"]"
+          ],
+          "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+        },
+        "debug": {
+          "task": "The label fields are in the wrong order. Create label with the exact format sample_id | channel using the supplied values; print it.",
+          "starter": "label = f\"{channel} | {sample_id}\"\nprint(label)",
+          "cases": [
+            {
+              "sample_id": "A01",
+              "channel": "blue"
+            },
+            {
+              "sample_id": "B07",
+              "channel": "green"
+            },
+            {
+              "sample_id": "blank",
+              "channel": "red"
+            }
+          ],
+          "checks": [
+            "ns.get(\"label\") == case[\"sample_id\"]+\" | \"+case[\"channel\"]",
+            "output.strip() == ns[\"label\"]"
+          ],
+          "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+        },
+        "transfer": {
+          "task": "Prepare labels for a new organelle imaging session. Create label with the exact format sample_id | channel using the supplied values; print it.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-R4",
+              "channel": "yellow"
+            },
+            {
+              "sample_id": "CULTURE-Z0",
+              "channel": "cyan"
+            },
+            {
+              "sample_id": "BEAD-Q9",
+              "channel": "magenta"
+            }
+          ],
+          "checks": [
+            "ns.get(\"label\") == case[\"sample_id\"]+\" | \"+case[\"channel\"]",
+            "output.strip() == ns[\"label\"]"
+          ],
+          "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+        }
+      },
+      "hints": [
+        "An f-string combines stable text with changing metadata.",
+        "Put f before the quotation mark and use braces around variable names.",
+        "label = f\"{sample_id} | {channel}\"\nprint(label)"
+      ],
+      "transfers": [
+        {
+          "task": "Prepare labels for a new organelle imaging session. Create label with the exact format sample_id | channel using the supplied values; print it.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-R4",
+              "channel": "yellow"
+            },
+            {
+              "sample_id": "CULTURE-Z0",
+              "channel": "cyan"
+            },
+            {
+              "sample_id": "BEAD-Q9",
+              "channel": "magenta"
+            }
+          ],
+          "checks": [
+            "ns.get(\"label\") == case[\"sample_id\"]+\" | \"+case[\"channel\"]",
+            "output.strip() == ns[\"label\"]"
+          ],
+          "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Prepare labels for a new organelle imaging session. Create label with the exact format sample_id | channel using the supplied values; print it.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-R4 \u00b7 batch 31",
+              "channel": "yellow \u00b7 batch 31"
+            },
+            {
+              "sample_id": "CULTURE-Z0 \u00b7 batch 31",
+              "channel": "cyan \u00b7 batch 31"
+            },
+            {
+              "sample_id": "BEAD-Q9 \u00b7 batch 31",
+              "channel": "magenta \u00b7 batch 31"
+            }
+          ],
+          "checks": [
+            "ns.get(\"label\") == case[\"sample_id\"]+\" | \"+case[\"channel\"]",
+            "output.strip() == ns[\"label\"]"
+          ],
+          "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Prepare labels for a new organelle imaging session. Create label with the exact format sample_id | channel using the supplied values; print it.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-R4 \u00b7 batch 67",
+              "channel": "yellow \u00b7 batch 67"
+            },
+            {
+              "sample_id": "CULTURE-Z0 \u00b7 batch 67",
+              "channel": "cyan \u00b7 batch 67"
+            },
+            {
+              "sample_id": "BEAD-Q9 \u00b7 batch 67",
+              "channel": "magenta \u00b7 batch 67"
+            }
+          ],
+          "checks": [
+            "ns.get(\"label\") == case[\"sample_id\"]+\" | \"+case[\"channel\"]",
+            "output.strip() == ns[\"label\"]"
+          ],
+          "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.calculate_with_physical_quantities",
+      "number": "006",
+      "title": "Calculate with physical quantities",
+      "context": "A stage moves a known number of pixels. Here pixel_size_um is an explicitly supplied teaching calibration, not a value inferred from the HPA JPEG.",
+      "example": {
+        "source": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
+        "case": {
+          "distance_px": 20,
+          "pixel_size_um": 0.5
+        }
+      },
+      "predict": "Predict the distance and its physical unit.",
+      "investigate": {
+        "question": "Why multiply by pixel_size_um?",
+        "options": [
+          "Pixels \u00d7 micrometers/pixel gives micrometers.",
+          "A pixel count is already a physical distance.",
+          "The result is an area in square micrometers."
+        ],
+        "answer": 0,
+        "explanation": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+      },
+      "stages": {
+        "modify": {
+          "task": "Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
+          "starter": "distance_um = distance_px\nprint(distance_um)",
+          "cases": [
+            {
+              "distance_px": 20,
+              "pixel_size_um": 0.5
+            },
+            {
+              "distance_px": 0,
+              "pixel_size_um": 0.25
+            },
+            {
+              "distance_px": 7,
+              "pixel_size_um": 0.2
+            }
+          ],
+          "checks": [
+            "number(ns.get(\"distance_um\"),case[\"distance_px\"]*case[\"pixel_size_um\"])",
+            "printed_number(output,ns[\"distance_um\"])"
+          ],
+          "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+        },
+        "write": {
+          "task": "Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "distance_px": 13,
+              "pixel_size_um": 0.12
+            },
+            {
+              "distance_px": 1,
+              "pixel_size_um": 1.5
+            },
+            {
+              "distance_px": 0,
+              "pixel_size_um": 0.18
+            }
+          ],
+          "checks": [
+            "number(ns.get(\"distance_um\"),case[\"distance_px\"]*case[\"pixel_size_um\"])",
+            "printed_number(output,ns[\"distance_um\"])"
+          ],
+          "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+        },
+        "debug": {
+          "task": "Division gives the wrong units. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
+          "starter": "distance_um = distance_px / pixel_size_um\nprint(distance_um)",
+          "cases": [
+            {
+              "distance_px": 20,
+              "pixel_size_um": 0.5
+            },
+            {
+              "distance_px": 0,
+              "pixel_size_um": 0.25
+            },
+            {
+              "distance_px": 7,
+              "pixel_size_um": 0.2
+            }
+          ],
+          "checks": [
+            "number(ns.get(\"distance_um\"),case[\"distance_px\"]*case[\"pixel_size_um\"])",
+            "printed_number(output,ns[\"distance_um\"])"
+          ],
+          "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+        },
+        "transfer": {
+          "task": "Convert a new set of tracked particle displacements using their supplied calibration. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
+          "starter": "",
+          "cases": [
+            {
+              "distance_px": 9,
+              "pixel_size_um": 0.4
+            },
+            {
+              "distance_px": 0,
+              "pixel_size_um": 0.07
+            },
+            {
+              "distance_px": 17,
+              "pixel_size_um": 0.15
+            }
+          ],
+          "checks": [
+            "number(ns.get(\"distance_um\"),case[\"distance_px\"]*case[\"pixel_size_um\"])",
+            "printed_number(output,ns[\"distance_um\"])"
+          ],
+          "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+        }
+      },
+      "hints": [
+        "Track the units through the multiplication.",
+        "Multiply the pixel displacement by micrometers per pixel.",
+        "distance_um = distance_px * pixel_size_um\nprint(distance_um)"
+      ],
+      "transfers": [
+        {
+          "task": "Convert a new set of tracked particle displacements using their supplied calibration. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
+          "starter": "",
+          "cases": [
+            {
+              "distance_px": 9,
+              "pixel_size_um": 0.4
+            },
+            {
+              "distance_px": 0,
+              "pixel_size_um": 0.07
+            },
+            {
+              "distance_px": 17,
+              "pixel_size_um": 0.15
+            }
+          ],
+          "checks": [
+            "number(ns.get(\"distance_um\"),case[\"distance_px\"]*case[\"pixel_size_um\"])",
+            "printed_number(output,ns[\"distance_um\"])"
+          ],
+          "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Convert a new set of tracked particle displacements using their supplied calibration. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
+          "starter": "",
+          "cases": [
+            {
+              "distance_px": 40,
+              "pixel_size_um": 31.4
+            },
+            {
+              "distance_px": 31,
+              "pixel_size_um": 31.07
+            },
+            {
+              "distance_px": 48,
+              "pixel_size_um": 31.15
+            }
+          ],
+          "checks": [
+            "number(ns.get(\"distance_um\"),case[\"distance_px\"]*case[\"pixel_size_um\"])",
+            "printed_number(output,ns[\"distance_um\"])"
+          ],
+          "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Convert a new set of tracked particle displacements using their supplied calibration. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
+          "starter": "",
+          "cases": [
+            {
+              "distance_px": 76,
+              "pixel_size_um": 67.4
+            },
+            {
+              "distance_px": 67,
+              "pixel_size_um": 67.07
+            },
+            {
+              "distance_px": 84,
+              "pixel_size_um": 67.15
+            }
+          ],
+          "checks": [
+            "number(ns.get(\"distance_um\"),case[\"distance_px\"]*case[\"pixel_size_um\"])",
+            "printed_number(output,ns[\"distance_um\"])"
+          ],
+          "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.explain_int_float_and_bool",
+      "number": "007",
+      "title": "Explain int, float and bool",
+      "context": "An object count is an int, a measured distance is a float, and a QC decision is a bool. Python types express different kinds of values.",
+      "example": {
+        "source": "print(type(count).__name__)\nprint(type(distance_um).__name__)\nprint(type(accepted).__name__)",
+        "case": {
+          "count": 8,
+          "distance_um": 2.5,
+          "accepted": true
+        },
+        "input_types": {
+          "distance_um": "float"
+        }
+      },
+      "predict": "Predict the three type names.",
+      "investigate": {
+        "question": "What is the type of False?",
+        "options": [
+          "bool",
+          "str",
+          "float"
+        ],
+        "answer": 0,
+        "explanation": "False is a Boolean value. The quoted text \"False\" would have type str."
+      },
+      "stages": {
+        "modify": {
+          "task": "Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
+          "starter": "count_type = type(count)\ndistance_type = type(count)\naccepted_type = type(count)",
+          "cases": [
+            {
+              "count": 8,
+              "distance_um": 2.5,
+              "accepted": true
+            },
+            {
+              "count": 0,
+              "distance_um": 0.0,
+              "accepted": false
+            },
+            {
+              "count": 12,
+              "distance_um": 3.0,
+              "accepted": false
+            }
+          ],
+          "checks": [
+            "ns.get(\"count_type\") is int",
+            "ns.get(\"distance_type\") is float",
+            "ns.get(\"accepted_type\") is bool",
+            "output.strip().splitlines() == [\"int\",\"float\",\"bool\"]"
+          ],
+          "reference": "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(accepted)\nprint(count_type.__name__)\nprint(distance_type.__name__)\nprint(accepted_type.__name__)",
+          "input_types": {
+            "distance_um": "float"
+          },
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+        },
+        "write": {
+          "task": "Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "count": 3,
+              "distance_um": 1.2,
+              "accepted": false
+            },
+            {
+              "count": 0,
+              "distance_um": 0.0,
+              "accepted": true
+            },
+            {
+              "count": 1,
+              "distance_um": 0.1,
+              "accepted": true
+            }
+          ],
+          "checks": [
+            "ns.get(\"count_type\") is int",
+            "ns.get(\"distance_type\") is float",
+            "ns.get(\"accepted_type\") is bool",
+            "output.strip().splitlines() == [\"int\",\"float\",\"bool\"]"
+          ],
+          "reference": "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(accepted)\nprint(count_type.__name__)\nprint(distance_type.__name__)\nprint(accepted_type.__name__)",
+          "input_types": {
+            "distance_um": "float"
+          },
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+        },
+        "debug": {
+          "task": "The QC type comes from quoted text rather than the Boolean variable. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
+          "starter": "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(\"accepted\")",
+          "cases": [
+            {
+              "count": 8,
+              "distance_um": 2.5,
+              "accepted": true
+            },
+            {
+              "count": 0,
+              "distance_um": 0.0,
+              "accepted": false
+            },
+            {
+              "count": 12,
+              "distance_um": 3.0,
+              "accepted": false
+            }
+          ],
+          "checks": [
+            "ns.get(\"count_type\") is int",
+            "ns.get(\"distance_type\") is float",
+            "ns.get(\"accepted_type\") is bool",
+            "output.strip().splitlines() == [\"int\",\"float\",\"bool\"]"
+          ],
+          "reference": "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(accepted)\nprint(count_type.__name__)\nprint(distance_type.__name__)\nprint(accepted_type.__name__)",
+          "input_types": {
+            "distance_um": "float"
+          },
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+        },
+        "transfer": {
+          "task": "Audit types in fresh acquisition records, including zero and False. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
+          "starter": "",
+          "cases": [
+            {
+              "count": 21,
+              "distance_um": 8.4,
+              "accepted": true
+            },
+            {
+              "count": 0,
+              "distance_um": 1.0,
+              "accepted": false
+            },
+            {
+              "count": 4,
+              "distance_um": 0.04,
+              "accepted": false
+            }
+          ],
+          "checks": [
+            "ns.get(\"count_type\") is int",
+            "ns.get(\"distance_type\") is float",
+            "ns.get(\"accepted_type\") is bool",
+            "output.strip().splitlines() == [\"int\",\"float\",\"bool\"]"
+          ],
+          "reference": "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(accepted)\nprint(count_type.__name__)\nprint(distance_type.__name__)\nprint(accepted_type.__name__)",
+          "input_types": {
+            "distance_um": "float"
+          },
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+        }
+      },
+      "hints": [
+        "type(value) inspects the supplied object.",
+        "Use each of the three variables rather than count three times.",
+        "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(accepted)\nprint(count_type.__name__)\nprint(distance_type.__name__)\nprint(accepted_type.__name__)"
+      ],
+      "transfers": [
+        {
+          "task": "Audit types in fresh acquisition records, including zero and False. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
+          "starter": "",
+          "cases": [
+            {
+              "count": 21,
+              "distance_um": 8.4,
+              "accepted": true
+            },
+            {
+              "count": 0,
+              "distance_um": 1.0,
+              "accepted": false
+            },
+            {
+              "count": 4,
+              "distance_um": 0.04,
+              "accepted": false
+            }
+          ],
+          "checks": [
+            "ns.get(\"count_type\") is int",
+            "ns.get(\"distance_type\") is float",
+            "ns.get(\"accepted_type\") is bool",
+            "output.strip().splitlines() == [\"int\",\"float\",\"bool\"]"
+          ],
+          "reference": "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(accepted)\nprint(count_type.__name__)\nprint(distance_type.__name__)\nprint(accepted_type.__name__)",
+          "input_types": {
+            "distance_um": "float"
+          },
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Audit types in fresh acquisition records, including zero and False. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
+          "starter": "",
+          "cases": [
+            {
+              "count": 52,
+              "distance_um": 39.4,
+              "accepted": false
+            },
+            {
+              "count": 31,
+              "distance_um": 32.0,
+              "accepted": true
+            },
+            {
+              "count": 35,
+              "distance_um": 31.04,
+              "accepted": true
+            }
+          ],
+          "checks": [
+            "ns.get(\"count_type\") is int",
+            "ns.get(\"distance_type\") is float",
+            "ns.get(\"accepted_type\") is bool",
+            "output.strip().splitlines() == [\"int\",\"float\",\"bool\"]"
+          ],
+          "reference": "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(accepted)\nprint(count_type.__name__)\nprint(distance_type.__name__)\nprint(accepted_type.__name__)",
+          "input_types": {
+            "distance_um": "float"
+          },
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Audit types in fresh acquisition records, including zero and False. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
+          "starter": "",
+          "cases": [
+            {
+              "count": 88,
+              "distance_um": 75.4,
+              "accepted": false
+            },
+            {
+              "count": 67,
+              "distance_um": 68.0,
+              "accepted": true
+            },
+            {
+              "count": 71,
+              "distance_um": 67.04,
+              "accepted": true
+            }
+          ],
+          "checks": [
+            "ns.get(\"count_type\") is int",
+            "ns.get(\"distance_type\") is float",
+            "ns.get(\"accepted_type\") is bool",
+            "output.strip().splitlines() == [\"int\",\"float\",\"bool\"]"
+          ],
+          "reference": "count_type = type(count)\ndistance_type = type(distance_um)\naccepted_type = type(accepted)\nprint(count_type.__name__)\nprint(distance_type.__name__)\nprint(accepted_type.__name__)",
+          "input_types": {
+            "distance_um": "float"
+          },
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.compare_measurements_safely",
+      "number": "010",
+      "title": "Compare measurements safely",
+      "context": "A microscope field passes an illustrative signal threshold when its signal is at least the minimum. This QC rule is a teaching example, not a validated biological classifier.",
+      "example": {
+        "source": "passes = signal >= minimum\nprint(passes)",
+        "case": {
+          "signal": 10,
+          "minimum": 10
+        }
+      },
+      "predict": "Will the field pass when it equals the minimum?",
+      "investigate": {
+        "question": "Which operator includes the boundary?",
+        "options": [
+          ">=",
+          ">",
+          "="
+        ],
+        "answer": 0,
+        "explanation": ">= includes equality. = assigns a value; it does not compare two values."
+      },
+      "stages": {
+        "modify": {
+          "task": "Create the Boolean passes = signal >= minimum; print passes.",
+          "starter": "passes = signal > minimum\nprint(passes)",
+          "cases": [
+            {
+              "signal": 10,
+              "minimum": 10
+            },
+            {
+              "signal": 9,
+              "minimum": 10
+            },
+            {
+              "signal": 11,
+              "minimum": 10
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"passes\")) is bool",
+            "ns[\"passes\"] == (case[\"signal\"] >= case[\"minimum\"])",
+            "output.strip() == str(ns[\"passes\"])"
+          ],
+          "reference": "passes = signal >= minimum\nprint(passes)",
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+        },
+        "write": {
+          "task": "Create the Boolean passes = signal >= minimum; print passes. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 0,
+              "minimum": 0
+            },
+            {
+              "signal": 14,
+              "minimum": 15
+            },
+            {
+              "signal": 16,
+              "minimum": 15
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"passes\")) is bool",
+            "ns[\"passes\"] == (case[\"signal\"] >= case[\"minimum\"])",
+            "output.strip() == str(ns[\"passes\"])"
+          ],
+          "reference": "passes = signal >= minimum\nprint(passes)",
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+        },
+        "debug": {
+          "task": "This accepts only equality and rejects signals above the minimum. Create the Boolean passes = signal >= minimum; print passes.",
+          "starter": "passes = signal == minimum\nprint(passes)",
+          "cases": [
+            {
+              "signal": 10,
+              "minimum": 10
+            },
+            {
+              "signal": 9,
+              "minimum": 10
+            },
+            {
+              "signal": 11,
+              "minimum": 10
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"passes\")) is bool",
+            "ns[\"passes\"] == (case[\"signal\"] >= case[\"minimum\"])",
+            "output.strip() == str(ns[\"passes\"])"
+          ],
+          "reference": "passes = signal >= minimum\nprint(passes)",
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+        },
+        "transfer": {
+          "task": "Apply the same documented rule to a different acquisition threshold. Create the Boolean passes = signal >= minimum; print passes.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 21,
+              "minimum": 21
+            },
+            {
+              "signal": 19,
+              "minimum": 21
+            },
+            {
+              "signal": 25,
+              "minimum": 21
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"passes\")) is bool",
+            "ns[\"passes\"] == (case[\"signal\"] >= case[\"minimum\"])",
+            "output.strip() == str(ns[\"passes\"])"
+          ],
+          "reference": "passes = signal >= minimum\nprint(passes)",
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+        }
+      },
+      "hints": [
+        "Check the equality boundary as well as higher and lower signals.",
+        "At least means greater than or equal to.",
+        "passes = signal >= minimum\nprint(passes)"
+      ],
+      "transfers": [
+        {
+          "task": "Apply the same documented rule to a different acquisition threshold. Create the Boolean passes = signal >= minimum; print passes.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 21,
+              "minimum": 21
+            },
+            {
+              "signal": 19,
+              "minimum": 21
+            },
+            {
+              "signal": 25,
+              "minimum": 21
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"passes\")) is bool",
+            "ns[\"passes\"] == (case[\"signal\"] >= case[\"minimum\"])",
+            "output.strip() == str(ns[\"passes\"])"
+          ],
+          "reference": "passes = signal >= minimum\nprint(passes)",
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Apply the same documented rule to a different acquisition threshold. Create the Boolean passes = signal >= minimum; print passes.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 52,
+              "minimum": 52
+            },
+            {
+              "signal": 50,
+              "minimum": 52
+            },
+            {
+              "signal": 56,
+              "minimum": 52
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"passes\")) is bool",
+            "ns[\"passes\"] == (case[\"signal\"] >= case[\"minimum\"])",
+            "output.strip() == str(ns[\"passes\"])"
+          ],
+          "reference": "passes = signal >= minimum\nprint(passes)",
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Apply the same documented rule to a different acquisition threshold. Create the Boolean passes = signal >= minimum; print passes.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 88,
+              "minimum": 88
+            },
+            {
+              "signal": 86,
+              "minimum": 88
+            },
+            {
+              "signal": 92,
+              "minimum": 88
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"passes\")) is bool",
+            "ns[\"passes\"] == (case[\"signal\"] >= case[\"minimum\"])",
+            "output.strip() == str(ns[\"passes\"])"
+          ],
+          "reference": "passes = signal >= minimum\nprint(passes)",
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.write_conditional_quality_rules",
+      "number": "011",
+      "title": "Write conditional quality rules",
+      "context": "An explicit quality rule records why a field is retained. It does not establish that the field is an independent biological replicate.",
+      "example": {
+        "source": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+        "case": {
+          "signal": 10,
+          "minimum": 10
+        }
+      },
+      "predict": "Which branch executes for this signal?",
+      "investigate": {
+        "question": "Why indent the assignment below if?",
+        "options": [
+          "Indentation puts it inside that branch.",
+          "Indentation is only decorative.",
+          "Indentation repeats the statement."
+        ],
+        "answer": 0,
+        "explanation": "Python uses indentation to define a block. The else branch handles values below the threshold."
+      },
+      "stages": {
+        "modify": {
+          "task": "Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
+          "starter": "if signal > minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "cases": [
+            {
+              "signal": 10,
+              "minimum": 10
+            },
+            {
+              "signal": 0,
+              "minimum": 10
+            },
+            {
+              "signal": 15,
+              "minimum": 10
+            }
+          ],
+          "checks": [
+            "ns.get(\"decision\") == (\"keep\" if case[\"signal\"] >= case[\"minimum\"] else \"review\")",
+            "output.strip() == ns[\"decision\"]"
+          ],
+          "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+        },
+        "write": {
+          "task": "Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 5,
+              "minimum": 5
+            },
+            {
+              "signal": 4,
+              "minimum": 5
+            },
+            {
+              "signal": 0,
+              "minimum": 0
+            }
+          ],
+          "checks": [
+            "ns.get(\"decision\") == (\"keep\" if case[\"signal\"] >= case[\"minimum\"] else \"review\")",
+            "output.strip() == ns[\"decision\"]"
+          ],
+          "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+        },
+        "debug": {
+          "task": "Read the syntax error location and restore the missing block marker. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
+          "starter": "if signal >= minimum\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "cases": [
+            {
+              "signal": 10,
+              "minimum": 10
+            },
+            {
+              "signal": 0,
+              "minimum": 10
+            },
+            {
+              "signal": 15,
+              "minimum": 10
+            }
+          ],
+          "checks": [
+            "ns.get(\"decision\") == (\"keep\" if case[\"signal\"] >= case[\"minimum\"] else \"review\")",
+            "output.strip() == ns[\"decision\"]"
+          ],
+          "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+        },
+        "transfer": {
+          "task": "Record decisions on previously unseen field signals. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 23,
+              "minimum": 23
+            },
+            {
+              "signal": 22,
+              "minimum": 23
+            },
+            {
+              "signal": 30,
+              "minimum": 23
+            }
+          ],
+          "checks": [
+            "ns.get(\"decision\") == (\"keep\" if case[\"signal\"] >= case[\"minimum\"] else \"review\")",
+            "output.strip() == ns[\"decision\"]"
+          ],
+          "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+        }
+      },
+      "hints": [
+        "Write both branches of the rule.",
+        "A colon starts the block; use consistent indentation.",
+        "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)"
+      ],
+      "transfers": [
+        {
+          "task": "Record decisions on previously unseen field signals. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 23,
+              "minimum": 23
+            },
+            {
+              "signal": 22,
+              "minimum": 23
+            },
+            {
+              "signal": 30,
+              "minimum": 23
+            }
+          ],
+          "checks": [
+            "ns.get(\"decision\") == (\"keep\" if case[\"signal\"] >= case[\"minimum\"] else \"review\")",
+            "output.strip() == ns[\"decision\"]"
+          ],
+          "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Record decisions on previously unseen field signals. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 54,
+              "minimum": 54
+            },
+            {
+              "signal": 53,
+              "minimum": 54
+            },
+            {
+              "signal": 61,
+              "minimum": 54
+            }
+          ],
+          "checks": [
+            "ns.get(\"decision\") == (\"keep\" if case[\"signal\"] >= case[\"minimum\"] else \"review\")",
+            "output.strip() == ns[\"decision\"]"
+          ],
+          "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Record decisions on previously unseen field signals. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
+          "starter": "",
+          "cases": [
+            {
+              "signal": 90,
+              "minimum": 90
+            },
+            {
+              "signal": 89,
+              "minimum": 90
+            },
+            {
+              "signal": 97,
+              "minimum": 90
+            }
+          ],
+          "checks": [
+            "ns.get(\"decision\") == (\"keep\" if case[\"signal\"] >= case[\"minimum\"] else \"review\")",
+            "output.strip() == ns[\"decision\"]"
+          ],
+          "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.index_and_slice_a_list",
+      "number": "016",
+      "title": "Index and slice a list",
+      "context": "Field counts are ordered observations from one specimen. The first element of a Python list has index zero.",
+      "example": {
+        "source": "print(counts[0])\nprint(counts[-1])",
+        "case": {
+          "counts": [
+            4,
+            7,
+            2,
+            9
+          ]
+        }
+      },
+      "predict": "Predict the first and last count.",
+      "investigate": {
+        "question": "What does counts[-1] select?",
+        "options": [
+          "The last observation.",
+          "A negative count.",
+          "The first observation."
+        ],
+        "answer": 0,
+        "explanation": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+      },
+      "stages": {
+        "modify": {
+          "task": "Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
+          "starter": "first = counts[1]\nmiddle = counts[1:2]\nprint(first)\nprint(middle)",
+          "cases": [
+            {
+              "counts": [
+                4,
+                7,
+                2,
+                9
+              ]
+            },
+            {
+              "counts": [
+                0,
+                3,
+                8
+              ]
+            },
+            {
+              "counts": [
+                12,
+                1,
+                5,
+                4,
+                6
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"first\") == case[\"counts\"][0]",
+            "ns.get(\"middle\") == case[\"counts\"][1:3]",
+            "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
+          ],
+          "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+        },
+        "write": {
+          "task": "Create first = counts[0] and middle = counts[1:3]. Print first, then middle. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                2,
+                0,
+                11,
+                3
+              ]
+            },
+            {
+              "counts": [
+                8,
+                9,
+                10
+              ]
+            },
+            {
+              "counts": [
+                1,
+                1,
+                1,
+                1
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"first\") == case[\"counts\"][0]",
+            "ns.get(\"middle\") == case[\"counts\"][1:3]",
+            "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
+          ],
+          "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+        },
+        "debug": {
+          "task": "The slice excludes one requested observation. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
+          "starter": "first = counts[0]\nmiddle = counts[1:2]\nprint(first)\nprint(middle)",
+          "cases": [
+            {
+              "counts": [
+                4,
+                7,
+                2,
+                9
+              ]
+            },
+            {
+              "counts": [
+                0,
+                3,
+                8
+              ]
+            },
+            {
+              "counts": [
+                12,
+                1,
+                5,
+                4,
+                6
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"first\") == case[\"counts\"][0]",
+            "ns.get(\"middle\") == case[\"counts\"][1:3]",
+            "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
+          ],
+          "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+        },
+        "transfer": {
+          "task": "Inspect a new list of colony counts. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                19,
+                7,
+                0,
+                3
+              ]
+            },
+            {
+              "counts": [
+                5,
+                11,
+                9
+              ]
+            },
+            {
+              "counts": [
+                0,
+                2,
+                4,
+                6,
+                8
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"first\") == case[\"counts\"][0]",
+            "ns.get(\"middle\") == case[\"counts\"][1:3]",
+            "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
+          ],
+          "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+        }
+      },
+      "hints": [
+        "The first index is 0. The slice stop is excluded.",
+        "Use [1:3] for the second and third observations.",
+        "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)"
+      ],
+      "transfers": [
+        {
+          "task": "Inspect a new list of colony counts. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                19,
+                7,
+                0,
+                3
+              ]
+            },
+            {
+              "counts": [
+                5,
+                11,
+                9
+              ]
+            },
+            {
+              "counts": [
+                0,
+                2,
+                4,
+                6,
+                8
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"first\") == case[\"counts\"][0]",
+            "ns.get(\"middle\") == case[\"counts\"][1:3]",
+            "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
+          ],
+          "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Inspect a new list of colony counts. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                50,
+                38,
+                31,
+                34
+              ]
+            },
+            {
+              "counts": [
+                36,
+                42,
+                40
+              ]
+            },
+            {
+              "counts": [
+                31,
+                33,
+                35,
+                37,
+                39
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"first\") == case[\"counts\"][0]",
+            "ns.get(\"middle\") == case[\"counts\"][1:3]",
+            "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
+          ],
+          "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Inspect a new list of colony counts. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                86,
+                74,
+                67,
+                70
+              ]
+            },
+            {
+              "counts": [
+                72,
+                78,
+                76
+              ]
+            },
+            {
+              "counts": [
+                67,
+                69,
+                71,
+                73,
+                75
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"first\") == case[\"counts\"][0]",
+            "ns.get(\"middle\") == case[\"counts\"][1:3]",
+            "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
+          ],
+          "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.iterate_and_summarize_microscope_field_lists",
+      "number": "012",
+      "title": "Iterate and summarize microscope-field lists",
+      "context": "Iterate across fields, apply the documented QC rule, and accumulate a count. Multiple fields still come from one specimen.",
+      "example": {
+        "source": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
+        "case": {
+          "signals": [
+            5,
+            10,
+            12
+          ],
+          "minimum": 10
+        }
+      },
+      "predict": "How many fields meet the rule?",
+      "investigate": {
+        "question": "Why initialize kept before the loop?",
+        "options": [
+          "To accumulate across all fields.",
+          "To reset the count on every field.",
+          "To convert fields into biological replicates."
+        ],
+        "answer": 0,
+        "explanation": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+      },
+      "stages": {
+        "modify": {
+          "task": "Use a for loop to count signals >= minimum in kept. Print kept.",
+          "starter": "kept = 0\nfor signal in signals:\n    if signal > minimum:\n        kept = kept + 1\nprint(kept)",
+          "cases": [
+            {
+              "signals": [
+                5,
+                10,
+                12
+              ],
+              "minimum": 10
+            },
+            {
+              "signals": [],
+              "minimum": 10
+            },
+            {
+              "signals": [
+                0,
+                0,
+                1
+              ],
+              "minimum": 0
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"kept\")) is int",
+            "ns[\"kept\"] == sum(s >= case[\"minimum\"] for s in case[\"signals\"])",
+            "printed_number(output,ns[\"kept\"])",
+            "has_node(tree,ast.For)"
+          ],
+          "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+        },
+        "write": {
+          "task": "Use a for loop to count signals >= minimum in kept. Print kept. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                2,
+                7,
+                7
+              ],
+              "minimum": 7
+            },
+            {
+              "signals": [],
+              "minimum": 0
+            },
+            {
+              "signals": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "minimum": 3
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"kept\")) is int",
+            "ns[\"kept\"] == sum(s >= case[\"minimum\"] for s in case[\"signals\"])",
+            "printed_number(output,ns[\"kept\"])",
+            "has_node(tree,ast.For)"
+          ],
+          "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+        },
+        "debug": {
+          "task": "The accumulator is reset inside the loop. Use a for loop to count signals >= minimum in kept. Print kept.",
+          "starter": "kept = 0\nfor signal in signals:\n    kept = 0\n    if signal >= minimum:\n        kept += 1\nprint(kept)",
+          "cases": [
+            {
+              "signals": [
+                5,
+                10,
+                12
+              ],
+              "minimum": 10
+            },
+            {
+              "signals": [],
+              "minimum": 10
+            },
+            {
+              "signals": [
+                0,
+                0,
+                1
+              ],
+              "minimum": 0
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"kept\")) is int",
+            "ns[\"kept\"] == sum(s >= case[\"minimum\"] for s in case[\"signals\"])",
+            "printed_number(output,ns[\"kept\"])",
+            "has_node(tree,ast.For)"
+          ],
+          "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+        },
+        "transfer": {
+          "task": "Summarize QC for new culture fields, including an empty acquisition. Use a for loop to count signals >= minimum in kept. Print kept.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                9,
+                10,
+                11,
+                12
+              ],
+              "minimum": 11
+            },
+            {
+              "signals": [],
+              "minimum": 8
+            },
+            {
+              "signals": [
+                4,
+                4,
+                4
+              ],
+              "minimum": 4
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"kept\")) is int",
+            "ns[\"kept\"] == sum(s >= case[\"minimum\"] for s in case[\"signals\"])",
+            "printed_number(output,ns[\"kept\"])",
+            "has_node(tree,ast.For)"
+          ],
+          "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+        }
+      },
+      "hints": [
+        "Start kept at zero before entering the loop.",
+        "Increment only inside the passing branch; include equality.",
+        "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept += 1\nprint(kept)"
+      ],
+      "transfers": [
+        {
+          "task": "Summarize QC for new culture fields, including an empty acquisition. Use a for loop to count signals >= minimum in kept. Print kept.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                9,
+                10,
+                11,
+                12
+              ],
+              "minimum": 11
+            },
+            {
+              "signals": [],
+              "minimum": 8
+            },
+            {
+              "signals": [
+                4,
+                4,
+                4
+              ],
+              "minimum": 4
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"kept\")) is int",
+            "ns[\"kept\"] == sum(s >= case[\"minimum\"] for s in case[\"signals\"])",
+            "printed_number(output,ns[\"kept\"])",
+            "has_node(tree,ast.For)"
+          ],
+          "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Summarize QC for new culture fields, including an empty acquisition. Use a for loop to count signals >= minimum in kept. Print kept.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                40,
+                41,
+                42,
+                43
+              ],
+              "minimum": 42
+            },
+            {
+              "signals": [],
+              "minimum": 39
+            },
+            {
+              "signals": [
+                35,
+                35,
+                35
+              ],
+              "minimum": 35
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"kept\")) is int",
+            "ns[\"kept\"] == sum(s >= case[\"minimum\"] for s in case[\"signals\"])",
+            "printed_number(output,ns[\"kept\"])",
+            "has_node(tree,ast.For)"
+          ],
+          "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Summarize QC for new culture fields, including an empty acquisition. Use a for loop to count signals >= minimum in kept. Print kept.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                76,
+                77,
+                78,
+                79
+              ],
+              "minimum": 78
+            },
+            {
+              "signals": [],
+              "minimum": 75
+            },
+            {
+              "signals": [
+                71,
+                71,
+                71
+              ],
+              "minimum": 71
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"kept\")) is int",
+            "ns[\"kept\"] == sum(s >= case[\"minimum\"] for s in case[\"signals\"])",
+            "printed_number(output,ns[\"kept\"])",
+            "has_node(tree,ast.For)"
+          ],
+          "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m03.return_results_from_a_function",
+      "number": "025",
+      "title": "Return results from a function",
+      "context": "A reusable function accepts field signals as arguments and returns a result. Printing alone does not send a value back to the caller.",
+      "example": {
+        "source": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
+        "case": {
+          "signals": [
+            5,
+            10,
+            12
+          ],
+          "minimum": 10
+        }
+      },
+      "predict": "What does the function return?",
+      "investigate": {
+        "question": "What does return do?",
+        "options": [
+          "Sends the result back to the caller.",
+          "Only displays text on screen.",
+          "Changes every global variable."
+        ],
+        "answer": 0,
+        "explanation": "A returned value can be tested and reused with new arguments. A function without return produces None."
+      },
+      "stages": {
+        "modify": {
+          "task": "Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
+          "starter": "def count_fields(values, cutoff):\n    return 0\n\nprint(count_fields(signals, minimum))",
+          "cases": [
+            {
+              "signals": [
+                5,
+                10,
+                12
+              ],
+              "minimum": 10
+            },
+            {
+              "signals": [],
+              "minimum": 10
+            },
+            {
+              "signals": [
+                0,
+                0,
+                1
+              ],
+              "minimum": 0
+            }
+          ],
+          "checks": [
+            "callable(ns.get(\"count_fields\"))",
+            "all(ns[\"count_fields\"](v,c) == sum(x>=c for x in v) for v,c in [([],0),([0,1,2],1),([9,9],9),([5],6)])",
+            "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
+          ],
+          "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+        },
+        "write": {
+          "task": "Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum). Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                1,
+                3,
+                4
+              ],
+              "minimum": 3
+            },
+            {
+              "signals": [],
+              "minimum": 2
+            },
+            {
+              "signals": [
+                8,
+                8,
+                0
+              ],
+              "minimum": 8
+            }
+          ],
+          "checks": [
+            "callable(ns.get(\"count_fields\"))",
+            "all(ns[\"count_fields\"](v,c) == sum(x>=c for x in v) for v,c in [([],0),([0,1,2],1),([9,9],9),([5],6)])",
+            "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
+          ],
+          "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+        },
+        "debug": {
+          "task": "The function prints a count but returns None. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
+          "starter": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    print(total)\n\nprint(count_fields(signals, minimum))",
+          "cases": [
+            {
+              "signals": [
+                5,
+                10,
+                12
+              ],
+              "minimum": 10
+            },
+            {
+              "signals": [],
+              "minimum": 10
+            },
+            {
+              "signals": [
+                0,
+                0,
+                1
+              ],
+              "minimum": 0
+            }
+          ],
+          "checks": [
+            "callable(ns.get(\"count_fields\"))",
+            "all(ns[\"count_fields\"](v,c) == sum(x>=c for x in v) for v,c in [([],0),([0,1,2],1),([9,9],9),([5],6)])",
+            "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
+          ],
+          "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+        },
+        "transfer": {
+          "task": "Write the function for fresh particle-QC data. Hidden calls use new arguments. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                19,
+                20,
+                21
+              ],
+              "minimum": 20
+            },
+            {
+              "signals": [],
+              "minimum": 19
+            },
+            {
+              "signals": [
+                5,
+                5,
+                5
+              ],
+              "minimum": 5
+            }
+          ],
+          "checks": [
+            "callable(ns.get(\"count_fields\"))",
+            "all(ns[\"count_fields\"](v,c) == sum(x>=c for x in v) for v,c in [([],0),([0,1,2],1),([9,9],9),([5],6)])",
+            "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
+          ],
+          "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+        }
+      },
+      "hints": [
+        "Use the function parameters rather than the global inputs.",
+        "Return the accumulator after the loop. Print the function call outside the definition.",
+        "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\nprint(count_fields(signals, minimum))"
+      ],
+      "transfers": [
+        {
+          "task": "Write the function for fresh particle-QC data. Hidden calls use new arguments. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                19,
+                20,
+                21
+              ],
+              "minimum": 20
+            },
+            {
+              "signals": [],
+              "minimum": 19
+            },
+            {
+              "signals": [
+                5,
+                5,
+                5
+              ],
+              "minimum": 5
+            }
+          ],
+          "checks": [
+            "callable(ns.get(\"count_fields\"))",
+            "all(ns[\"count_fields\"](v,c) == sum(x>=c for x in v) for v,c in [([],0),([0,1,2],1),([9,9],9),([5],6)])",
+            "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
+          ],
+          "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Write the function for fresh particle-QC data. Hidden calls use new arguments. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                50,
+                51,
+                52
+              ],
+              "minimum": 51
+            },
+            {
+              "signals": [],
+              "minimum": 50
+            },
+            {
+              "signals": [
+                36,
+                36,
+                36
+              ],
+              "minimum": 36
+            }
+          ],
+          "checks": [
+            "callable(ns.get(\"count_fields\"))",
+            "all(ns[\"count_fields\"](v,c) == sum(x>=c for x in v) for v,c in [([],0),([0,1,2],1),([9,9],9),([5],6)])",
+            "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
+          ],
+          "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Write the function for fresh particle-QC data. Hidden calls use new arguments. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                86,
+                87,
+                88
+              ],
+              "minimum": 87
+            },
+            {
+              "signals": [],
+              "minimum": 86
+            },
+            {
+              "signals": [
+                72,
+                72,
+                72
+              ],
+              "minimum": 72
+            }
+          ],
+          "checks": [
+            "callable(ns.get(\"count_fields\"))",
+            "all(ns[\"count_fields\"](v,c) == sum(x>=c for x in v) for v,c in [([],0),([0,1,2],1),([9,9],9),([5],6)])",
+            "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
+          ],
+          "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m00.read_an_error_traceback",
+      "number": "002",
+      "title": "Read an error traceback",
+      "context": "A traceback identifies the exception, the failing line, and the call path. Read the final exception line, then locate the named source line.",
+      "example": {
+        "source": "print(sample_id)\nprint(missing_label)",
+        "case": {
+          "sample_id": "A01"
+        }
+      },
+      "predict": "The first line prints; what happens on the second line?",
+      "investigate": {
+        "question": "What does NameError: name missing_label is not defined mean?",
+        "options": [
+          "The code used a name with no assigned value.",
+          "The image is too dark.",
+          "The supplied sample_id is necessarily invalid."
+        ],
+        "answer": 0,
+        "explanation": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+      },
+      "stages": {
+        "modify": {
+          "task": "Repair the specimen report by assigning report_id = sample_id, then print report_id.",
+          "starter": "report_id = sample_id\nprint(reportid)",
+          "cases": [
+            {
+              "sample_id": "A01"
+            },
+            {
+              "sample_id": "B02"
+            },
+            {
+              "sample_id": "CTRL-0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"report_id\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "report_id = sample_id\nprint(report_id)",
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+        },
+        "write": {
+          "task": "Repair the specimen report by assigning report_id = sample_id, then print report_id. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "DYE-NEG"
+            },
+            {
+              "sample_id": "WORM-W3"
+            },
+            {
+              "sample_id": "YEAST-Y1"
+            }
+          ],
+          "checks": [
+            "ns.get(\"report_id\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "report_id = sample_id\nprint(report_id)",
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+        },
+        "debug": {
+          "task": "The traceback reports a case-sensitive spelling mismatch. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
+          "starter": "report_id = sample_id\nprint(reportId)",
+          "cases": [
+            {
+              "sample_id": "A01"
+            },
+            {
+              "sample_id": "B02"
+            },
+            {
+              "sample_id": "CTRL-0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"report_id\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "report_id = sample_id\nprint(report_id)",
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+        },
+        "transfer": {
+          "task": "Repair a report for new specimen metadata using traceback evidence. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "LEAF-L8"
+            },
+            {
+              "sample_id": "BEAD-Q4"
+            },
+            {
+              "sample_id": "MOCK-M7"
+            }
+          ],
+          "checks": [
+            "ns.get(\"report_id\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "report_id = sample_id\nprint(report_id)",
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+        }
+      },
+      "hints": [
+        "Read the last exception line and compare the variable spelling.",
+        "Assignment and print must use the same report_id name.",
+        "report_id = sample_id\nprint(report_id)"
+      ],
+      "transfers": [
+        {
+          "task": "Repair a report for new specimen metadata using traceback evidence. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "LEAF-L8"
+            },
+            {
+              "sample_id": "BEAD-Q4"
+            },
+            {
+              "sample_id": "MOCK-M7"
+            }
+          ],
+          "checks": [
+            "ns.get(\"report_id\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "report_id = sample_id\nprint(report_id)",
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Repair a report for new specimen metadata using traceback evidence. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "LEAF-L8 \u00b7 batch 31"
+            },
+            {
+              "sample_id": "BEAD-Q4 \u00b7 batch 31"
+            },
+            {
+              "sample_id": "MOCK-M7 \u00b7 batch 31"
+            }
+          ],
+          "checks": [
+            "ns.get(\"report_id\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "report_id = sample_id\nprint(report_id)",
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Repair a report for new specimen metadata using traceback evidence. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "LEAF-L8 \u00b7 batch 67"
+            },
+            {
+              "sample_id": "BEAD-Q4 \u00b7 batch 67"
+            },
+            {
+              "sample_id": "MOCK-M7 \u00b7 batch 67"
+            }
+          ],
+          "checks": [
+            "ns.get(\"report_id\") == case[\"sample_id\"]",
+            "output.strip() == case[\"sample_id\"]"
+          ],
+          "reference": "report_id = sample_id\nprint(report_id)",
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m00.use_documentation_and_help",
+      "number": "003",
+      "title": "Use documentation and help",
+      "context": "Documentation explains function arguments and edge behavior. Here help(len) is real Python documentation; length counts elements, not their total.",
+      "example": {
+        "source": "help(len)\nprint(len(counts))",
+        "case": {
+          "counts": [
+            4,
+            7,
+            2
+          ]
+        }
+      },
+      "predict": "What kind of information will help(len) display, and what number prints last?",
+      "investigate": {
+        "question": "What does len return for an empty list?",
+        "options": [
+          "0",
+          "An error for every empty list.",
+          "The sum of its values."
+        ],
+        "answer": 0,
+        "explanation": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+      },
+      "stages": {
+        "modify": {
+          "task": "Call help(len), assign n_fields = len(counts), then print n_fields.",
+          "starter": "help(len)\nn_fields = sum(counts)\nprint(n_fields)",
+          "cases": [
+            {
+              "counts": [
+                4,
+                7,
+                2
+              ]
+            },
+            {
+              "counts": []
+            },
+            {
+              "counts": [
+                8
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"n_fields\") == len(case[\"counts\"])",
+            "output.strip().splitlines()[-1] == str(len(case[\"counts\"]))",
+            "\"number of items\" in output.lower()"
+          ],
+          "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+        },
+        "write": {
+          "task": "Call help(len), assign n_fields = len(counts), then print n_fields. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                1,
+                2,
+                3,
+                4
+              ]
+            },
+            {
+              "counts": []
+            },
+            {
+              "counts": [
+                0,
+                0
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"n_fields\") == len(case[\"counts\"])",
+            "output.strip().splitlines()[-1] == str(len(case[\"counts\"]))",
+            "\"number of items\" in output.lower()"
+          ],
+          "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+        },
+        "debug": {
+          "task": "The code measures the variable name as text. Call help(len), assign n_fields = len(counts), then print n_fields.",
+          "starter": "help(len)\nn_fields = len(\"counts\")\nprint(n_fields)",
+          "cases": [
+            {
+              "counts": [
+                4,
+                7,
+                2
+              ]
+            },
+            {
+              "counts": []
+            },
+            {
+              "counts": [
+                8
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"n_fields\") == len(case[\"counts\"])",
+            "output.strip().splitlines()[-1] == str(len(case[\"counts\"]))",
+            "\"number of items\" in output.lower()"
+          ],
+          "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+        },
+        "transfer": {
+          "task": "Use documentation to check the size of a new field list. Call help(len), assign n_fields = len(counts), then print n_fields.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                19,
+                2,
+                0,
+                7,
+                8
+              ]
+            },
+            {
+              "counts": []
+            },
+            {
+              "counts": [
+                6,
+                4,
+                2
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"n_fields\") == len(case[\"counts\"])",
+            "output.strip().splitlines()[-1] == str(len(case[\"counts\"]))",
+            "\"number of items\" in output.lower()"
+          ],
+          "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+        }
+      },
+      "hints": [
+        "Ask Python for help with len itself, without calling it inside help.",
+        "len(counts) counts list entries, including when the list is empty.",
+        "help(len)\nn_fields = len(counts)\nprint(n_fields)"
+      ],
+      "transfers": [
+        {
+          "task": "Use documentation to check the size of a new field list. Call help(len), assign n_fields = len(counts), then print n_fields.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                19,
+                2,
+                0,
+                7,
+                8
+              ]
+            },
+            {
+              "counts": []
+            },
+            {
+              "counts": [
+                6,
+                4,
+                2
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"n_fields\") == len(case[\"counts\"])",
+            "output.strip().splitlines()[-1] == str(len(case[\"counts\"]))",
+            "\"number of items\" in output.lower()"
+          ],
+          "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Use documentation to check the size of a new field list. Call help(len), assign n_fields = len(counts), then print n_fields.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                50,
+                33,
+                31,
+                38,
+                39
+              ]
+            },
+            {
+              "counts": []
+            },
+            {
+              "counts": [
+                37,
+                35,
+                33
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"n_fields\") == len(case[\"counts\"])",
+            "output.strip().splitlines()[-1] == str(len(case[\"counts\"]))",
+            "\"number of items\" in output.lower()"
+          ],
+          "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Use documentation to check the size of a new field list. Call help(len), assign n_fields = len(counts), then print n_fields.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                86,
+                69,
+                67,
+                74,
+                75
+              ]
+            },
+            {
+              "counts": []
+            },
+            {
+              "counts": [
+                73,
+                71,
+                69
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"n_fields\") == len(case[\"counts\"])",
+            "output.strip().splitlines()[-1] == str(len(case[\"counts\"]))",
+            "\"number of items\" in output.lower()"
+          ],
+          "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m04.construct_typed_arrays",
+      "number": "037",
+      "title": "Construct typed arrays",
+      "context": "NumPy arrays store typed numerical values. These small authored signal lists are teaching data, not decoded image pixels.",
+      "example": {
+        "source": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
+        "case": {
+          "signals": [
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "predict": "What dtype will the array have?",
+      "investigate": {
+        "question": "Why request dtype=float?",
+        "options": [
+          "To store fractional numerical values explicitly.",
+          "To recover lost sensor precision from a JPEG.",
+          "To make the list a biological replicate."
+        ],
+        "answer": 0,
+        "explanation": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+      },
+      "stages": {
+        "modify": {
+          "task": "Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
+          "starter": "import numpy as np\nvalues = signals\nprint(values.dtype)",
+          "cases": [
+            {
+              "signals": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "signals": [
+                0.5,
+                1.25
+              ]
+            },
+            {
+              "signals": []
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"values\"),np.ndarray)",
+            "ns[\"values\"].dtype.kind == \"f\"",
+            "np.array_equal(ns[\"values\"],np.array(case[\"signals\"],dtype=float))",
+            "output.strip() == str(ns[\"values\"].dtype)"
+          ],
+          "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+        },
+        "write": {
+          "task": "Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                0.2,
+                2.8,
+                0
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -1.5,
+                4
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"values\"),np.ndarray)",
+            "ns[\"values\"].dtype.kind == \"f\"",
+            "np.array_equal(ns[\"values\"],np.array(case[\"signals\"],dtype=float))",
+            "output.strip() == str(ns[\"values\"].dtype)"
+          ],
+          "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+        },
+        "debug": {
+          "task": "Integer conversion loses fractional values. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
+          "starter": "import numpy as np\nvalues = np.array(signals, dtype=int)\nprint(values.dtype)",
+          "cases": [
+            {
+              "signals": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "signals": [
+                0.5,
+                1.25
+              ]
+            },
+            {
+              "signals": []
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"values\"),np.ndarray)",
+            "ns[\"values\"].dtype.kind == \"f\"",
+            "np.array_equal(ns[\"values\"],np.array(case[\"signals\"],dtype=float))",
+            "output.strip() == str(ns[\"values\"].dtype)"
+          ],
+          "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+        },
+        "transfer": {
+          "task": "Construct a floating-point array from a new sensor readout. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                0.75,
+                3.125,
+                0
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -2.25,
+                8.5
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"values\"),np.ndarray)",
+            "ns[\"values\"].dtype.kind == \"f\"",
+            "np.array_equal(ns[\"values\"],np.array(case[\"signals\"],dtype=float))",
+            "output.strip() == str(ns[\"values\"].dtype)"
+          ],
+          "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+        }
+      },
+      "hints": [
+        "A list has no dtype attribute. Convert it to a NumPy array.",
+        "np.array takes the values and a dtype argument.",
+        "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)"
+      ],
+      "transfers": [
+        {
+          "task": "Construct a floating-point array from a new sensor readout. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                0.75,
+                3.125,
+                0
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -2.25,
+                8.5
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"values\"),np.ndarray)",
+            "ns[\"values\"].dtype.kind == \"f\"",
+            "np.array_equal(ns[\"values\"],np.array(case[\"signals\"],dtype=float))",
+            "output.strip() == str(ns[\"values\"].dtype)"
+          ],
+          "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Construct a floating-point array from a new sensor readout. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                31.75,
+                34.125,
+                31
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                28.75,
+                39.5
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"values\"),np.ndarray)",
+            "ns[\"values\"].dtype.kind == \"f\"",
+            "np.array_equal(ns[\"values\"],np.array(case[\"signals\"],dtype=float))",
+            "output.strip() == str(ns[\"values\"].dtype)"
+          ],
+          "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Construct a floating-point array from a new sensor readout. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                67.75,
+                70.125,
+                67
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                64.75,
+                75.5
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"values\"),np.ndarray)",
+            "ns[\"values\"].dtype.kind == \"f\"",
+            "np.array_equal(ns[\"values\"],np.array(case[\"signals\"],dtype=float))",
+            "output.strip() == str(ns[\"values\"].dtype)"
+          ],
+          "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m04.understand_shape_and_ndim",
+      "number": "038",
+      "title": "Understand shape and ndim",
+      "context": "A two-dimensional array has rows and columns. Shape alone does not tell you whether an axis represents space, time or channels.",
+      "example": {
+        "source": "import numpy as np\nimage = np.array(grid)\nprint(image.shape)\nprint(image.ndim)",
+        "case": {
+          "grid": [
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              4,
+              5,
+              6
+            ]
+          ]
+        }
+      },
+      "predict": "Predict the shape tuple and the number of axes.",
+      "investigate": {
+        "question": "What does shape (2, 3) mean for this documented row \u00d7 column grid?",
+        "options": [
+          "2 rows and 3 columns.",
+          "3 rows and 2 channels automatically.",
+          "6 biological replicates."
+        ],
+        "answer": 0,
+        "explanation": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+      },
+      "stages": {
+        "modify": {
+          "task": "Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
+          "starter": "import numpy as np\nimage = np.array(grid)\ndimensions = image.size\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "cases": [
+            {
+              "grid": [
+                [
+                  1,
+                  2,
+                  3
+                ],
+                [
+                  4,
+                  5,
+                  6
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  0
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  1,
+                  2
+                ],
+                [
+                  3,
+                  4
+                ],
+                [
+                  5,
+                  6
+                ]
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"image\"),np.ndarray)",
+            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
+            "ns.get(\"axes\") == 2",
+            "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
+          ],
+          "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+        },
+        "write": {
+          "task": "Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes. Start from a blank editor. Your code must work when the provided data change.",
+          "starter": "",
+          "cases": [
+            {
+              "grid": [
+                [
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  2,
+                  3
+                ]
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"image\"),np.ndarray)",
+            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
+            "ns.get(\"axes\") == 2",
+            "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
+          ],
+          "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+        },
+        "debug": {
+          "task": "Rows and columns were swapped. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
+          "starter": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape[::-1]\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "cases": [
+            {
+              "grid": [
+                [
+                  1,
+                  2,
+                  3
+                ],
+                [
+                  4,
+                  5,
+                  6
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  0
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  1,
+                  2
+                ],
+                [
+                  3,
+                  4
+                ],
+                [
+                  5,
+                  6
+                ]
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"image\"),np.ndarray)",
+            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
+            "ns.get(\"axes\") == 2",
+            "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
+          ],
+          "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+        },
+        "transfer": {
+          "task": "Inspect a new rectangular teaching grid; state shape without inventing axis metadata. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
+          "starter": "",
+          "cases": [
+            {
+              "grid": [
+                [
+                  2,
+                  4,
+                  6,
+                  8,
+                  10
+                ],
+                [
+                  1,
+                  3,
+                  5,
+                  7,
+                  9
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  9
+                ],
+                [
+                  8
+                ],
+                [
+                  7
+                ],
+                [
+                  6
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  1,
+                  2,
+                  3
+                ],
+                [
+                  4,
+                  5,
+                  6
+                ],
+                [
+                  7,
+                  8,
+                  9
+                ]
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"image\"),np.ndarray)",
+            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
+            "ns.get(\"axes\") == 2",
+            "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
+          ],
+          "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+        }
+      },
+      "hints": [
+        "size counts all elements; shape reports axis lengths.",
+        "Use image.shape and image.ndim.",
+        "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)"
+      ],
+      "transfers": [
+        {
+          "task": "Inspect a new rectangular teaching grid; state shape without inventing axis metadata. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
+          "starter": "",
+          "cases": [
+            {
+              "grid": [
+                [
+                  2,
+                  4,
+                  6,
+                  8,
+                  10
+                ],
+                [
+                  1,
+                  3,
+                  5,
+                  7,
+                  9
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  9
+                ],
+                [
+                  8
+                ],
+                [
+                  7
+                ],
+                [
+                  6
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  1,
+                  2,
+                  3
+                ],
+                [
+                  4,
+                  5,
+                  6
+                ],
+                [
+                  7,
+                  8,
+                  9
+                ]
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"image\"),np.ndarray)",
+            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
+            "ns.get(\"axes\") == 2",
+            "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
+          ],
+          "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+        },
+        {
+          "task": "Fresh acquisition batch 31. Inspect a new rectangular teaching grid; state shape without inventing axis metadata. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
+          "starter": "",
+          "cases": [
+            {
+              "grid": [
+                [
+                  33,
+                  35,
+                  37,
+                  39,
+                  41
+                ],
+                [
+                  32,
+                  34,
+                  36,
+                  38,
+                  40
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  40
+                ],
+                [
+                  39
+                ],
+                [
+                  38
+                ],
+                [
+                  37
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  32,
+                  33,
+                  34
+                ],
+                [
+                  35,
+                  36,
+                  37
+                ],
+                [
+                  38,
+                  39,
+                  40
+                ]
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"image\"),np.ndarray)",
+            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
+            "ns.get(\"axes\") == 2",
+            "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
+          ],
+          "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+        },
+        {
+          "task": "Fresh acquisition batch 67. Inspect a new rectangular teaching grid; state shape without inventing axis metadata. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
+          "starter": "",
+          "cases": [
+            {
+              "grid": [
+                [
+                  69,
+                  71,
+                  73,
+                  75,
+                  77
+                ],
+                [
+                  68,
+                  70,
+                  72,
+                  74,
+                  76
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  76
+                ],
+                [
+                  75
+                ],
+                [
+                  74
+                ],
+                [
+                  73
+                ]
+              ]
+            },
+            {
+              "grid": [
+                [
+                  68,
+                  69,
+                  70
+                ],
+                [
+                  71,
+                  72,
+                  73
+                ],
+                [
+                  74,
+                  75,
+                  76
+                ]
+              ]
+            }
+          ],
+          "checks": [
+            "isinstance(ns.get(\"image\"),np.ndarray)",
+            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
+            "ns.get(\"axes\") == 2",
+            "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
+          ],
+          "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+        }
+      ]
+    }
+  ]
+}
