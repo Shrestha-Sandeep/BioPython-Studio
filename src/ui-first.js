@@ -26,6 +26,7 @@
   };
 
   let stage = "Python";
+  let initialized = false;
   let mode = "python";
   let phase = "learn";
   let result = "output";
@@ -63,9 +64,9 @@
     const col = before.length - before.lastIndexOf("\n");
     $("cursor").textContent = "Ln " + line + ", Col " + col;
   }
-  function switchMode(nextMode) {
+  function switchMode(nextMode, skipSave = false) {
     if (nextMode !== "python" && nextMode !== "image") return;
-    if (nextMode !== mode) saveEditor();
+    if (nextMode !== mode && !skipSave) saveEditor();
     mode = nextMode;
     for (const button of document.querySelectorAll("[data-mode]")) {
       button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
@@ -77,7 +78,7 @@
   }
   function chooseStage(nextStage) {
     if (!Object.prototype.hasOwnProperty.call(STAGES, nextStage)) return;
-    saveEditor();
+    if (initialized) saveEditor();
     stage = nextStage;
     const info = STAGES[stage];
     $("page-title").textContent = info.title;
@@ -89,7 +90,8 @@
       if (active) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     }
-    switchMode(info.mode);
+    switchMode(info.mode, true);
+    initialized = true;
     $("sidebar").classList.remove("open");
     $("nav-toggle").setAttribute("aria-expanded", "false");
   }
