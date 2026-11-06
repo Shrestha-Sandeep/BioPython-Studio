@@ -12,6 +12,10 @@ test("Witz material audited from original notebooks with precise cells",()=>{
  assert.equal(data.notebooks.length,7);
  assert.equal(data.notebooks.reduce((sum,n)=>sum+n.numbered_prompts.length,0),54);
  assert.equal(data.assets && Object.keys(data.assets).length,6);
+ assert.equal(data.worked_examples.length,12);
+ assert.equal(new Set(data.worked_examples.map(x=>x.mission)).size,12);
+ assert.ok(data.worked_examples.every(x=>x.source_url.endsWith(".ipynb") && x.code.length>3 && Number.isInteger(x.source_cell)));
+
  assert.ok(data.license.includes("BSD"));
  for(const n of data.notebooks){
    assert.ok(n.url.startsWith("https://github.com/guiwitz/PyImageCourse_beginner/blob/master/"));
