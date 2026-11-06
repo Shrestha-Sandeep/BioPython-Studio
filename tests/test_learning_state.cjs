@@ -67,3 +67,10 @@ test('repeating an old write check cannot clear a failed transfer review',()=>{
  S.assess(skill,'transfer',{ok:false},30);S.assess(skill,'write',{ok:true},31);
  assert.equal(S.evidence(skill),'needs review');
 });
+test('import replaces an untouched landing record and restores the saved position',()=>{
+ const local=S.fresh(),incoming=S.fresh();S.record(local,'a');
+ S.record(incoming,'a').drafts.write='saved draft';incoming.current='a';
+ const merged=S.merge(local,incoming);assert.equal(merged.skills.a.drafts.write,'saved draft');assert.equal(merged.current,'a');assert.equal(merged.importArchive,undefined);
+ local.skills.a.prediction='my own prediction';
+ const conflicted=S.merge(local,incoming);assert.equal(conflicted.skills.a.prediction,'my own prediction');assert.equal(conflicted.importArchive[0].record.drafts.write,'saved draft');
+});

@@ -72,13 +72,17 @@
     // Historical completions are history only, never new mastery or unlocks.
     return aliases;
   }
+  function untouched(skill) {
+    return skill && skill.stage==='predict' && !skill.prediction && !skill.guidedAt && !skill.independentAt && !skill.retainedAt && !skill.needsReview && !Object.keys(skill.drafts).length && !Object.keys(skill.passed).length && !Object.keys(skill.hints).length && !skill.attempts.length;
+  }
   function merge(local, incoming) {
     validate(incoming);
     const merged = structuredClone(local);
+    if(Object.values(local.skills).every(untouched)) merged.current=incoming.current;
     merged.importArchive = [...(local.importArchive||[]),...(incoming.importArchive||[])];
     merged.legacySnapshots = [...new Set([...local.legacySnapshots,...incoming.legacySnapshots])];
     for (const [id, skill] of Object.entries(incoming.skills)) {
-      if (!merged.skills[id]) merged.skills[id] = structuredClone(skill);
+      if (!merged.skills[id] || untouched(merged.skills[id])) merged.skills[id] = structuredClone(skill);
       else if (JSON.stringify(merged.skills[id]) !== JSON.stringify(skill)) {
         // Keep both versions; importing must never overwrite a local draft.
         (merged.importArchive ||= []).push({id,record:structuredClone(skill)});
@@ -87,7 +91,7 @@
     if(!merged.importArchive.length)delete merged.importArchive;
     return merged;
   }
-  const api = {KEY,LEGACY_KEY,DELAY,fresh,validate,load,record,evidence,ready,due,assess,migrateAliases,merge};
+  const api = {KEY,LEGACY_KEY,DELAY,fresh,validate,load,record,evidence,ready,due,assess,migrateAliases,merge,untouched};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.LearningState = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

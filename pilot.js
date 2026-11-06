@@ -6,6 +6,24 @@ const labels = {predict:'Predict',run:'Run',investigate:'Investigate',modify:'Mo
 let manifest, catalog, state, aliases, activity, skill, worker, requestId=0, busy=false, storageBlocked=false;
 const source = 'https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg';
 let imageLoaded=false, imagePending=false, imageURL=null;
+function pythonValue(value) {
+  if(value===null)return 'None';
+  if(value===true)return 'True';
+  if(value===false)return 'False';
+  if(Array.isArray(value))return '['+value.map(pythonValue).join(', ')+']';
+  if(typeof value==='object')return '{'+Object.entries(value).map(([k,v])=>JSON.stringify(k)+': '+pythonValue(v)).join(', ')+'}';
+  return JSON.stringify(value);
+}
+function dueActivities() {
+  return catalog.activities.filter(a=>S.due(state.skills[a.id]) && (state.skills[a.id].reviewCursor||0)<a.transfers.length && !(state.skills[a.id].stage==='transfer'&&!state.skills[a.id].passed.transfer))
+    .sort((a,b)=>state.skills[a.id].reviewAt-state.skills[b.id].reviewAt);
+}
+function updateReviewReminder() {
+  if(!catalog||!state)return;
+  const due=dueActivities();el('review-reminder').hidden=!due.length;
+  el('review-summary').textContent=due.length?`${due.length} delayed review${due.length===1?' is':'s are'} ready. Next: ${due[0].title}.`:'';
+  el('open-review').disabled=busy;
+}
 function feedback(message, success=false) {
   el('pilot-feedback').textContent=message;
   el('pilot-feedback').className='feedback '+(success?'success':'error');
@@ -22,7 +40,7 @@ function setBusy(value) {
   for (const id of ['pilot-run','restore-starter','pilot-hint','phase-back','phase-next','next-activity','start-review','save-prediction','check-explanation']) el(id).disabled=value;
   el('pilot-editor').readOnly=value || skill.stage==='run';
   if(!value){el('pilot-hint').disabled=(skill.hints[skill.stage]||0)>=3;el('pilot-run').disabled=skill.stage==='transfer'&&!!skill.passed.transfer;}
-  renderNavigation();
+  renderNavigation();updateReviewReminder();
 }
 async function loadImage() {
   if (imagePending || imageLoaded) return;
@@ -96,7 +114,7 @@ function render() {
   if(coding) {
     const spec=stage==='run'?{starter:activity.example.source,cases:[activity.example.case],input_types:activity.example.input_types||{}}:stage==='transfer'?activity.transfers[skill.activeReview??0]:activity.stages[stage];
     el('pilot-editor').value=skill.drafts[stage] ?? spec.starter;el('pilot-editor').readOnly=stage==='run';
-    el('provided-data').textContent=Object.entries(spec.cases[0]).map(([key,value])=>`${key}${spec.input_types?.[key]?" ("+spec.input_types[key]+")":""} = ${JSON.stringify(value)}`).join('\n');
+    el('provided-data').textContent=Object.entries(spec.cases[0]).map(([key,value])=>`${key}${spec.input_types?.[key]?" ("+spec.input_types[key]+")":""} = ${pythonValue(value)}`).join('\n');
     el('pilot-run').textContent=stage==='run'?'Run worked example ▶':'Run & check Python ▶';
     el('restore-starter').hidden=stage==='run';
   }
@@ -119,7 +137,7 @@ function render() {
   el('learning-note').textContent=activity.investigate.explanation;
   const history=aliases[activity.id]||[];
   el('legacy-history').textContent=history.length?`Preserved historical records: ${[...new Set(history.map(x=>x.legacyId))].join(', ')}. They do not award v3 mastery. Access the original drafts through the existing lessons.`:'';
-  renderNavigation();save();
+  renderNavigation();updateReviewReminder();save();
 }
 async function runPython() {
   if(busy)return;
@@ -132,14 +150,17 @@ async function runPython() {
   el('pilot-output-area').hidden=false;el('pilot-output').textContent='Executing real Python…';el('pilot-traceback').hidden=true;el('pilot-runtime').textContent='Starting Python…';el('pilot-feedback').hidden=true;
   const seq=++requestId;let timer;
   try {
-    worker ||= new Worker('./worker.js?v=v3-pilot-1');
+    worker ||= new Worker('./worker.js?v=v3-pilot-2');
     const result=await new Promise((resolve,reject)=>{
       timer=setTimeout(()=>{worker.terminate();worker=null;reject(new Error('Python exceeded the time limit. Retry after checking for an infinite loop.'));},120000);
       worker.onmessage=event=>{const msg=event.data;if(msg.type==='status'){el('pilot-runtime').textContent=msg.message;return;}if(msg.requestId!==seq)return;clearTimeout(timer);if(msg.type==='error')reject(new Error(msg.message));else resolve(msg);};
       worker.onerror=()=>{worker.terminate();worker=null;reject(new Error('The Python Worker could not load. Check the connection and retry.'));};
       worker.postMessage({type:'pilot',requestId:seq,activity:activity.id,stage,source:sourceCode,reviewIndex:skill.activeReview});
     });
-    const report=result.cases?.[0];
+    const report=result.ok?result.cases?.[0]:result.cases?.at(-1);
+    const inputIndex=report?.input_index??0;
+    const testSpec=stage==='run'?{cases:[activity.example.case]}:stage==='transfer'?activity.transfers[skill.activeReview]:activity.stages[stage];
+    el('output-case').textContent=report?`Input ${inputIndex+1}: ${Object.entries(testSpec.cases[inputIndex]||{}).map(([k,v])=>k+' = '+pythonValue(v)).join('; ')}`:'';
     el('pilot-output').textContent=report?.output?.trim()||'(No printed output)';
     if(report?.error){el('pilot-traceback').textContent=report.error;el('pilot-traceback').hidden=false;}
     // The traceback demonstration is intentional; it is exploration, never mastery.
@@ -149,8 +170,8 @@ async function runPython() {
     el('phase-next').hidden=!passed || stage==='transfer' || (stage==='debug'&&skill.guidedAt);
     el('evidence').textContent=S.evidence(skill);
     if(stage==='debug'||stage==='transfer') {
-      const output=el('pilot-output').textContent,trace=el('pilot-traceback').textContent,hasTrace=!el('pilot-traceback').hidden,message=el('pilot-feedback').textContent;
-      render();el('pilot-output-area').hidden=false;el('pilot-output').textContent=output;el('pilot-traceback').textContent=trace;el('pilot-traceback').hidden=!hasTrace;feedback(message,passed);
+      const output=el('pilot-output').textContent,caseLabel=el('output-case').textContent,trace=el('pilot-traceback').textContent,hasTrace=!el('pilot-traceback').hidden,message=el('pilot-feedback').textContent;
+      render();el('pilot-output-area').hidden=false;el('output-case').textContent=caseLabel;el('pilot-output').textContent=output;el('pilot-traceback').textContent=trace;el('pilot-traceback').hidden=!hasTrace;feedback(message,passed);
     }
   } catch(error){feedback(error.message+' No result was simulated.');el('pilot-output').textContent='Execution unavailable.';}
   finally {clearTimeout(timer);setBusy(false);el('pilot-runtime').textContent='Python runs on this device';}
@@ -168,9 +189,12 @@ el('pilot-hint').onclick=()=>{if(busy)return;skill.hints[skill.stage]=Math.min(3
 el('next-activity').onclick=()=>{const next=catalog.activities[catalog.activities.indexOf(activity)+1];if(next)select(next.id);};
 el('start-review').onclick=()=>{if(busy||!S.due(skill))return;if((skill.reviewCursor||0)>=activity.transfers.length)return;skill.activeReview=skill.reviewCursor||0;skill.reviewCursor=skill.activeReview+1;skill.stage='transfer';skill.drafts.transfer='';skill.passed.transfer=false;save();render();};
 el('pathway').onchange=renderNavigation;
+el('open-review').onclick=()=>{const next=dueActivities()[0];if(next&&!busy)select(next.id);};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateReviewReminder();});
+setInterval(updateReviewReminder,60000);
 el('image-retry').onclick=loadImage;
 el('export-progress').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='biopython-studio-progress.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
-el('import-progress').onchange=async event=>{try{const file=event.target.files[0];if(!file)return;if(file.size>10000000)throw new Error('Progress file is larger than 10 MB.');const incoming=S.validate(JSON.parse(await file.text()));state=S.merge(state,incoming);aliases=S.migrateAliases(state,manifest);save();skill=S.record(state,activity.id);render();el('backup-status').textContent='Progress imported. Existing drafts were kept; conflicting imported records are preserved in the export archive.';}catch(error){el('backup-status').textContent=error.message;}finally{event.target.value='';}};
+el('import-progress').onchange=async event=>{try{if(busy)throw new Error('Finish the current Python run before importing progress.');const file=event.target.files[0];if(!file)return;if(file.size>10000000)throw new Error('Progress file is larger than 10 MB.');const incoming=S.validate(JSON.parse(await file.text()));state=S.merge(state,incoming);aliases=S.migrateAliases(state,manifest);save();select(state.current||activity.id);el('backup-status').textContent='Progress imported. Existing drafts were kept; conflicting imported records are preserved in the export archive.';}catch(error){el('backup-status').textContent=error.message;}finally{event.target.value='';}};
 document.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)&&!el('coding-panel').hidden){event.preventDefault();runPython();}});
 async function boot() {
   try {

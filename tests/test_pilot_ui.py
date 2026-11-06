@@ -67,6 +67,12 @@ try:
         print('PASS live activity',a['number'],a['title'],flush=True)
         if i<len(CAT)-1:page.locator('#next-activity').click()
     assert not errors,errors
+    page.evaluate("() => { select(catalog.activities[0].id);skill.stage='modify';render(); }")
+    page.locator('#pilot-editor').fill('if field_name != "Field B07":\n    print(field_name)\n    print("Recorded")\nelse:\n    print(missing_second_input)')
+    run(page,success=False)
+    assert 'NameError' in page.locator('#pilot-traceback').inner_text()
+    assert 'Input 2:' in page.locator('#output-case').inner_text()
+    assert 'Field B07' in page.locator('#output-case').inner_text()
     # All activity drafts, hint use and position persist across a reload.
     before=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
     page.reload();page.wait_for_function('!!activity')
@@ -74,6 +80,7 @@ try:
     assert before==after
     # Advancing the test clock exercises the real delayed-transfer UI, not a 24h sleep.
     page.evaluate('''() => { const a=catalog.activities[1];state.skills[a.id].reviewAt=Date.now()-1;select(a.id); }''')
+    assert page.locator('#review-reminder').is_visible()
     page.locator('#start-review').click()
     assert page.locator('#pilot-editor').input_value()==''
     assert page.locator('#pilot-hint').is_hidden()
@@ -119,6 +126,12 @@ try:
     fresh=browser.new_context();imported=fresh.new_page();imported.goto(URL);imported.wait_for_function('!!activity')
     imported.locator('#import-progress').set_input_files(dict(name='progress.json',mimeType='application/json',buffer=json.dumps(exported).encode()))
     imported.wait_for_function('state.legacySnapshots.length===1')
+    # Importing into an untouched first-activity page restores its actual progress.
+    assert imported.evaluate('state.skills[catalog.activities[0].id].drafts')=={}
+    restored=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
+    imported.locator('#import-progress').set_input_files(dict(name='v3-progress.json',mimeType='application/json',buffer=json.dumps(restored).encode()))
+    imported.wait_for_function('Object.keys(state.skills).length>1')
+    assert imported.evaluate('state.skills[catalog.activities[0].id].drafts.modify')==restored['skills'][CAT[0]['id']]['drafts']['modify']
     imported.goto(URL+'/legacy.html')
     assert imported.locator('#editor').input_value()==legacy['drafts']['final_research_pipeline']
     assert imported.evaluate('lessons.length')==61

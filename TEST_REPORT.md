@@ -45,3 +45,7 @@ The live pilot separately loaded and decoded the first original HPA image and re
 - Next: evaluate the pilot, finish G2 migration/prerequisite UX with learner feedback, then extend foundations and the notebook/venv/Git handoff in the unchanged default route. Calibrated/annotated microscopy and scientific inference remain later release gates.
 
 HPA JPEG composites are visualization/array teaching assets, not calibrated raw fluorescence. Candidate regions are not validated biological objects. BioCompute and AppDeploy ImageLab were not changed.
+
+## Pilot usability review follow-up
+
+Repository review found and corrected three concrete issues: a failure on changed input 2/3 previously displayed the first input’s output and hid the actual traceback; importing into a fresh landing record could archive rather than restore its saved progress; and due delayed reviews had no visible reminder. The UI now shows the failing input/traceback, restores untouched records and saved position, and presents a compact due-review action. Provided values use Python `True`/`False`/`None` spelling. Imports are blocked while a Python run is active to avoid changing the record receiving that run’s result. These are automated usability findings, not a completed human learner evaluation.
