@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#0b1118">
   <meta name="description" content="BioPython Studio — focused IDE for learning Python and scientific image analysis.">
   <title>BioPython Studio — Learning IDE</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.21/lib/codemirror.min.css">
+  <link rel="stylesheet" href="./vendor/codemirror5/codemirror.css">
   <link rel="stylesheet" href="./styles.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/codemirror@5.65.21/lib/codemirror.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/codemirror@5.65.21/mode/python/python.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/codemirror@5.65.21/addon/edit/closebrackets.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/codemirror@5.65.21/addon/edit/matchbrackets.min.js"></script>
+  <script defer src="./vendor/codemirror5/codemirror.js"></script>
+  <script defer src="./vendor/codemirror5/python.js"></script>
+  <script defer src="./vendor/codemirror5/closebrackets.js"></script>
+  <script defer src="./vendor/codemirror5/matchbrackets.js"></script>
   <script defer src="./src/ui-first.js"></script>
 </head>
 <body data-theme="dark">
@@ -99,7 +99,7 @@
 
         <section class="image card" id="image-panel" aria-label="Scientific image viewer" hidden>
           <div class="panel-toolbar image-toolbar">
-            <span class="file-label">Image viewer <span class="editor-type">Preview</span></span>
+            <span class="file-label">Image viewer <span class="editor-type">RGB preview</span></span>
             <div class="panel-actions viewer-controls">
               <button id="zoom-out" class="icon-button compact" type="button" aria-label="Zoom out" disabled>−</button>
               <button id="zoom-reset" class="subtle-button" type="button" disabled>Fit</button>
@@ -117,14 +117,37 @@
             <span class="viewer-value">0 / 0</span>
             <label class="control-label" for="time-point">T</label><input id="time-point" type="range" min="0" max="0" value="0" disabled aria-label="Time point" title="Time-series viewer will be enabled for supported microscopy files">
             <span class="viewer-value">0 / 0</span>
+            <button type="button" id="compare-toggle" class="subtle-button compare-toggle" aria-expanded="false" aria-controls="comparison-tools">Compare</button>
           </div>
+          <div class="comparison-tools" id="comparison-tools" hidden>
+            <label class="load-button" for="comparison-upload" tabindex="0">Open result image</label>
+            <input id="comparison-upload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+            <span id="comparison-filename" class="comparison-filename">No comparison image</span>
+            <label class="control-label" for="comparison-mode">View</label>
+            <select id="comparison-mode" aria-label="Comparison view" disabled>
+              <option value="side">Side by side</option>
+              <option value="overlay">Overlay</option>
+              <option value="wipe">Wipe</option>
+            </select>
+            <label class="control-label" for="comparison-opacity">Mix</label>
+            <input id="comparison-opacity" type="range" min="0" max="100" value="50" aria-label="Overlay opacity or wipe position" disabled>
+            <output id="comparison-opacity-value" for="comparison-opacity">50%</output>
+          </div>
+          <div class="comparison-notice" id="comparison-notice" role="status" hidden></div>
           <div class="image-canvas" id="image-canvas" aria-label="Image preview area">
             <div id="image-empty" class="image-empty">
               <svg width="48" height="48" viewBox="0 0 52 52" fill="none" aria-hidden="true"><rect x="6" y="7" width="40" height="38" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="18" cy="19" r="4" stroke="currentColor" stroke-width="1.5"/><path d="m9 39 10-11 8 7 9-12 7 11" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
               <strong>Open a microscopy image</strong>
               <p>PNG, JPEG, WebP. TIFF/OME support will be added with the analysis engine.</p>
             </div>
-            <img id="image-preview" alt="Opened microscopy image" draggable="false" hidden>
+            <div id="source-image-frame" class="image-frame source-frame" hidden>
+              <span class="frame-tag">Original</span>
+              <img id="image-preview" alt="Opened microscopy image" draggable="false" hidden>
+            </div>
+            <div id="comparison-image-frame" class="image-frame comparison-frame" hidden>
+              <span class="frame-tag">Comparison</span>
+              <img id="comparison-preview" alt="Manually opened comparison image" draggable="false" hidden>
+            </div>
             <div class="image-loading" id="image-loading" hidden>Loading image…</div>
           </div>
           <div class="panel-footer viewer-footer">
