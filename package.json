@@ -1,9 +1,9 @@
 {
-  "name": "biopython-studio-rebuild",
+  "name": "biopython-studio-ui-first",
   "private": true,
   "type": "module",
-  "description": "Source-led Python-to-microscopy learning app frontend rebuild",
+  "description": "Interface-only responsive Python and microscopy IDE preview",
   "scripts": {
-    "test": "node --test tests/preview.test.mjs"
+    "test": "node --test tests/preview.test.mjs tests/witz_sources.test.mjs"
   }
 }
