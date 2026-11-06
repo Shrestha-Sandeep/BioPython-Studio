@@ -44,6 +44,11 @@ def main():
                 page.wait_for_function("document.querySelectorAll('#stage-nav button').length === 4")
                 assert page.get_by_role("heading",name="Run your first scientific script").is_visible()
                 page.get_by_role("heading",name="Witz exercise 1 of 6").wait_for()
+                assert page.locator("#worked-example").is_visible()
+                page.locator("#worked-example summary").click()
+                assert page.locator("#worked-example-code").is_visible()
+                assert len(page.locator("#worked-example-code").inner_text())>3
+
                 assert page.locator("#source-link").get_attribute("href").endswith("e01-Python_basics.ipynb")
                 page.locator("#code-editor").fill("var1 = 5\nprint(var1)")
                 page.get_by_role("button",name="Next exercise").click()
