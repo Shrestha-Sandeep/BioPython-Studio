@@ -3,7 +3,7 @@ const S = LearningState;
 const el = id => document.getElementById(id);
 const phases = ['predict','run','investigate','modify','write','debug'];
 const labels = {predict:'Predict',run:'Run',investigate:'Investigate',modify:'Modify',write:'Write',debug:'Debug',transfer:'Delayed transfer'};
-let manifest, catalog, coursePath, state, aliases, activity, skill, worker, goalUI, requestId=0, busy=false, storageBlocked=false;
+let manifest, catalog, spine, coursePath, state, aliases, activity, skill, worker, goalUI, requestId=0, busy=false, storageBlocked=false;
 const notebookDefaults={setup:'specimen = "CTRL-A01"\nfield_count = 3',analysis:'print(specimen)\nprint(field_count)'};
 const source = 'https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg';
 let imageLoaded=false, imagePending=false, imageURL=null;
@@ -80,7 +80,7 @@ function navigateCourse(entry){
 function renderNavigation(){
   CoursePath.render(el('activity-list'),coursePath,activity.id,navigateCourse);
   for(const button of el('activity-list').querySelectorAll('button'))button.disabled=busy;
-  el('pilot-progress').textContent=CoursePath.stage(manifest.competencies.find(c=>c.id===activity.id));
+  el('pilot-progress').textContent=coursePath.find(c=>c.id===activity.id)?.stage||'Python';
 }
 function selectPhase(phase){
   if(busy||!phases.includes(phase))return;
@@ -95,7 +95,8 @@ function select(id) {
 }
 function render() {
   const stage=skill.stage, index=catalog.activities.indexOf(activity);
-  el('activity-position').textContent=`${CoursePath.stage(manifest.competencies.find(c=>c.id===activity.id))} · Exercise ${CoursePath.available(coursePath).findIndex(c=>c.id===activity.id)+1} of ${CoursePath.available(coursePath).length}`;
+  const courseEntry=coursePath.find(c=>c.id===activity.id);
+  el('activity-position').textContent=`${courseEntry?.stage||'Python'} · ${courseEntry?.mission?.title||'Scientific Python'} · ${CoursePath.available(coursePath).findIndex(c=>c.id===activity.id)+1}/${CoursePath.available(coursePath).length}`;
   el('activity-title').textContent=activity.title;el('activity-context').textContent=activity.context;
   el('evidence').textContent=S.evidence(skill);el('evidence').className='pill '+(skill.independentAt?'verified':'guided');
   const track=el('phase-track');track.replaceChildren();
@@ -240,10 +241,10 @@ el('import-progress').onchange=async event=>{try{if(busy)throw new Error('Finish
 document.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){if(['notebook-setup','notebook-analysis'].includes(event.target.id)){event.preventDefault();notebookRun(event.target.id.replace('notebook-',''));}else if(!el('coding-panel').hidden){event.preventDefault();runPython();}}});
 async function boot() {
   try {
-    const responses=await Promise.all([fetch('./curriculum/v3_manifest.json'),fetch('./curriculum/v3_pilot.json')]);
+    const responses=await Promise.all([fetch('./curriculum/v3_manifest.json'),fetch('./curriculum/v3_pilot.json'),fetch('./curriculum/witz_spine.json')]);
     if(responses.some(r=>!r.ok))throw new Error('The curriculum could not load. Reload this page.');
-    [manifest,catalog]=await Promise.all(responses.map(r=>r.json()));
-    coursePath=CoursePath.build(manifest,catalog);
+    [manifest,catalog,spine]=await Promise.all(responses.map(r=>r.json()));
+    coursePath=CoursePath.build(manifest,catalog,spine);
     try {state=S.load(localStorage);}catch(error){storageBlocked=true;state=S.fresh();el('storage-warning').hidden=false;el('storage-warning').textContent='Saved progress could not be read. The original stored data is untouched. '+error.message;}
     goalUI=PilotMilestones.createUI({context:()=>({state,catalog,manifest,activity,skill,busy}),navigate:select,canOpen:id=>catalog.activities.some(a=>a.id===id),beginReview:startReview,save,download:()=>{
       const data=PilotMilestones.report(state,catalog,manifest),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='biopython-pilot-evidence.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
