@@ -1,0 +1,3129 @@
+{
+  "schema_version": "3.0.0",
+  "date": "2026-11-06",
+  "status": "FROZEN_DESIGN_NOT_IMPLEMENTED",
+  "based_on_sha": "c6aaae508ff50e87958222ecb5826e2f0b367a96",
+  "scope": "BioPython Studio only; BioCompute and ImageLab excluded",
+  "count_definition": "156 DISTINCT competencies, not 156 shipped interactive lessons or mandatory screens",
+  "modules": [
+    {
+      "id": "M00",
+      "title": "Orientation, execution, errors and notebooks",
+      "track": "foundation",
+      "count": 4
+    },
+    {
+      "id": "M01",
+      "title": "Python values, decisions and iteration",
+      "track": "foundation",
+      "count": 11
+    },
+    {
+      "id": "M02",
+      "title": "Collections and structured scientific records",
+      "track": "foundation",
+      "count": 9
+    },
+    {
+      "id": "M03",
+      "title": "Functions, files, testing and actual tools",
+      "track": "foundation",
+      "count": 12
+    },
+    {
+      "id": "M04",
+      "title": "NumPy arrays and numerical reasoning",
+      "track": "foundation",
+      "count": 14
+    },
+    {
+      "id": "M05",
+      "title": "Pandas, biological metadata and data QA",
+      "track": "foundation",
+      "count": 12
+    },
+    {
+      "id": "M06",
+      "title": "Scientific figures and communication",
+      "track": "foundation",
+      "count": 8
+    },
+    {
+      "id": "M07",
+      "title": "Real microscopy images, provenance and axes",
+      "track": "microscopy",
+      "count": 11
+    },
+    {
+      "id": "M08",
+      "title": "Image filtering, thresholds and segmentation",
+      "track": "microscopy",
+      "count": 14
+    },
+    {
+      "id": "M09",
+      "title": "Measurements, motion and validation",
+      "track": "microscopy",
+      "count": 12
+    },
+    {
+      "id": "M10",
+      "title": "Scientific statistics, units and reproducibility",
+      "track": "shared_scientific",
+      "count": 15
+    },
+    {
+      "id": "M11",
+      "title": "Biopython, DNA sequences and introductory NGS",
+      "track": "sequence",
+      "count": 16
+    },
+    {
+      "id": "M12",
+      "title": "Defensible baseline ML for biological data",
+      "track": "ml",
+      "count": 11
+    },
+    {
+      "id": "M13",
+      "title": "Unseen-data independent projects",
+      "track": "projects",
+      "count": 7
+    }
+  ],
+  "competencies": [
+    {
+      "number": "001",
+      "id": "bps3.m00.run_a_scientific_python_cell",
+      "module": "M00",
+      "source_key": "V2-001",
+      "title": "Run a scientific Python cell",
+      "prerequisite_numbers": [],
+      "prerequisites": []
+    },
+    {
+      "number": "002",
+      "id": "bps3.m00.read_an_error_traceback",
+      "module": "M00",
+      "source_key": "V2-003",
+      "title": "Read an error traceback",
+      "prerequisite_numbers": [
+        "001"
+      ],
+      "prerequisites": [
+        "bps3.m00.run_a_scientific_python_cell"
+      ]
+    },
+    {
+      "number": "003",
+      "id": "bps3.m00.use_documentation_and_help",
+      "module": "M00",
+      "source_key": "V2-004",
+      "title": "Use documentation and help",
+      "prerequisite_numbers": [
+        "001"
+      ],
+      "prerequisites": [
+        "bps3.m00.run_a_scientific_python_cell"
+      ]
+    },
+    {
+      "number": "004",
+      "id": "bps3.m00.understand_a_notebook_workflow",
+      "module": "M00",
+      "source_key": "V2-005",
+      "title": "Understand a notebook workflow",
+      "prerequisite_numbers": [
+        "001"
+      ],
+      "prerequisites": [
+        "bps3.m00.run_a_scientific_python_cell"
+      ]
+    },
+    {
+      "number": "005",
+      "id": "bps3.m01.name_a_specimen_using_variables",
+      "module": "M01",
+      "source_key": "V2-007",
+      "title": "Name a specimen using variables",
+      "prerequisite_numbers": [
+        "001"
+      ],
+      "prerequisites": [
+        "bps3.m00.run_a_scientific_python_cell"
+      ]
+    },
+    {
+      "number": "006",
+      "id": "bps3.m01.calculate_with_physical_quantities",
+      "module": "M01",
+      "source_key": "V2-008",
+      "title": "Calculate with physical quantities",
+      "prerequisite_numbers": [
+        "005"
+      ],
+      "prerequisites": [
+        "bps3.m01.name_a_specimen_using_variables"
+      ]
+    },
+    {
+      "number": "007",
+      "id": "bps3.m01.explain_int_float_and_bool",
+      "module": "M01",
+      "source_key": "V2-009",
+      "title": "Explain int, float and bool",
+      "prerequisite_numbers": [
+        "006"
+      ],
+      "prerequisites": [
+        "bps3.m01.calculate_with_physical_quantities"
+      ]
+    },
+    {
+      "number": "008",
+      "id": "bps3.m01.build_informative_strings",
+      "module": "M01",
+      "source_key": "V2-010",
+      "title": "Build informative strings",
+      "prerequisite_numbers": [
+        "005"
+      ],
+      "prerequisites": [
+        "bps3.m01.name_a_specimen_using_variables"
+      ]
+    },
+    {
+      "number": "009",
+      "id": "bps3.m01.parse_a_specimen_identifier",
+      "module": "M01",
+      "source_key": "V2-011",
+      "title": "Parse a specimen identifier",
+      "prerequisite_numbers": [
+        "008"
+      ],
+      "prerequisites": [
+        "bps3.m01.build_informative_strings"
+      ]
+    },
+    {
+      "number": "010",
+      "id": "bps3.m01.compare_measurements_safely",
+      "module": "M01",
+      "source_key": "V2-012",
+      "title": "Compare measurements safely",
+      "prerequisite_numbers": [
+        "006",
+        "007"
+      ],
+      "prerequisites": [
+        "bps3.m01.calculate_with_physical_quantities",
+        "bps3.m01.explain_int_float_and_bool"
+      ]
+    },
+    {
+      "number": "011",
+      "id": "bps3.m01.write_conditional_quality_rules",
+      "module": "M01",
+      "source_key": "V2-013",
+      "title": "Write conditional quality rules",
+      "prerequisite_numbers": [
+        "010"
+      ],
+      "prerequisites": [
+        "bps3.m01.compare_measurements_safely"
+      ]
+    },
+    {
+      "number": "012",
+      "id": "bps3.m01.iterate_and_summarize_microscope_field_lists",
+      "module": "M01",
+      "source_key": "V2-014",
+      "title": "Iterate and summarize microscope-field lists",
+      "prerequisite_numbers": [
+        "016",
+        "011"
+      ],
+      "prerequisites": [
+        "bps3.m02.index_and_slice_a_list",
+        "bps3.m01.write_conditional_quality_rules"
+      ]
+    },
+    {
+      "number": "013",
+      "id": "bps3.m01.use_range_and_enumerate",
+      "module": "M01",
+      "source_key": "V2-015",
+      "title": "Use range and enumerate",
+      "prerequisite_numbers": [
+        "012"
+      ],
+      "prerequisites": [
+        "bps3.m01.iterate_and_summarize_microscope_field_lists"
+      ]
+    },
+    {
+      "number": "014",
+      "id": "bps3.m01.make_a_bounded_while_loop",
+      "module": "M01",
+      "source_key": "V2-016",
+      "title": "Make a bounded while loop",
+      "prerequisite_numbers": [
+        "011"
+      ],
+      "prerequisites": [
+        "bps3.m01.write_conditional_quality_rules"
+      ]
+    },
+    {
+      "number": "015",
+      "id": "bps3.m01.skip_and_stop_intentionally",
+      "module": "M01",
+      "source_key": "V2-017",
+      "title": "Skip and stop intentionally",
+      "prerequisite_numbers": [
+        "012",
+        "011"
+      ],
+      "prerequisites": [
+        "bps3.m01.iterate_and_summarize_microscope_field_lists",
+        "bps3.m01.write_conditional_quality_rules"
+      ]
+    },
+    {
+      "number": "016",
+      "id": "bps3.m02.index_and_slice_a_list",
+      "module": "M02",
+      "source_key": "V2-019",
+      "title": "Index and slice a list",
+      "prerequisite_numbers": [
+        "005"
+      ],
+      "prerequisites": [
+        "bps3.m01.name_a_specimen_using_variables"
+      ]
+    },
+    {
+      "number": "017",
+      "id": "bps3.m02.change_a_list_safely",
+      "module": "M02",
+      "source_key": "V2-020",
+      "title": "Change a list safely",
+      "prerequisite_numbers": [
+        "016"
+      ],
+      "prerequisites": [
+        "bps3.m02.index_and_slice_a_list"
+      ]
+    },
+    {
+      "number": "018",
+      "id": "bps3.m02.unpack_immutable_tuples",
+      "module": "M02",
+      "source_key": "V2-021",
+      "title": "Unpack immutable tuples",
+      "prerequisite_numbers": [
+        "016"
+      ],
+      "prerequisites": [
+        "bps3.m02.index_and_slice_a_list"
+      ]
+    },
+    {
+      "number": "019",
+      "id": "bps3.m02.map_ids_to_metadata",
+      "module": "M02",
+      "source_key": "V2-022",
+      "title": "Map IDs to metadata",
+      "prerequisite_numbers": [
+        "008"
+      ],
+      "prerequisites": [
+        "bps3.m01.build_informative_strings"
+      ]
+    },
+    {
+      "number": "020",
+      "id": "bps3.m02.navigate_nested_records",
+      "module": "M02",
+      "source_key": "V2-023",
+      "title": "Navigate nested records",
+      "prerequisite_numbers": [
+        "019"
+      ],
+      "prerequisites": [
+        "bps3.m02.map_ids_to_metadata"
+      ]
+    },
+    {
+      "number": "021",
+      "id": "bps3.m02.deduplicate_using_sets",
+      "module": "M02",
+      "source_key": "V2-024",
+      "title": "Deduplicate using sets",
+      "prerequisite_numbers": [
+        "016"
+      ],
+      "prerequisites": [
+        "bps3.m02.index_and_slice_a_list"
+      ]
+    },
+    {
+      "number": "022",
+      "id": "bps3.m02.express_a_simple_comprehension",
+      "module": "M02",
+      "source_key": "V2-025",
+      "title": "Express a simple comprehension",
+      "prerequisite_numbers": [
+        "012",
+        "016"
+      ],
+      "prerequisites": [
+        "bps3.m01.iterate_and_summarize_microscope_field_lists",
+        "bps3.m02.index_and_slice_a_list"
+      ]
+    },
+    {
+      "number": "023",
+      "id": "bps3.m02.iterate_over_dictionary_records",
+      "module": "M02",
+      "source_key": "V2-026",
+      "title": "Iterate over dictionary records",
+      "prerequisite_numbers": [
+        "019",
+        "012"
+      ],
+      "prerequisites": [
+        "bps3.m02.map_ids_to_metadata",
+        "bps3.m01.iterate_and_summarize_microscope_field_lists"
+      ]
+    },
+    {
+      "number": "024",
+      "id": "bps3.m02.pair_related_arrays_with_zip",
+      "module": "M02",
+      "source_key": "V2-027",
+      "title": "Pair related arrays with zip",
+      "prerequisite_numbers": [
+        "016",
+        "012"
+      ],
+      "prerequisites": [
+        "bps3.m02.index_and_slice_a_list",
+        "bps3.m01.iterate_and_summarize_microscope_field_lists"
+      ]
+    },
+    {
+      "number": "025",
+      "id": "bps3.m03.return_results_from_a_function",
+      "module": "M03",
+      "source_key": "V2-029",
+      "title": "Return results from a function",
+      "prerequisite_numbers": [
+        "012"
+      ],
+      "prerequisites": [
+        "bps3.m01.iterate_and_summarize_microscope_field_lists"
+      ]
+    },
+    {
+      "number": "026",
+      "id": "bps3.m03.define_parameters_and_defaults",
+      "module": "M03",
+      "source_key": "V2-030",
+      "title": "Define parameters and defaults",
+      "prerequisite_numbers": [
+        "025"
+      ],
+      "prerequisites": [
+        "bps3.m03.return_results_from_a_function"
+      ]
+    },
+    {
+      "number": "027",
+      "id": "bps3.m03.understand_scope",
+      "module": "M03",
+      "source_key": "V2-031",
+      "title": "Understand scope",
+      "prerequisite_numbers": [
+        "025"
+      ],
+      "prerequisites": [
+        "bps3.m03.return_results_from_a_function"
+      ]
+    },
+    {
+      "number": "028",
+      "id": "bps3.m03.write_docstrings_and_type_hints",
+      "module": "M03",
+      "source_key": "V2-032",
+      "title": "Write docstrings and type hints",
+      "prerequisite_numbers": [
+        "025"
+      ],
+      "prerequisites": [
+        "bps3.m03.return_results_from_a_function"
+      ]
+    },
+    {
+      "number": "029",
+      "id": "bps3.m03.raise_and_handle_exceptions",
+      "module": "M03",
+      "source_key": "V2-033",
+      "title": "Raise and handle exceptions",
+      "prerequisite_numbers": [
+        "011",
+        "025"
+      ],
+      "prerequisites": [
+        "bps3.m01.write_conditional_quality_rules",
+        "bps3.m03.return_results_from_a_function"
+      ]
+    },
+    {
+      "number": "030",
+      "id": "bps3.m03.use_imports_and_small_modules",
+      "module": "M03",
+      "source_key": "V2-034",
+      "title": "Use imports and small modules",
+      "prerequisite_numbers": [
+        "025",
+        "003"
+      ],
+      "prerequisites": [
+        "bps3.m03.return_results_from_a_function",
+        "bps3.m00.use_documentation_and_help"
+      ]
+    },
+    {
+      "number": "031",
+      "id": "bps3.m03.read_and_write_a_text_file",
+      "module": "M03",
+      "source_key": "V2-035",
+      "title": "Read and write a text file",
+      "prerequisite_numbers": [
+        "008",
+        "003"
+      ],
+      "prerequisites": [
+        "bps3.m01.build_informative_strings",
+        "bps3.m00.use_documentation_and_help"
+      ]
+    },
+    {
+      "number": "032",
+      "id": "bps3.m03.create_and_run_a_local_python_virtual_environment",
+      "module": "M03",
+      "source_key": "V3-CLI",
+      "title": "Create and run a local Python virtual environment",
+      "prerequisite_numbers": [
+        "030",
+        "031",
+        "004"
+      ],
+      "prerequisites": [
+        "bps3.m03.use_imports_and_small_modules",
+        "bps3.m03.read_and_write_a_text_file",
+        "bps3.m00.understand_a_notebook_workflow"
+      ]
+    },
+    {
+      "number": "033",
+      "id": "bps3.m03.serialize_a_metadata_record",
+      "module": "M03",
+      "source_key": "V2-036",
+      "title": "Serialize a metadata record",
+      "prerequisite_numbers": [
+        "019",
+        "031"
+      ],
+      "prerequisites": [
+        "bps3.m02.map_ids_to_metadata",
+        "bps3.m03.read_and_write_a_text_file"
+      ]
+    },
+    {
+      "number": "034",
+      "id": "bps3.m03.test_a_function_with_pytest_style_checks",
+      "module": "M03",
+      "source_key": "V2-037",
+      "title": "Test a function with pytest-style checks",
+      "prerequisite_numbers": [
+        "025",
+        "002"
+      ],
+      "prerequisites": [
+        "bps3.m03.return_results_from_a_function",
+        "bps3.m00.read_an_error_traceback"
+      ]
+    },
+    {
+      "number": "035",
+      "id": "bps3.m03.package_a_tiny_workflow",
+      "module": "M03",
+      "source_key": "V2-038",
+      "title": "Package a tiny workflow",
+      "prerequisite_numbers": [
+        "030",
+        "031",
+        "034"
+      ],
+      "prerequisites": [
+        "bps3.m03.use_imports_and_small_modules",
+        "bps3.m03.read_and_write_a_text_file",
+        "bps3.m03.test_a_function_with_pytest_style_checks"
+      ]
+    },
+    {
+      "number": "036",
+      "id": "bps3.m03.inspect_and_commit_a_reproducible_git_change",
+      "module": "M03",
+      "source_key": "V3-GIT",
+      "title": "Inspect and commit a reproducible Git change",
+      "prerequisite_numbers": [
+        "032",
+        "035"
+      ],
+      "prerequisites": [
+        "bps3.m03.create_and_run_a_local_python_virtual_environment",
+        "bps3.m03.package_a_tiny_workflow"
+      ]
+    },
+    {
+      "number": "037",
+      "id": "bps3.m04.construct_typed_arrays",
+      "module": "M04",
+      "source_key": "V2-039",
+      "title": "Construct typed arrays",
+      "prerequisite_numbers": [
+        "016",
+        "003"
+      ],
+      "prerequisites": [
+        "bps3.m02.index_and_slice_a_list",
+        "bps3.m00.use_documentation_and_help"
+      ]
+    },
+    {
+      "number": "038",
+      "id": "bps3.m04.understand_shape_and_ndim",
+      "module": "M04",
+      "source_key": "V2-040",
+      "title": "Understand shape and ndim",
+      "prerequisite_numbers": [
+        "037"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_typed_arrays"
+      ]
+    },
+    {
+      "number": "039",
+      "id": "bps3.m04.index_rows_columns_and_planes",
+      "module": "M04",
+      "source_key": "V2-041",
+      "title": "Index rows, columns and planes",
+      "prerequisite_numbers": [
+        "038"
+      ],
+      "prerequisites": [
+        "bps3.m04.understand_shape_and_ndim"
+      ]
+    },
+    {
+      "number": "040",
+      "id": "bps3.m04.slice_a_subarray",
+      "module": "M04",
+      "source_key": "V2-042",
+      "title": "Slice a subarray",
+      "prerequisite_numbers": [
+        "039"
+      ],
+      "prerequisites": [
+        "bps3.m04.index_rows_columns_and_planes"
+      ]
+    },
+    {
+      "number": "041",
+      "id": "bps3.m04.distinguish_views_from_copies",
+      "module": "M04",
+      "source_key": "V2-043",
+      "title": "Distinguish views from copies",
+      "prerequisite_numbers": [
+        "040"
+      ],
+      "prerequisites": [
+        "bps3.m04.slice_a_subarray"
+      ]
+    },
+    {
+      "number": "042",
+      "id": "bps3.m04.apply_ufuncs_and_vectorization",
+      "module": "M04",
+      "source_key": "V2-044",
+      "title": "Apply ufuncs and vectorization",
+      "prerequisite_numbers": [
+        "037"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_typed_arrays"
+      ]
+    },
+    {
+      "number": "043",
+      "id": "bps3.m04.use_broadcasting_correctly",
+      "module": "M04",
+      "source_key": "V2-045",
+      "title": "Use broadcasting correctly",
+      "prerequisite_numbers": [
+        "038",
+        "042"
+      ],
+      "prerequisites": [
+        "bps3.m04.understand_shape_and_ndim",
+        "bps3.m04.apply_ufuncs_and_vectorization"
+      ]
+    },
+    {
+      "number": "044",
+      "id": "bps3.m04.construct_boolean_masks",
+      "module": "M04",
+      "source_key": "V2-046",
+      "title": "Construct Boolean masks",
+      "prerequisite_numbers": [
+        "037",
+        "010"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_typed_arrays",
+        "bps3.m01.compare_measurements_safely"
+      ]
+    },
+    {
+      "number": "045",
+      "id": "bps3.m04.make_masked_assignments",
+      "module": "M04",
+      "source_key": "V2-047",
+      "title": "Make masked assignments",
+      "prerequisite_numbers": [
+        "044",
+        "041"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_boolean_masks",
+        "bps3.m04.distinguish_views_from_copies"
+      ]
+    },
+    {
+      "number": "046",
+      "id": "bps3.m04.aggregate_over_an_axis",
+      "module": "M04",
+      "source_key": "V2-048",
+      "title": "Aggregate over an axis",
+      "prerequisite_numbers": [
+        "038",
+        "042"
+      ],
+      "prerequisites": [
+        "bps3.m04.understand_shape_and_ndim",
+        "bps3.m04.apply_ufuncs_and_vectorization"
+      ]
+    },
+    {
+      "number": "047",
+      "id": "bps3.m04.treat_missing_numbers_explicitly",
+      "module": "M04",
+      "source_key": "V2-049",
+      "title": "Treat missing numbers explicitly",
+      "prerequisite_numbers": [
+        "046"
+      ],
+      "prerequisites": [
+        "bps3.m04.aggregate_over_an_axis"
+      ]
+    },
+    {
+      "number": "048",
+      "id": "bps3.m04.calculate_percentiles_and_sorting_ranks",
+      "module": "M04",
+      "source_key": "V2-050",
+      "title": "Calculate percentiles and sorting ranks",
+      "prerequisite_numbers": [
+        "046"
+      ],
+      "prerequisites": [
+        "bps3.m04.aggregate_over_an_axis"
+      ]
+    },
+    {
+      "number": "049",
+      "id": "bps3.m04.use_seeded_random_simulation_responsibly",
+      "module": "M04",
+      "source_key": "V2-051",
+      "title": "Use seeded random simulation responsibly",
+      "prerequisite_numbers": [
+        "037"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_typed_arrays"
+      ]
+    },
+    {
+      "number": "050",
+      "id": "bps3.m04.check_numeric_precision_and_overflow",
+      "module": "M04",
+      "source_key": "V2-052",
+      "title": "Check numeric precision and overflow",
+      "prerequisite_numbers": [
+        "037"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_typed_arrays"
+      ]
+    },
+    {
+      "number": "051",
+      "id": "bps3.m05.create_and_inspect_a_dataframe",
+      "module": "M05",
+      "source_key": "V2-053",
+      "title": "Create and inspect a DataFrame",
+      "prerequisite_numbers": [
+        "019",
+        "016"
+      ],
+      "prerequisites": [
+        "bps3.m02.map_ids_to_metadata",
+        "bps3.m02.index_and_slice_a_list"
+      ]
+    },
+    {
+      "number": "052",
+      "id": "bps3.m05.read_a_typed_csv_table",
+      "module": "M05",
+      "source_key": "V2-054",
+      "title": "Read a typed CSV table",
+      "prerequisite_numbers": [
+        "051",
+        "031"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe",
+        "bps3.m03.read_and_write_a_text_file"
+      ]
+    },
+    {
+      "number": "053",
+      "id": "bps3.m05.select_rows_and_columns",
+      "module": "M05",
+      "source_key": "V2-055",
+      "title": "Select rows and columns",
+      "prerequisite_numbers": [
+        "051"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe"
+      ]
+    },
+    {
+      "number": "054",
+      "id": "bps3.m05.validate_column_schemas",
+      "module": "M05",
+      "source_key": "V2-056",
+      "title": "Validate column schemas",
+      "prerequisite_numbers": [
+        "051",
+        "020"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe",
+        "bps3.m02.navigate_nested_records"
+      ]
+    },
+    {
+      "number": "055",
+      "id": "bps3.m05.normalize_messy_sample_ids",
+      "module": "M05",
+      "source_key": "V2-057",
+      "title": "Normalize messy sample IDs",
+      "prerequisite_numbers": [
+        "051",
+        "009"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe",
+        "bps3.m01.parse_a_specimen_identifier"
+      ]
+    },
+    {
+      "number": "056",
+      "id": "bps3.m05.find_duplicates_and_conflicting_keys",
+      "module": "M05",
+      "source_key": "V2-058",
+      "title": "Find duplicates and conflicting keys",
+      "prerequisite_numbers": [
+        "051",
+        "021"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe",
+        "bps3.m02.deduplicate_using_sets"
+      ]
+    },
+    {
+      "number": "057",
+      "id": "bps3.m05.handle_missing_records",
+      "module": "M05",
+      "source_key": "V2-059",
+      "title": "Handle missing records",
+      "prerequisite_numbers": [
+        "051"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe"
+      ]
+    },
+    {
+      "number": "058",
+      "id": "bps3.m05.join_sample_and_imaging_tables",
+      "module": "M05",
+      "source_key": "V2-060",
+      "title": "Join sample and imaging tables",
+      "prerequisite_numbers": [
+        "051",
+        "055"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe",
+        "bps3.m05.normalize_messy_sample_ids"
+      ]
+    },
+    {
+      "number": "059",
+      "id": "bps3.m05.group_and_aggregate_descriptive_data",
+      "module": "M05",
+      "source_key": "V2-061",
+      "title": "Group and aggregate descriptive data",
+      "prerequisite_numbers": [
+        "051",
+        "046"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe",
+        "bps3.m04.aggregate_over_an_axis"
+      ]
+    },
+    {
+      "number": "060",
+      "id": "bps3.m05.reshape_wide_and_long_tables",
+      "module": "M05",
+      "source_key": "V2-062",
+      "title": "Reshape wide and long tables",
+      "prerequisite_numbers": [
+        "051",
+        "053"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe",
+        "bps3.m05.select_rows_and_columns"
+      ]
+    },
+    {
+      "number": "061",
+      "id": "bps3.m05.handle_timestamps_and_categories",
+      "module": "M05",
+      "source_key": "V2-063",
+      "title": "Handle timestamps and categories",
+      "prerequisite_numbers": [
+        "051"
+      ],
+      "prerequisites": [
+        "bps3.m05.create_and_inspect_a_dataframe"
+      ]
+    },
+    {
+      "number": "062",
+      "id": "bps3.m05.export_a_traceable_dataset",
+      "module": "M05",
+      "source_key": "V2-064",
+      "title": "Export a traceable dataset",
+      "prerequisite_numbers": [
+        "052",
+        "054",
+        "057"
+      ],
+      "prerequisites": [
+        "bps3.m05.read_a_typed_csv_table",
+        "bps3.m05.validate_column_schemas",
+        "bps3.m05.handle_missing_records"
+      ]
+    },
+    {
+      "number": "063",
+      "id": "bps3.m06.build_a_matplotlib_figure",
+      "module": "M06",
+      "source_key": "V2-065",
+      "title": "Build a Matplotlib figure",
+      "prerequisite_numbers": [
+        "037",
+        "003"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_typed_arrays",
+        "bps3.m00.use_documentation_and_help"
+      ]
+    },
+    {
+      "number": "064",
+      "id": "bps3.m06.show_scatter_and_line_relationships",
+      "module": "M06",
+      "source_key": "V2-066",
+      "title": "Show scatter and line relationships",
+      "prerequisite_numbers": [
+        "063"
+      ],
+      "prerequisites": [
+        "bps3.m06.build_a_matplotlib_figure"
+      ]
+    },
+    {
+      "number": "065",
+      "id": "bps3.m06.show_a_numerical_distribution",
+      "module": "M06",
+      "source_key": "V2-067",
+      "title": "Show a numerical distribution",
+      "prerequisite_numbers": [
+        "063",
+        "048"
+      ],
+      "prerequisites": [
+        "bps3.m06.build_a_matplotlib_figure",
+        "bps3.m04.calculate_percentiles_and_sorting_ranks"
+      ]
+    },
+    {
+      "number": "066",
+      "id": "bps3.m06.compare_grouped_observations",
+      "module": "M06",
+      "source_key": "V2-068",
+      "title": "Compare grouped observations",
+      "prerequisite_numbers": [
+        "063",
+        "059"
+      ],
+      "prerequisites": [
+        "bps3.m06.build_a_matplotlib_figure",
+        "bps3.m05.group_and_aggregate_descriptive_data"
+      ]
+    },
+    {
+      "number": "067",
+      "id": "bps3.m06.arrange_multiple_panels",
+      "module": "M06",
+      "source_key": "V2-069",
+      "title": "Arrange multiple panels",
+      "prerequisite_numbers": [
+        "063"
+      ],
+      "prerequisites": [
+        "bps3.m06.build_a_matplotlib_figure"
+      ]
+    },
+    {
+      "number": "068",
+      "id": "bps3.m06.represent_uncertainty",
+      "module": "M06",
+      "source_key": "V2-070",
+      "title": "Represent uncertainty",
+      "prerequisite_numbers": [
+        "063",
+        "115"
+      ],
+      "prerequisites": [
+        "bps3.m06.build_a_matplotlib_figure",
+        "bps3.m10.distinguish_standard_deviation_from_standard_error"
+      ]
+    },
+    {
+      "number": "069",
+      "id": "bps3.m06.choose_scales_and_accessible_design",
+      "module": "M06",
+      "source_key": "V2-071",
+      "title": "Choose scales and accessible design",
+      "prerequisite_numbers": [
+        "063"
+      ],
+      "prerequisites": [
+        "bps3.m06.build_a_matplotlib_figure"
+      ]
+    },
+    {
+      "number": "070",
+      "id": "bps3.m06.export_publication_ready_graphics",
+      "module": "M06",
+      "source_key": "V2-072",
+      "title": "Export publication-ready graphics",
+      "prerequisite_numbers": [
+        "063",
+        "062"
+      ],
+      "prerequisites": [
+        "bps3.m06.build_a_matplotlib_figure",
+        "bps3.m05.export_a_traceable_dataset"
+      ]
+    },
+    {
+      "number": "071",
+      "id": "bps3.m07.document_a_real_source_image",
+      "module": "M07",
+      "source_key": "V2-073",
+      "title": "Document a real source image",
+      "prerequisite_numbers": [
+        "001"
+      ],
+      "prerequisites": [
+        "bps3.m00.run_a_scientific_python_cell"
+      ]
+    },
+    {
+      "number": "072",
+      "id": "bps3.m07.decode_an_image_into_an_array",
+      "module": "M07",
+      "source_key": "V2-074",
+      "title": "Decode an image into an array",
+      "prerequisite_numbers": [
+        "037",
+        "071"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_typed_arrays",
+        "bps3.m07.document_a_real_source_image"
+      ]
+    },
+    {
+      "number": "073",
+      "id": "bps3.m07.separate_color_channel_data",
+      "module": "M07",
+      "source_key": "V2-075",
+      "title": "Separate color/channel data",
+      "prerequisite_numbers": [
+        "072",
+        "038"
+      ],
+      "prerequisites": [
+        "bps3.m07.decode_an_image_into_an_array",
+        "bps3.m04.understand_shape_and_ndim"
+      ]
+    },
+    {
+      "number": "074",
+      "id": "bps3.m07.understand_image_coordinate_conventions",
+      "module": "M07",
+      "source_key": "V2-076",
+      "title": "Understand image coordinate conventions",
+      "prerequisite_numbers": [
+        "039",
+        "072"
+      ],
+      "prerequisites": [
+        "bps3.m04.index_rows_columns_and_planes",
+        "bps3.m07.decode_an_image_into_an_array"
+      ]
+    },
+    {
+      "number": "075",
+      "id": "bps3.m07.interpret_pixel_dtype_and_range",
+      "module": "M07",
+      "source_key": "V2-077",
+      "title": "Interpret pixel dtype and range",
+      "prerequisite_numbers": [
+        "037",
+        "072"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_typed_arrays",
+        "bps3.m07.decode_an_image_into_an_array"
+      ]
+    },
+    {
+      "number": "076",
+      "id": "bps3.m07.view_contrast_without_changing_data",
+      "module": "M07",
+      "source_key": "V2-078",
+      "title": "View contrast without changing data",
+      "prerequisite_numbers": [
+        "072",
+        "063"
+      ],
+      "prerequisites": [
+        "bps3.m07.decode_an_image_into_an_array",
+        "bps3.m06.build_a_matplotlib_figure"
+      ]
+    },
+    {
+      "number": "077",
+      "id": "bps3.m07.crop_a_biological_roi",
+      "module": "M07",
+      "source_key": "V2-079",
+      "title": "Crop a biological ROI",
+      "prerequisite_numbers": [
+        "040",
+        "074",
+        "072"
+      ],
+      "prerequisites": [
+        "bps3.m04.slice_a_subarray",
+        "bps3.m07.understand_image_coordinate_conventions",
+        "bps3.m07.decode_an_image_into_an_array"
+      ]
+    },
+    {
+      "number": "078",
+      "id": "bps3.m07.quantify_a_selected_roi",
+      "module": "M07",
+      "source_key": "V2-080",
+      "title": "Quantify a selected ROI",
+      "prerequisite_numbers": [
+        "077",
+        "046"
+      ],
+      "prerequisites": [
+        "bps3.m07.crop_a_biological_roi",
+        "bps3.m04.aggregate_over_an_axis"
+      ]
+    },
+    {
+      "number": "079",
+      "id": "bps3.m07.convert_pixel_area_to_physical_units",
+      "module": "M07",
+      "source_key": "V2-081",
+      "title": "Convert pixel area to physical units",
+      "prerequisite_numbers": [
+        "077",
+        "006",
+        "071"
+      ],
+      "prerequisites": [
+        "bps3.m07.crop_a_biological_roi",
+        "bps3.m01.calculate_with_physical_quantities",
+        "bps3.m07.document_a_real_source_image"
+      ]
+    },
+    {
+      "number": "080",
+      "id": "bps3.m07.inspect_axes_in_multidimensional_images",
+      "module": "M07",
+      "source_key": "V2-082",
+      "title": "Inspect axes in multidimensional images",
+      "prerequisite_numbers": [
+        "038",
+        "073"
+      ],
+      "prerequisites": [
+        "bps3.m04.understand_shape_and_ndim",
+        "bps3.m07.separate_color_channel_data"
+      ]
+    },
+    {
+      "number": "081",
+      "id": "bps3.m07.inspect_a_tiff_ome_tiff_in_a_notebook",
+      "module": "M07",
+      "source_key": "V2-083",
+      "title": "Inspect a TIFF/OME-TIFF in a notebook",
+      "prerequisite_numbers": [
+        "080",
+        "031",
+        "032"
+      ],
+      "prerequisites": [
+        "bps3.m07.inspect_axes_in_multidimensional_images",
+        "bps3.m03.read_and_write_a_text_file",
+        "bps3.m03.create_and_run_a_local_python_virtual_environment"
+      ]
+    },
+    {
+      "number": "082",
+      "id": "bps3.m08.explore_an_intensity_histogram",
+      "module": "M08",
+      "source_key": "V2-085",
+      "title": "Explore an intensity histogram",
+      "prerequisite_numbers": [
+        "072",
+        "048",
+        "063"
+      ],
+      "prerequisites": [
+        "bps3.m07.decode_an_image_into_an_array",
+        "bps3.m04.calculate_percentiles_and_sorting_ranks",
+        "bps3.m06.build_a_matplotlib_figure"
+      ]
+    },
+    {
+      "number": "083",
+      "id": "bps3.m08.estimate_and_subtract_background",
+      "module": "M08",
+      "source_key": "V2-086",
+      "title": "Estimate and subtract background",
+      "prerequisite_numbers": [
+        "075",
+        "082"
+      ],
+      "prerequisites": [
+        "bps3.m07.interpret_pixel_dtype_and_range",
+        "bps3.m08.explore_an_intensity_histogram"
+      ]
+    },
+    {
+      "number": "084",
+      "id": "bps3.m08.apply_gaussian_filtering",
+      "module": "M08",
+      "source_key": "V2-087",
+      "title": "Apply Gaussian filtering",
+      "prerequisite_numbers": [
+        "072",
+        "037"
+      ],
+      "prerequisites": [
+        "bps3.m07.decode_an_image_into_an_array",
+        "bps3.m04.construct_typed_arrays"
+      ]
+    },
+    {
+      "number": "085",
+      "id": "bps3.m08.choose_a_denoiser",
+      "module": "M08",
+      "source_key": "V2-088",
+      "title": "Choose a denoiser",
+      "prerequisite_numbers": [
+        "084"
+      ],
+      "prerequisites": [
+        "bps3.m08.apply_gaussian_filtering"
+      ]
+    },
+    {
+      "number": "086",
+      "id": "bps3.m08.make_a_global_threshold_mask",
+      "module": "M08",
+      "source_key": "V2-089",
+      "title": "Make a global threshold mask",
+      "prerequisite_numbers": [
+        "044",
+        "072"
+      ],
+      "prerequisites": [
+        "bps3.m04.construct_boolean_masks",
+        "bps3.m07.decode_an_image_into_an_array"
+      ]
+    },
+    {
+      "number": "087",
+      "id": "bps3.m08.compare_automatic_thresholds",
+      "module": "M08",
+      "source_key": "V2-090",
+      "title": "Compare automatic thresholds",
+      "prerequisite_numbers": [
+        "086",
+        "048"
+      ],
+      "prerequisites": [
+        "bps3.m08.make_a_global_threshold_mask",
+        "bps3.m04.calculate_percentiles_and_sorting_ranks"
+      ]
+    },
+    {
+      "number": "088",
+      "id": "bps3.m08.quantify_threshold_sensitivity",
+      "module": "M08",
+      "source_key": "V2-091",
+      "title": "Quantify threshold sensitivity",
+      "prerequisite_numbers": [
+        "086",
+        "046"
+      ],
+      "prerequisites": [
+        "bps3.m08.make_a_global_threshold_mask",
+        "bps3.m04.aggregate_over_an_axis"
+      ]
+    },
+    {
+      "number": "089",
+      "id": "bps3.m08.apply_binary_morphology",
+      "module": "M08",
+      "source_key": "V2-092",
+      "title": "Apply binary morphology",
+      "prerequisite_numbers": [
+        "086"
+      ],
+      "prerequisites": [
+        "bps3.m08.make_a_global_threshold_mask"
+      ]
+    },
+    {
+      "number": "090",
+      "id": "bps3.m08.label_connected_components",
+      "module": "M08",
+      "source_key": "V2-093",
+      "title": "Label connected components",
+      "prerequisite_numbers": [
+        "086"
+      ],
+      "prerequisites": [
+        "bps3.m08.make_a_global_threshold_mask"
+      ]
+    },
+    {
+      "number": "091",
+      "id": "bps3.m08.filter_components_by_measured_size",
+      "module": "M08",
+      "source_key": "V2-094",
+      "title": "Filter components by measured size",
+      "prerequisite_numbers": [
+        "090",
+        "046"
+      ],
+      "prerequisites": [
+        "bps3.m08.label_connected_components",
+        "bps3.m04.aggregate_over_an_axis"
+      ]
+    },
+    {
+      "number": "092",
+      "id": "bps3.m08.handle_objects_touching_borders",
+      "module": "M08",
+      "source_key": "V2-095",
+      "title": "Handle objects touching borders",
+      "prerequisite_numbers": [
+        "090"
+      ],
+      "prerequisites": [
+        "bps3.m08.label_connected_components"
+      ]
+    },
+    {
+      "number": "093",
+      "id": "bps3.m08.split_touching_candidates",
+      "module": "M08",
+      "source_key": "V2-096",
+      "title": "Split touching candidates",
+      "prerequisite_numbers": [
+        "090",
+        "092"
+      ],
+      "prerequisites": [
+        "bps3.m08.label_connected_components",
+        "bps3.m08.handle_objects_touching_borders"
+      ]
+    },
+    {
+      "number": "094",
+      "id": "bps3.m08.handle_3d_segmentation_limits",
+      "module": "M08",
+      "source_key": "V2-097",
+      "title": "Handle 3D segmentation limits",
+      "prerequisite_numbers": [
+        "080",
+        "090"
+      ],
+      "prerequisites": [
+        "bps3.m07.inspect_axes_in_multidimensional_images",
+        "bps3.m08.label_connected_components"
+      ]
+    },
+    {
+      "number": "095",
+      "id": "bps3.m08.compose_a_parameterized_segmentation_pipeline",
+      "module": "M08",
+      "source_key": "V2-098",
+      "title": "Compose a parameterized segmentation pipeline",
+      "prerequisite_numbers": [
+        "025",
+        "083",
+        "084",
+        "086",
+        "090",
+        "091"
+      ],
+      "prerequisites": [
+        "bps3.m03.return_results_from_a_function",
+        "bps3.m08.estimate_and_subtract_background",
+        "bps3.m08.apply_gaussian_filtering",
+        "bps3.m08.make_a_global_threshold_mask",
+        "bps3.m08.label_connected_components",
+        "bps3.m08.filter_components_by_measured_size"
+      ]
+    },
+    {
+      "number": "096",
+      "id": "bps3.m09.measure_region_properties",
+      "module": "M09",
+      "source_key": "V2-099",
+      "title": "Measure region properties",
+      "prerequisite_numbers": [
+        "090",
+        "051"
+      ],
+      "prerequisites": [
+        "bps3.m08.label_connected_components",
+        "bps3.m05.create_and_inspect_a_dataframe"
+      ]
+    },
+    {
+      "number": "097",
+      "id": "bps3.m09.measure_intensity_in_regions",
+      "module": "M09",
+      "source_key": "V2-100",
+      "title": "Measure intensity in regions",
+      "prerequisite_numbers": [
+        "096",
+        "078"
+      ],
+      "prerequisites": [
+        "bps3.m09.measure_region_properties",
+        "bps3.m07.quantify_a_selected_roi"
+      ]
+    },
+    {
+      "number": "098",
+      "id": "bps3.m09.compare_compartment_signals",
+      "module": "M09",
+      "source_key": "V2-101",
+      "title": "Compare compartment signals",
+      "prerequisite_numbers": [
+        "097"
+      ],
+      "prerequisites": [
+        "bps3.m09.measure_intensity_in_regions"
+      ]
+    },
+    {
+      "number": "099",
+      "id": "bps3.m09.audit_colocalization_reasoning",
+      "module": "M09",
+      "source_key": "V2-102",
+      "title": "Audit colocalization reasoning",
+      "prerequisite_numbers": [
+        "073",
+        "098"
+      ],
+      "prerequisites": [
+        "bps3.m07.separate_color_channel_data",
+        "bps3.m09.compare_compartment_signals"
+      ]
+    },
+    {
+      "number": "100",
+      "id": "bps3.m09.detect_candidate_puncta_peaks",
+      "module": "M09",
+      "source_key": "V2-103",
+      "title": "Detect candidate puncta peaks",
+      "prerequisite_numbers": [
+        "084",
+        "090"
+      ],
+      "prerequisites": [
+        "bps3.m08.apply_gaussian_filtering",
+        "bps3.m08.label_connected_components"
+      ]
+    },
+    {
+      "number": "101",
+      "id": "bps3.m09.analyze_spatial_proximity",
+      "module": "M09",
+      "source_key": "V2-104",
+      "title": "Analyze spatial proximity",
+      "prerequisite_numbers": [
+        "096"
+      ],
+      "prerequisites": [
+        "bps3.m09.measure_region_properties"
+      ]
+    },
+    {
+      "number": "102",
+      "id": "bps3.m09.estimate_motion_from_paired_positions",
+      "module": "M09",
+      "source_key": "V2-105",
+      "title": "Estimate motion from paired positions",
+      "prerequisite_numbers": [
+        "018",
+        "079",
+        "096"
+      ],
+      "prerequisites": [
+        "bps3.m02.unpack_immutable_tuples",
+        "bps3.m07.convert_pixel_area_to_physical_units",
+        "bps3.m09.measure_region_properties"
+      ]
+    },
+    {
+      "number": "103",
+      "id": "bps3.m09.detect_mergers_and_tracking_ambiguity",
+      "module": "M09",
+      "source_key": "V2-106",
+      "title": "Detect mergers and tracking ambiguity",
+      "prerequisite_numbers": [
+        "102"
+      ],
+      "prerequisites": [
+        "bps3.m09.estimate_motion_from_paired_positions"
+      ]
+    },
+    {
+      "number": "104",
+      "id": "bps3.m09.build_a_manual_annotation_specification",
+      "module": "M09",
+      "source_key": "V2-107",
+      "title": "Build a manual-annotation specification",
+      "prerequisite_numbers": [
+        "071",
+        "090"
+      ],
+      "prerequisites": [
+        "bps3.m07.document_a_real_source_image",
+        "bps3.m08.label_connected_components"
+      ]
+    },
+    {
+      "number": "105",
+      "id": "bps3.m09.evaluate_pixel_masks",
+      "module": "M09",
+      "source_key": "V2-108",
+      "title": "Evaluate pixel masks",
+      "prerequisite_numbers": [
+        "086",
+        "104"
+      ],
+      "prerequisites": [
+        "bps3.m08.make_a_global_threshold_mask",
+        "bps3.m09.build_a_manual_annotation_specification"
+      ]
+    },
+    {
+      "number": "106",
+      "id": "bps3.m09.evaluate_object_detections",
+      "module": "M09",
+      "source_key": "V2-109",
+      "title": "Evaluate object detections",
+      "prerequisite_numbers": [
+        "096",
+        "104"
+      ],
+      "prerequisites": [
+        "bps3.m09.measure_region_properties",
+        "bps3.m09.build_a_manual_annotation_specification"
+      ]
+    },
+    {
+      "number": "107",
+      "id": "bps3.m09.stress_test_an_image_analysis_pipeline",
+      "module": "M09",
+      "source_key": "V2-110",
+      "title": "Stress-test an image analysis pipeline",
+      "prerequisite_numbers": [
+        "095",
+        "105",
+        "106"
+      ],
+      "prerequisites": [
+        "bps3.m08.compose_a_parameterized_segmentation_pipeline",
+        "bps3.m09.evaluate_pixel_masks",
+        "bps3.m09.evaluate_object_detections"
+      ]
+    },
+    {
+      "number": "108",
+      "id": "bps3.m10.identify_independent_experimental_units",
+      "module": "M10",
+      "source_key": "V2-111",
+      "title": "Identify independent experimental units",
+      "prerequisite_numbers": [
+        "059",
+        "020"
+      ],
+      "prerequisites": [
+        "bps3.m05.group_and_aggregate_descriptive_data",
+        "bps3.m02.navigate_nested_records"
+      ]
+    },
+    {
+      "number": "109",
+      "id": "bps3.m10.audit_paired_study_designs_and_compute_matched_change",
+      "module": "M10",
+      "source_key": "V2-112",
+      "title": "Audit paired study designs and compute matched change",
+      "prerequisite_numbers": [
+        "108",
+        "010"
+      ],
+      "prerequisites": [
+        "bps3.m10.identify_independent_experimental_units",
+        "bps3.m01.compare_measurements_safely"
+      ]
+    },
+    {
+      "number": "110",
+      "id": "bps3.m10.detect_qc_exclusions_and_bias",
+      "module": "M10",
+      "source_key": "V2-113",
+      "title": "Detect QC exclusions and bias",
+      "prerequisite_numbers": [
+        "057",
+        "109"
+      ],
+      "prerequisites": [
+        "bps3.m05.handle_missing_records",
+        "bps3.m10.audit_paired_study_designs_and_compute_matched_change"
+      ]
+    },
+    {
+      "number": "111",
+      "id": "bps3.m10.define_a_treatment_effect_estimand",
+      "module": "M10",
+      "source_key": "V2-114",
+      "title": "Define a treatment effect estimand",
+      "prerequisite_numbers": [
+        "109"
+      ],
+      "prerequisites": [
+        "bps3.m10.audit_paired_study_designs_and_compute_matched_change"
+      ]
+    },
+    {
+      "number": "112",
+      "id": "bps3.m10.aggregate_within_biological_replicate",
+      "module": "M10",
+      "source_key": "V2-115",
+      "title": "Aggregate within biological replicate",
+      "prerequisite_numbers": [
+        "059",
+        "108"
+      ],
+      "prerequisites": [
+        "bps3.m05.group_and_aggregate_descriptive_data",
+        "bps3.m10.identify_independent_experimental_units"
+      ]
+    },
+    {
+      "number": "113",
+      "id": "bps3.m10.spot_acquisition_batch_confounding",
+      "module": "M10",
+      "source_key": "V2-116",
+      "title": "Spot acquisition-batch confounding",
+      "prerequisite_numbers": [
+        "108",
+        "058"
+      ],
+      "prerequisites": [
+        "bps3.m10.identify_independent_experimental_units",
+        "bps3.m05.join_sample_and_imaging_tables"
+      ]
+    },
+    {
+      "number": "114",
+      "id": "bps3.m10.implement_a_transparent_normalization",
+      "module": "M10",
+      "source_key": "V2-117",
+      "title": "Implement a transparent normalization",
+      "prerequisite_numbers": [
+        "113",
+        "059"
+      ],
+      "prerequisites": [
+        "bps3.m10.spot_acquisition_batch_confounding",
+        "bps3.m05.group_and_aggregate_descriptive_data"
+      ]
+    },
+    {
+      "number": "115",
+      "id": "bps3.m10.distinguish_standard_deviation_from_standard_error",
+      "module": "M10",
+      "source_key": "V2-118",
+      "title": "Distinguish standard deviation from standard error",
+      "prerequisite_numbers": [
+        "112",
+        "046"
+      ],
+      "prerequisites": [
+        "bps3.m10.aggregate_within_biological_replicate",
+        "bps3.m04.aggregate_over_an_axis"
+      ]
+    },
+    {
+      "number": "116",
+      "id": "bps3.m10.choose_a_robust_descriptive_summary",
+      "module": "M10",
+      "source_key": "V3-ROBUST",
+      "title": "Choose a robust descriptive summary",
+      "prerequisite_numbers": [
+        "046",
+        "112"
+      ],
+      "prerequisites": [
+        "bps3.m04.aggregate_over_an_axis",
+        "bps3.m10.aggregate_within_biological_replicate"
+      ]
+    },
+    {
+      "number": "117",
+      "id": "bps3.m10.construct_a_confidence_interval",
+      "module": "M10",
+      "source_key": "V2-119",
+      "title": "Construct a confidence interval",
+      "prerequisite_numbers": [
+        "115"
+      ],
+      "prerequisites": [
+        "bps3.m10.distinguish_standard_deviation_from_standard_error"
+      ]
+    },
+    {
+      "number": "118",
+      "id": "bps3.m10.bootstrap_at_the_correct_unit_level",
+      "module": "M10",
+      "source_key": "V2-120",
+      "title": "Bootstrap at the correct unit level",
+      "prerequisite_numbers": [
+        "112",
+        "117"
+      ],
+      "prerequisites": [
+        "bps3.m10.aggregate_within_biological_replicate",
+        "bps3.m10.construct_a_confidence_interval"
+      ]
+    },
+    {
+      "number": "119",
+      "id": "bps3.m10.select_a_statistical_comparison",
+      "module": "M10",
+      "source_key": "V2-121",
+      "title": "Select a statistical comparison",
+      "prerequisite_numbers": [
+        "109",
+        "117"
+      ],
+      "prerequisites": [
+        "bps3.m10.audit_paired_study_designs_and_compute_matched_change",
+        "bps3.m10.construct_a_confidence_interval"
+      ]
+    },
+    {
+      "number": "120",
+      "id": "bps3.m10.report_effect_size_and_multiplicity",
+      "module": "M10",
+      "source_key": "V2-122",
+      "title": "Report effect size and multiplicity",
+      "prerequisite_numbers": [
+        "119"
+      ],
+      "prerequisites": [
+        "bps3.m10.select_a_statistical_comparison"
+      ]
+    },
+    {
+      "number": "121",
+      "id": "bps3.m10.visualize_replicate_level_effects",
+      "module": "M10",
+      "source_key": "V2-123",
+      "title": "Visualize replicate-level effects",
+      "prerequisite_numbers": [
+        "068",
+        "112"
+      ],
+      "prerequisites": [
+        "bps3.m06.represent_uncertainty",
+        "bps3.m10.aggregate_within_biological_replicate"
+      ]
+    },
+    {
+      "number": "122",
+      "id": "bps3.m10.produce_a_reproducible_experiment_summary",
+      "module": "M10",
+      "source_key": "V2-124",
+      "title": "Produce a reproducible experiment summary",
+      "prerequisite_numbers": [
+        "062",
+        "111",
+        "121"
+      ],
+      "prerequisites": [
+        "bps3.m05.export_a_traceable_dataset",
+        "bps3.m10.define_a_treatment_effect_estimand",
+        "bps3.m10.visualize_replicate_level_effects"
+      ]
+    },
+    {
+      "number": "123",
+      "id": "bps3.m11.validate_dna_bases_and_ambiguity_policy",
+      "module": "M11",
+      "source_key": "V2-125",
+      "title": "Validate DNA bases and ambiguity policy",
+      "prerequisite_numbers": [
+        "008",
+        "016",
+        "010"
+      ],
+      "prerequisites": [
+        "bps3.m01.build_informative_strings",
+        "bps3.m02.index_and_slice_a_list",
+        "bps3.m01.compare_measurements_safely"
+      ]
+    },
+    {
+      "number": "124",
+      "id": "bps3.m11.compute_and_interpret_dna_gc_fraction",
+      "module": "M11",
+      "source_key": "V3-GC",
+      "title": "Compute and interpret DNA GC fraction",
+      "prerequisite_numbers": [
+        "123",
+        "006"
+      ],
+      "prerequisites": [
+        "bps3.m11.validate_dna_bases_and_ambiguity_policy",
+        "bps3.m01.calculate_with_physical_quantities"
+      ]
+    },
+    {
+      "number": "125",
+      "id": "bps3.m11.reverse_complement_dna",
+      "module": "M11",
+      "source_key": "V2-126",
+      "title": "Reverse-complement DNA",
+      "prerequisite_numbers": [
+        "123",
+        "019"
+      ],
+      "prerequisites": [
+        "bps3.m11.validate_dna_bases_and_ambiguity_policy",
+        "bps3.m02.map_ids_to_metadata"
+      ]
+    },
+    {
+      "number": "126",
+      "id": "bps3.m11.translate_a_coding_sequence",
+      "module": "M11",
+      "source_key": "V2-127",
+      "title": "Translate a coding sequence",
+      "prerequisite_numbers": [
+        "123"
+      ],
+      "prerequisites": [
+        "bps3.m11.validate_dna_bases_and_ambiguity_policy"
+      ]
+    },
+    {
+      "number": "127",
+      "id": "bps3.m11.use_biopython_seq_and_seqrecord",
+      "module": "M11",
+      "source_key": "V2-128",
+      "title": "Use Biopython Seq and SeqRecord",
+      "prerequisite_numbers": [
+        "123",
+        "030"
+      ],
+      "prerequisites": [
+        "bps3.m11.validate_dna_bases_and_ambiguity_policy",
+        "bps3.m03.use_imports_and_small_modules"
+      ]
+    },
+    {
+      "number": "128",
+      "id": "bps3.m11.parse_and_write_fasta",
+      "module": "M11",
+      "source_key": "V2-129",
+      "title": "Parse and write FASTA",
+      "prerequisite_numbers": [
+        "127",
+        "031"
+      ],
+      "prerequisites": [
+        "bps3.m11.use_biopython_seq_and_seqrecord",
+        "bps3.m03.read_and_write_a_text_file"
+      ]
+    },
+    {
+      "number": "129",
+      "id": "bps3.m11.extract_genomic_intervals",
+      "module": "M11",
+      "source_key": "V2-130",
+      "title": "Extract genomic intervals",
+      "prerequisite_numbers": [
+        "128",
+        "039"
+      ],
+      "prerequisites": [
+        "bps3.m11.parse_and_write_fasta",
+        "bps3.m04.index_rows_columns_and_planes"
+      ]
+    },
+    {
+      "number": "130",
+      "id": "bps3.m11.parse_fastq_records",
+      "module": "M11",
+      "source_key": "V2-131",
+      "title": "Parse FASTQ records",
+      "prerequisite_numbers": [
+        "128",
+        "127"
+      ],
+      "prerequisites": [
+        "bps3.m11.parse_and_write_fasta",
+        "bps3.m11.use_biopython_seq_and_seqrecord"
+      ]
+    },
+    {
+      "number": "131",
+      "id": "bps3.m11.summarize_base_quality_profiles",
+      "module": "M11",
+      "source_key": "V2-132",
+      "title": "Summarize base-quality profiles",
+      "prerequisite_numbers": [
+        "130",
+        "046"
+      ],
+      "prerequisites": [
+        "bps3.m11.parse_fastq_records",
+        "bps3.m04.aggregate_over_an_axis"
+      ]
+    },
+    {
+      "number": "132",
+      "id": "bps3.m11.trim_reads_by_a_documented_rule",
+      "module": "M11",
+      "source_key": "V2-133",
+      "title": "Trim reads by a documented rule",
+      "prerequisite_numbers": [
+        "130",
+        "010"
+      ],
+      "prerequisites": [
+        "bps3.m11.parse_fastq_records",
+        "bps3.m01.compare_measurements_safely"
+      ]
+    },
+    {
+      "number": "133",
+      "id": "bps3.m11.count_k_mers_with_ambiguity_handling",
+      "module": "M11",
+      "source_key": "V2-134",
+      "title": "Count k-mers with ambiguity handling",
+      "prerequisite_numbers": [
+        "123",
+        "012"
+      ],
+      "prerequisites": [
+        "bps3.m11.validate_dna_bases_and_ambiguity_policy",
+        "bps3.m01.iterate_and_summarize_microscope_field_lists"
+      ]
+    },
+    {
+      "number": "134",
+      "id": "bps3.m11.perform_small_pairwise_alignments",
+      "module": "M11",
+      "source_key": "V2-135",
+      "title": "Perform small pairwise alignments",
+      "prerequisite_numbers": [
+        "127",
+        "125"
+      ],
+      "prerequisites": [
+        "bps3.m11.use_biopython_seq_and_seqrecord",
+        "bps3.m11.reverse_complement_dna"
+      ]
+    },
+    {
+      "number": "135",
+      "id": "bps3.m11.interpret_mapping_summaries",
+      "module": "M11",
+      "source_key": "V2-136",
+      "title": "Interpret mapping summaries",
+      "prerequisite_numbers": [
+        "129",
+        "130"
+      ],
+      "prerequisites": [
+        "bps3.m11.extract_genomic_intervals",
+        "bps3.m11.parse_fastq_records"
+      ]
+    },
+    {
+      "number": "136",
+      "id": "bps3.m11.compute_read_coverage",
+      "module": "M11",
+      "source_key": "V2-137",
+      "title": "Compute read coverage",
+      "prerequisite_numbers": [
+        "129",
+        "037"
+      ],
+      "prerequisites": [
+        "bps3.m11.extract_genomic_intervals",
+        "bps3.m04.construct_typed_arrays"
+      ]
+    },
+    {
+      "number": "137",
+      "id": "bps3.m11.build_a_count_matrix",
+      "module": "M11",
+      "source_key": "V2-138",
+      "title": "Build a count matrix",
+      "prerequisite_numbers": [
+        "128",
+        "051"
+      ],
+      "prerequisites": [
+        "bps3.m11.parse_and_write_fasta",
+        "bps3.m05.create_and_inspect_a_dataframe"
+      ]
+    },
+    {
+      "number": "138",
+      "id": "bps3.m11.calculate_cpm_and_explain_limits",
+      "module": "M11",
+      "source_key": "V2-139",
+      "title": "Calculate CPM and explain limits",
+      "prerequisite_numbers": [
+        "137",
+        "006"
+      ],
+      "prerequisites": [
+        "bps3.m11.build_a_count_matrix",
+        "bps3.m01.calculate_with_physical_quantities"
+      ]
+    },
+    {
+      "number": "139",
+      "id": "bps3.m12.frame_a_prediction_problem",
+      "module": "M12",
+      "source_key": "V2-141",
+      "title": "Frame a prediction problem",
+      "prerequisite_numbers": [
+        "059",
+        "108"
+      ],
+      "prerequisites": [
+        "bps3.m05.group_and_aggregate_descriptive_data",
+        "bps3.m10.identify_independent_experimental_units"
+      ]
+    },
+    {
+      "number": "140",
+      "id": "bps3.m12.detect_leakage_before_modeling",
+      "module": "M12",
+      "source_key": "V2-142",
+      "title": "Detect leakage before modeling",
+      "prerequisite_numbers": [
+        "139"
+      ],
+      "prerequisites": [
+        "bps3.m12.frame_a_prediction_problem"
+      ]
+    },
+    {
+      "number": "141",
+      "id": "bps3.m12.design_a_group_aware_split",
+      "module": "M12",
+      "source_key": "V2-143",
+      "title": "Design a group-aware split",
+      "prerequisite_numbers": [
+        "140",
+        "108"
+      ],
+      "prerequisites": [
+        "bps3.m12.detect_leakage_before_modeling",
+        "bps3.m10.identify_independent_experimental_units"
+      ]
+    },
+    {
+      "number": "142",
+      "id": "bps3.m12.build_a_preprocessing_pipeline",
+      "module": "M12",
+      "source_key": "V2-144",
+      "title": "Build a preprocessing pipeline",
+      "prerequisite_numbers": [
+        "141",
+        "051"
+      ],
+      "prerequisites": [
+        "bps3.m12.design_a_group_aware_split",
+        "bps3.m05.create_and_inspect_a_dataframe"
+      ]
+    },
+    {
+      "number": "143",
+      "id": "bps3.m12.establish_a_dummy_baseline",
+      "module": "M12",
+      "source_key": "V2-145",
+      "title": "Establish a dummy baseline",
+      "prerequisite_numbers": [
+        "141"
+      ],
+      "prerequisites": [
+        "bps3.m12.design_a_group_aware_split"
+      ]
+    },
+    {
+      "number": "144",
+      "id": "bps3.m12.fit_a_linear_regression_baseline",
+      "module": "M12",
+      "source_key": "V2-146",
+      "title": "Fit a linear regression baseline",
+      "prerequisite_numbers": [
+        "143",
+        "142"
+      ],
+      "prerequisites": [
+        "bps3.m12.establish_a_dummy_baseline",
+        "bps3.m12.build_a_preprocessing_pipeline"
+      ]
+    },
+    {
+      "number": "145",
+      "id": "bps3.m12.fit_a_regularized_classifier",
+      "module": "M12",
+      "source_key": "V2-147",
+      "title": "Fit a regularized classifier",
+      "prerequisite_numbers": [
+        "142",
+        "143"
+      ],
+      "prerequisites": [
+        "bps3.m12.build_a_preprocessing_pipeline",
+        "bps3.m12.establish_a_dummy_baseline"
+      ]
+    },
+    {
+      "number": "146",
+      "id": "bps3.m12.compare_one_interpretable_tree_model",
+      "module": "M12",
+      "source_key": "V2-148",
+      "title": "Compare one interpretable tree model",
+      "prerequisite_numbers": [
+        "145"
+      ],
+      "prerequisites": [
+        "bps3.m12.fit_a_regularized_classifier"
+      ]
+    },
+    {
+      "number": "147",
+      "id": "bps3.m12.cross_validate_with_correct_groups",
+      "module": "M12",
+      "source_key": "V2-149",
+      "title": "Cross-validate with correct groups",
+      "prerequisite_numbers": [
+        "141",
+        "143"
+      ],
+      "prerequisites": [
+        "bps3.m12.design_a_group_aware_split",
+        "bps3.m12.establish_a_dummy_baseline"
+      ]
+    },
+    {
+      "number": "148",
+      "id": "bps3.m12.evaluate_imbalanced_classes",
+      "module": "M12",
+      "source_key": "V2-150",
+      "title": "Evaluate imbalanced classes",
+      "prerequisite_numbers": [
+        "145",
+        "147"
+      ],
+      "prerequisites": [
+        "bps3.m12.fit_a_regularized_classifier",
+        "bps3.m12.cross_validate_with_correct_groups"
+      ]
+    },
+    {
+      "number": "149",
+      "id": "bps3.m12.inspect_errors_and_calibration",
+      "module": "M12",
+      "source_key": "V2-151",
+      "title": "Inspect errors and calibration",
+      "prerequisite_numbers": [
+        "148"
+      ],
+      "prerequisites": [
+        "bps3.m12.evaluate_imbalanced_classes"
+      ]
+    },
+    {
+      "number": "150",
+      "id": "bps3.m13.debug_an_unfamiliar_scientific_script",
+      "module": "M13",
+      "source_key": "V2-153",
+      "title": "Debug an unfamiliar scientific script",
+      "prerequisite_numbers": [
+        "034",
+        "052",
+        "002"
+      ],
+      "prerequisites": [
+        "bps3.m03.test_a_function_with_pytest_style_checks",
+        "bps3.m05.read_a_typed_csv_table",
+        "bps3.m00.read_an_error_traceback"
+      ]
+    },
+    {
+      "number": "151",
+      "id": "bps3.m13.clean_a_fresh_metadata_dataset",
+      "module": "M13",
+      "source_key": "V2-154",
+      "title": "Clean a fresh metadata dataset",
+      "prerequisite_numbers": [
+        "062",
+        "057",
+        "058"
+      ],
+      "prerequisites": [
+        "bps3.m05.export_a_traceable_dataset",
+        "bps3.m05.handle_missing_records",
+        "bps3.m05.join_sample_and_imaging_tables"
+      ]
+    },
+    {
+      "number": "152",
+      "id": "bps3.m13.create_a_clear_figure_from_new_observations",
+      "module": "M13",
+      "source_key": "V2-155",
+      "title": "Create a clear figure from new observations",
+      "prerequisite_numbers": [
+        "070",
+        "059"
+      ],
+      "prerequisites": [
+        "bps3.m06.export_publication_ready_graphics",
+        "bps3.m05.group_and_aggregate_descriptive_data"
+      ]
+    },
+    {
+      "number": "153",
+      "id": "bps3.m13.audit_an_unfamiliar_microscopy_result",
+      "module": "M13",
+      "source_key": "V2-156",
+      "title": "Audit an unfamiliar microscopy result",
+      "prerequisite_numbers": [
+        "079",
+        "107"
+      ],
+      "prerequisites": [
+        "bps3.m07.convert_pixel_area_to_physical_units",
+        "bps3.m09.stress_test_an_image_analysis_pipeline"
+      ]
+    },
+    {
+      "number": "154",
+      "id": "bps3.m13.complete_a_real_image_measurement_project",
+      "module": "M13",
+      "source_key": "V2-157",
+      "title": "Complete a real-image measurement project",
+      "prerequisite_numbers": [
+        "095",
+        "096",
+        "105",
+        "122"
+      ],
+      "prerequisites": [
+        "bps3.m08.compose_a_parameterized_segmentation_pipeline",
+        "bps3.m09.measure_region_properties",
+        "bps3.m09.evaluate_pixel_masks",
+        "bps3.m10.produce_a_reproducible_experiment_summary"
+      ]
+    },
+    {
+      "number": "155",
+      "id": "bps3.m13.complete_a_small_sequence_ngs_qc_project",
+      "module": "M13",
+      "source_key": "V2-159",
+      "title": "Complete a small sequence/NGS QC project",
+      "prerequisite_numbers": [
+        "128",
+        "131",
+        "138",
+        "035"
+      ],
+      "prerequisites": [
+        "bps3.m11.parse_and_write_fasta",
+        "bps3.m11.summarize_base_quality_profiles",
+        "bps3.m11.calculate_cpm_and_explain_limits",
+        "bps3.m03.package_a_tiny_workflow"
+      ]
+    },
+    {
+      "number": "156",
+      "id": "bps3.m13.complete_a_group_safe_biological_ml_project",
+      "module": "M13",
+      "source_key": "V2-160",
+      "title": "Complete a group-safe biological ML project",
+      "prerequisite_numbers": [
+        "145",
+        "147",
+        "148",
+        "122"
+      ],
+      "prerequisites": [
+        "bps3.m12.fit_a_regularized_classifier",
+        "bps3.m12.cross_validate_with_correct_groups",
+        "bps3.m12.evaluate_imbalanced_classes",
+        "bps3.m10.produce_a_reproducible_experiment_summary"
+      ]
+    }
+  ],
+  "legacy_migration": [
+    {
+      "legacy_id": "sample",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m01.name_a_specimen_using_variables",
+      "target_display_number": "005",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "change",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m01.calculate_with_physical_quantities",
+      "target_display_number": "006",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "sample_parts",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m01.parse_a_specimen_identifier",
+      "target_display_number": "009",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "quality_filter",
+      "action": "MOVE",
+      "target_competency_id": "bps3.m02.express_a_simple_comprehension",
+      "target_display_number": "022",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "metadata_dict",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m02.map_ids_to_metadata",
+      "target_display_number": "019",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "function",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m03.return_results_from_a_function",
+      "target_display_number": "025",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "replicates",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m01.iterate_and_summarize_microscope_field_lists",
+      "target_display_number": "012",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "table",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m05.create_and_inspect_a_dataframe",
+      "target_display_number": "051",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "group",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m05.group_and_aggregate_descriptive_data",
+      "target_display_number": "059",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "missing_records",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m05.handle_missing_records",
+      "target_display_number": "057",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "join_metadata",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m05.join_sample_and_imaging_tables",
+      "target_display_number": "058",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "csv_import",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m05.read_a_typed_csv_table",
+      "target_display_number": "052",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "clean_ids",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m05.normalize_messy_sample_ids",
+      "target_display_number": "055",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "schema_missing",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m05.validate_column_schemas",
+      "target_display_number": "054",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "duplicate_ids",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m05.find_duplicates_and_conflicting_keys",
+      "target_display_number": "056",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "plot",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m06.compare_grouped_observations",
+      "target_display_number": "066",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "errorbar_plot",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m10.visualize_replicate_level_effects",
+      "target_display_number": "121",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "shape",
+      "action": "MOVE",
+      "target_competency_id": "bps3.m04.understand_shape_and_ndim",
+      "target_display_number": "038",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "pixel",
+      "action": "MOVE",
+      "target_competency_id": "bps3.m04.index_rows_columns_and_planes",
+      "target_display_number": "039",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "roi_crop",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m07.crop_a_biological_roi",
+      "target_display_number": "077",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "roi_mean",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m07.quantify_a_selected_roi",
+      "target_display_number": "078",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "dtype_conversion",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m07.interpret_pixel_dtype_and_range",
+      "target_display_number": "075",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "axis_selection",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m07.inspect_axes_in_multidimensional_images",
+      "target_display_number": "080",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "pixel_area",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m07.convert_pixel_area_to_physical_units",
+      "target_display_number": "079",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "mask",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m08.make_a_global_threshold_mask",
+      "target_display_number": "086",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "bright_fraction",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m08.quantify_threshold_sensitivity",
+      "target_display_number": "088",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "background_subtract",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m08.estimate_and_subtract_background",
+      "target_display_number": "083",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "intensity_hist",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m08.explore_an_intensity_histogram",
+      "target_display_number": "082",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "candidate_regions",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m08.label_connected_components",
+      "target_display_number": "090",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "percentile_mask",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m08.compare_automatic_thresholds",
+      "target_display_number": "087",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "gaussian_smooth",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m08.apply_gaussian_filtering",
+      "target_display_number": "084",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "percentile_background",
+      "action": "MERGE",
+      "target_competency_id": "bps3.m08.estimate_and_subtract_background",
+      "target_display_number": "083",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "morphological_open",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m08.apply_binary_morphology",
+      "target_display_number": "089",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "skimage_label",
+      "action": "MERGE",
+      "target_competency_id": "bps3.m08.label_connected_components",
+      "target_display_number": "090",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "remove_small",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m08.filter_components_by_measured_size",
+      "target_display_number": "091",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "region_table",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m09.measure_region_properties",
+      "target_display_number": "096",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "segmentation_precision",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m09.evaluate_pixel_masks",
+      "target_display_number": "105",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "puncta_peaks",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m09.detect_candidate_puncta_peaks",
+      "target_display_number": "100",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "track_displacement",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m09.estimate_motion_from_paired_positions",
+      "target_display_number": "102",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "replicate_means",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m10.aggregate_within_biological_replicate",
+      "target_display_number": "112",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "batch_normalize",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m10.implement_a_transparent_normalization",
+      "target_display_number": "114",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "paired_change",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m10.audit_paired_study_designs_and_compute_matched_change",
+      "target_display_number": "109",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "bio_replicate_n",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m10.identify_independent_experimental_units",
+      "target_display_number": "108",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "standard_error",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m10.distinguish_standard_deviation_from_standard_error",
+      "target_display_number": "115",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "confidence_interval",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m10.construct_a_confidence_interval",
+      "target_display_number": "117",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "robust_median",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m10.choose_a_robust_descriptive_summary",
+      "target_display_number": "116",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "gc_fraction",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m11.compute_and_interpret_dna_gc_fraction",
+      "target_display_number": "124",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "reverse_complement",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m11.reverse_complement_dna",
+      "target_display_number": "125",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "fasta_parse",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m11.parse_and_write_fasta",
+      "target_display_number": "128",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "trim_quality",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m11.trim_reads_by_a_documented_rule",
+      "target_display_number": "132",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "fastq_qc",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m11.summarize_base_quality_profiles",
+      "target_display_number": "131",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "kmer_counts",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m11.count_k_mers_with_ambiguity_handling",
+      "target_display_number": "133",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "read_coverage",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m11.compute_read_coverage",
+      "target_display_number": "136",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "count_cpm",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m11.calculate_cpm_and_explain_limits",
+      "target_display_number": "138",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "group_safe_split",
+      "action": "KEEP",
+      "target_competency_id": "bps3.m12.design_a_group_aware_split",
+      "target_display_number": "141",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "ml_classifier",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m12.fit_a_regularized_classifier",
+      "target_display_number": "145",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "transfer",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m03.package_a_tiny_workflow",
+      "target_display_number": "035",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "field_report",
+      "action": "MERGE",
+      "target_competency_id": "bps3.m08.compose_a_parameterized_segmentation_pipeline",
+      "target_display_number": "095",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "imaging_pipeline",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m08.compose_a_parameterized_segmentation_pipeline",
+      "target_display_number": "095",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "reproducible_report",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m10.produce_a_reproducible_experiment_summary",
+      "target_display_number": "122",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    },
+    {
+      "legacy_id": "final_research_pipeline",
+      "action": "UPGRADE",
+      "target_competency_id": "bps3.m13.complete_a_real_image_measurement_project",
+      "target_display_number": "154",
+      "preserve_drafts": true,
+      "preserve_completion_history": true,
+      "requires_new_mastery_proof": true
+    }
+  ],
+  "removed_v2": {
+    "2": "editor interaction inside run/modify",
+    "6": "debugging formative probe",
+    "18": "control-flow checkpoint",
+    "28": "collections checkpoint",
+    "84": "image interpretation check",
+    "140": "NGS report as project scaffold",
+    "152": "model card as ML project rubric",
+    "158": "unseen microscopy transfer as project assessment"
+  },
+  "added_v3": [
+    "V3-CLI",
+    "V3-GIT",
+    "V3-ROBUST",
+    "V3-GC"
+  ],
+  "progress_policy": "Preserve all saved code, completion and hint records for 25/61 lesson versions; never infer new independent or retained mastery from old results.",
+  "path_policy": "Prerequisite DAG; microscopy recommended, sequence and ML optional. Use real-image context in first session.",
+  "release_gates": [
+    "G0 deployed Pyodide/HPA real runtime QA",
+    "G1 12-15 activity teaching-engine pilot",
+    "G2 61-ID migration tests and DAG unlock system",
+    "G3 foundation plus real notebook/venv/Git transfer",
+    "G4 calibrated microscopy and inference pathway",
+    "G5 optional sequences/ML, projects and release QA"
+  ],
+  "recommended_default_route": [
+    "001",
+    "071",
+    "005",
+    "008",
+    "006",
+    "007",
+    "010",
+    "011",
+    "016",
+    "012",
+    "025",
+    "002",
+    "003",
+    "037",
+    "038",
+    "004",
+    "009",
+    "013",
+    "014",
+    "015",
+    "017",
+    "018",
+    "019",
+    "020",
+    "021",
+    "022",
+    "023",
+    "024",
+    "026",
+    "027",
+    "028",
+    "029",
+    "030",
+    "031",
+    "032",
+    "033",
+    "034",
+    "035",
+    "036",
+    "039",
+    "040",
+    "041",
+    "042",
+    "043",
+    "044",
+    "045",
+    "046",
+    "047",
+    "048",
+    "049",
+    "050",
+    "051",
+    "052",
+    "053",
+    "054",
+    "055",
+    "056",
+    "057",
+    "058",
+    "059",
+    "060",
+    "061",
+    "062",
+    "063",
+    "064",
+    "065",
+    "066",
+    "067",
+    "069",
+    "070",
+    "072",
+    "073",
+    "074",
+    "075",
+    "076",
+    "077",
+    "078",
+    "079",
+    "080",
+    "081",
+    "082",
+    "083",
+    "084",
+    "085",
+    "086",
+    "087",
+    "088",
+    "089",
+    "090",
+    "091",
+    "092",
+    "093",
+    "094",
+    "095",
+    "096",
+    "097",
+    "098",
+    "099",
+    "100",
+    "101",
+    "102",
+    "103",
+    "104",
+    "105",
+    "106",
+    "107",
+    "108",
+    "109",
+    "110",
+    "111",
+    "112",
+    "113",
+    "114",
+    "115",
+    "068",
+    "116",
+    "117",
+    "118",
+    "119",
+    "120",
+    "121",
+    "122",
+    "150",
+    "151",
+    "152",
+    "153",
+    "154"
+  ],
+  "recommended_first_15": [
+    "001",
+    "071",
+    "005",
+    "008",
+    "006",
+    "007",
+    "010",
+    "011",
+    "016",
+    "012",
+    "025",
+    "002",
+    "003",
+    "037",
+    "038"
+  ],
+  "default_route_definition": "127 competencies: foundation + shared statistics + recommended microscopy and five relevant independent projects; 16 sequence + 11 ML + 2 specialized projects are optional. The app may reorder ready skills adaptively; no item unlocks before prerequisites.",
+  "optional_sequence_route": [
+    "123",
+    "124",
+    "125",
+    "126",
+    "127",
+    "128",
+    "129",
+    "130",
+    "131",
+    "132",
+    "133",
+    "134",
+    "135",
+    "136",
+    "137",
+    "138",
+    "155"
+  ],
+  "optional_ml_route": [
+    "139",
+    "140",
+    "141",
+    "142",
+    "143",
+    "144",
+    "145",
+    "146",
+    "147",
+    "148",
+    "149",
+    "156"
+  ]
+}
