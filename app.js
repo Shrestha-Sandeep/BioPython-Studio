@@ -424,7 +424,10 @@ function showGeneratedResult(report){
  }
 }
 function showLinks(lesson){const dest=$('source-links');dest.replaceChildren();const make=(url,label)=>{const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=label+' ↗';dest.append(a);};
- if(courseManifest&&CoursePath.sourceFor(courseManifest,lesson.id))CoursePath.renderSource(dest,courseManifest,lesson.id);
+ if(courseManifest&&CoursePath.sourceFor(courseManifest,lesson.id)){
+  CoursePath.renderSource(dest,courseManifest,lesson.id);
+  if(unifiedPath.find(c=>c.legacyIds.includes(lesson.id))?.kind==='activity')dest.prepend(document.createTextNode('Source note for the corresponding v3 activity. '));
+ }
  else {
  if(lesson.sourceImage)make(IMAGE_SOURCE+'/blob/master/'+lesson.sourceImage,'Image Processing for Beginners');
  else make(IMAGE_SOURCE,'Image Processing for Beginners');

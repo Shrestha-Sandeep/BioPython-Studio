@@ -83,6 +83,8 @@ try:
     free.locator('#learn-more summary').click()
     assert 'Structures appendix' in free.locator('#source-links').inner_text()
     assert 'Reference:' in free.locator('#source-links').inner_text()
+    free.goto(URL+'/legacy.html?lesson=shape');free.wait_for_function('!!courseManifest')
+    assert 'corresponding v3 activity' in free.locator('#source-links').text_content()
     a=next(a for a in CAT if a['number']=='038')
     free.goto(URL+'/?activity='+a['id']);free.wait_for_function('activity?.number==="038"')
     free.locator('#phase-track').get_by_role('button',name='Write',exact=True).click()
