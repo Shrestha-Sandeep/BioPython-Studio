@@ -10,7 +10,6 @@
       "id": "e01",
       "path": "e01-Python_basics.ipynb",
       "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e01-Python_basics.ipynb",
-      "sha": "https://api.github.com/repos/guiwitz/PyImageCourse_beginner/contents/e01-Python_basics.ipynb?ref=master",
       "linked_preview_mission": "py-01",
       "numbered_prompts": [
         {
@@ -56,7 +55,6 @@
       "id": "e02",
       "path": "e02-Numpy_basics.ipynb",
       "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e02-Numpy_basics.ipynb",
-      "sha": "https://api.github.com/repos/guiwitz/PyImageCourse_beginner/contents/e02-Numpy_basics.ipynb?ref=master",
       "linked_preview_mission": "im-01",
       "numbered_prompts": [
         {
@@ -102,7 +100,6 @@
       "id": "e03",
       "path": "e03-More_on_Images.ipynb",
       "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e03-More_on_Images.ipynb",
-      "sha": "https://api.github.com/repos/guiwitz/PyImageCourse_beginner/contents/e03-More_on_Images.ipynb?ref=master",
       "linked_preview_mission": "im-02",
       "numbered_prompts": [
         {
@@ -160,7 +157,6 @@
       "id": "e04",
       "path": "e04-Thresholding.ipynb",
       "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e04-Thresholding.ipynb",
-      "sha": "https://api.github.com/repos/guiwitz/PyImageCourse_beginner/contents/e04-Thresholding.ipynb?ref=master",
       "linked_preview_mission": "im-04",
       "numbered_prompts": [
         {
@@ -198,7 +194,6 @@
       "id": "e05",
       "path": "e05-Filtering.ipynb",
       "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e05-Filtering.ipynb",
-      "sha": "https://api.github.com/repos/guiwitz/PyImageCourse_beginner/contents/e05-Filtering.ipynb?ref=master",
       "linked_preview_mission": "im-05",
       "numbered_prompts": [
         {
@@ -229,7 +224,6 @@
       "id": "e06",
       "path": "e06-Regions.ipynb",
       "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e06-Regions.ipynb",
-      "sha": "https://api.github.com/repos/guiwitz/PyImageCourse_beginner/contents/e06-Regions.ipynb?ref=master",
       "linked_preview_mission": "im-06",
       "numbered_prompts": [
         {
@@ -272,7 +266,6 @@
       "id": "e08",
       "path": "e08-Loops_conditions.ipynb",
       "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e08-Loops_conditions.ipynb",
-      "sha": "https://api.github.com/repos/guiwitz/PyImageCourse_beginner/contents/e08-Loops_conditions.ipynb?ref=master",
       "linked_preview_mission": "py-03",
       "numbered_prompts": [
         {
@@ -302,5 +295,506 @@
       ],
       "code_examples": []
     }
-  ]
+  ],
+  "chapters": [
+    {
+      "path": "01-Python_essentials.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/01-Python_essentials.ipynb",
+      "cells": 75,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "1. Python and notebook basics"
+        },
+        {
+          "cell": 1,
+          "heading": "Variables"
+        },
+        {
+          "cell": 25,
+          "heading": "Functions"
+        },
+        {
+          "cell": 34,
+          "heading": "Variables as objects"
+        },
+        {
+          "cell": 42,
+          "heading": "Packages"
+        },
+        {
+          "cell": 42,
+          "heading": "Importing functions"
+        },
+        {
+          "cell": 56,
+          "heading": "Structures"
+        },
+        {
+          "cell": 69,
+          "heading": "Plotting"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "02-Images_as_arrays.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/02-Images_as_arrays.ipynb",
+      "cells": 94,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "2. Images as arrays"
+        },
+        {
+          "cell": 11,
+          "heading": "Accessing values"
+        },
+        {
+          "cell": 19,
+          "heading": "Accessing parts of the array"
+        },
+        {
+          "cell": 33,
+          "heading": "Other ways of creating arrays"
+        },
+        {
+          "cell": 40,
+          "heading": "Mathematics with arrays"
+        },
+        {
+          "cell": 41,
+          "heading": "Basic calculus"
+        },
+        {
+          "cell": 53,
+          "heading": "Numpy functions"
+        },
+        {
+          "cell": 64,
+          "heading": "Operations between arrays"
+        },
+        {
+          "cell": 73,
+          "heading": "Logical operations and indexing"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "03-More_on_images.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/03-More_on_images.ipynb",
+      "cells": 49,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "3. More on images"
+        },
+        {
+          "cell": 1,
+          "heading": "Displaying images"
+        },
+        {
+          "cell": 10,
+          "heading": "Multi-dimensional images"
+        },
+        {
+          "cell": 18,
+          "heading": "Splitting channels"
+        },
+        {
+          "cell": 25,
+          "heading": "Image histogram"
+        },
+        {
+          "cell": 33,
+          "heading": "Image types"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "04-Thresholding.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/04-Thresholding.ipynb",
+      "cells": 41,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "4. Thresholding"
+        },
+        {
+          "cell": 3,
+          "heading": "Importing the image"
+        },
+        {
+          "cell": 11,
+          "heading": "9.2 Manual investigation"
+        },
+        {
+          "cell": 20,
+          "heading": "Automatic thresholding"
+        },
+        {
+          "cell": 27,
+          "heading": "Combining masks"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "05-Filtering.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/05-Filtering.ipynb",
+      "cells": 79,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "5. Filtering"
+        },
+        {
+          "cell": 5,
+          "heading": "Linear filters"
+        },
+        {
+          "cell": 6,
+          "heading": "Blurring effect"
+        },
+        {
+          "cell": 21,
+          "heading": "Removing noise"
+        },
+        {
+          "cell": 28,
+          "heading": "Filtering an image"
+        },
+        {
+          "cell": 37,
+          "heading": "Non-linear filters"
+        },
+        {
+          "cell": 44,
+          "heading": "Other selection elements"
+        },
+        {
+          "cell": 48,
+          "heading": "Morphological filters"
+        },
+        {
+          "cell": 72,
+          "heading": "Other packages"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "06-Regions.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/06-Regions.ipynb",
+      "cells": 56,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "6. Region properties"
+        },
+        {
+          "cell": 6,
+          "heading": "Labelling"
+        },
+        {
+          "cell": 11,
+          "heading": "Region properties"
+        },
+        {
+          "cell": 16,
+          "heading": "Dictionaries"
+        },
+        {
+          "cell": 20,
+          "heading": "Recovering image intensity information"
+        },
+        {
+          "cell": 27,
+          "heading": "Filtering information"
+        },
+        {
+          "cell": 33,
+          "heading": "One step further: Pandas"
+        },
+        {
+          "cell": 48,
+          "heading": "Back to our problem"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "07-Pipeline.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb",
+      "cells": 26,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "7. Creating a pipeline"
+        },
+        {
+          "cell": 3,
+          "heading": "Creating an image processing function"
+        },
+        {
+          "cell": 9,
+          "heading": "Adjusting the function behavior"
+        },
+        {
+          "cell": 15,
+          "heading": "Analyzing multiple images"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "08-Logical_flow.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/08-Logical_flow.ipynb",
+      "cells": 28,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "8. Loops and conditions"
+        },
+        {
+          "cell": 2,
+          "heading": "Conditional statements"
+        },
+        {
+          "cell": 10,
+          "heading": "Simple looping"
+        },
+        {
+          "cell": 18,
+          "heading": "Looping using a range"
+        },
+        {
+          "cell": 24,
+          "heading": "Mixing for and if"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "09-Advanced.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/09-Advanced.ipynb",
+      "cells": 54,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "9. Advanced examples: cellpose and napari"
+        },
+        {
+          "cell": 1,
+          "heading": "cellpose"
+        },
+        {
+          "cell": 2,
+          "heading": "Installation"
+        },
+        {
+          "cell": 5,
+          "heading": "Using the software"
+        },
+        {
+          "cell": 26,
+          "heading": "napari"
+        },
+        {
+          "cell": 43,
+          "heading": "napari plugins"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "Appendix_Functions.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Functions.ipynb",
+      "cells": 73,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "Methods and functions"
+        },
+        {
+          "cell": 5,
+          "heading": "Built-in functions"
+        },
+        {
+          "cell": 19,
+          "heading": "Methods"
+        },
+        {
+          "cell": 26,
+          "heading": "Getting infos"
+        },
+        {
+          "cell": 33,
+          "heading": "Compounding functions"
+        },
+        {
+          "cell": 45,
+          "heading": "Custom functions"
+        },
+        {
+          "cell": 64,
+          "heading": "External packages"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "Appendix_Structures.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Structures.ipynb",
+      "cells": 105,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "Python structures"
+        },
+        {
+          "cell": 2,
+          "heading": "Lists"
+        },
+        {
+          "cell": 3,
+          "heading": "Creating lists"
+        },
+        {
+          "cell": 10,
+          "heading": "List indexes"
+        },
+        {
+          "cell": 18,
+          "heading": "Who is who ?"
+        },
+        {
+          "cell": 38,
+          "heading": "Using functions and methods"
+        },
+        {
+          "cell": 51,
+          "heading": "Dictionaries"
+        },
+        {
+          "cell": 56,
+          "heading": "Again who's who ?"
+        },
+        {
+          "cell": 64,
+          "heading": "Grouping dictionaries"
+        },
+        {
+          "cell": 70,
+          "heading": "Dataframes"
+        },
+        {
+          "cell": 73,
+          "heading": "Creating a Dataframe"
+        },
+        {
+          "cell": 83,
+          "heading": "Accessing data"
+        },
+        {
+          "cell": 91,
+          "heading": "Doing statistics"
+        },
+        {
+          "cell": 101,
+          "heading": "Plotting with Pandas"
+        }
+      ],
+      "role": "primary teaching chapter"
+    },
+    {
+      "path": "Demo.ipynb",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Demo.ipynb",
+      "cells": 32,
+      "headings": [
+        {
+          "cell": 0,
+          "heading": "Demo"
+        },
+        {
+          "cell": 1,
+          "heading": "Complete workflow"
+        },
+        {
+          "cell": 11,
+          "heading": "Import image"
+        },
+        {
+          "cell": 13,
+          "heading": "Filter the image"
+        },
+        {
+          "cell": 16,
+          "heading": "Automated threshold"
+        },
+        {
+          "cell": 18,
+          "heading": "Clean-up with morphological operations"
+        },
+        {
+          "cell": 21,
+          "heading": "Compute a band around the nuclei"
+        },
+        {
+          "cell": 23,
+          "heading": "Label nuclei and band and measure properties"
+        },
+        {
+          "cell": 25,
+          "heading": "Post-processing: stats"
+        }
+      ],
+      "role": "HPA nuclear localization capstone"
+    }
+  ],
+  "assets": {
+    "fluorescence-examples.png": {
+      "file": "assets/witz/fluorescence-examples.png",
+      "notebook": "Demo.ipynb",
+      "cell": 3,
+      "description": "Two HPA fluorescence composites rendered in Witz's Demo"
+    },
+    "fluorescence-single.png": {
+      "file": "assets/witz/fluorescence-single.png",
+      "notebook": "Demo.ipynb",
+      "cell": 12,
+      "description": "HPA fluorescence composite rendered by Witz"
+    },
+    "otsu-nuclei-mask.png": {
+      "file": "assets/witz/otsu-nuclei-mask.png",
+      "notebook": "Demo.ipynb",
+      "cell": 17,
+      "description": "Nuclear candidate threshold mask rendered by Witz"
+    },
+    "nuclear-intensity-histogram.png": {
+      "file": "assets/witz/nuclear-intensity-histogram.png",
+      "notebook": "04-Thresholding.ipynb",
+      "cell": 13,
+      "description": "Nuclear channel pixel histogram rendered by Witz"
+    },
+    "threshold-mask.png": {
+      "file": "assets/witz/threshold-mask.png",
+      "notebook": "04-Thresholding.ipynb",
+      "cell": 16,
+      "description": "Manual-threshold mask rendered by Witz"
+    },
+    "labeled-nuclei.png": {
+      "file": "assets/witz/labeled-nuclei.png",
+      "notebook": "06-Regions.ipynb",
+      "cell": 10,
+      "description": "Connected component labels rendered by Witz"
+    }
+  },
+  "rights": {
+    "teaching_material": "Witz/University of Bern BSD-3-Clause; credit and preserve license notice",
+    "hpa": "Images in Witz repository documented CC BY-SA 3.0; display images require attribution",
+    "pngs": "Embedded figures are copies of rendered notebook outputs; derived from HPA data, not raw measurement images."
+  }
 }
