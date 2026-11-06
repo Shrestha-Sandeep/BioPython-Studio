@@ -3283,5 +3283,583 @@
     "148",
     "149",
     "156"
-  ]
+  ],
+  "python_source_audit": {
+    "scope": "All 47 distinct available Python-stage entries. Status describes current exercise reuse, not completion of the full v3 upgrade. References and authored tasks are not claimed as copied book exercises.",
+    "reviewed": "2026-11-06",
+    "cell_indexing": "Zero-based notebook.cells indices in source_blob. Handbook prose is linked, not reproduced or adapted.",
+    "sources": {
+      "essentials": {
+        "title": "Python essentials",
+        "author": "Guillaume Witz / University of Bern",
+        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/01-Python_essentials.ipynb",
+        "source_blob": "d097f8345f7313046836af07427fba5ddf4885ff",
+        "license": "BSD-3-Clause"
+      },
+      "essential-exercises": {
+        "title": "Python essentials exercises",
+        "author": "Guillaume Witz / University of Bern",
+        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e01-Python_basics.ipynb",
+        "source_blob": "1d50715e201ab37c881c360681fd101fc9301886",
+        "license": "BSD-3-Clause"
+      },
+      "flow": {
+        "title": "Logical flow",
+        "author": "Guillaume Witz / University of Bern",
+        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/08-Logical_flow.ipynb",
+        "source_blob": "666968f4e5ea293b95fdcf86ddecee5b94a518d6",
+        "license": "BSD-3-Clause"
+      },
+      "flow-exercises": {
+        "title": "Loops and conditions exercises",
+        "author": "Guillaume Witz / University of Bern",
+        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e08-Loops_conditions.ipynb",
+        "source_blob": "805d122e37557440cd1b3ca190ad251a524b0680",
+        "license": "BSD-3-Clause"
+      },
+      "functions": {
+        "title": "Functions appendix",
+        "author": "Guillaume Witz / University of Bern",
+        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Functions.ipynb",
+        "source_blob": "60582739660da8a2cd4a51005c27e73be2a39635",
+        "license": "BSD-3-Clause"
+      },
+      "structures": {
+        "title": "Structures appendix",
+        "author": "Guillaume Witz / University of Bern",
+        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Structures.ipynb",
+        "source_blob": "421f28f08fbfdfefc56df86459d979ccaa67dfc8",
+        "license": "BSD-3-Clause"
+      },
+      "numpy-exercises": {
+        "title": "Images as arrays exercises",
+        "author": "Guillaume Witz / University of Bern",
+        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e02-Numpy_basics.ipynb",
+        "source_blob": "aa23c2269061a66a1ac9cb8a9d9d7166c85ecd3f",
+        "license": "BSD-3-Clause"
+      },
+      "types": {
+        "title": "Understanding data types",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/02.01-Understanding-Data-Types.ipynb",
+        "source_blob": "82b128e486cc58fd9d4297115dfa0abe0aa5c90d",
+        "license": "MIT (code)"
+      },
+      "arrays": {
+        "title": "NumPy arrays",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/02.02-The-Basics-Of-NumPy-Arrays.ipynb",
+        "source_blob": "f9dad509a150cc1f0e67e23ae088ef66ba526b92",
+        "license": "MIT (code)"
+      },
+      "aggregates": {
+        "title": "Array aggregates",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/02.04-Computation-on-arrays-aggregates.ipynb",
+        "source_blob": "53e6462fd3efc0fc2f841fda91bda11c7dfaa50f",
+        "license": "MIT (code)"
+      },
+      "pandas": {
+        "title": "Pandas objects",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/03.01-Introducing-Pandas-Objects.ipynb",
+        "source_blob": "2e5f8f7b3159ec17f917f96d2318caab6bb2c259",
+        "license": "MIT (code)"
+      },
+      "missing": {
+        "title": "Missing values",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/03.04-Missing-Values.ipynb",
+        "source_blob": "180ca09e780eca4dd810e39e6cc8e1870bdf1bd2",
+        "license": "MIT (code)"
+      },
+      "joins": {
+        "title": "Merge and join",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/03.07-Merge-and-Join.ipynb",
+        "source_blob": "c46383e577d26c160055675490b1cbf8e8aad5b1",
+        "license": "MIT (code)"
+      },
+      "grouping": {
+        "title": "Aggregation and grouping",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/03.08-Aggregation-and-Grouping.ipynb",
+        "source_blob": "be00723d132360cb63987dd7f419d46a99032c48",
+        "license": "MIT (code)"
+      },
+      "strings": {
+        "title": "Working with strings",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/03.10-Working-With-Strings.ipynb",
+        "source_blob": "75c004b84641fa3e74f006deffd91ff812281f0c",
+        "license": "MIT (code)"
+      },
+      "errorbars": {
+        "title": "Error bars",
+        "author": "Jake VanderPlas",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/04.03-Errorbars.ipynb",
+        "source_blob": "094ae9c89f63bcededbdcb3e7a95da9094547941",
+        "license": "MIT (code)"
+      }
+    },
+    "entries": [
+      {
+        "number": "001",
+        "status": "reference",
+        "source": "functions",
+        "cells": [
+          18
+        ],
+        "note": "The print call is a reference; the two-line microscopy startup task is authored."
+      },
+      {
+        "number": "002",
+        "status": "authored",
+        "source": "essentials",
+        "cells": [
+          21,
+          23
+        ],
+        "note": "The intentional NameError and traceback repair are authored; assignment examples provide background only."
+      },
+      {
+        "number": "003",
+        "status": "adapted",
+        "source": "functions",
+        "cells": [
+          28,
+          30
+        ],
+        "note": "Adapt help(method) to help(len), retaining real documentation output; the changed-input count check is authored. IPython question-mark syntax is replaced by ordinary Python help()."
+      },
+      {
+        "number": "004",
+        "status": "reference",
+        "source": "essentials",
+        "cells": [
+          12,
+          15,
+          17,
+          19
+        ],
+        "note": "The stale-value/rerun demonstration informs the two-cell lab; kernel restart, export and changed-input assessment are authored."
+      },
+      {
+        "number": "005",
+        "status": "adapted",
+        "source": "essential-exercises",
+        "cells": [
+          1
+        ],
+        "note": "Adapt variable creation in exercise 1 to the supplied specimen ID instead of a fixed number."
+      },
+      {
+        "number": "006",
+        "status": "adapted",
+        "source": "essential-exercises",
+        "cells": [
+          1,
+          2,
+          3
+        ],
+        "note": "Reuse the integer 5, float 9.5 and multiplication from exercises 1–3 in the worked example; rename them to distance_px and illustrative pixel_size_um. Unit reasoning and changing-input checks are authored."
+      },
+      {
+        "number": "007",
+        "status": "adapted",
+        "source": "essential-exercises",
+        "cells": [
+          4
+        ],
+        "note": "Adapt the type inspection exercise to supplied integer/float values and print type names; Boolean acceptance is an authored extension."
+      },
+      {
+        "number": "008",
+        "status": "reference",
+        "source": "essentials",
+        "cells": [
+          21,
+          30
+        ],
+        "note": "Text variables are a reference; specimen/channel f-string construction and exact-label checks are authored."
+      },
+      {
+        "number": "009",
+        "status": "reference",
+        "source": "strings",
+        "cells": [
+          24,
+          36
+        ],
+        "note": "Handbook vectorized split/index code is a reference only; this task uses ordinary Python strings and an authored specimen-ID convention."
+      },
+      {
+        "number": "010",
+        "status": "reference",
+        "source": "flow",
+        "cells": [
+          4,
+          5
+        ],
+        "note": "The comparison in an if condition is a reference; an inclusive biological minimum and a stored Boolean are authored."
+      },
+      {
+        "number": "011",
+        "status": "adapted",
+        "source": "flow",
+        "cells": [
+          9
+        ],
+        "note": "Adapt the if/elif/else example to two branches with a changing inclusive signal cutoff; equality-boundary checks are authored."
+      },
+      {
+        "number": "012",
+        "status": "adapted",
+        "source": "flow-exercises",
+        "cells": [
+          1,
+          2,
+          5
+        ],
+        "note": "Adapt list traversal and conditional selection from exercises 1, 2 and 5 to a count accumulator; threshold equality and empty-input checks are authored."
+      },
+      {
+        "number": "013",
+        "status": "adapted",
+        "source": "flow",
+        "cells": [
+          20,
+          22
+        ],
+        "note": "Adapt the range loop to field numbering; enumerate(start=1) and changing list lengths are authored extensions."
+      },
+      {
+        "number": "014",
+        "status": "authored",
+        "source": "flow",
+        "cells": [
+          20
+        ],
+        "note": "No bounded-while exercise was found in the reviewed loop notebook. The terminating acquisition-attempt task is authored; the for loop is background only."
+      },
+      {
+        "number": "015",
+        "status": "authored",
+        "source": "flow-exercises",
+        "cells": [
+          5,
+          6
+        ],
+        "note": "No break/continue exercise was found in the reviewed exercise notebook. Sentinel termination and skip rules are authored; conditional selection is background only."
+      },
+      {
+        "number": "016",
+        "status": "adapted",
+        "source": "structures",
+        "cells": [
+          4,
+          13
+        ],
+        "note": "Adapt list indexing to first/last specimen counts; the slice task and empty-slice assessment are authored extensions."
+      },
+      {
+        "number": "017",
+        "status": "adapted",
+        "source": "structures",
+        "cells": [
+          4,
+          16,
+          28,
+          34,
+          36,
+          45
+        ],
+        "note": "Reuse the list values, index replacement, copy and append operations in a specimen-count example. Edit the copy while preserving the source list; independent identity checks are authored."
+      },
+      {
+        "number": "018",
+        "status": "authored",
+        "source": "structures",
+        "cells": [
+          13
+        ],
+        "note": "The reviewed structures notebook covers list indexing, not this immutable coordinate-pair task. Tuple unpacking and mutation protection are authored."
+      },
+      {
+        "number": "019",
+        "status": "adapted",
+        "source": "structures",
+        "cells": [
+          53,
+          55
+        ],
+        "note": "Adapt the biological cell-metadata dictionary and keyed lookup to specimen/condition metadata. The worked example retains extra metadata; assessments require the requested fields without rejecting extra keys."
+      },
+      {
+        "number": "020",
+        "status": "reference",
+        "source": "structures",
+        "cells": [
+          66
+        ],
+        "note": "Nested biological records are a reference; the specimen/acquisition nesting and lookup contract are authored."
+      },
+      {
+        "number": "021",
+        "status": "authored",
+        "source": "structures",
+        "cells": [
+          4
+        ],
+        "note": "No set exercise was found in the reviewed structures notebook. Set deduplication and deterministic display are authored; lists are background only."
+      },
+      {
+        "number": "022",
+        "status": "adapted",
+        "source": "types",
+        "cells": [
+          11
+        ],
+        "note": "Adapt the list-comprehension code from string conversion to signal filtering; the inclusive cutoff is authored. Only MIT-licensed code is adapted."
+      },
+      {
+        "number": "023",
+        "status": "reference",
+        "source": "structures",
+        "cells": [
+          69
+        ],
+        "note": "Dictionary keys are a reference; items()-based field aggregation and its assessment are authored."
+      },
+      {
+        "number": "024",
+        "status": "authored",
+        "source": "structures",
+        "cells": [
+          66
+        ],
+        "note": "No length-checked zip exercise was found in the reviewed structures notebook. Safe specimen/count pairing and mismatch rejection are authored."
+      },
+      {
+        "number": "025",
+        "status": "reference",
+        "source": "essentials",
+        "cells": [
+          26,
+          28
+        ],
+        "note": "The parameterized function and returned value are a reference; composing a threshold count, empty-list behavior and transfer checks is authored."
+      },
+      {
+        "number": "035",
+        "status": "reference",
+        "source": "structures",
+        "cells": [
+          66,
+          75,
+          100
+        ],
+        "note": "Records, a DataFrame and a column mean are references; the independent reusable summary contract is authored."
+      },
+      {
+        "number": "037",
+        "status": "adapted",
+        "source": "types",
+        "cells": [
+          27
+        ],
+        "note": "Adapt the explicit float32 array code to supplied signals and dtype=float. Keep biological changed-input checks; only MIT-licensed code is adapted."
+      },
+      {
+        "number": "038",
+        "status": "adapted",
+        "source": "numpy-exercises",
+        "cells": [
+          2
+        ],
+        "note": "Reuse exercise 2: a six-row, four-column array of ones, parameterized for the worked example. Grid-based assessments and ndim output are authored; actual array contents are checked."
+      },
+      {
+        "number": "039",
+        "status": "reference",
+        "source": "arrays",
+        "cells": [
+          24,
+          25,
+          26
+        ],
+        "note": "Array element indexing is a reference; reading the displayed HPA image pixel and validating changed image data is authored."
+      },
+      {
+        "number": "051",
+        "status": "reference",
+        "source": "structures",
+        "cells": [
+          66,
+          75,
+          100
+        ],
+        "note": "Biological record dictionaries, DataFrame construction and a column mean are references; the existing bright-pixel sum task is authored."
+      },
+      {
+        "number": "052",
+        "status": "authored",
+        "source": "pandas",
+        "cells": [],
+        "note": "The reviewed Pandas objects chapter is background only. Typed CSV import with identifier preservation is an authored data-integrity task."
+      },
+      {
+        "number": "054",
+        "status": "authored",
+        "source": "missing",
+        "cells": [
+          33
+        ],
+        "note": "Null detection is background only; validating required schema and missing columns needs the existing authored contract."
+      },
+      {
+        "number": "055",
+        "status": "reference",
+        "source": "strings",
+        "cells": [
+          24,
+          36
+        ],
+        "note": "Vectorized string operations are a reference; trimming/case-normalizing specimen IDs and rejecting collisions are authored."
+      },
+      {
+        "number": "056",
+        "status": "authored",
+        "source": "joins",
+        "cells": [
+          10
+        ],
+        "note": "Merge behavior is background only; duplicate-identifier conflict handling needs the existing authored guardrail."
+      },
+      {
+        "number": "057",
+        "status": "reference",
+        "source": "missing",
+        "cells": [
+          33
+        ],
+        "note": "Null detection is a reference; the existing task distinguishes missing measurements from zero using authored records."
+      },
+      {
+        "number": "058",
+        "status": "reference",
+        "source": "joins",
+        "cells": [
+          10,
+          23
+        ],
+        "note": "Key-based merge code is a reference; preserving scientific metadata and checking unmatched IDs are authored requirements."
+      },
+      {
+        "number": "059",
+        "status": "reference",
+        "source": "grouping",
+        "cells": [
+          31,
+          33,
+          38
+        ],
+        "note": "Grouping and column selection are references; treatment/control bright-pixel summaries use authored records."
+      },
+      {
+        "number": "066",
+        "status": "authored",
+        "source": "errorbars",
+        "cells": [
+          6
+        ],
+        "note": "Plotting is background only; a labeled grouped bar chart is not the error-bar exercise and remains authored."
+      },
+      {
+        "number": "108",
+        "status": "authored",
+        "source": "grouping",
+        "cells": [
+          31,
+          33
+        ],
+        "note": "Group aggregation is background only; distinguishing independent biological replicates from fields requires an authored scientific-unit check."
+      },
+      {
+        "number": "109",
+        "status": "authored",
+        "source": "joins",
+        "cells": [
+          23
+        ],
+        "note": "Key-based matching is background only; within-subject paired treatment changes require the existing authored design constraint."
+      },
+      {
+        "number": "112",
+        "status": "reference",
+        "source": "grouping",
+        "cells": [
+          31,
+          33,
+          38
+        ],
+        "note": "Group aggregation is a reference; reducing fields to biological-replicate means is an authored scientific requirement."
+      },
+      {
+        "number": "114",
+        "status": "authored",
+        "source": "grouping",
+        "cells": [
+          31,
+          33
+        ],
+        "note": "Grouping is background only; within-batch control normalization and denominator handling are authored scientific requirements."
+      },
+      {
+        "number": "115",
+        "status": "authored",
+        "source": "aggregates",
+        "cells": [],
+        "note": "Array aggregation is background only. Biological-replicate SEM, sample SD and correct n require an authored statistical task."
+      },
+      {
+        "number": "116",
+        "status": "reference",
+        "source": "aggregates",
+        "cells": [
+          38
+        ],
+        "note": "Median computation code is a reference; the robust-summary exercise and its biological caution are authored."
+      },
+      {
+        "number": "117",
+        "status": "authored",
+        "source": "errorbars",
+        "cells": [
+          6
+        ],
+        "note": "Uncertainty display is background only; a t-based interval and independent replicate interpretation require an authored statistical task."
+      },
+      {
+        "number": "121",
+        "status": "reference",
+        "source": "errorbars",
+        "cells": [
+          6,
+          8
+        ],
+        "note": "Matplotlib yerr code is a reference; biological-replicate units and supplied mean/error validation are authored."
+      },
+      {
+        "number": "122",
+        "status": "authored",
+        "source": "grouping",
+        "cells": [
+          31,
+          33
+        ],
+        "note": "Grouping is background only; the reproducible report combines provenance, replicate units and an authored reporting contract."
+      }
+    ]
+  }
 }

@@ -615,9 +615,16 @@ def pilot_evaluate(source, spec, example=False, session_namespace=None):
             try:
                 env=dict(ns=ns,case=case,output=output,tree=tree,ast=ast,number=number,printed_number=printed_number,has_node=has_node,has_call=has_call,has_method=has_method,sentinel_total=sentinel_total)
                 if 'numpy' in sys.modules: env['np']=sys.modules['numpy']
-                for check in spec['checks']:
-                    if not eval(check,env):
-                        return {'ok':False,'message':f'Check {index+1} did not match the requested behavior. '+spec.get('feedback','Re-read the task and test the boundary or changed input.'),'cases':reports}
+                for check_index,check in enumerate(spec['checks']):
+                    hints=spec.get('check_feedback',[])
+                    explanation=hints[check_index] if check_index<len(hints) else spec.get('feedback','Re-read the task and test the boundary or changed input.')
+                    # Missing or wrongly typed learner results can make inspection
+                    # raise too. Keep the explanation tied to the failing behavior.
+                    try: passed=bool(eval(check,env))
+                    except Exception: passed=False
+                    if not passed:
+                        report['failed_check']=check_index
+                        return {'ok':False,'message':f'Input {index+1}: '+explanation,'cases':reports}
             except Exception:
                 return {'ok':False,'message':f'Check {index+1} could not inspect the requested result. Create every named result in the task and print it as requested.','cases':reports}
     return {'ok':True,'message':'Example executed.' if example else f'Passed {len(reports)} changed-input and edge checks.','cases':reports}

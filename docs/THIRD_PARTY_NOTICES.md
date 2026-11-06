@@ -2,9 +2,9 @@
 
 ## Image Processing for Beginners
 
-Guillaume Witz / University of Bern. Source exercises: [Python essentials](https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e01-Python_basics.ipynb) and [images as arrays](https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e02-Numpy_basics.ipynb). The array-shape worked example adapts exercise 2 to parameterized dimensions and prints shape/ndim. Existing specimen, multiplication and type activities are aligned with exercises 1–4; biological context and changed-input assessments are BioPython Studio adaptations. No additional duplicate lesson was introduced.
+Guillaume Witz / University of Bern. Adapted exercise/code patterns come from Python essentials and its exercises, Logical flow and its exercises, and the Functions and Structures appendices in [Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner). The six-by-four array-of-ones example adapts [images as arrays, exercise 2](https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e02-Numpy_basics.ipynb). Per-activity reuse, source blob hashes and notebook cell indices are recorded in `python_source_audit` in [the manifest](../curriculum/v3_manifest.json). Biological context and changing-input assessments are BioPython Studio adaptations; background-only references are labeled separately. No duplicate lesson was introduced.
 
-+BSD 3-Clause License
+BSD 3-Clause License
 
 Copyright (c) 2021, University of Bern, Mathematical Institute and Microscopy
 Imaging Center, Guillaume Witz
@@ -38,9 +38,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## Python Data Science Handbook — code
 
-Jake VanderPlas. The typed-array worked example adapts the explicit floating-point array construction example from [Understanding Data Types](https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/02.01-Understanding-Data-Types.ipynb), blob `82b128e486cc58fd9d4297115dfa0abe0aa5c90d`. Only MIT-licensed code is adapted; the book's separately licensed prose is linked, not reproduced or adapted.
+Jake VanderPlas. The typed-array worked example adapts explicit floating-point array construction, and signal filtering adapts the list-comprehension code from [Understanding Data Types](https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/02.01-Understanding-Data-Types.ipynb), blob `82b128e486cc58fd9d4297115dfa0abe0aa5c90d`. Other Handbook chapters are references, not claimed exercise reuse. Only MIT-licensed code is adapted; the book's separately licensed prose is linked, not reproduced or adapted.
 
-+The MIT License (MIT)
+The MIT License (MIT)
 
 Copyright (c) 2016 Jacob VanderPlas
 

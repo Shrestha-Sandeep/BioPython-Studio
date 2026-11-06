@@ -31,6 +31,19 @@
  }
  function available(path){return path.filter(c=>c.kind!=='planned');}
  function adjacent(path,id,offset){const items=available(path),i=items.findIndex(c=>c.id===id);return i<0?null:items[i+offset]||null;}
+ function sourceFor(manifest,id){
+  const canonical=manifest.legacy_migration.find(a=>a.legacy_id===id)?.target_competency_id||id;
+  const number=manifest.competencies.find(c=>c.id===canonical||c.number===canonical)?.number;
+  const audit=manifest.python_source_audit,entry=audit?.entries.find(e=>e.number===number);
+  return entry?{...entry,source:audit.sources[entry.source]}:null;
+ }
+ function renderSource(target,manifest,id){
+  target.replaceChildren();const entry=sourceFor(manifest,id);if(!entry)return;
+  const a=document.createElement('a');a.href=entry.source.url;a.target='_blank';a.rel='noopener noreferrer';
+  a.textContent=entry.source.title+' · '+entry.source.author+' · '+entry.source.license;
+  const prefix=entry.status==='adapted'?'Adapted from ':entry.status==='reference'?'Reference: ':'Background: ';
+  target.append(document.createTextNode(prefix),a,document.createTextNode('. '+entry.note));
+ }
  function render(nav,path,current,onNavigate){
   nav.replaceChildren();
   for(const label of stages){
@@ -40,6 +53,6 @@
    }
   }
  }
- const api={stages,stage,build,available,adjacent,render};
+ const api={stages,stage,build,available,adjacent,render,sourceFor,renderSource};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.CoursePath=api;
 })(globalThis);

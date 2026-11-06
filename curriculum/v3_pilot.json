@@ -42,7 +42,10 @@
             "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
           ],
           "reference": "print(field_name)\nprint(\"Recorded\")",
-          "feedback": "print displays its argument. Running a cell executes each statement in order."
+          "feedback": "print displays its argument. Running a cell executes each statement in order.",
+          "check_feedback": [
+            "Print the supplied field_name, then Recorded on the next line. A fixed field label fails when the specimen changes."
+          ]
         },
         "write": {
           "task": "Print the provided field_name, then print \"Recorded\" on a second line. Start from a blank editor. Your code must work when the provided data change.",
@@ -62,7 +65,10 @@
             "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
           ],
           "reference": "print(field_name)\nprint(\"Recorded\")",
-          "feedback": "print displays its argument. Running a cell executes each statement in order."
+          "feedback": "print displays its argument. Running a cell executes each statement in order.",
+          "check_feedback": [
+            "Print the supplied field_name, then Recorded on the next line. A fixed field label fails when the specimen changes."
+          ]
         },
         "debug": {
           "task": "The script prints a variable name as literal text. Fix that behavior. Print the provided field_name, then print \"Recorded\" on a second line.",
@@ -82,7 +88,10 @@
             "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
           ],
           "reference": "print(field_name)\nprint(\"Recorded\")",
-          "feedback": "print displays its argument. Running a cell executes each statement in order."
+          "feedback": "print displays its argument. Running a cell executes each statement in order.",
+          "check_feedback": [
+            "Print the supplied field_name, then Recorded on the next line. A fixed field label fails when the specimen changes."
+          ]
         },
         "transfer": {
           "task": "A colleague is logging new culture fields. Produce a two-line record without copying a field ID. Print the provided field_name, then print \"Recorded\" on a second line.",
@@ -102,7 +111,10 @@
             "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
           ],
           "reference": "print(field_name)\nprint(\"Recorded\")",
-          "feedback": "print displays its argument. Running a cell executes each statement in order."
+          "feedback": "print displays its argument. Running a cell executes each statement in order.",
+          "check_feedback": [
+            "Print the supplied field_name, then Recorded on the next line. A fixed field label fails when the specimen changes."
+          ]
         }
       },
       "hints": [
@@ -129,47 +141,56 @@
             "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
           ],
           "reference": "print(field_name)\nprint(\"Recorded\")",
-          "feedback": "print displays its argument. Running a cell executes each statement in order."
+          "feedback": "print displays its argument. Running a cell executes each statement in order.",
+          "check_feedback": [
+            "Print the supplied field_name, then Recorded on the next line. A fixed field label fails when the specimen changes."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. A colleague is logging new culture fields. Produce a two-line record without copying a field ID. Print the provided field_name, then print \"Recorded\" on a second line.",
           "starter": "",
           "cases": [
             {
-              "field_name": "Root R09 \u00b7 batch 31"
+              "field_name": "Root R09 · batch 31"
             },
             {
-              "field_name": "Control C17 \u00b7 batch 31"
+              "field_name": "Control C17 · batch 31"
             },
             {
-              "field_name": "Field Z00 \u00b7 batch 31"
+              "field_name": "Field Z00 · batch 31"
             }
           ],
           "checks": [
             "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
           ],
           "reference": "print(field_name)\nprint(\"Recorded\")",
-          "feedback": "print displays its argument. Running a cell executes each statement in order."
+          "feedback": "print displays its argument. Running a cell executes each statement in order.",
+          "check_feedback": [
+            "Print the supplied field_name, then Recorded on the next line. A fixed field label fails when the specimen changes."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. A colleague is logging new culture fields. Produce a two-line record without copying a field ID. Print the provided field_name, then print \"Recorded\" on a second line.",
           "starter": "",
           "cases": [
             {
-              "field_name": "Root R09 \u00b7 batch 67"
+              "field_name": "Root R09 · batch 67"
             },
             {
-              "field_name": "Control C17 \u00b7 batch 67"
+              "field_name": "Control C17 · batch 67"
             },
             {
-              "field_name": "Field Z00 \u00b7 batch 67"
+              "field_name": "Field Z00 · batch 67"
             }
           ],
           "checks": [
             "output.strip().splitlines() == [case[\"field_name\"], \"Recorded\"]"
           ],
           "reference": "print(field_name)\nprint(\"Recorded\")",
-          "feedback": "print displays its argument. Running a cell executes each statement in order."
+          "feedback": "print displays its argument. Running a cell executes each statement in order.",
+          "check_feedback": [
+            "Print the supplied field_name, then Recorded on the next line. A fixed field label fails when the specimen changes."
+          ]
         }
       ]
     },
@@ -281,17 +302,17 @@
           "starter": "",
           "cases": [
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "source_name": "Human Protein Atlas · CC BY 4.0",
               "image_id": "HPA-46658",
               "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
             },
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "source_name": "Human Protein Atlas · CC BY 4.0",
               "image_id": "HPA-8346",
               "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
             },
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "source_name": "Human Protein Atlas · CC BY 4.0",
               "image_id": "HPA-23394",
               "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
             }
@@ -314,17 +335,17 @@
           "starter": "",
           "cases": [
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "source_name": "Human Protein Atlas · CC BY 4.0",
               "image_id": "HPA-46658",
               "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
             },
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "source_name": "Human Protein Atlas · CC BY 4.0",
               "image_id": "HPA-8346",
               "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
             },
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0",
+              "source_name": "Human Protein Atlas · CC BY 4.0",
               "image_id": "HPA-23394",
               "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
             }
@@ -340,18 +361,18 @@
           "starter": "",
           "cases": [
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 31",
-              "image_id": "HPA-46658 \u00b7 batch 31",
+              "source_name": "Human Protein Atlas · CC BY 4.0 · batch 31",
+              "image_id": "HPA-46658 · batch 31",
               "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
             },
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 31",
-              "image_id": "HPA-8346 \u00b7 batch 31",
+              "source_name": "Human Protein Atlas · CC BY 4.0 · batch 31",
+              "image_id": "HPA-8346 · batch 31",
               "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
             },
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 31",
-              "image_id": "HPA-23394 \u00b7 batch 31",
+              "source_name": "Human Protein Atlas · CC BY 4.0 · batch 31",
+              "image_id": "HPA-23394 · batch 31",
               "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
             }
           ],
@@ -366,18 +387,18 @@
           "starter": "",
           "cases": [
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 67",
-              "image_id": "HPA-46658 \u00b7 batch 67",
+              "source_name": "Human Protein Atlas · CC BY 4.0 · batch 67",
+              "image_id": "HPA-46658 · batch 67",
               "image_url": "https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg"
             },
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 67",
-              "image_id": "HPA-8346 \u00b7 batch 67",
+              "source_name": "Human Protein Atlas · CC BY 4.0 · batch 67",
+              "image_id": "HPA-8346 · batch 67",
               "image_url": "https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg"
             },
             {
-              "source_name": "Human Protein Atlas \u00b7 CC BY 4.0 \u00b7 batch 67",
-              "image_id": "HPA-23394 \u00b7 batch 67",
+              "source_name": "Human Protein Atlas · CC BY 4.0 · batch 67",
+              "image_id": "HPA-23394 · batch 67",
               "image_url": "https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg"
             }
           ],
@@ -431,7 +452,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "specimen = sample_id\nprint(specimen)",
-          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal.",
+          "check_feedback": [
+            "Assign specimen from the supplied sample_id rather than a quoted variable name.",
+            "Print specimen so the output follows the changed sample ID."
+          ]
         },
         "write": {
           "task": "Assign sample_id to specimen, then print specimen. Start from a blank editor. Your code must work when the provided data change.",
@@ -452,7 +477,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "specimen = sample_id\nprint(specimen)",
-          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal.",
+          "check_feedback": [
+            "Assign specimen from the supplied sample_id rather than a quoted variable name.",
+            "Print specimen so the output follows the changed sample ID."
+          ]
         },
         "debug": {
           "task": "An equality comparison was used where an assignment is needed. Assign sample_id to specimen, then print specimen.",
@@ -473,7 +502,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "specimen = sample_id\nprint(specimen)",
-          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal.",
+          "check_feedback": [
+            "Assign specimen from the supplied sample_id rather than a quoted variable name.",
+            "Print specimen so the output follows the changed sample ID."
+          ]
         },
         "transfer": {
           "task": "Label new yeast cultures from their supplied metadata. Assign sample_id to specimen, then print specimen.",
@@ -494,7 +527,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "specimen = sample_id\nprint(specimen)",
-          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal.",
+          "check_feedback": [
+            "Assign specimen from the supplied sample_id rather than a quoted variable name.",
+            "Print specimen so the output follows the changed sample ID."
+          ]
         }
       },
       "hints": [
@@ -522,20 +559,24 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "specimen = sample_id\nprint(specimen)",
-          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal.",
+          "check_feedback": [
+            "Assign specimen from the supplied sample_id rather than a quoted variable name.",
+            "Print specimen so the output follows the changed sample ID."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Label new yeast cultures from their supplied metadata. Assign sample_id to specimen, then print specimen.",
           "starter": "",
           "cases": [
             {
-              "sample_id": "ROOT-R4 \u00b7 batch 31"
+              "sample_id": "ROOT-R4 · batch 31"
             },
             {
-              "sample_id": "LIVER-L2 \u00b7 batch 31"
+              "sample_id": "LIVER-L2 · batch 31"
             },
             {
-              "sample_id": "DYE-ONLY \u00b7 batch 31"
+              "sample_id": "DYE-ONLY · batch 31"
             }
           ],
           "checks": [
@@ -543,20 +584,24 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "specimen = sample_id\nprint(specimen)",
-          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal.",
+          "check_feedback": [
+            "Assign specimen from the supplied sample_id rather than a quoted variable name.",
+            "Print specimen so the output follows the changed sample ID."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Label new yeast cultures from their supplied metadata. Assign sample_id to specimen, then print specimen.",
           "starter": "",
           "cases": [
             {
-              "sample_id": "ROOT-R4 \u00b7 batch 67"
+              "sample_id": "ROOT-R4 · batch 67"
             },
             {
-              "sample_id": "LIVER-L2 \u00b7 batch 67"
+              "sample_id": "LIVER-L2 · batch 67"
             },
             {
-              "sample_id": "DYE-ONLY \u00b7 batch 67"
+              "sample_id": "DYE-ONLY · batch 67"
             }
           ],
           "checks": [
@@ -564,7 +609,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "specimen = sample_id\nprint(specimen)",
-          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal."
+          "feedback": "The right-hand side of an assignment is evaluated first. Quoted text is literal.",
+          "check_feedback": [
+            "Assign specimen from the supplied sample_id rather than a quoted variable name.",
+            "Print specimen so the output follows the changed sample ID."
+          ]
         }
       ]
     },
@@ -614,7 +663,11 @@
             "output.strip() == ns[\"label\"]"
           ],
           "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
-          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text.",
+          "check_feedback": [
+            "Build label from sample_id, a space-pipe-space separator, then channel. Keep the supplied letter case.",
+            "Print the label you built; check separators and spaces."
+          ]
         },
         "write": {
           "task": "Create label with the exact format sample_id | channel using the supplied values; print it. Start from a blank editor. Your code must work when the provided data change.",
@@ -638,7 +691,11 @@
             "output.strip() == ns[\"label\"]"
           ],
           "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
-          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text.",
+          "check_feedback": [
+            "Build label from sample_id, a space-pipe-space separator, then channel. Keep the supplied letter case.",
+            "Print the label you built; check separators and spaces."
+          ]
         },
         "debug": {
           "task": "The label fields are in the wrong order. Create label with the exact format sample_id | channel using the supplied values; print it.",
@@ -662,7 +719,11 @@
             "output.strip() == ns[\"label\"]"
           ],
           "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
-          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text.",
+          "check_feedback": [
+            "Build label from sample_id, a space-pipe-space separator, then channel. Keep the supplied letter case.",
+            "Print the label you built; check separators and spaces."
+          ]
         },
         "transfer": {
           "task": "Prepare labels for a new organelle imaging session. Create label with the exact format sample_id | channel using the supplied values; print it.",
@@ -686,7 +747,11 @@
             "output.strip() == ns[\"label\"]"
           ],
           "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
-          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text.",
+          "check_feedback": [
+            "Build label from sample_id, a space-pipe-space separator, then channel. Keep the supplied letter case.",
+            "Print the label you built; check separators and spaces."
+          ]
         }
       },
       "hints": [
@@ -717,23 +782,27 @@
             "output.strip() == ns[\"label\"]"
           ],
           "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
-          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text.",
+          "check_feedback": [
+            "Build label from sample_id, a space-pipe-space separator, then channel. Keep the supplied letter case.",
+            "Print the label you built; check separators and spaces."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Prepare labels for a new organelle imaging session. Create label with the exact format sample_id | channel using the supplied values; print it.",
           "starter": "",
           "cases": [
             {
-              "sample_id": "ROOT-R4 \u00b7 batch 31",
-              "channel": "yellow \u00b7 batch 31"
+              "sample_id": "ROOT-R4 · batch 31",
+              "channel": "yellow · batch 31"
             },
             {
-              "sample_id": "CULTURE-Z0 \u00b7 batch 31",
-              "channel": "cyan \u00b7 batch 31"
+              "sample_id": "CULTURE-Z0 · batch 31",
+              "channel": "cyan · batch 31"
             },
             {
-              "sample_id": "BEAD-Q9 \u00b7 batch 31",
-              "channel": "magenta \u00b7 batch 31"
+              "sample_id": "BEAD-Q9 · batch 31",
+              "channel": "magenta · batch 31"
             }
           ],
           "checks": [
@@ -741,23 +810,27 @@
             "output.strip() == ns[\"label\"]"
           ],
           "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
-          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text.",
+          "check_feedback": [
+            "Build label from sample_id, a space-pipe-space separator, then channel. Keep the supplied letter case.",
+            "Print the label you built; check separators and spaces."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Prepare labels for a new organelle imaging session. Create label with the exact format sample_id | channel using the supplied values; print it.",
           "starter": "",
           "cases": [
             {
-              "sample_id": "ROOT-R4 \u00b7 batch 67",
-              "channel": "yellow \u00b7 batch 67"
+              "sample_id": "ROOT-R4 · batch 67",
+              "channel": "yellow · batch 67"
             },
             {
-              "sample_id": "CULTURE-Z0 \u00b7 batch 67",
-              "channel": "cyan \u00b7 batch 67"
+              "sample_id": "CULTURE-Z0 · batch 67",
+              "channel": "cyan · batch 67"
             },
             {
-              "sample_id": "BEAD-Q9 \u00b7 batch 67",
-              "channel": "magenta \u00b7 batch 67"
+              "sample_id": "BEAD-Q9 · batch 67",
+              "channel": "magenta · batch 67"
             }
           ],
           "checks": [
@@ -765,7 +838,11 @@
             "output.strip() == ns[\"label\"]"
           ],
           "reference": "label = f\"{sample_id} | {channel}\"\nprint(label)",
-          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text."
+          "feedback": "The f prefix enables interpolation. Spaces and separators outside braces remain literal text.",
+          "check_feedback": [
+            "Build label from sample_id, a space-pipe-space separator, then channel. Keep the supplied letter case.",
+            "Print the label you built; check separators and spaces."
+          ]
         }
       ]
     },
@@ -777,15 +854,15 @@
       "example": {
         "source": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
         "case": {
-          "distance_px": 20,
-          "pixel_size_um": 0.5
+          "distance_px": 5,
+          "pixel_size_um": 9.5
         }
       },
       "predict": "Predict the distance and its physical unit.",
       "investigate": {
         "question": "Why multiply by pixel_size_um?",
         "options": [
-          "Pixels \u00d7 micrometers/pixel gives micrometers.",
+          "Pixels × micrometers/pixel gives micrometers.",
           "A pixel count is already a physical distance.",
           "The result is an area in square micrometers."
         ],
@@ -815,7 +892,11 @@
             "printed_number(output,ns[\"distance_um\"])"
           ],
           "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
-          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration.",
+          "check_feedback": [
+            "Calculate distance_um from distance_px times pixel_size_um; the units are pixels × micrometers/pixel.",
+            "Print distance_um as a number after calculating it."
+          ]
         },
         "write": {
           "task": "Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um. Start from a blank editor. Your code must work when the provided data change.",
@@ -839,7 +920,11 @@
             "printed_number(output,ns[\"distance_um\"])"
           ],
           "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
-          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration.",
+          "check_feedback": [
+            "Calculate distance_um from distance_px times pixel_size_um; the units are pixels × micrometers/pixel.",
+            "Print distance_um as a number after calculating it."
+          ]
         },
         "debug": {
           "task": "Division gives the wrong units. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
@@ -863,7 +948,11 @@
             "printed_number(output,ns[\"distance_um\"])"
           ],
           "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
-          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration.",
+          "check_feedback": [
+            "Calculate distance_um from distance_px times pixel_size_um; the units are pixels × micrometers/pixel.",
+            "Print distance_um as a number after calculating it."
+          ]
         },
         "transfer": {
           "task": "Convert a new set of tracked particle displacements using their supplied calibration. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
@@ -887,7 +976,11 @@
             "printed_number(output,ns[\"distance_um\"])"
           ],
           "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
-          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration.",
+          "check_feedback": [
+            "Calculate distance_um from distance_px times pixel_size_um; the units are pixels × micrometers/pixel.",
+            "Print distance_um as a number after calculating it."
+          ]
         }
       },
       "hints": [
@@ -918,7 +1011,11 @@
             "printed_number(output,ns[\"distance_um\"])"
           ],
           "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
-          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration.",
+          "check_feedback": [
+            "Calculate distance_um from distance_px times pixel_size_um; the units are pixels × micrometers/pixel.",
+            "Print distance_um as a number after calculating it."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Convert a new set of tracked particle displacements using their supplied calibration. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
@@ -942,7 +1039,11 @@
             "printed_number(output,ns[\"distance_um\"])"
           ],
           "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
-          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration.",
+          "check_feedback": [
+            "Calculate distance_um from distance_px times pixel_size_um; the units are pixels × micrometers/pixel.",
+            "Print distance_um as a number after calculating it."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Convert a new set of tracked particle displacements using their supplied calibration. Set distance_um to distance_px multiplied by pixel_size_um, then print distance_um.",
@@ -966,7 +1067,11 @@
             "printed_number(output,ns[\"distance_um\"])"
           ],
           "reference": "distance_um = distance_px * pixel_size_um\nprint(distance_um)",
-          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration."
+          "feedback": "Unit cancellation explains the calculation. Area would require a squared length calibration.",
+          "check_feedback": [
+            "Calculate distance_um from distance_px times pixel_size_um; the units are pixels × micrometers/pixel.",
+            "Print distance_um as a number after calculating it."
+          ]
         }
       ]
     },
@@ -978,8 +1083,8 @@
       "example": {
         "source": "print(type(count).__name__)\nprint(type(distance_um).__name__)\nprint(type(accepted).__name__)",
         "case": {
-          "count": 8,
-          "distance_um": 2.5,
+          "count": 5,
+          "distance_um": 47.5,
           "accepted": true
         },
         "input_types": {
@@ -1028,7 +1133,13 @@
           "input_types": {
             "distance_um": "float"
           },
-          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str.",
+          "check_feedback": [
+            "Save type(count) itself as count_type, not the name string.",
+            "Save type(distance_um) as distance_type; a whole-valued physical measurement can still be a float.",
+            "Save type(accepted) as accepted_type; True/False are Boolean values.",
+            "Print the three type names in the order int, float, bool."
+          ]
         },
         "write": {
           "task": "Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines. Start from a blank editor. Your code must work when the provided data change.",
@@ -1060,7 +1171,13 @@
           "input_types": {
             "distance_um": "float"
           },
-          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str.",
+          "check_feedback": [
+            "Save type(count) itself as count_type, not the name string.",
+            "Save type(distance_um) as distance_type; a whole-valued physical measurement can still be a float.",
+            "Save type(accepted) as accepted_type; True/False are Boolean values.",
+            "Print the three type names in the order int, float, bool."
+          ]
         },
         "debug": {
           "task": "The QC type comes from quoted text rather than the Boolean variable. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
@@ -1092,7 +1209,13 @@
           "input_types": {
             "distance_um": "float"
           },
-          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str.",
+          "check_feedback": [
+            "Save type(count) itself as count_type, not the name string.",
+            "Save type(distance_um) as distance_type; a whole-valued physical measurement can still be a float.",
+            "Save type(accepted) as accepted_type; True/False are Boolean values.",
+            "Print the three type names in the order int, float, bool."
+          ]
         },
         "transfer": {
           "task": "Audit types in fresh acquisition records, including zero and False. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
@@ -1124,7 +1247,13 @@
           "input_types": {
             "distance_um": "float"
           },
-          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str.",
+          "check_feedback": [
+            "Save type(count) itself as count_type, not the name string.",
+            "Save type(distance_um) as distance_type; a whole-valued physical measurement can still be a float.",
+            "Save type(accepted) as accepted_type; True/False are Boolean values.",
+            "Print the three type names in the order int, float, bool."
+          ]
         }
       },
       "hints": [
@@ -1163,7 +1292,13 @@
           "input_types": {
             "distance_um": "float"
           },
-          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str.",
+          "check_feedback": [
+            "Save type(count) itself as count_type, not the name string.",
+            "Save type(distance_um) as distance_type; a whole-valued physical measurement can still be a float.",
+            "Save type(accepted) as accepted_type; True/False are Boolean values.",
+            "Print the three type names in the order int, float, bool."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Audit types in fresh acquisition records, including zero and False. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
@@ -1195,7 +1330,13 @@
           "input_types": {
             "distance_um": "float"
           },
-          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str.",
+          "check_feedback": [
+            "Save type(count) itself as count_type, not the name string.",
+            "Save type(distance_um) as distance_type; a whole-valued physical measurement can still be a float.",
+            "Save type(accepted) as accepted_type; True/False are Boolean values.",
+            "Print the three type names in the order int, float, bool."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Audit types in fresh acquisition records, including zero and False. Create count_type = type(count), distance_type = type(distance_um), and accepted_type = type(accepted). Print their __name__ values on separate lines.",
@@ -1227,7 +1368,13 @@
           "input_types": {
             "distance_um": "float"
           },
-          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str."
+          "feedback": "False is a Boolean value. The quoted text \"False\" would have type str.",
+          "check_feedback": [
+            "Save type(count) itself as count_type, not the name string.",
+            "Save type(distance_um) as distance_type; a whole-valued physical measurement can still be a float.",
+            "Save type(accepted) as accepted_type; True/False are Boolean values.",
+            "Print the three type names in the order int, float, bool."
+          ]
         }
       ]
     },
@@ -1278,7 +1425,12 @@
             "output.strip() == str(ns[\"passes\"])"
           ],
           "reference": "passes = signal >= minimum\nprint(passes)",
-          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values.",
+          "check_feedback": [
+            "Store a Boolean in passes, rather than the words True or False as text.",
+            "Equality meets the minimum: compare the current signal with the inclusive cutoff.",
+            "Print the stored passes result."
+          ]
         },
         "write": {
           "task": "Create the Boolean passes = signal >= minimum; print passes. Start from a blank editor. Your code must work when the provided data change.",
@@ -1303,7 +1455,12 @@
             "output.strip() == str(ns[\"passes\"])"
           ],
           "reference": "passes = signal >= minimum\nprint(passes)",
-          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values.",
+          "check_feedback": [
+            "Store a Boolean in passes, rather than the words True or False as text.",
+            "Equality meets the minimum: compare the current signal with the inclusive cutoff.",
+            "Print the stored passes result."
+          ]
         },
         "debug": {
           "task": "This accepts only equality and rejects signals above the minimum. Create the Boolean passes = signal >= minimum; print passes.",
@@ -1328,7 +1485,12 @@
             "output.strip() == str(ns[\"passes\"])"
           ],
           "reference": "passes = signal >= minimum\nprint(passes)",
-          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values.",
+          "check_feedback": [
+            "Store a Boolean in passes, rather than the words True or False as text.",
+            "Equality meets the minimum: compare the current signal with the inclusive cutoff.",
+            "Print the stored passes result."
+          ]
         },
         "transfer": {
           "task": "Apply the same documented rule to a different acquisition threshold. Create the Boolean passes = signal >= minimum; print passes.",
@@ -1353,7 +1515,12 @@
             "output.strip() == str(ns[\"passes\"])"
           ],
           "reference": "passes = signal >= minimum\nprint(passes)",
-          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values.",
+          "check_feedback": [
+            "Store a Boolean in passes, rather than the words True or False as text.",
+            "Equality meets the minimum: compare the current signal with the inclusive cutoff.",
+            "Print the stored passes result."
+          ]
         }
       },
       "hints": [
@@ -1385,7 +1552,12 @@
             "output.strip() == str(ns[\"passes\"])"
           ],
           "reference": "passes = signal >= minimum\nprint(passes)",
-          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values.",
+          "check_feedback": [
+            "Store a Boolean in passes, rather than the words True or False as text.",
+            "Equality meets the minimum: compare the current signal with the inclusive cutoff.",
+            "Print the stored passes result."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Apply the same documented rule to a different acquisition threshold. Create the Boolean passes = signal >= minimum; print passes.",
@@ -1410,7 +1582,12 @@
             "output.strip() == str(ns[\"passes\"])"
           ],
           "reference": "passes = signal >= minimum\nprint(passes)",
-          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values.",
+          "check_feedback": [
+            "Store a Boolean in passes, rather than the words True or False as text.",
+            "Equality meets the minimum: compare the current signal with the inclusive cutoff.",
+            "Print the stored passes result."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Apply the same documented rule to a different acquisition threshold. Create the Boolean passes = signal >= minimum; print passes.",
@@ -1435,7 +1612,12 @@
             "output.strip() == str(ns[\"passes\"])"
           ],
           "reference": "passes = signal >= minimum\nprint(passes)",
-          "feedback": ">= includes equality. = assigns a value; it does not compare two values."
+          "feedback": ">= includes equality. = assigns a value; it does not compare two values.",
+          "check_feedback": [
+            "Store a Boolean in passes, rather than the words True or False as text.",
+            "Equality meets the minimum: compare the current signal with the inclusive cutoff.",
+            "Print the stored passes result."
+          ]
         }
       ]
     },
@@ -1485,7 +1667,11 @@
             "output.strip() == ns[\"decision\"]"
           ],
           "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
-          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold.",
+          "check_feedback": [
+            "Set decision to keep at or above the minimum, otherwise review. Test the equality boundary.",
+            "Print decision after choosing the branch."
+          ]
         },
         "write": {
           "task": "Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision. Start from a blank editor. Your code must work when the provided data change.",
@@ -1509,7 +1695,11 @@
             "output.strip() == ns[\"decision\"]"
           ],
           "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
-          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold.",
+          "check_feedback": [
+            "Set decision to keep at or above the minimum, otherwise review. Test the equality boundary.",
+            "Print decision after choosing the branch."
+          ]
         },
         "debug": {
           "task": "Read the syntax error location and restore the missing block marker. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
@@ -1533,7 +1723,11 @@
             "output.strip() == ns[\"decision\"]"
           ],
           "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
-          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold.",
+          "check_feedback": [
+            "Set decision to keep at or above the minimum, otherwise review. Test the equality boundary.",
+            "Print decision after choosing the branch."
+          ]
         },
         "transfer": {
           "task": "Record decisions on previously unseen field signals. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
@@ -1557,7 +1751,11 @@
             "output.strip() == ns[\"decision\"]"
           ],
           "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
-          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold.",
+          "check_feedback": [
+            "Set decision to keep at or above the minimum, otherwise review. Test the equality boundary.",
+            "Print decision after choosing the branch."
+          ]
         }
       },
       "hints": [
@@ -1588,7 +1786,11 @@
             "output.strip() == ns[\"decision\"]"
           ],
           "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
-          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold.",
+          "check_feedback": [
+            "Set decision to keep at or above the minimum, otherwise review. Test the equality boundary.",
+            "Print decision after choosing the branch."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Record decisions on previously unseen field signals. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
@@ -1612,7 +1814,11 @@
             "output.strip() == ns[\"decision\"]"
           ],
           "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
-          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold.",
+          "check_feedback": [
+            "Set decision to keep at or above the minimum, otherwise review. Test the equality boundary.",
+            "Print decision after choosing the branch."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Record decisions on previously unseen field signals. Set decision to \"keep\" when signal >= minimum, otherwise \"review\". Print decision.",
@@ -1636,7 +1842,11 @@
             "output.strip() == ns[\"decision\"]"
           ],
           "reference": "if signal >= minimum:\n    decision = \"keep\"\nelse:\n    decision = \"review\"\nprint(decision)",
-          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold."
+          "feedback": "Python uses indentation to define a block. The else branch handles values below the threshold.",
+          "check_feedback": [
+            "Set decision to keep at or above the minimum, otherwise review. Test the equality boundary.",
+            "Print decision after choosing the branch."
+          ]
         }
       ]
     },
@@ -1703,7 +1913,12 @@
             "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
           ],
           "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
-          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3.",
+          "check_feedback": [
+            "Save the first count using zero-based indexing.",
+            "Save counts at indices 1 and 2 as middle; the slice stop is excluded.",
+            "Print first, then middle on separate lines."
+          ]
         },
         "write": {
           "task": "Create first = counts[0] and middle = counts[1:3]. Print first, then middle. Start from a blank editor. Your code must work when the provided data change.",
@@ -1739,7 +1954,12 @@
             "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
           ],
           "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
-          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3.",
+          "check_feedback": [
+            "Save the first count using zero-based indexing.",
+            "Save counts at indices 1 and 2 as middle; the slice stop is excluded.",
+            "Print first, then middle on separate lines."
+          ]
         },
         "debug": {
           "task": "The slice excludes one requested observation. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
@@ -1776,7 +1996,12 @@
             "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
           ],
           "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
-          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3.",
+          "check_feedback": [
+            "Save the first count using zero-based indexing.",
+            "Save counts at indices 1 and 2 as middle; the slice stop is excluded.",
+            "Print first, then middle on separate lines."
+          ]
         },
         "transfer": {
           "task": "Inspect a new list of colony counts. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
@@ -1813,7 +2038,12 @@
             "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
           ],
           "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
-          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3.",
+          "check_feedback": [
+            "Save the first count using zero-based indexing.",
+            "Save counts at indices 1 and 2 as middle; the slice stop is excluded.",
+            "Print first, then middle on separate lines."
+          ]
         }
       },
       "hints": [
@@ -1857,7 +2087,12 @@
             "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
           ],
           "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
-          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3.",
+          "check_feedback": [
+            "Save the first count using zero-based indexing.",
+            "Save counts at indices 1 and 2 as middle; the slice stop is excluded.",
+            "Print first, then middle on separate lines."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Inspect a new list of colony counts. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
@@ -1894,7 +2129,12 @@
             "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
           ],
           "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
-          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3.",
+          "check_feedback": [
+            "Save the first count using zero-based indexing.",
+            "Save counts at indices 1 and 2 as middle; the slice stop is excluded.",
+            "Print first, then middle on separate lines."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Inspect a new list of colony counts. Create first = counts[0] and middle = counts[1:3]. Print first, then middle.",
@@ -1931,7 +2171,12 @@
             "output.strip().splitlines() == [str(ns[\"first\"]),str(ns[\"middle\"])]"
           ],
           "reference": "first = counts[0]\nmiddle = counts[1:3]\nprint(first)\nprint(middle)",
-          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3."
+          "feedback": "Negative indexing counts from the end; a slice [1:3] includes index 1 and excludes index 3.",
+          "check_feedback": [
+            "Save the first count using zero-based indexing.",
+            "Save counts at indices 1 and 2 as middle; the slice stop is excluded.",
+            "Print first, then middle on separate lines."
+          ]
         }
       ]
     },
@@ -1995,7 +2240,13 @@
             "has_node(tree,ast.For)"
           ],
           "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
-          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero.",
+          "check_feedback": [
+            "Initialize kept as an integer count.",
+            "Count every signal at or above minimum; empty input must leave the count at zero.",
+            "Print the final kept count after the loop.",
+            "Use a for loop to practice visiting the measurements."
+          ]
         },
         "write": {
           "task": "Use a for loop to count signals >= minimum in kept. Print kept. Start from a blank editor. Your code must work when the provided data change.",
@@ -2030,7 +2281,13 @@
             "has_node(tree,ast.For)"
           ],
           "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
-          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero.",
+          "check_feedback": [
+            "Initialize kept as an integer count.",
+            "Count every signal at or above minimum; empty input must leave the count at zero.",
+            "Print the final kept count after the loop.",
+            "Use a for loop to practice visiting the measurements."
+          ]
         },
         "debug": {
           "task": "The accumulator is reset inside the loop. Use a for loop to count signals >= minimum in kept. Print kept.",
@@ -2064,7 +2321,13 @@
             "has_node(tree,ast.For)"
           ],
           "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
-          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero.",
+          "check_feedback": [
+            "Initialize kept as an integer count.",
+            "Count every signal at or above minimum; empty input must leave the count at zero.",
+            "Print the final kept count after the loop.",
+            "Use a for loop to practice visiting the measurements."
+          ]
         },
         "transfer": {
           "task": "Summarize QC for new culture fields, including an empty acquisition. Use a for loop to count signals >= minimum in kept. Print kept.",
@@ -2099,7 +2362,13 @@
             "has_node(tree,ast.For)"
           ],
           "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
-          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero.",
+          "check_feedback": [
+            "Initialize kept as an integer count.",
+            "Count every signal at or above minimum; empty input must leave the count at zero.",
+            "Print the final kept count after the loop.",
+            "Use a for loop to practice visiting the measurements."
+          ]
         }
       },
       "hints": [
@@ -2141,7 +2410,13 @@
             "has_node(tree,ast.For)"
           ],
           "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
-          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero.",
+          "check_feedback": [
+            "Initialize kept as an integer count.",
+            "Count every signal at or above minimum; empty input must leave the count at zero.",
+            "Print the final kept count after the loop.",
+            "Use a for loop to practice visiting the measurements."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Summarize QC for new culture fields, including an empty acquisition. Use a for loop to count signals >= minimum in kept. Print kept.",
@@ -2176,7 +2451,13 @@
             "has_node(tree,ast.For)"
           ],
           "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
-          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero.",
+          "check_feedback": [
+            "Initialize kept as an integer count.",
+            "Count every signal at or above minimum; empty input must leave the count at zero.",
+            "Print the final kept count after the loop.",
+            "Use a for loop to practice visiting the measurements."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Summarize QC for new culture fields, including an empty acquisition. Use a for loop to count signals >= minimum in kept. Print kept.",
@@ -2211,7 +2492,13 @@
             "has_node(tree,ast.For)"
           ],
           "reference": "kept = 0\nfor signal in signals:\n    if signal >= minimum:\n        kept = kept + 1\nprint(kept)",
-          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero."
+          "feedback": "An accumulator keeps its running value between iterations. Empty input should leave it at zero.",
+          "check_feedback": [
+            "Initialize kept as an integer count.",
+            "Count every signal at or above minimum; empty input must leave the count at zero.",
+            "Print the final kept count after the loop.",
+            "Use a for loop to practice visiting the measurements."
+          ]
         }
       ]
     },
@@ -2274,7 +2561,12 @@
             "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
           ],
           "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
-          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None.",
+          "check_feedback": [
+            "Define count_fields as a function that can be called with new measurements and a cutoff.",
+            "Return the number at or above cutoff for every call, including an empty list and equality. Printing inside the function is not returning.",
+            "Print the returned result for the supplied signals and minimum."
+          ]
         },
         "write": {
           "task": "Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum). Start from a blank editor. Your code must work when the provided data change.",
@@ -2307,7 +2599,12 @@
             "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
           ],
           "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
-          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None.",
+          "check_feedback": [
+            "Define count_fields as a function that can be called with new measurements and a cutoff.",
+            "Return the number at or above cutoff for every call, including an empty list and equality. Printing inside the function is not returning.",
+            "Print the returned result for the supplied signals and minimum."
+          ]
         },
         "debug": {
           "task": "The function prints a count but returns None. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
@@ -2340,7 +2637,12 @@
             "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
           ],
           "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
-          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None.",
+          "check_feedback": [
+            "Define count_fields as a function that can be called with new measurements and a cutoff.",
+            "Return the number at or above cutoff for every call, including an empty list and equality. Printing inside the function is not returning.",
+            "Print the returned result for the supplied signals and minimum."
+          ]
         },
         "transfer": {
           "task": "Write the function for fresh particle-QC data. Hidden calls use new arguments. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
@@ -2373,7 +2675,12 @@
             "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
           ],
           "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
-          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None.",
+          "check_feedback": [
+            "Define count_fields as a function that can be called with new measurements and a cutoff.",
+            "Return the number at or above cutoff for every call, including an empty list and equality. Printing inside the function is not returning.",
+            "Print the returned result for the supplied signals and minimum."
+          ]
         }
       },
       "hints": [
@@ -2413,7 +2720,12 @@
             "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
           ],
           "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
-          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None.",
+          "check_feedback": [
+            "Define count_fields as a function that can be called with new measurements and a cutoff.",
+            "Return the number at or above cutoff for every call, including an empty list and equality. Printing inside the function is not returning.",
+            "Print the returned result for the supplied signals and minimum."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Write the function for fresh particle-QC data. Hidden calls use new arguments. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
@@ -2446,7 +2758,12 @@
             "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
           ],
           "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
-          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None.",
+          "check_feedback": [
+            "Define count_fields as a function that can be called with new measurements and a cutoff.",
+            "Return the number at or above cutoff for every call, including an empty list and equality. Printing inside the function is not returning.",
+            "Print the returned result for the supplied signals and minimum."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Write the function for fresh particle-QC data. Hidden calls use new arguments. Define count_fields(values, cutoff) returning the number of values >= cutoff. Print count_fields(signals, minimum).",
@@ -2479,7 +2796,12 @@
             "printed_number(output,sum(x>=case[\"minimum\"] for x in case[\"signals\"]))"
           ],
           "reference": "def count_fields(values, cutoff):\n    total = 0\n    for value in values:\n        if value >= cutoff:\n            total += 1\n    return total\n\nprint(count_fields(signals, minimum))",
-          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None."
+          "feedback": "A returned value can be tested and reused with new arguments. A function without return produces None.",
+          "check_feedback": [
+            "Define count_fields as a function that can be called with new measurements and a cutoff.",
+            "Return the number at or above cutoff for every call, including an empty list and equality. Printing inside the function is not returning.",
+            "Print the returned result for the supplied signals and minimum."
+          ]
         }
       ]
     },
@@ -2525,7 +2847,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "report_id = sample_id\nprint(report_id)",
-          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis.",
+          "check_feedback": [
+            "Assign report_id from the supplied sample_id; spelling and quoted text have different meanings.",
+            "Print report_id so the displayed identifier follows the current input."
+          ]
         },
         "write": {
           "task": "Repair the specimen report by assigning report_id = sample_id, then print report_id. Start from a blank editor. Your code must work when the provided data change.",
@@ -2546,7 +2872,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "report_id = sample_id\nprint(report_id)",
-          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis.",
+          "check_feedback": [
+            "Assign report_id from the supplied sample_id; spelling and quoted text have different meanings.",
+            "Print report_id so the displayed identifier follows the current input."
+          ]
         },
         "debug": {
           "task": "The traceback reports a case-sensitive spelling mismatch. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
@@ -2567,7 +2897,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "report_id = sample_id\nprint(report_id)",
-          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis.",
+          "check_feedback": [
+            "Assign report_id from the supplied sample_id; spelling and quoted text have different meanings.",
+            "Print report_id so the displayed identifier follows the current input."
+          ]
         },
         "transfer": {
           "task": "Repair a report for new specimen metadata using traceback evidence. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
@@ -2588,7 +2922,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "report_id = sample_id\nprint(report_id)",
-          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis.",
+          "check_feedback": [
+            "Assign report_id from the supplied sample_id; spelling and quoted text have different meanings.",
+            "Print report_id so the displayed identifier follows the current input."
+          ]
         }
       },
       "hints": [
@@ -2616,20 +2954,24 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "report_id = sample_id\nprint(report_id)",
-          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis.",
+          "check_feedback": [
+            "Assign report_id from the supplied sample_id; spelling and quoted text have different meanings.",
+            "Print report_id so the displayed identifier follows the current input."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Repair a report for new specimen metadata using traceback evidence. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
           "starter": "",
           "cases": [
             {
-              "sample_id": "LEAF-L8 \u00b7 batch 31"
+              "sample_id": "LEAF-L8 · batch 31"
             },
             {
-              "sample_id": "BEAD-Q4 \u00b7 batch 31"
+              "sample_id": "BEAD-Q4 · batch 31"
             },
             {
-              "sample_id": "MOCK-M7 \u00b7 batch 31"
+              "sample_id": "MOCK-M7 · batch 31"
             }
           ],
           "checks": [
@@ -2637,20 +2979,24 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "report_id = sample_id\nprint(report_id)",
-          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis.",
+          "check_feedback": [
+            "Assign report_id from the supplied sample_id; spelling and quoted text have different meanings.",
+            "Print report_id so the displayed identifier follows the current input."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Repair a report for new specimen metadata using traceback evidence. Repair the specimen report by assigning report_id = sample_id, then print report_id.",
           "starter": "",
           "cases": [
             {
-              "sample_id": "LEAF-L8 \u00b7 batch 67"
+              "sample_id": "LEAF-L8 · batch 67"
             },
             {
-              "sample_id": "BEAD-Q4 \u00b7 batch 67"
+              "sample_id": "BEAD-Q4 · batch 67"
             },
             {
-              "sample_id": "MOCK-M7 \u00b7 batch 67"
+              "sample_id": "MOCK-M7 · batch 67"
             }
           ],
           "checks": [
@@ -2658,7 +3004,11 @@
             "output.strip() == case[\"sample_id\"]"
           ],
           "reference": "report_id = sample_id\nprint(report_id)",
-          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis."
+          "feedback": "The displayed line number points to the failing statement. Fix the name or assign it; a traceback is evidence, not a biological diagnosis.",
+          "check_feedback": [
+            "Assign report_id from the supplied sample_id; spelling and quoted text have different meanings.",
+            "Print report_id so the displayed identifier follows the current input."
+          ]
         }
       ]
     },
@@ -2715,7 +3065,12 @@
             "\"number of items\" in output.lower()"
           ],
           "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
-          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar.",
+          "check_feedback": [
+            "Save the list length as n_fields; count the current list rather than typing a fixed count.",
+            "Print the current n_fields as the final line after the help text.",
+            "Call help(len) so Python displays what the function does, not just its result."
+          ]
         },
         "write": {
           "task": "Call help(len), assign n_fields = len(counts), then print n_fields. Start from a blank editor. Your code must work when the provided data change.",
@@ -2745,7 +3100,12 @@
             "\"number of items\" in output.lower()"
           ],
           "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
-          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar.",
+          "check_feedback": [
+            "Save the list length as n_fields; count the current list rather than typing a fixed count.",
+            "Print the current n_fields as the final line after the help text.",
+            "Call help(len) so Python displays what the function does, not just its result."
+          ]
         },
         "debug": {
           "task": "The code measures the variable name as text. Call help(len), assign n_fields = len(counts), then print n_fields.",
@@ -2773,7 +3133,12 @@
             "\"number of items\" in output.lower()"
           ],
           "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
-          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar.",
+          "check_feedback": [
+            "Save the list length as n_fields; count the current list rather than typing a fixed count.",
+            "Print the current n_fields as the final line after the help text.",
+            "Call help(len) so Python displays what the function does, not just its result."
+          ]
         },
         "transfer": {
           "task": "Use documentation to check the size of a new field list. Call help(len), assign n_fields = len(counts), then print n_fields.",
@@ -2805,7 +3170,12 @@
             "\"number of items\" in output.lower()"
           ],
           "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
-          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar.",
+          "check_feedback": [
+            "Save the list length as n_fields; count the current list rather than typing a fixed count.",
+            "Print the current n_fields as the final line after the help text.",
+            "Call help(len) so Python displays what the function does, not just its result."
+          ]
         }
       },
       "hints": [
@@ -2844,7 +3214,12 @@
             "\"number of items\" in output.lower()"
           ],
           "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
-          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar.",
+          "check_feedback": [
+            "Save the list length as n_fields; count the current list rather than typing a fixed count.",
+            "Print the current n_fields as the final line after the help text.",
+            "Call help(len) so Python displays what the function does, not just its result."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Use documentation to check the size of a new field list. Call help(len), assign n_fields = len(counts), then print n_fields.",
@@ -2876,7 +3251,12 @@
             "\"number of items\" in output.lower()"
           ],
           "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
-          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar.",
+          "check_feedback": [
+            "Save the list length as n_fields; count the current list rather than typing a fixed count.",
+            "Print the current n_fields as the final line after the help text.",
+            "Call help(len) so Python displays what the function does, not just its result."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Use documentation to check the size of a new field list. Call help(len), assign n_fields = len(counts), then print n_fields.",
@@ -2908,7 +3288,12 @@
             "\"number of items\" in output.lower()"
           ],
           "reference": "help(len)\nn_fields = len(counts)\nprint(n_fields)",
-          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar."
+          "feedback": "len reports the number of items. Consult help when the behavior or accepted input is unfamiliar.",
+          "check_feedback": [
+            "Save the list length as n_fields; count the current list rather than typing a fixed count.",
+            "Print the current n_fields as the final line after the help text.",
+            "Call help(len) so Python displays what the function does, not just its result."
+          ]
         }
       ]
     },
@@ -2968,7 +3353,13 @@
             "output.strip() == str(ns[\"values\"].dtype)"
           ],
           "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
-          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source.",
+          "check_feedback": [
+            "Create values as a NumPy array.",
+            "Choose a floating dtype explicitly, even if every supplied signal is an integer.",
+            "Keep the supplied signal values in the same order when creating the array.",
+            "Print the actual dtype of values."
+          ]
         },
         "write": {
           "task": "Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype. Start from a blank editor. Your code must work when the provided data change.",
@@ -2998,7 +3389,13 @@
             "output.strip() == str(ns[\"values\"].dtype)"
           ],
           "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
-          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source.",
+          "check_feedback": [
+            "Create values as a NumPy array.",
+            "Choose a floating dtype explicitly, even if every supplied signal is an integer.",
+            "Keep the supplied signal values in the same order when creating the array.",
+            "Print the actual dtype of values."
+          ]
         },
         "debug": {
           "task": "Integer conversion loses fractional values. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
@@ -3028,7 +3425,13 @@
             "output.strip() == str(ns[\"values\"].dtype)"
           ],
           "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
-          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source.",
+          "check_feedback": [
+            "Create values as a NumPy array.",
+            "Choose a floating dtype explicitly, even if every supplied signal is an integer.",
+            "Keep the supplied signal values in the same order when creating the array.",
+            "Print the actual dtype of values."
+          ]
         },
         "transfer": {
           "task": "Construct a floating-point array from a new sensor readout. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
@@ -3058,7 +3461,13 @@
             "output.strip() == str(ns[\"values\"].dtype)"
           ],
           "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
-          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source.",
+          "check_feedback": [
+            "Create values as a NumPy array.",
+            "Choose a floating dtype explicitly, even if every supplied signal is an integer.",
+            "Keep the supplied signal values in the same order when creating the array.",
+            "Print the actual dtype of values."
+          ]
         }
       },
       "hints": [
@@ -3095,7 +3504,13 @@
             "output.strip() == str(ns[\"values\"].dtype)"
           ],
           "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
-          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source.",
+          "check_feedback": [
+            "Create values as a NumPy array.",
+            "Choose a floating dtype explicitly, even if every supplied signal is an integer.",
+            "Keep the supplied signal values in the same order when creating the array.",
+            "Print the actual dtype of values."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Construct a floating-point array from a new sensor readout. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
@@ -3125,7 +3540,13 @@
             "output.strip() == str(ns[\"values\"].dtype)"
           ],
           "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
-          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source.",
+          "check_feedback": [
+            "Create values as a NumPy array.",
+            "Choose a floating dtype explicitly, even if every supplied signal is an integer.",
+            "Keep the supplied signal values in the same order when creating the array.",
+            "Print the actual dtype of values."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Construct a floating-point array from a new sensor readout. Import numpy as np. Create values = np.array(signals, dtype=float), then print values.dtype.",
@@ -3155,17 +3576,15 @@
             "output.strip() == str(ns[\"values\"].dtype)"
           ],
           "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
-          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
+          "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source.",
+          "check_feedback": [
+            "Create values as a NumPy array.",
+            "Choose a floating dtype explicitly, even if every supplied signal is an integer.",
+            "Keep the supplied signal values in the same order when creating the array.",
+            "Print the actual dtype of values."
+          ]
         }
-      ],
-      "provenance": {
-        "author": "Jake VanderPlas",
-        "title": "Python Data Science Handbook \u00b7 Understanding Data Types",
-        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/02.01-Understanding-Data-Types.ipynb",
-        "source_blob": "82b128e486cc58fd9d4297115dfa0abe0aa5c90d",
-        "license": "MIT (code)",
-        "adaptation": "Explicit typed-array code adapted to supplied signals and dtype=float; biological changed-input assessments are retained."
-      }
+      ]
     },
     {
       "id": "bps3.m04.understand_shape_and_ndim",
@@ -3181,7 +3600,7 @@
       },
       "predict": "Predict the shape tuple and the number of axes.",
       "investigate": {
-        "question": "What does shape (2, 3) mean for this documented row \u00d7 column grid?",
+        "question": "What does shape (2, 3) mean for this documented row × column grid?",
         "options": [
           "2 rows and 3 columns.",
           "3 rows and 2 channels automatically.",
@@ -3235,12 +3654,20 @@
           ],
           "checks": [
             "isinstance(ns.get(\"image\"),np.ndarray)",
-            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
-            "ns.get(\"axes\") == 2",
+            "np.array_equal(ns[\"image\"],np.asarray(case[\"grid\"]))",
+            "ns.get(\"dimensions\") == ns[\"image\"].shape",
+            "ns.get(\"axes\") == ns[\"image\"].ndim",
             "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
           ],
           "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
-          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes.",
+          "check_feedback": [
+            "Create image as a NumPy array.",
+            "Build image from the supplied grid; correct dimensions alone cannot validate a different image.",
+            "Save dimensions from the actual image.shape.",
+            "Save axes from the actual image.ndim; this grid has two axes.",
+            "Print dimensions, then axes on separate lines."
+          ]
         },
         "write": {
           "task": "Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes. Start from a blank editor. Your code must work when the provided data change.",
@@ -3284,12 +3711,20 @@
           ],
           "checks": [
             "isinstance(ns.get(\"image\"),np.ndarray)",
-            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
-            "ns.get(\"axes\") == 2",
+            "np.array_equal(ns[\"image\"],np.asarray(case[\"grid\"]))",
+            "ns.get(\"dimensions\") == ns[\"image\"].shape",
+            "ns.get(\"axes\") == ns[\"image\"].ndim",
             "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
           ],
           "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
-          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes.",
+          "check_feedback": [
+            "Create image as a NumPy array.",
+            "Build image from the supplied grid; correct dimensions alone cannot validate a different image.",
+            "Save dimensions from the actual image.shape.",
+            "Save axes from the actual image.ndim; this grid has two axes.",
+            "Print dimensions, then axes on separate lines."
+          ]
         },
         "debug": {
           "task": "Rows and columns were swapped. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
@@ -3335,12 +3770,20 @@
           ],
           "checks": [
             "isinstance(ns.get(\"image\"),np.ndarray)",
-            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
-            "ns.get(\"axes\") == 2",
+            "np.array_equal(ns[\"image\"],np.asarray(case[\"grid\"]))",
+            "ns.get(\"dimensions\") == ns[\"image\"].shape",
+            "ns.get(\"axes\") == ns[\"image\"].ndim",
             "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
           ],
           "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
-          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes.",
+          "check_feedback": [
+            "Create image as a NumPy array.",
+            "Build image from the supplied grid; correct dimensions alone cannot validate a different image.",
+            "Save dimensions from the actual image.shape.",
+            "Save axes from the actual image.ndim; this grid has two axes.",
+            "Print dimensions, then axes on separate lines."
+          ]
         },
         "transfer": {
           "task": "Inspect a new rectangular teaching grid; state shape without inventing axis metadata. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
@@ -3402,12 +3845,20 @@
           ],
           "checks": [
             "isinstance(ns.get(\"image\"),np.ndarray)",
-            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
-            "ns.get(\"axes\") == 2",
+            "np.array_equal(ns[\"image\"],np.asarray(case[\"grid\"]))",
+            "ns.get(\"dimensions\") == ns[\"image\"].shape",
+            "ns.get(\"axes\") == ns[\"image\"].ndim",
             "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
           ],
           "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
-          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes.",
+          "check_feedback": [
+            "Create image as a NumPy array.",
+            "Build image from the supplied grid; correct dimensions alone cannot validate a different image.",
+            "Save dimensions from the actual image.shape.",
+            "Save axes from the actual image.ndim; this grid has two axes.",
+            "Print dimensions, then axes on separate lines."
+          ]
         }
       },
       "hints": [
@@ -3476,12 +3927,20 @@
           ],
           "checks": [
             "isinstance(ns.get(\"image\"),np.ndarray)",
-            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
-            "ns.get(\"axes\") == 2",
+            "np.array_equal(ns[\"image\"],np.asarray(case[\"grid\"]))",
+            "ns.get(\"dimensions\") == ns[\"image\"].shape",
+            "ns.get(\"axes\") == ns[\"image\"].ndim",
             "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
           ],
           "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
-          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes.",
+          "check_feedback": [
+            "Create image as a NumPy array.",
+            "Build image from the supplied grid; correct dimensions alone cannot validate a different image.",
+            "Save dimensions from the actual image.shape.",
+            "Save axes from the actual image.ndim; this grid has two axes.",
+            "Print dimensions, then axes on separate lines."
+          ]
         },
         {
           "task": "Fresh acquisition batch 31. Inspect a new rectangular teaching grid; state shape without inventing axis metadata. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
@@ -3543,12 +4002,20 @@
           ],
           "checks": [
             "isinstance(ns.get(\"image\"),np.ndarray)",
-            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
-            "ns.get(\"axes\") == 2",
+            "np.array_equal(ns[\"image\"],np.asarray(case[\"grid\"]))",
+            "ns.get(\"dimensions\") == ns[\"image\"].shape",
+            "ns.get(\"axes\") == ns[\"image\"].ndim",
             "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
           ],
           "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
-          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes.",
+          "check_feedback": [
+            "Create image as a NumPy array.",
+            "Build image from the supplied grid; correct dimensions alone cannot validate a different image.",
+            "Save dimensions from the actual image.shape.",
+            "Save axes from the actual image.ndim; this grid has two axes.",
+            "Print dimensions, then axes on separate lines."
+          ]
         },
         {
           "task": "Fresh acquisition batch 67. Inspect a new rectangular teaching grid; state shape without inventing axis metadata. Import numpy as np and create image = np.array(grid). Save dimensions = image.shape and axes = image.ndim. Print dimensions, then axes.",
@@ -3610,22 +4077,22 @@
           ],
           "checks": [
             "isinstance(ns.get(\"image\"),np.ndarray)",
-            "ns.get(\"dimensions\") == np.asarray(case[\"grid\"]).shape",
-            "ns.get(\"axes\") == 2",
+            "np.array_equal(ns[\"image\"],np.asarray(case[\"grid\"]))",
+            "ns.get(\"dimensions\") == ns[\"image\"].shape",
+            "ns.get(\"axes\") == ns[\"image\"].ndim",
             "output.strip().splitlines() == [str(ns[\"dimensions\"]),\"2\"]"
           ],
           "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
-          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
+          "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes.",
+          "check_feedback": [
+            "Create image as a NumPy array.",
+            "Build image from the supplied grid; correct dimensions alone cannot validate a different image.",
+            "Save dimensions from the actual image.shape.",
+            "Save axes from the actual image.ndim; this grid has two axes.",
+            "Print dimensions, then axes on separate lines."
+          ]
         }
-      ],
-      "provenance": {
-        "author": "Guillaume Witz / University of Bern",
-        "title": "Image Processing for Beginners \u00b7 Images as arrays, exercise 2",
-        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e02-Numpy_basics.ipynb",
-        "source_blob": "aa23c2269061a66a1ac9cb8a9d9d7166c85ecd3f",
-        "license": "BSD-3-Clause",
-        "adaptation": "The six-row, four-column array-of-ones exercise is parameterized and prints shape/ndim. Existing grid assessments are retained."
-      }
+      ]
     },
     {
       "id": "bps3.m00.understand_a_notebook_workflow",
@@ -3674,7 +4141,12 @@
             "printed_number(output,ns[\"updated_count\"])"
           ],
           "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
-          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state.",
+          "check_feedback": [
+            "The setup value field_count must come from initial_fields.",
+            "Recompute updated_count from field_count plus extra_fields; changing an input does not rerun earlier code.",
+            "Print the recomputed updated_count."
+          ]
         },
         "write": {
           "task": "Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
@@ -3699,7 +4171,12 @@
             "printed_number(output,ns[\"updated_count\"])"
           ],
           "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
-          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state.",
+          "check_feedback": [
+            "The setup value field_count must come from initial_fields.",
+            "Recompute updated_count from field_count plus extra_fields; changing an input does not rerun earlier code.",
+            "Print the recomputed updated_count."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
@@ -3724,7 +4201,12 @@
             "printed_number(output,ns[\"updated_count\"])"
           ],
           "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
-          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state.",
+          "check_feedback": [
+            "The setup value field_count must come from initial_fields.",
+            "Recompute updated_count from field_count plus extra_fields; changing an input does not rerun earlier code.",
+            "Print the recomputed updated_count."
+          ]
         },
         "transfer": {
           "task": "Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
@@ -3749,7 +4231,12 @@
             "printed_number(output,ns[\"updated_count\"])"
           ],
           "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
-          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state.",
+          "check_feedback": [
+            "The setup value field_count must come from initial_fields.",
+            "Recompute updated_count from field_count plus extra_fields; changing an input does not rerun earlier code.",
+            "Print the recomputed updated_count."
+          ]
         }
       },
       "hints": [
@@ -3781,7 +4268,12 @@
             "printed_number(output,ns[\"updated_count\"])"
           ],
           "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
-          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state.",
+          "check_feedback": [
+            "The setup value field_count must come from initial_fields.",
+            "Recompute updated_count from field_count plus extra_fields; changing an input does not rerun earlier code.",
+            "Print the recomputed updated_count."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
@@ -3807,7 +4299,12 @@
             "printed_number(output,ns[\"updated_count\"])"
           ],
           "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
-          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state.",
+          "check_feedback": [
+            "The setup value field_count must come from initial_fields.",
+            "Recompute updated_count from field_count plus extra_fields; changing an input does not rerun earlier code.",
+            "Print the recomputed updated_count."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
@@ -3833,7 +4330,12 @@
             "printed_number(output,ns[\"updated_count\"])"
           ],
           "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
-          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state.",
+          "check_feedback": [
+            "The setup value field_count must come from initial_fields.",
+            "Recompute updated_count from field_count plus extra_fields; changing an input does not rerun earlier code.",
+            "Print the recomputed updated_count."
+          ]
         }
       ]
     },
@@ -3880,7 +4382,12 @@
             "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
           ],
           "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
-          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser.",
+          "check_feedback": [
+            "Split the current sample_id on hyphens into parts.",
+            "Assign condition, well and replicate from the three parts in order; indexing starts at zero.",
+            "Print the three parsed parts with a space-pipe-space separator."
+          ]
         },
         "write": {
           "task": "Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
@@ -3902,7 +4409,12 @@
             "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
           ],
           "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
-          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser.",
+          "check_feedback": [
+            "Split the current sample_id on hyphens into parts.",
+            "Assign condition, well and replicate from the three parts in order; indexing starts at zero.",
+            "Print the three parsed parts with a space-pipe-space separator."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
@@ -3924,7 +4436,12 @@
             "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
           ],
           "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
-          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser.",
+          "check_feedback": [
+            "Split the current sample_id on hyphens into parts.",
+            "Assign condition, well and replicate from the three parts in order; indexing starts at zero.",
+            "Print the three parsed parts with a space-pipe-space separator."
+          ]
         },
         "transfer": {
           "task": "Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
@@ -3946,7 +4463,12 @@
             "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
           ],
           "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
-          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser.",
+          "check_feedback": [
+            "Split the current sample_id on hyphens into parts.",
+            "Assign condition, well and replicate from the three parts in order; indexing starts at zero.",
+            "Print the three parsed parts with a space-pipe-space separator."
+          ]
         }
       },
       "hints": [
@@ -3975,7 +4497,12 @@
             "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
           ],
           "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
-          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser.",
+          "check_feedback": [
+            "Split the current sample_id on hyphens into parts.",
+            "Assign condition, well and replicate from the three parts in order; indexing starts at zero.",
+            "Print the three parsed parts with a space-pipe-space separator."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
@@ -3998,7 +4525,12 @@
             "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
           ],
           "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
-          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser.",
+          "check_feedback": [
+            "Split the current sample_id on hyphens into parts.",
+            "Assign condition, well and replicate from the three parts in order; indexing starts at zero.",
+            "Print the three parsed parts with a space-pipe-space separator."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
@@ -4021,7 +4553,12 @@
             "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
           ],
           "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
-          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser.",
+          "check_feedback": [
+            "Split the current sample_id on hyphens into parts.",
+            "Assign condition, well and replicate from the three parts in order; indexing starts at zero.",
+            "Print the three parsed parts with a space-pipe-space separator."
+          ]
         }
       ]
     },
@@ -4078,7 +4615,12 @@
             "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
           ],
           "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
-          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices.",
+          "check_feedback": [
+            "Build field_numbers starting at 1 and ending at the current number of signals. The range stop is excluded.",
+            "Print the list first, then each numbered field and signal on its own line.",
+            "Use range for field_numbers and enumerate to pair each signal with its number."
+          ]
         },
         "write": {
           "task": "Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
@@ -4108,7 +4650,12 @@
             "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
           ],
           "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
-          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices.",
+          "check_feedback": [
+            "Build field_numbers starting at 1 and ending at the current number of signals. The range stop is excluded.",
+            "Print the list first, then each numbered field and signal on its own line.",
+            "Use range for field_numbers and enumerate to pair each signal with its number."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
@@ -4136,7 +4683,12 @@
             "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
           ],
           "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
-          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices.",
+          "check_feedback": [
+            "Build field_numbers starting at 1 and ending at the current number of signals. The range stop is excluded.",
+            "Print the list first, then each numbered field and signal on its own line.",
+            "Use range for field_numbers and enumerate to pair each signal with its number."
+          ]
         },
         "transfer": {
           "task": "Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
@@ -4164,7 +4716,12 @@
             "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
           ],
           "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
-          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices.",
+          "check_feedback": [
+            "Build field_numbers starting at 1 and ending at the current number of signals. The range stop is excluded.",
+            "Print the list first, then each numbered field and signal on its own line.",
+            "Use range for field_numbers and enumerate to pair each signal with its number."
+          ]
         }
       },
       "hints": [
@@ -4199,7 +4756,12 @@
             "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
           ],
           "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
-          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices.",
+          "check_feedback": [
+            "Build field_numbers starting at 1 and ending at the current number of signals. The range stop is excluded.",
+            "Print the list first, then each numbered field and signal on its own line.",
+            "Use range for field_numbers and enumerate to pair each signal with its number."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
@@ -4228,7 +4790,12 @@
             "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
           ],
           "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
-          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices.",
+          "check_feedback": [
+            "Build field_numbers starting at 1 and ending at the current number of signals. The range stop is excluded.",
+            "Print the list first, then each numbered field and signal on its own line.",
+            "Use range for field_numbers and enumerate to pair each signal with its number."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
@@ -4257,7 +4824,12 @@
             "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
           ],
           "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
-          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices.",
+          "check_feedback": [
+            "Build field_numbers starting at 1 and ending at the current number of signals. The range stop is excluded.",
+            "Print the list first, then each numbered field and signal on its own line.",
+            "Use range for field_numbers and enumerate to pair each signal with its number."
+          ]
         }
       ]
     },
@@ -4304,7 +4876,12 @@
             "has_node(tree,ast.While)"
           ],
           "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
-          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number.",
+          "check_feedback": [
+            "Update attempt until it reaches max_attempts, including the zero-attempt case.",
+            "Print the final attempt after the loop.",
+            "Use a while loop whose condition eventually becomes false."
+          ]
         },
         "write": {
           "task": "Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
@@ -4326,7 +4903,12 @@
             "has_node(tree,ast.While)"
           ],
           "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
-          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number.",
+          "check_feedback": [
+            "Update attempt until it reaches max_attempts, including the zero-attempt case.",
+            "Print the final attempt after the loop.",
+            "Use a while loop whose condition eventually becomes false."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
@@ -4348,7 +4930,12 @@
             "has_node(tree,ast.While)"
           ],
           "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
-          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number.",
+          "check_feedback": [
+            "Update attempt until it reaches max_attempts, including the zero-attempt case.",
+            "Print the final attempt after the loop.",
+            "Use a while loop whose condition eventually becomes false."
+          ]
         },
         "transfer": {
           "task": "Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
@@ -4370,7 +4957,12 @@
             "has_node(tree,ast.While)"
           ],
           "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
-          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number.",
+          "check_feedback": [
+            "Update attempt until it reaches max_attempts, including the zero-attempt case.",
+            "Print the final attempt after the loop.",
+            "Use a while loop whose condition eventually becomes false."
+          ]
         }
       },
       "hints": [
@@ -4399,7 +4991,12 @@
             "has_node(tree,ast.While)"
           ],
           "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
-          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number.",
+          "check_feedback": [
+            "Update attempt until it reaches max_attempts, including the zero-attempt case.",
+            "Print the final attempt after the loop.",
+            "Use a while loop whose condition eventually becomes false."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
@@ -4422,7 +5019,12 @@
             "has_node(tree,ast.While)"
           ],
           "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
-          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number.",
+          "check_feedback": [
+            "Update attempt until it reaches max_attempts, including the zero-attempt case.",
+            "Print the final attempt after the loop.",
+            "Use a while loop whose condition eventually becomes false."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
@@ -4445,7 +5047,12 @@
             "has_node(tree,ast.While)"
           ],
           "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
-          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number.",
+          "check_feedback": [
+            "Update attempt until it reaches max_attempts, including the zero-attempt case.",
+            "Print the final attempt after the loop.",
+            "Use a while loop whose condition eventually becomes false."
+          ]
         }
       ]
     },
@@ -4507,7 +5114,12 @@
             "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
           ],
           "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
-          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed.",
+          "check_feedback": [
+            "Stop at the first -1 sentinel and skip other negative values before adding valid signals.",
+            "Print total after processing the valid values.",
+            "Use break to end acquisition and continue to skip one invalid measurement."
+          ]
         },
         "write": {
           "task": "Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
@@ -4539,7 +5151,12 @@
             "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
           ],
           "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
-          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed.",
+          "check_feedback": [
+            "Stop at the first -1 sentinel and skip other negative values before adding valid signals.",
+            "Print total after processing the valid values.",
+            "Use break to end acquisition and continue to skip one invalid measurement."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
@@ -4570,7 +5187,12 @@
             "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
           ],
           "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
-          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed.",
+          "check_feedback": [
+            "Stop at the first -1 sentinel and skip other negative values before adding valid signals.",
+            "Print total after processing the valid values.",
+            "Use break to end acquisition and continue to skip one invalid measurement."
+          ]
         },
         "transfer": {
           "task": "Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
@@ -4601,7 +5223,12 @@
             "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
           ],
           "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
-          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed.",
+          "check_feedback": [
+            "Stop at the first -1 sentinel and skip other negative values before adding valid signals.",
+            "Print total after processing the valid values.",
+            "Use break to end acquisition and continue to skip one invalid measurement."
+          ]
         }
       },
       "hints": [
@@ -4639,7 +5266,12 @@
             "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
           ],
           "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
-          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed.",
+          "check_feedback": [
+            "Stop at the first -1 sentinel and skip other negative values before adding valid signals.",
+            "Print total after processing the valid values.",
+            "Use break to end acquisition and continue to skip one invalid measurement."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
@@ -4671,7 +5303,12 @@
             "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
           ],
           "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
-          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed.",
+          "check_feedback": [
+            "Stop at the first -1 sentinel and skip other negative values before adding valid signals.",
+            "Print total after processing the valid values.",
+            "Use break to end acquisition and continue to skip one invalid measurement."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
@@ -4703,7 +5340,12 @@
             "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
           ],
           "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
-          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed.",
+          "check_feedback": [
+            "Stop at the first -1 sentinel and skip other negative values before adding valid signals.",
+            "Print total after processing the valid values.",
+            "Use break to end acquisition and continue to skip one invalid measurement."
+          ]
         }
       ]
     },
@@ -4716,12 +5358,14 @@
         "source": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
         "case": {
           "counts": [
-            3,
-            5
+            10,
+            5,
+            983,
+            20
           ],
-          "index": 0,
-          "replacement": 9,
-          "new_count": 1
+          "index": 2,
+          "replacement": 25,
+          "new_count": 230
         }
       },
       "predict": "Predict the output and explain which input values determine it.",
@@ -4775,7 +5419,13 @@
             "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
           ],
           "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
-          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged.",
+          "check_feedback": [
+            "Keep the original counts list unchanged. Copy before editing.",
+            "Replace only the requested index, then append new_count to the copy.",
+            "updated must be a separate list; another name for counts still refers to the same list.",
+            "Print the changed list, then the unchanged original list."
+          ]
         },
         "write": {
           "task": "Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
@@ -4816,7 +5466,13 @@
             "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
           ],
           "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
-          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged.",
+          "check_feedback": [
+            "Keep the original counts list unchanged. Copy before editing.",
+            "Replace only the requested index, then append new_count to the copy.",
+            "updated must be a separate list; another name for counts still refers to the same list.",
+            "Print the changed list, then the unchanged original list."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
@@ -4857,7 +5513,13 @@
             "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
           ],
           "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
-          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged.",
+          "check_feedback": [
+            "Keep the original counts list unchanged. Copy before editing.",
+            "Replace only the requested index, then append new_count to the copy.",
+            "updated must be a separate list; another name for counts still refers to the same list.",
+            "Print the changed list, then the unchanged original list."
+          ]
         },
         "transfer": {
           "task": "Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
@@ -4898,7 +5560,13 @@
             "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
           ],
           "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
-          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged.",
+          "check_feedback": [
+            "Keep the original counts list unchanged. Copy before editing.",
+            "Replace only the requested index, then append new_count to the copy.",
+            "updated must be a separate list; another name for counts still refers to the same list.",
+            "Print the changed list, then the unchanged original list."
+          ]
         }
       },
       "hints": [
@@ -4946,7 +5614,13 @@
             "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
           ],
           "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
-          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged.",
+          "check_feedback": [
+            "Keep the original counts list unchanged. Copy before editing.",
+            "Replace only the requested index, then append new_count to the copy.",
+            "updated must be a separate list; another name for counts still refers to the same list.",
+            "Print the changed list, then the unchanged original list."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
@@ -4988,7 +5662,13 @@
             "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
           ],
           "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
-          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged.",
+          "check_feedback": [
+            "Keep the original counts list unchanged. Copy before editing.",
+            "Replace only the requested index, then append new_count to the copy.",
+            "updated must be a separate list; another name for counts still refers to the same list.",
+            "Print the changed list, then the unchanged original list."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
@@ -5030,7 +5710,13 @@
             "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
           ],
           "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
-          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged.",
+          "check_feedback": [
+            "Keep the original counts list unchanged. Copy before editing.",
+            "Replace only the requested index, then append new_count to the copy.",
+            "updated must be a separate list; another name for counts still refers to the same list.",
+            "Print the changed list, then the unchanged original list."
+          ]
         }
       ]
     },
@@ -5096,7 +5782,13 @@
           "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
           "input_types": {
             "position": "tuple"
-          }
+          },
+          "check_feedback": [
+            "Keep position as a tuple; it represents an immutable coordinate pair.",
+            "Unpack row first, then column from position.",
+            "Keep the original coordinate pair unchanged.",
+            "Print row, then column on separate lines."
+          ]
         },
         "write": {
           "task": "Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
@@ -5131,7 +5823,13 @@
           "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
           "input_types": {
             "position": "tuple"
-          }
+          },
+          "check_feedback": [
+            "Keep position as a tuple; it represents an immutable coordinate pair.",
+            "Unpack row first, then column from position.",
+            "Keep the original coordinate pair unchanged.",
+            "Print row, then column on separate lines."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
@@ -5166,7 +5864,13 @@
           "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
           "input_types": {
             "position": "tuple"
-          }
+          },
+          "check_feedback": [
+            "Keep position as a tuple; it represents an immutable coordinate pair.",
+            "Unpack row first, then column from position.",
+            "Keep the original coordinate pair unchanged.",
+            "Print row, then column on separate lines."
+          ]
         },
         "transfer": {
           "task": "Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
@@ -5201,7 +5905,13 @@
           "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
           "input_types": {
             "position": "tuple"
-          }
+          },
+          "check_feedback": [
+            "Keep position as a tuple; it represents an immutable coordinate pair.",
+            "Unpack row first, then column from position.",
+            "Keep the original coordinate pair unchanged.",
+            "Print row, then column on separate lines."
+          ]
         }
       },
       "hints": [
@@ -5243,7 +5953,13 @@
           "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
           "input_types": {
             "position": "tuple"
-          }
+          },
+          "check_feedback": [
+            "Keep position as a tuple; it represents an immutable coordinate pair.",
+            "Unpack row first, then column from position.",
+            "Keep the original coordinate pair unchanged.",
+            "Print row, then column on separate lines."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
@@ -5279,7 +5995,13 @@
           "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
           "input_types": {
             "position": "tuple"
-          }
+          },
+          "check_feedback": [
+            "Keep position as a tuple; it represents an immutable coordinate pair.",
+            "Unpack row first, then column from position.",
+            "Keep the original coordinate pair unchanged.",
+            "Print row, then column on separate lines."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
@@ -5315,7 +6037,13 @@
           "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
           "input_types": {
             "position": "tuple"
-          }
+          },
+          "check_feedback": [
+            "Keep position as a tuple; it represents an immutable coordinate pair.",
+            "Unpack row first, then column from position.",
+            "Keep the original coordinate pair unchanged.",
+            "Print row, then column on separate lines."
+          ]
         }
       ]
     },
@@ -5325,7 +6053,7 @@
       "title": "Map IDs to metadata",
       "context": "A dictionary maps named keys to metadata. An explicit specimen ID and condition belong in the analysis record; their names are not inferred from image appearance.",
       "example": {
-        "source": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+        "source": "record = {\"sample_id\": sample_id, \"condition\": condition, \"cell_type\": \"embryonic\"}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
         "case": {
           "sample_id": "A01",
           "condition": "control"
@@ -5361,11 +6089,15 @@
             }
           ],
           "checks": [
-            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "isinstance(ns.get(\"record\"),dict) and all(ns[\"record\"].get(k) == case[k] for k in [\"sample_id\",\"condition\"])",
             "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
           ],
           "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
-          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them.",
+          "check_feedback": [
+            "Create a dictionary record containing the supplied sample_id and condition under those keys. Extra metadata is allowed.",
+            "Print the stored sample ID, then condition on separate lines."
+          ]
         },
         "write": {
           "task": "Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
@@ -5385,11 +6117,15 @@
             }
           ],
           "checks": [
-            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "isinstance(ns.get(\"record\"),dict) and all(ns[\"record\"].get(k) == case[k] for k in [\"sample_id\",\"condition\"])",
             "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
           ],
           "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
-          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them.",
+          "check_feedback": [
+            "Create a dictionary record containing the supplied sample_id and condition under those keys. Extra metadata is allowed.",
+            "Print the stored sample ID, then condition on separate lines."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
@@ -5409,11 +6145,15 @@
             }
           ],
           "checks": [
-            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "isinstance(ns.get(\"record\"),dict) and all(ns[\"record\"].get(k) == case[k] for k in [\"sample_id\",\"condition\"])",
             "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
           ],
           "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
-          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them.",
+          "check_feedback": [
+            "Create a dictionary record containing the supplied sample_id and condition under those keys. Extra metadata is allowed.",
+            "Print the stored sample ID, then condition on separate lines."
+          ]
         },
         "transfer": {
           "task": "Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
@@ -5433,11 +6173,15 @@
             }
           ],
           "checks": [
-            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "isinstance(ns.get(\"record\"),dict) and all(ns[\"record\"].get(k) == case[k] for k in [\"sample_id\",\"condition\"])",
             "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
           ],
           "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
-          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them.",
+          "check_feedback": [
+            "Create a dictionary record containing the supplied sample_id and condition under those keys. Extra metadata is allowed.",
+            "Print the stored sample ID, then condition on separate lines."
+          ]
         }
       },
       "hints": [
@@ -5464,11 +6208,15 @@
             }
           ],
           "checks": [
-            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "isinstance(ns.get(\"record\"),dict) and all(ns[\"record\"].get(k) == case[k] for k in [\"sample_id\",\"condition\"])",
             "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
           ],
           "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
-          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them.",
+          "check_feedback": [
+            "Create a dictionary record containing the supplied sample_id and condition under those keys. Extra metadata is allowed.",
+            "Print the stored sample ID, then condition on separate lines."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
@@ -5489,11 +6237,15 @@
             }
           ],
           "checks": [
-            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "isinstance(ns.get(\"record\"),dict) and all(ns[\"record\"].get(k) == case[k] for k in [\"sample_id\",\"condition\"])",
             "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
           ],
           "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
-          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them.",
+          "check_feedback": [
+            "Create a dictionary record containing the supplied sample_id and condition under those keys. Extra metadata is allowed.",
+            "Print the stored sample ID, then condition on separate lines."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
@@ -5514,11 +6266,15 @@
             }
           ],
           "checks": [
-            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "isinstance(ns.get(\"record\"),dict) and all(ns[\"record\"].get(k) == case[k] for k in [\"sample_id\",\"condition\"])",
             "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
           ],
           "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
-          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them.",
+          "check_feedback": [
+            "Create a dictionary record containing the supplied sample_id and condition under those keys. Extra metadata is allowed.",
+            "Print the stored sample ID, then condition on separate lines."
+          ]
         }
       ]
     },
@@ -5593,7 +6349,12 @@
             "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
           ],
           "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
-          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed.",
+          "check_feedback": [
+            "Read sample from experiment[\"specimen\"][\"sample_id\"]. Check both levels of keys.",
+            "Read channel from the acquisition record, not the specimen record.",
+            "Print sample and channel separated by a space-pipe-space."
+          ]
         },
         "write": {
           "task": "Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
@@ -5636,7 +6397,12 @@
             "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
           ],
           "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
-          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed.",
+          "check_feedback": [
+            "Read sample from experiment[\"specimen\"][\"sample_id\"]. Check both levels of keys.",
+            "Read channel from the acquisition record, not the specimen record.",
+            "Print sample and channel separated by a space-pipe-space."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
@@ -5679,7 +6445,12 @@
             "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
           ],
           "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
-          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed.",
+          "check_feedback": [
+            "Read sample from experiment[\"specimen\"][\"sample_id\"]. Check both levels of keys.",
+            "Read channel from the acquisition record, not the specimen record.",
+            "Print sample and channel separated by a space-pipe-space."
+          ]
         },
         "transfer": {
           "task": "Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
@@ -5722,7 +6493,12 @@
             "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
           ],
           "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
-          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed.",
+          "check_feedback": [
+            "Read sample from experiment[\"specimen\"][\"sample_id\"]. Check both levels of keys.",
+            "Read channel from the acquisition record, not the specimen record.",
+            "Print sample and channel separated by a space-pipe-space."
+          ]
         }
       },
       "hints": [
@@ -5772,7 +6548,12 @@
             "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
           ],
           "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
-          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed.",
+          "check_feedback": [
+            "Read sample from experiment[\"specimen\"][\"sample_id\"]. Check both levels of keys.",
+            "Read channel from the acquisition record, not the specimen record.",
+            "Print sample and channel separated by a space-pipe-space."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
@@ -5816,7 +6597,12 @@
             "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
           ],
           "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
-          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed.",
+          "check_feedback": [
+            "Read sample from experiment[\"specimen\"][\"sample_id\"]. Check both levels of keys.",
+            "Read channel from the acquisition record, not the specimen record.",
+            "Print sample and channel separated by a space-pipe-space."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
@@ -5860,7 +6646,12 @@
             "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
           ],
           "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
-          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed.",
+          "check_feedback": [
+            "Read sample from experiment[\"specimen\"][\"sample_id\"]. Check both levels of keys.",
+            "Read channel from the acquisition record, not the specimen record.",
+            "Print sample and channel separated by a space-pipe-space."
+          ]
         }
       ]
     },
@@ -5918,7 +6709,12 @@
             "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
           ],
           "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
-          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory.",
+          "check_feedback": [
+            "Create unique_ids as a set so repeated specimen IDs collapse to one value.",
+            "Keep every distinct supplied ID; do not hardcode the expected specimens.",
+            "Print the sorted unique IDs for deterministic output."
+          ]
         },
         "write": {
           "task": "Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
@@ -5947,7 +6743,12 @@
             "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
           ],
           "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
-          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory.",
+          "check_feedback": [
+            "Create unique_ids as a set so repeated specimen IDs collapse to one value.",
+            "Keep every distinct supplied ID; do not hardcode the expected specimens.",
+            "Print the sorted unique IDs for deterministic output."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
@@ -5976,7 +6777,12 @@
             "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
           ],
           "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
-          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory.",
+          "check_feedback": [
+            "Create unique_ids as a set so repeated specimen IDs collapse to one value.",
+            "Keep every distinct supplied ID; do not hardcode the expected specimens.",
+            "Print the sorted unique IDs for deterministic output."
+          ]
         },
         "transfer": {
           "task": "Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
@@ -6006,7 +6812,12 @@
             "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
           ],
           "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
-          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory.",
+          "check_feedback": [
+            "Create unique_ids as a set so repeated specimen IDs collapse to one value.",
+            "Keep every distinct supplied ID; do not hardcode the expected specimens.",
+            "Print the sorted unique IDs for deterministic output."
+          ]
         }
       },
       "hints": [
@@ -6043,7 +6854,12 @@
             "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
           ],
           "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
-          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory.",
+          "check_feedback": [
+            "Create unique_ids as a set so repeated specimen IDs collapse to one value.",
+            "Keep every distinct supplied ID; do not hardcode the expected specimens.",
+            "Print the sorted unique IDs for deterministic output."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
@@ -6074,7 +6890,12 @@
             "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
           ],
           "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
-          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory.",
+          "check_feedback": [
+            "Create unique_ids as a set so repeated specimen IDs collapse to one value.",
+            "Keep every distinct supplied ID; do not hardcode the expected specimens.",
+            "Print the sorted unique IDs for deterministic output."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
@@ -6105,7 +6926,12 @@
             "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
           ],
           "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
-          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory.",
+          "check_feedback": [
+            "Create unique_ids as a set so repeated specimen IDs collapse to one value.",
+            "Keep every distinct supplied ID; do not hardcode the expected specimens.",
+            "Print the sorted unique IDs for deterministic output."
+          ]
         }
       ]
     },
@@ -6168,7 +6994,12 @@
             "has_node(tree,ast.ListComp)"
           ],
           "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
-          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior.",
+          "check_feedback": [
+            "Keep all signals at or above minimum in their original order. Empty input produces an empty list.",
+            "Print the accepted list.",
+            "Use a list comprehension to practice expressing the filter in one construction."
+          ]
         },
         "write": {
           "task": "Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
@@ -6201,7 +7032,12 @@
             "has_node(tree,ast.ListComp)"
           ],
           "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
-          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior.",
+          "check_feedback": [
+            "Keep all signals at or above minimum in their original order. Empty input produces an empty list.",
+            "Print the accepted list.",
+            "Use a list comprehension to practice expressing the filter in one construction."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
@@ -6234,7 +7070,12 @@
             "has_node(tree,ast.ListComp)"
           ],
           "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
-          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior.",
+          "check_feedback": [
+            "Keep all signals at or above minimum in their original order. Empty input produces an empty list.",
+            "Print the accepted list.",
+            "Use a list comprehension to practice expressing the filter in one construction."
+          ]
         },
         "transfer": {
           "task": "Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
@@ -6267,7 +7108,12 @@
             "has_node(tree,ast.ListComp)"
           ],
           "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
-          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior.",
+          "check_feedback": [
+            "Keep all signals at or above minimum in their original order. Empty input produces an empty list.",
+            "Print the accepted list.",
+            "Use a list comprehension to practice expressing the filter in one construction."
+          ]
         }
       },
       "hints": [
@@ -6307,7 +7153,12 @@
             "has_node(tree,ast.ListComp)"
           ],
           "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
-          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior.",
+          "check_feedback": [
+            "Keep all signals at or above minimum in their original order. Empty input produces an empty list.",
+            "Print the accepted list.",
+            "Use a list comprehension to practice expressing the filter in one construction."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
@@ -6341,7 +7192,12 @@
             "has_node(tree,ast.ListComp)"
           ],
           "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
-          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior.",
+          "check_feedback": [
+            "Keep all signals at or above minimum in their original order. Empty input produces an empty list.",
+            "Print the accepted list.",
+            "Use a list comprehension to practice expressing the filter in one construction."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
@@ -6375,7 +7231,12 @@
             "has_node(tree,ast.ListComp)"
           ],
           "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
-          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior.",
+          "check_feedback": [
+            "Keep all signals at or above minimum in their original order. Empty input produces an empty list.",
+            "Print the accepted list.",
+            "Use a list comprehension to practice expressing the filter in one construction."
+          ]
         }
       ]
     },
@@ -6430,7 +7291,12 @@
             "has_node(tree,ast.For) and has_method(tree,\"items\")"
           ],
           "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
-          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked.",
+          "check_feedback": [
+            "Add all values from counts_by_field; empty metadata must total zero.",
+            "Print the final total after visiting the dictionary.",
+            "Use a for loop over .items() to visit each field ID and count together."
+          ]
         },
         "write": {
           "task": "Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
@@ -6458,7 +7324,12 @@
             "has_node(tree,ast.For) and has_method(tree,\"items\")"
           ],
           "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
-          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked.",
+          "check_feedback": [
+            "Add all values from counts_by_field; empty metadata must total zero.",
+            "Print the final total after visiting the dictionary.",
+            "Use a for loop over .items() to visit each field ID and count together."
+          ]
         },
         "debug": {
           "task": "Repair the bug. Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
@@ -6485,7 +7356,12 @@
             "has_node(tree,ast.For) and has_method(tree,\"items\")"
           ],
           "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
-          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked.",
+          "check_feedback": [
+            "Add all values from counts_by_field; empty metadata must total zero.",
+            "Print the final total after visiting the dictionary.",
+            "Use a for loop over .items() to visit each field ID and count together."
+          ]
         },
         "transfer": {
           "task": "Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
@@ -6513,7 +7389,12 @@
             "has_node(tree,ast.For) and has_method(tree,\"items\")"
           ],
           "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
-          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked.",
+          "check_feedback": [
+            "Add all values from counts_by_field; empty metadata must total zero.",
+            "Print the final total after visiting the dictionary.",
+            "Use a for loop over .items() to visit each field ID and count together."
+          ]
         }
       },
       "hints": [
@@ -6548,7 +7429,12 @@
             "has_node(tree,ast.For) and has_method(tree,\"items\")"
           ],
           "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
-          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked.",
+          "check_feedback": [
+            "Add all values from counts_by_field; empty metadata must total zero.",
+            "Print the final total after visiting the dictionary.",
+            "Use a for loop over .items() to visit each field ID and count together."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
@@ -6577,7 +7463,12 @@
             "has_node(tree,ast.For) and has_method(tree,\"items\")"
           ],
           "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
-          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked.",
+          "check_feedback": [
+            "Add all values from counts_by_field; empty metadata must total zero.",
+            "Print the final total after visiting the dictionary.",
+            "Use a for loop over .items() to visit each field ID and count together."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
@@ -6606,7 +7497,12 @@
             "has_node(tree,ast.For) and has_method(tree,\"items\")"
           ],
           "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
-          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked.",
+          "check_feedback": [
+            "Add all values from counts_by_field; empty metadata must total zero.",
+            "Print the final total after visiting the dictionary.",
+            "Use a for loop over .items() to visit each field ID and count together."
+          ]
         }
       ]
     },
@@ -6674,7 +7570,12 @@
             "has_call(tree,\"zip\")"
           ],
           "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
-          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table.",
+          "check_feedback": [
+            "Pair all specimen IDs with their counts when lengths match. Use None when lengths differ; zip alone silently truncates.",
+            "Print paired so both valid and mismatched inputs are visible.",
+            "Use zip for pairing after checking the lengths."
+          ]
         },
         "write": {
           "task": "When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
@@ -6712,7 +7613,12 @@
             "has_call(tree,\"zip\")"
           ],
           "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
-          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table.",
+          "check_feedback": [
+            "Pair all specimen IDs with their counts when lengths match. Use None when lengths differ; zip alone silently truncates.",
+            "Print paired so both valid and mismatched inputs are visible.",
+            "Use zip for pairing after checking the lengths."
+          ]
         },
         "debug": {
           "task": "Repair the bug. When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
@@ -6748,7 +7654,12 @@
             "has_call(tree,\"zip\")"
           ],
           "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
-          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table.",
+          "check_feedback": [
+            "Pair all specimen IDs with their counts when lengths match. Use None when lengths differ; zip alone silently truncates.",
+            "Print paired so both valid and mismatched inputs are visible.",
+            "Use zip for pairing after checking the lengths."
+          ]
         },
         "transfer": {
           "task": "When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
@@ -6784,7 +7695,12 @@
             "has_call(tree,\"zip\")"
           ],
           "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
-          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table.",
+          "check_feedback": [
+            "Pair all specimen IDs with their counts when lengths match. Use None when lengths differ; zip alone silently truncates.",
+            "Print paired so both valid and mismatched inputs are visible.",
+            "Use zip for pairing after checking the lengths."
+          ]
         }
       },
       "hints": [
@@ -6827,7 +7743,12 @@
             "has_call(tree,\"zip\")"
           ],
           "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
-          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table.",
+          "check_feedback": [
+            "Pair all specimen IDs with their counts when lengths match. Use None when lengths differ; zip alone silently truncates.",
+            "Print paired so both valid and mismatched inputs are visible.",
+            "Use zip for pairing after checking the lengths."
+          ]
         },
         {
           "task": "Fresh acquisition batch 2. When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
@@ -6864,7 +7785,12 @@
             "has_call(tree,\"zip\")"
           ],
           "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
-          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table.",
+          "check_feedback": [
+            "Pair all specimen IDs with their counts when lengths match. Use None when lengths differ; zip alone silently truncates.",
+            "Print paired so both valid and mismatched inputs are visible.",
+            "Use zip for pairing after checking the lengths."
+          ]
         },
         {
           "task": "Fresh acquisition batch 3. When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
@@ -6901,7 +7827,12 @@
             "has_call(tree,\"zip\")"
           ],
           "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
-          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table.",
+          "check_feedback": [
+            "Pair all specimen IDs with their counts when lengths match. Use None when lengths differ; zip alone silently truncates.",
+            "Print paired so both valid and mismatched inputs are visible.",
+            "Use zip for pairing after checking the lengths."
+          ]
         }
       ]
     }

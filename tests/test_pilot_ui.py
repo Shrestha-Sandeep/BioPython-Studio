@@ -63,6 +63,36 @@ try:
     free.locator('#next-activity').click()
     if next_entry['kind']=='legacy':free.wait_for_url('**/legacy.html?lesson=*')
     else:free.wait_for_function('(id)=>activity.id===id',arg=next_entry['id'])
+    # Specific explanations come from the real Worker, and extra metadata is valid.
+    a=next(a for a in CAT if a['number']=='019')
+    free.goto(URL+'/?activity='+a['id']);free.wait_for_function('activity?.number==="019"')
+    free.locator('#phase-track').get_by_role('button',name='Write',exact=True).click()
+    free.locator('#pilot-editor').fill('record = {"sample_id": sample_id}\nprint(sample_id)\nprint(condition)')
+    run(free,success=False)
+    assert 'Extra metadata is allowed' in free.locator('#pilot-feedback').inner_text()
+    assert free.evaluate('!!skill.independentAt') is False
+    free.locator('#pilot-editor').fill('record = dict(sample_id=sample_id, condition=condition, channel="blue")\nprint(record["sample_id"])\nprint(record["condition"])')
+    run(free)
+    assert free.evaluate('!!skill.independentAt') is True
+    assert 'Adapted from' in free.locator('#exercise-source').text_content()
+    free.evaluate('() => {skill.drafts.run="print(123)";selectPhase("run");}')
+    assert free.locator('#pilot-editor').input_value()==a['example']['source']
+    assert free.evaluate('skill.drafts.run')=='print(123)', 'Preserve the historical record while showing the example that will execute'
+    run(free)
+    free.goto(URL+'/legacy.html?lesson=table');free.wait_for_function('!!courseManifest')
+    free.locator('#learn-more summary').click()
+    assert 'Structures appendix' in free.locator('#source-links').inner_text()
+    assert 'Reference:' in free.locator('#source-links').inner_text()
+    free.goto(URL+'/legacy.html?lesson=shape');free.wait_for_function('!!courseManifest')
+    assert 'corresponding v3 activity' in free.locator('#source-links').text_content()
+    a=next(a for a in CAT if a['number']=='038')
+    free.goto(URL+'/?activity='+a['id']);free.wait_for_function('activity?.number==="038"')
+    free.locator('#phase-track').get_by_role('button',name='Write',exact=True).click()
+    free.locator('#pilot-editor').fill('import numpy as np\nimage=np.zeros((1,1))\ndimensions=np.array(grid).shape\naxes=2\nprint(dimensions)\nprint(axes)')
+    run(free,success=False)
+    assert 'supplied grid' in free.locator('#pilot-feedback').inner_text()
+    assert free.evaluate('!!skill.independentAt') is False
+    assert free.locator('#exercise-source a').get_attribute('href').endswith('/e02-Numpy_basics.ipynb')
     access.close()
     print('PASS fresh unlocked 78-entry course, all stages, early real-Python transfer practice and no fabricated mastery',flush=True)
     page=browser.new_page(viewport={'width':1440,'height':1000})

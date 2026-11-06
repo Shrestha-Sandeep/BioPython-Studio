@@ -96,3 +96,47 @@ def test_notebook_saved_function_traceback_from_earlier_cell_does_not_crash_feed
     assert not result['ok']
     assert 'NameError' in result['cases'][0]['error']
     assert 'earlier cell' in result['cases'][0]['error']
+
+def test_shape_checks_validate_the_actual_array_and_accept_equivalent_construction():
+    a=next(a for a in CAT if a['number']=='038')
+    wrong='import numpy as np\nimage = np.zeros((1, 1))\ndimensions = np.array(grid).shape\naxes = 2\nprint(dimensions)\nprint(axes)'
+    equivalent='import numpy as np\nimage = np.asarray(grid, dtype=float)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)'
+    for spec in list(a['stages'].values())+a['transfers']:
+        result=evaluate(wrong,spec)
+        assert not result['ok']
+        assert 'supplied grid' in result['message']
+        assert evaluate(equivalent,spec)['ok']
+
+def test_dictionary_checks_allow_extra_metadata_but_require_correct_named_fields():
+    a=next(a for a in CAT if a['number']=='019')
+    equivalent='record = dict(sample_id=sample_id, condition=condition, channel="blue")\nprint(record["sample_id"])\nprint(record["condition"])'
+    missing='record = {"sample_id": sample_id}\nprint(sample_id)\nprint(condition)'
+    incorrect='record = {"sample_id": sample_id, "condition": "wrong"}\nprint(sample_id)\nprint(condition)'
+    for spec in list(a['stages'].values())+a['transfers']:
+        assert evaluate(equivalent,spec)['ok']
+        assert not evaluate(missing,spec)['ok']
+        assert not evaluate(incorrect,spec)['ok']
+
+def test_feedback_distinguishes_a_missing_result_from_wrong_output_and_boundary():
+    spec=next(a for a in CAT if a['number']=='005')['stages']['write']
+    assert 'Assign specimen' in evaluate('print(sample_id)',spec)['message']
+    assert 'Print specimen' in evaluate('specimen = sample_id\nprint("sample_id")',spec)['message']
+    spec=next(a for a in CAT if a['number']=='010')['stages']['write']
+    result=evaluate('passes = signal > minimum\nprint(passes)',spec)
+    assert not result['ok'] and 'inclusive cutoff' in result['message']
+    # The expression-inspection failure also keeps its own explanatory hint.
+    spec=next(a for a in CAT if a['number']=='003')['stages']['write']
+    result=evaluate('n_fields = len(counts)',spec)
+    assert not result['ok'] and 'final line' in result['message']
+
+def test_every_python_check_has_specific_feedback_including_delayed_prompts():
+    for a in CAT:
+        if a['number']=='071':continue
+        for spec in list(a['stages'].values())+a['transfers']:
+            assert len(spec['check_feedback'])==len(spec['checks'])
+            assert all(isinstance(hint,str) and hint.strip() for hint in spec['check_feedback'])
+
+def test_older_spec_without_per_check_feedback_still_evaluates():
+    spec={'cases':[{'x':2}],'checks':['ns.get("value") == case["x"]'],'feedback':'Use the supplied x.'}
+    assert evaluate('value=x',spec)['ok']
+    assert 'Use the supplied x.' in evaluate('value=0',spec)['message']

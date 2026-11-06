@@ -110,4 +110,14 @@ Biological and computational: [Python for Biologists](https://www.pythonforbiolo
 
 ## Development organization
 
-All previous planning chunks are consolidated into this map and [README.md](README.md); do not create redundant one-off blueprints. Source truth: GitHub `main`; deployment: connected Vercel project `biopython`. Keep independent BioCompute and AppDeploy ImageLab unchanged.
+All previous planning chunks are consolidated into this map and [README.md](README.md); do not create redundant one-off blueprints. Frozen design authority: PR #1 and [the v3 manifest](curriculum/v3_manifest.json); development remains on the branches described in README, while `main` is the earlier implementation. Deployment: connected Vercel project `biopython`. Keep independent BioCompute and AppDeploy ImageLab unchanged.
+
+## Python exercise source audit — 6 November 2026
+
+The manifest's `python_source_audit` records every one of the **47 distinct available Python-stage entries**, covering 27 current activities and 20 nonoverlapping historical exercises. Each record identifies the reviewed notebook, its Git blob hash, zero-based cell indices, reuse status and adaptation or authored-task rationale. This is implementation evidence; the 156 competencies, prerequisite edges and all 61 historical identifiers are unchanged.
+
+Thirteen existing entries adapt book/course exercises or code: 003 (help), 005–007 (variables, arithmetic, types), 011–013 (branches, conditional loops, numbering), 016–017 (indexing, copying), 019 (biological dictionaries), 022 (comprehensions), 037–038 (typed arrays, shape). The arithmetic example reuses Witz's 5 × 9.5 exercise, the list example reuses his values/copy/edit/append operations, and the dictionary example retains extra biological metadata. These are adaptations within existing competencies, not additional lessons. The record distinguishes source-derived operations from authored extensions such as equality boundaries, empty inputs and changed-input checks.
+
+Other entries identify a relevant reference or explain why their scientific guardrail remains authored. No suitable direct exercise was found in the reviewed notebooks for bounded while loops, sentinel handling, immutable tuple coordinates, length-checked pairing, independent biological units or t-based confidence intervals. This does not claim those topics are absent from every book. Handbook prose is linked, not reproduced or adapted; reused code is MIT-licensed and Witz material is BSD-licensed. Full notices are in [THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md).
+
+Source notes reuse the existing collapsed area in both learning engines. Check feedback identifies the failing behavior without adding a panel or giving a full solution. Two demonstrated validation issues are corrected: a different image with plausible metadata cannot pass the shape task, and valid metadata dictionaries with additional fields are accepted. Named task outputs, assessment inputs, saved code and progress keys remain compatible. Human pilot evidence is still the next teaching-quality milestone.
