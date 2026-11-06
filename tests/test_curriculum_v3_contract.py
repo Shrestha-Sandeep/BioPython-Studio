@@ -41,7 +41,7 @@ def test_legacy_aliases_cover_all_old_lessons_exactly_once():
     assert len(set(keys)) == 61
     old = (ROOT / "CURRICULUM.md").read_text(encoding="utf-8")
     original_ids = re.findall(
-        r"^\\|\\s*\\d+\\s*\\|\\s*\\`([a-z][a-z0-9_]+)\\`\\s*\\|",
+        r"^\|\s*\d+\s*\|\s*\x60([a-z][a-z0-9_]+)\x60\s*\|",
         old, re.M)
     assert len(original_ids) == 61, f"Expected 61 source IDs, found {len(original_ids)}"
     assert set(original_ids) == set(keys)
