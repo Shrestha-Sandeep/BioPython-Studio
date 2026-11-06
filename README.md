@@ -1,32 +1,32 @@
-# BioPython Studio — Clean rebuild
+# BioPython Studio — UI-first IDE branch
 
-This is the **new, independent Witz-first rebuild** of BioPython Studio. It is deliberately a minimal frontend scaffold, not the older deployed 25-lesson app or Codex's development branch.
+This branch is an **interface-only prototype**, based on the clean Witz-first rebuild. It is **not** the legacy production app and does not replace the existing curriculum work.
 
-**Teaching direction:** Python → Microscopy → NGS → ML. Guillaume Witz's *Image Processing for Beginners* is the primary source; other materials support missing programming, scientific validation and specialized topics. One source-led scientific mini-goal per mission. Learn → Apply → Prove is always visible. Everything is unlocked. No gamification, duplicate competence lessons or clutter.
+**Branch:** \`feature/ui-first-ide-workspace\`
 
-## Local preview
+## Preview locally
 
-Serve the folder rather than double-clicking the HTML file, because the interface uses native JavaScript modules:
+\`\`\`bash
+python -m http.server 8000
+\`\`\`
 
-    python -m http.server 8000
+Open http://localhost:8000. No installation or backend is required to preview the interface.
 
-Open http://localhost:8000. This build requires **no npm installation** for its frontend.
+## Included
 
-## Witz source integration
+- Dark-first, light-optional, uncluttered responsive IDE layout.
+- One learning path: Python → Microscopy → NGS → ML.
+- Learn / Apply / Prove panels with neutral placeholders only.
+- Editable Python text area, line numbers, tab indentation and locally persisted drafts.
+- Two workspace modes: Code and Image analysis.
+- In image mode, an adjacent viewer for **manually opened** local PNG/JPEG/WebP/GIF files, with zoom/pan and pixel dimensions. The image is not uploaded to a server or saved after reload.
+- Output and Measurements placeholders, collapsible contextual reference, mobile course drawer and keyboard-accessible tabs.
+- Automated UI contract tests and browser smoke checks.
 
-- The rebuild now audits **all 54 numbered exercises** from Witz's seven exercise notebooks. **47 are reachable** inside eight source-driven preview missions, one exercise at a time, with cumulative editable code.
-- **Twelve** original Witz worked-code excerpts are now available as a collapsed reference inside the relevant Learn screens, each linked to a precise source cell.
-- **Six** Witz notebook figure PNGs are bundled and load from the project itself, with exact source-cell attribution. The original microscopy TIFFs remain linked upstream and are **not bundled yet**.
-- Supporting references strengthen specific missing concepts (NumPy, biological files, segmentation validity and reproducibility) rather than duplicating the Witz teaching path.
-- The figures are visualization examples, **not calibrated numeric image files**. The real Python engine, image-array processing and grading remain subsequent work.
-- Exercise inventory: [`curriculum/witz_exercise_inventory.json`](curriculum/witz_exercise_inventory.json). License and images: [`assets/witz/CREDITS.md`](assets/witz/CREDITS.md).
+## Intentionally not included
 
-## Current boundary
+There are **no lesson bodies, course exercises, dataset imports, assessments, Python runtime or image-processing algorithms** in this branch's visible UI. The Run button is disabled by design; any data shown in the image viewer is only a user-chosen static preview, not an analysis result.
 
-- **Implemented:** responsive accessible frontend; one linear course; 18 representative mission previews (not a claim of finished content); clear Learn/Apply/Prove stages; editable drafts saved locally; six authentic bundled Witz/HPA-derived notebook figure images; original source links.
-- **Not implemented:** Pyodide/real Python execution, grading, full Witz exercise extraction, packaged microscopy images, mastery/retention, notebook export, NGS/ML teaching content depth. The Run Python button is intentionally disabled and states why. Nothing is marked complete.
-- **Important:** progress in the previous app lives under other storage formats. A careful, opt-in migration tool is planned; this preview only saves drafts in its own key.
+Existing \`src/course.js\`, Witz source inventory and assets remain in the repository for later content integration but are not loaded into the shell. Existing learner progress keys from previous versions are not read, reset or overwritten. This preview uses its own key \`biopython.ui-first.v1\` for editor drafts and theme.
 
-The full architecture, source rules, QA gates and feature roadmap are in [docs/PRODUCT_BLUEPRINT.md](docs/PRODUCT_BLUEPRINT.md) and [docs/SOURCE_LEDGER.md](docs/SOURCE_LEDGER.md).
-
-**Isolation:** Production \`main\` and all existing draft PRs are untouched. This new branch resets the file tree by design. Do not merge it over the legacy app until release gates and progress migration pass.
+Do not merge this branch into \`main\` until design review and the subsequent learning/runtime integrations are ready.
