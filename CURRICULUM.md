@@ -1,4 +1,6 @@
-# BioPython Studio — Authoritative course and completion map
+# BioPython Studio — Implemented 61-lesson legacy map
+
+> **Curriculum freeze (6 November 2026):** This document describes the **61 currently implemented lesson designs** on the expanded feature branch; it is retained as the historical implementation map. The **finalized future learning syllabus** has **156 distinct prerequisite-linked competencies**, not 156 shipped lessons. See [Frozen Curriculum v3](docs/CURRICULUM_V3_FROZEN.md) and its [machine-readable migration manifest](curriculum/v3_manifest.json). All 61 old IDs remain mapped for progress preservation. No deployment or full-course implementation is implied.
 
 **Product goal:** Enable a molecular biologist with advanced microscopy knowledge but beginner Python skills to go from basic scripts to traceable biological image analysis, reproducible experiment summaries and starter bioinformatics/ML workflows. All tasks should teach real transferable programming—not trivia or gameplay.
 
