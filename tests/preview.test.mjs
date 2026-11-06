@@ -7,7 +7,7 @@ test("future lesson source files are preserved and source mapping stays valid", 
   assert.deepEqual(STAGES, ["Python", "Microscopy", "NGS", "ML"]);
   assert.equal(MISSIONS.length, 18);
   assert.equal(new Set(MISSIONS.map(m => m.id)).size, MISSIONS.length);
-  for (const mission of MISSIONS) assert.ok(primarySource(m).startsWith("https://"));
+  for (const mission of MISSIONS) assert.ok(primarySource(mission).startsWith("https://"));
 });
 test("UI-first default page includes both adaptive workspaces and no loaded lesson content", () => {
   const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
