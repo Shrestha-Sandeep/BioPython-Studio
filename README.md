@@ -1,8 +1,10 @@
-# BioPython Studio — Clean rebuild
+# BioPython Studio — UI-first rebuild
 
-This is the **new, independent Witz-first rebuild** of BioPython Studio. It is deliberately a minimal frontend scaffold, not the older deployed 25-lesson app or Codex's development branch.
+**Current default interface: a content-free learning workspace.** Python, Microscopy, NGS and ML use one consistent shell; the Microscopy stage opens an adaptive image-analysis view. There are no loaded lessons, demonstrations, simulated results or working Python execution in this UI-first build. Editing code, switching learning phases, saving draft text locally, theme switching, opening the reference drawer and previewing a local PNG/JPEG/WebP image are available. Real scientific TIFF/OME-TIFF loading and quantitative analysis are **not** implemented yet.
 
-**Teaching direction:** Python → Microscopy → NGS → ML. Guillaume Witz's *Image Processing for Beginners* is the primary source; other materials support missing programming, scientific validation and specialized topics. One source-led scientific mini-goal per mission. Learn → Apply → Prove is always visible. Everything is unlocked. No gamification, duplicate competence lessons or clutter.
+The earlier Witz-led mission outlines, source inventory and genuine notebook figures remain in the repository **for later content integration** but are not shown in the default interface. This is the independent rebuild branch, not the production `main` app or Codex's stacked v3 development branches.
+
+**Teaching direction (future content):** Python → Microscopy → NGS → ML. Guillaume Witz's *Image Processing for Beginners* is the main source; supporting materials fill genuine gaps. Learn → Apply → Prove is the shared interface structure, not an assessment system yet. Everything is unlocked, with no gamification or clutter.
 
 ## Local preview
 
@@ -23,8 +25,9 @@ Open http://localhost:8000. This build requires **no npm installation** for its 
 
 ## Current boundary
 
-- **Implemented:** responsive accessible frontend; one linear course; 18 representative mission previews (not a claim of finished content); clear Learn/Apply/Prove stages; editable drafts saved locally; six authentic bundled Witz/HPA-derived notebook figure images; original source links.
-- **Not implemented:** Pyodide/real Python execution, grading, full Witz exercise extraction, packaged microscopy images, mastery/retention, notebook export, NGS/ML teaching content depth. The Run Python button is intentionally disabled and states why. Nothing is marked complete.
+- **Implemented in the visible UI:** responsive dark/light learning shell; four navigable stages; Learn/Apply/Prove phase tabs; separate local Python drafts per stage; keyboard-accessible editor and line numbers; collapsible reference panel; Microscopy image preview with zoom, pan and drag/drop; empty output/measurement panels. These are interface behaviors, not teaching content or image analysis.
+- **Preserved, but not loaded in the current UI:** 18 preliminary mission outlines, Witz source/exercise indexes, and six attributed notebook figures.
+- **Not implemented:** loaded lessons/exercises, Pyodide/real Python execution, scientific TIFF/OME-TIFF processing, segmentation, measurements, grading, mastery/retention, notebook export or NGS/ML teaching depth. The Run button is intentionally disabled and nothing is marked complete.
 - **Important:** progress in the previous app lives under other storage formats. A careful, opt-in migration tool is planned; this preview only saves drafts in its own key.
 
 The full architecture, source rules, QA gates and feature roadmap are in [docs/PRODUCT_BLUEPRINT.md](docs/PRODUCT_BLUEPRINT.md) and [docs/SOURCE_LEDGER.md](docs/SOURCE_LEDGER.md).

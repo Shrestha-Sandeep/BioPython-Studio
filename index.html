@@ -3,85 +3,139 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f8f7">
-  <meta name="description" content="Learn Python by completing authentic scientific image-analysis missions.">
-  <title>BioPython Studio · Scientific Python</title>
-  <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./src/main.js"></script>
+  <meta name="theme-color" content="#0c1118">
+  <meta name="description" content="BioPython Studio — a focused learning workspace for Python and scientific image analysis.">
+  <title>BioPython Studio · Learning Workspace</title>
+  <link rel="stylesheet" href="./studio.css">
+  <script type="module" src="./src/studio-ui.js"></script>
 </head>
-<body>
-  <header class="topbar">
-    <a class="identity" href="./" aria-label="BioPython Studio home"><span class="identity-mark">B</span><span>BioPython <strong>Studio</strong></span></a>
-    <span class="build-label">Design preview · Python runtime next</span>
+<body data-theme="dark">
+  <header class="appbar">
+    <button id="menu-toggle" class="icon-button mobile-menu" type="button" aria-label="Open course navigation" aria-expanded="false" aria-controls="course-sidebar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a class="brand" href="./" aria-label="BioPython Studio home">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M10 3c15 7-1 18 12 26M22 3C7 10 23 21 10 29M11 8h10M9 14h14M9 20h14M11 26h10"/></svg></span>
+      <span>BioPython <strong>Studio</strong></span>
+    </a>
+    <span class="appbar-divider" aria-hidden="true"></span>
+    <span class="appbar-context">Learning workspace</span>
+    <div class="appbar-actions">
+      <button id="reference-toggle" class="quiet-button" type="button" aria-expanded="false" aria-controls="reference-panel"><span aria-hidden="true">☷</span> Reference</button>
+      <button id="theme-toggle" class="icon-button" type="button" aria-label="Switch to light theme" title="Toggle light and dark theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.3M12 19.7V22M2 12h2.3M19.7 12H22M4.9 4.9l1.6 1.6m11 11 1.6 1.6m0-14.2-1.6 1.6m-11 11-1.6 1.6"/></svg>
+      </button>
+    </div>
   </header>
-  <div class="shell">
-    <nav class="stage-nav" aria-label="Course path" id="stage-nav"></nav>
-    <div class="content-layout">
-      <aside class="sidebar" aria-label="Missions">
-        <div class="sidebar-head"><h2>Course</h2><span id="mission-count">Loading…</span></div>
-        <nav id="mission-list" aria-label="Choose a mission"></nav>
-      </aside>
-      <main class="main-column">
-        <div class="lesson-meta"><span id="lesson-position">Python · 01</span><span class="access-note">All missions open</span></div>
-        <h1 id="mission-title">Your first scientific script</h1>
-        <p class="deck" id="mission-summary">Learn Python by reaching a scientific goal.</p>
-        <section class="goal-panel" aria-label="Scientific outcome">
-          <div class="goal-kicker">WHAT YOU WILL BUILD</div>
-          <p id="mission-outcome"></p>
-        </section>
-        <section class="workspace" aria-label="Mission learning workspace">
-          <div class="tabs" role="tablist" aria-label="Mission steps">
-            <button role="tab" id="tab-learn" aria-controls="stage-panel" aria-selected="true" tabindex="0" data-tab="learn">Learn</button>
-            <button role="tab" id="tab-apply" aria-controls="stage-panel" aria-selected="false" tabindex="-1" data-tab="apply">Apply</button>
-            <button role="tab" id="tab-prove" aria-controls="stage-panel" aria-selected="false" tabindex="-1" data-tab="prove">Prove</button>
+
+  <div class="app-shell">
+    <aside id="course-sidebar" class="course-sidebar" aria-label="Course navigation">
+      <div class="nav-section">
+        <p class="eyebrow">Learning path</p>
+        <nav id="pathway-nav" aria-label="Learning stages">
+          <button type="button" class="stage-link" data-stage="Python" aria-current="page"><span class="stage-index">01</span><span>Python</span><span class="nav-arrow" aria-hidden="true">›</span></button>
+          <button type="button" class="stage-link" data-stage="Microscopy"><span class="stage-index">02</span><span>Microscopy</span><span class="nav-arrow" aria-hidden="true">›</span></button>
+          <button type="button" class="stage-link" data-stage="NGS"><span class="stage-index">03</span><span>NGS</span><span class="nav-arrow" aria-hidden="true">›</span></button>
+          <button type="button" class="stage-link" data-stage="ML"><span class="stage-index">04</span><span>Machine learning</span><span class="nav-arrow" aria-hidden="true">›</span></button>
+        </nav>
+      </div>
+      <div class="nav-section lesson-list-section">
+        <div class="section-heading"><p class="eyebrow">Lessons</p></div>
+        <p class="nav-empty" id="lesson-list-placeholder">No lessons loaded yet.</p>
+      </div>
+      <div class="sidebar-foot">Interface preview <span class="muted-dot" aria-hidden="true">·</span> Content not loaded</div>
+    </aside>
+
+    <main class="main-area" id="main-content">
+      <div class="page-heading">
+        <div class="breadcrumb"><span id="breadcrumb-stage">Python</span><span aria-hidden="true">/</span><span>Workspace</span></div>
+        <h1 id="workspace-title">Python workspace</h1>
+        <p id="workspace-subtitle">A focused space for understanding, writing and testing code.</p>
+      </div>
+
+      <section class="lesson-section" aria-labelledby="lesson-section-title">
+        <div class="section-bar">
+          <h2 id="lesson-section-title">Lesson</h2>
+          <div class="step-tabs" role="tablist" aria-label="Learning phase">
+            <button type="button" role="tab" id="phase-learn" data-phase="learn" aria-controls="phase-panel" aria-selected="true" tabindex="0">Learn</button>
+            <button type="button" role="tab" id="phase-apply" data-phase="apply" aria-controls="phase-panel" aria-selected="false" tabindex="-1">Apply</button>
+            <button type="button" role="tab" id="phase-prove" data-phase="prove" aria-controls="phase-panel" aria-selected="false" tabindex="-1">Prove</button>
           </div>
-          <div class="workspace-grid" id="stage-panel" role="tabpanel" aria-labelledby="tab-learn">
-            <div class="task-column">
-              <h2 id="step-title">Understand one useful idea</h2>
-              <p class="step-description" id="step-text"></p>
-              <div id="learn-step-controls" class="learn-step-controls" hidden>
-                <span id="learn-step-position">Follow the Witz exercises in order.</span>
-                <div class="learn-step-actions">
-                  <button type="button" id="learn-step-prev" aria-label="Previous source exercise">Back</button>
-                  <button type="button" id="learn-step-next">Next exercise</button>
-                </div>
-              </div>
-              <div class="source-row"><span>Primary source</span><a id="source-link" href="https://github.com/guiwitz/PyImageCourse_beginner" target="_blank" rel="noopener noreferrer">Witz · Image Processing for Beginners</a></div>
-              <details class="worked-example" id="worked-example" hidden>
-                <summary>See Witz's worked code example</summary>
-                <pre id="worked-example-code" aria-label="Code from Witz's original notebook"></pre>
-                <p id="worked-example-context"></p>
-                <a id="worked-example-source" target="_blank" rel="noopener noreferrer">Original source notebook</a>
-              </details>
-              <details class="supplement" id="supplement-wrapper" hidden>
-                <summary>Optional supporting reference</summary>
-                <a id="support-source" target="_blank" rel="noopener noreferrer">Supporting material</a>
-              </details>
-              <div class="code-box">
-                <div class="code-topline"><label for="code-editor">Your Python</label><span class="code-status">Draft saved on this device</span></div>
-                <textarea id="code-editor" spellcheck="false" aria-label="Editable Python code" rows="11"></textarea>
-                <div class="code-bottomline">
-                  <span id="runtime-message" role="status">Real Python execution arrives in the next development step.</span>
-                  <button id="run-button" type="button" disabled title="Python engine is not installed in this first frontend build">Run Python</button>
-                </div>
+        </div>
+        <div class="lesson-placeholder" role="tabpanel" id="phase-panel" aria-labelledby="phase-learn" tabindex="0">
+          <div class="lesson-kicker"><span class="subtle-pulse" aria-hidden="true"></span><span id="phase-label">Learn</span></div>
+          <h3 id="phase-title">Your lesson will appear here</h3>
+          <p id="phase-description">This area is reserved for a concise explanation and one clear task. No example or exercise content has been added yet.</p>
+        </div>
+      </section>
+
+      <section class="work-section" aria-labelledby="work-section-title">
+        <div class="work-section-heading">
+          <h2 id="work-section-title">Workspace</h2>
+          <span class="work-mode" id="work-mode-label">Python</span>
+        </div>
+        <div class="work-grid" id="work-grid">
+          <section class="editor-panel" aria-label="Python code editor">
+            <div class="editor-toolbar">
+              <div class="file-name"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5"/></svg><span>main.py</span></div>
+              <div class="editor-actions">
+                <span class="save-state" id="save-state" role="status">Saved locally</span>
+                <button type="button" id="reset-editor" class="icon-button small" title="Clear editor" aria-label="Clear editor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 4h4M7 7l1 14h8l1-14M10 11v6M14 11v6"/></svg></button>
+                <button type="button" id="run-button" class="run-button" disabled title="Python execution will be added after the UI is approved">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg> Run
+                </button>
               </div>
             </div>
-            <aside class="context-column" aria-label="Scientific destination">
-              <div class="context-title">Why this matters</div>
-              <p id="science-context"></p>
-              <figure id="image-figure" hidden>
-                <img id="context-image" alt="Human Protein Atlas RGB fluorescence microscopy composite" loading="lazy">
-                <figcaption><span id="image-caption"></span> <a id="figure-source" target="_blank" rel="noopener noreferrer">Witz notebook</a> <a id="raw-tiff-link" target="_blank" rel="noopener noreferrer" hidden>Original Witz TIFF</a></figcaption>
-              </figure>
-              <p id="image-fallback" class="image-fallback" hidden>Bundled Witz figure could not be displayed; check the source notebook link.</p>
-              <div class="next-note" id="preview-note">This is a frontend preview. No exercise is marked complete without executing and assessing real Python.</div>
-            </aside>
+            <div class="code-surface" id="code-surface">
+              <div id="line-numbers" class="line-numbers" aria-hidden="true">1</div>
+              <textarea id="code-editor" aria-label="Editable Python code" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="# Write your Python here" rows="13"></textarea>
+            </div>
+            <div class="editor-footer"><span>Python 3 <span class="muted-dot" aria-hidden="true">·</span> Draft editor</span><span id="editor-position">Ln 1, Col 1</span></div>
+          </section>
+
+          <section class="image-panel" id="image-panel" aria-label="Scientific image viewer" hidden>
+            <div class="image-toolbar">
+              <div class="image-title">Image viewer <span class="image-secondary">Original image</span></div>
+              <div class="image-controls">
+                <button type="button" id="zoom-out" class="icon-button small" aria-label="Zoom out" title="Zoom out" disabled>−</button>
+                <button type="button" id="zoom-fit" class="viewer-fit" disabled>Fit</button>
+                <button type="button" id="zoom-in" class="icon-button small" aria-label="Zoom in" title="Zoom in" disabled>+</button>
+                <label for="image-upload" class="upload-button" tabindex="0">Open image</label>
+                <input type="file" id="image-upload" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+              </div>
+            </div>
+            <div class="image-viewport" id="image-viewport">
+              <div class="image-empty" id="image-empty">
+                <svg viewBox="0 0 56 56" aria-hidden="true"><rect x="7" y="9" width="42" height="38" rx="5"/><circle cx="20" cy="22" r="4"/><path d="m10 41 11-11 8 7 8-12 9 13"/></svg>
+                <p>Open a microscopy image</p>
+                <span>PNG, JPEG or WebP preview. No image is loaded.</span>
+              </div>
+              <img id="preview-image" class="preview-image" alt="Locally opened image" hidden>
+            </div>
+            <div class="viewer-footer"><span id="image-info">No image loaded</span><span id="zoom-value">—</span></div>
+          </section>
+        </div>
+
+        <section class="results-panel" aria-label="Execution results">
+          <div class="results-heading">
+            <div class="result-tabs" role="tablist" aria-label="Result view">
+              <button type="button" id="result-output" data-result="output" role="tab" aria-controls="result-panel" aria-selected="true" tabindex="0">Output</button>
+              <button type="button" id="result-measurements" data-result="measurements" role="tab" aria-controls="result-panel" aria-selected="false" tabindex="-1">Measurements</button>
+            </div>
+            <span class="engine-state"><span class="engine-dot" aria-hidden="true"></span> Execution not connected</span>
+          </div>
+          <div id="result-panel" class="result-body" role="tabpanel" aria-labelledby="result-output">
+            <p id="result-placeholder">Python output will appear here when execution is connected.</p>
           </div>
         </section>
-        <div class="lesson-footer"><button class="text-button" type="button" id="prev-mission">Previous mission</button><button class="primary-button" type="button" id="next-mission">Next mission <span aria-hidden="true">→</span></button></div>
-      </main>
-    </div>
+      </section>
+    </main>
+
+    <aside id="reference-panel" class="reference-panel" aria-label="Contextual reference" hidden>
+      <div class="reference-head"><h2>Reference</h2><button type="button" id="reference-close" class="icon-button small" aria-label="Close reference panel">×</button></div>
+      <div class="reference-empty"><div class="reference-glyph" aria-hidden="true">{ }</div><h3>No reference selected</h3><p>Relevant functions, parameters and notes will appear here alongside future lessons.</p></div>
+    </aside>
   </div>
-  <footer class="site-footer">Built around <a href="https://github.com/guiwitz/PyImageCourse_beginner" target="_blank" rel="noopener noreferrer">Guillaume Witz’s image-processing course</a>. This preview contains no assessment claims.</footer>
+  <div class="toast" id="toast" role="status" hidden></div>
 </body>
 </html>
