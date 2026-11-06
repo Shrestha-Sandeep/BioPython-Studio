@@ -113,7 +113,7 @@ def main():
                 assert page.locator("#comparison-mode").is_enabled()
                 page.locator("#comparison-mode").select_option("overlay")
                 assert "comparison-overlay" in page.locator("#image-canvas").get_attribute("class")
-                page.locator("#comparison-opacity").fill("65")
+                page.locator("#comparison-opacity").evaluate("el => { el.value = 65; el.dispatchEvent(new Event('input', { bubbles: true })); }")
                 assert page.locator("#comparison-opacity-value").inner_text() == "65%"
                 assert "0.65" in page.locator("#comparison-image-frame").get_attribute("style")
                 page.locator("#comparison-mode").select_option("wipe")
