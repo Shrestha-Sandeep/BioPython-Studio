@@ -32,6 +32,19 @@ Teach a scientist with deep biology/microscopy experience but novice Python synt
 | M13 | Unseen-data independent projects | 7 | projects |
 | **Total** | | **156** | Prerequisite graph |
 
+## Default learning route (deterministic, but flexible)
+
+The complete catalog is **156 distinct competencies**. The default microscopy-first route contains **127** of those competencies. The sequence/NGS branch contains **17** (including its project), and the ML branch contains **12** (including its project). The branches may be unlocked whenever their *actual local prerequisites* are met; they are not blocked behind unrelated microscopy modules.
+
+**Recommended first 15 competencies**, in prerequisite-safe teaching order (distinct from the catalog number order):
+
+1. Run a short Python cell (001); see the provenance of a real fluorescence image (071).
+2. Assign a specimen variable (005), format a label (008), calculate (006), and inspect types (007).
+3. Compare values (010), express a QC condition (011), learn list indexing (016), and iterate over fields (012).
+4. Write a first function (025), read a traceback (002), consult documentation (003), construct a NumPy array (037), and inspect its shape (038).
+
+This is a pilot sequence of 15 **competencies** that can contain 12–15 initial **learner activities** by combining or staging small interactions. Later tasks include real array decoding, coordinate selection, ROI and threshold transfer. Every subsequent default-route competency is listed in the machine-readable `recommended_default_route`, a validated topological order. UI navigation should present one next action, not this entire list.
+
 ## Exact competency list and immediate prerequisites
 
 Competency numbers are display order only; immutable semantic IDs in the manifest protect progress if the path order changes. Module IDs do **not** enforce a linear study sequence.
