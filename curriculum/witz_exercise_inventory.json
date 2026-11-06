@@ -796,5 +796,115 @@
     "teaching_material": "Witz/University of Bern BSD-3-Clause; credit and preserve license notice",
     "hpa": "Images in Witz repository documented CC BY-SA 3.0; display images require attribution",
     "pngs": "Embedded figures are copies of rendered notebook outputs; derived from HPA data, not raw measurement images."
-  }
+  },
+  "worked_examples": [
+    {
+      "mission": "py-01",
+      "notebook": "01-Python_essentials.ipynb",
+      "source_cell": 8,
+      "code": "b = 5\nc = 2",
+      "context": "Witz's Python variables; the notebook defines a and other values nearby.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/01-Python_essentials.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "py-02",
+      "notebook": "01-Python_essentials.ipynb",
+      "source_cell": 19,
+      "code": "d = a + b\nd",
+      "context": "Witz recomputes d after changing a; see surrounding cells for earlier assignments.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/01-Python_essentials.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "py-03",
+      "notebook": "08-Logical_flow.ipynb",
+      "source_cell": 17,
+      "code": "for x in mylist:\n    value_squared = x**2\n    print(value_squared)",
+      "context": "Witz's for-loop prints a transformed list; mylist is initialized in earlier cells.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/08-Logical_flow.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "py-04",
+      "notebook": "01-Python_essentials.ipynb",
+      "source_cell": 26,
+      "code": "def my_fun(x, a, b):\n    out = a * x + b\n    return out",
+      "context": "Witz's reusable function illustrates parameters and a returned value.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/01-Python_essentials.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "im-01",
+      "notebook": "02-Images_as_arrays.ipynb",
+      "source_cell": 35,
+      "code": "np.ones(shape=(5,3))",
+      "context": "Requires import numpy as np. Witz creates an array of ones.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/02-Images_as_arrays.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "im-02",
+      "notebook": "02-Images_as_arrays.ipynb",
+      "source_cell": 24,
+      "code": "cropped = image[400:530, 400:600].copy()",
+      "context": "Requires a previously loaded image. The copy avoids modifying the original array view.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/02-Images_as_arrays.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "im-03",
+      "notebook": "03-More_on_images.ipynb",
+      "source_cell": 19,
+      "code": "image_channel1 = image_rgb[:, : , 0]",
+      "context": "Requires image_rgb from previous notebook cells; selects the first channel.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/03-More_on_images.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "im-04",
+      "notebook": "04-Thresholding.ipynb",
+      "source_cell": 23,
+      "code": "my_otsu_threshold = skimage.filters.threshold_otsu(image_nuclei)\nprint(my_otsu_threshold)",
+      "context": "Requires image_nuclei and scikit-image import in earlier cells.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/04-Thresholding.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "im-05",
+      "notebook": "Demo.ipynb",
+      "source_cell": 14,
+      "code": "im_filtered = skimage.filters.median(image[:,:,2], skimage.morphology.disk(5))",
+      "context": "Requires Witz's image variable and scikit-image imports.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Demo.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "im-06",
+      "notebook": "06-Regions.ipynb",
+      "source_cell": 22,
+      "code": "my_regions = skimage.measure.regionprops_table(\n    my_labels,intensity_image=image_signal, properties=('label','area','mean_intensity'))",
+      "context": "Requires a labeled candidate mask and aligned intensity image.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/06-Regions.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "im-07",
+      "notebook": "Demo.ipynb",
+      "source_cell": 29,
+      "code": "merged = pd.merge(measure_eroded_df, measure_edge_df, on='label', how='inner')\nmerged['ratio'] = merged['mean_intensity_x']/merged['mean_intensity_y']",
+      "context": "Requires candidate interior/edge measurement tables and Pandas.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Demo.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    },
+    {
+      "mission": "im-08",
+      "notebook": "07-Pipeline.ipynb",
+      "source_cell": 19,
+      "code": "all_tables = []\nfor file in files_to_analyze:\n    \n    #use the function\n    new_table = my_pipeline(file)\n    \n    #add image index\n    new_table['filename'] = file.split('/')[-1]\n    \n    #append the result to the list\n    all_tables.append(new_table)\n    ",
+      "context": "Requires the earlier-defined my_pipeline function and files_to_analyze.",
+      "source_url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb",
+      "kind": "verbatim_source_code_excerpt_requires_notebook_context"
+    }
+  ]
 }
