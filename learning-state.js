@@ -35,7 +35,7 @@
   function evidence(skill) {
     if (!skill) return 'unseen';
     if (skill.needsReview) return 'needs review';
-    if (skill.retainedAt) return 'retained';
+    if (retained(skill)) return 'retained';
     if (skill.independentAt) return 'independent';
     if (skill.guidedAt) return 'guided';
     return 'explored';
@@ -43,7 +43,25 @@
   function ready(state, competency) {
     return competency.prerequisites.every(id => !!state.skills[id]?.guidedAt);
   }
-  function due(skill,now=Date.now()) { return !!skill?.reviewAt && now >= skill.reviewAt; }
+  function reviewDueAt(skill) {
+    if (!Number.isFinite(skill?.reviewAt) || skill.reviewAt<=0) return null;
+    return Math.max(skill.reviewAt,skill.guidedAt?skill.guidedAt+DELAY:0,skill.independentAt?skill.independentAt+DELAY:0);
+  }
+  function due(skill,now=Date.now()) { const at=reviewDueAt(skill);return at!==null&&now>=at; }
+  function retained(skill,now=Date.now()) {
+    // Keep earlier timestamps in saved records, but do not display a retention
+    // claim made before the required interval from independent work.
+    return !!(!skill?.needsReview&&skill?.retainedAt&&skill.retainedAt<=now&&skill.independentAt&&skill.guidedAt&&skill.retainedAt>=skill.independentAt+DELAY&&skill.retainedAt>=skill.guidedAt+DELAY);
+  }
+  function reviewAction(skill,count,now=Date.now()) {
+    const eligible=due(skill,now),fresh=(skill?.reviewCursor||0)<count,index=skill?.activeReview;
+    const pending=Number.isInteger(index)&&index>=0&&index<count&&!skill.passed.transfer&&
+      !skill.attempts.some(a=>a.reviewIndex===index&&['transfer','transfer_practice'].includes(a.stage)&&a.ok);
+    // Resume the exposed prompt. An early practice prompt stays practice; when
+    // a delayed check becomes eligible, use a different, still-unseen prompt.
+    const resume=pending&&(!eligible||!skill.reviewPractice||!fresh);
+    return {kind:resume?'resume':eligible&&fresh?'fresh':'practice',practice:resume?(!!skill.reviewPractice||!eligible):!eligible||!fresh,due:eligible,at:reviewDueAt(skill)};
+  }
   function noteHelp(skill,stage,now=Date.now()) {
     const key=stage==='transfer'?(skill.reviewPractice?'transfer_practice:':'transfer:')+skill.activeReview:stage;
     (skill.externalHelp||={})[key]=true;
@@ -58,26 +76,32 @@
     return (skill.hints[stage]||0)>0||skill.externalHelp?.[key]===true;
   }
   function beginReview(skill,count,now=Date.now()) {
+    const action=reviewAction(skill,count,now);
+    if(action.kind==='resume'){skill.stage='transfer';skill.reviewPractice=action.practice;return;}
     if(typeof skill.drafts.transfer==='string'&&skill.drafts.transfer.length)(skill.transferDraftHistory||=[]).push({source:skill.drafts.transfer,reviewIndex:skill.activeReview,practice:!!skill.reviewPractice,at:now});
     const cursor=skill.reviewCursor||0;
-    skill.reviewPractice=!due(skill,now)||cursor>=count;
+    skill.reviewPractice=action.practice;
     skill.activeReview=Math.min(cursor,count-1);skill.reviewCursor=Math.min(cursor+1,count);
     skill.stage='transfer';skill.drafts.transfer='';skill.passed.transfer=false;
   }
   function assess(skill,stage,result,now=Date.now()) {
-    if(stage==='transfer'&&(skill.reviewPractice||skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&a.ok))){
+    if(stage==='transfer'&&(!due(skill,now)||skill.reviewPractice||skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&a.ok))){
       skill.reviewPractice=true;
       skill.attempts.push({stage:'transfer_practice',ok:!!result.ok,assisted:assisted(skill,stage),at:now,reviewIndex:skill.activeReview,source:result.source||''});
       skill.passed.transfer=!!result.ok;return;
     }
-    if(stage==='transfer' && (!due(skill,now) || skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&a.ok))) return;
     const usedHelp = assisted(skill,stage);
     const priorFailure=stage==='transfer' && skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&!a.ok);
     skill.attempts.push({stage,ok:!!result.ok,assisted:usedHelp,at:now,...(stage==='transfer'?{reviewIndex:skill.activeReview}: {}),...(['write','transfer'].includes(stage)&&typeof result.source==='string'?{source:result.source}:{})});
     skill.passed[stage] = !!result.ok;
     if (stage === 'transfer' && !result.ok) {skill.needsReview = true;skill.retainedAt = null;}
     if (!result.ok) return;
-    if (stage === 'write' && !usedHelp) { skill.independentAt ||= now; }
+    if (stage === 'write' && !usedHelp && !skill.independentAt) {
+      skill.independentAt=now;
+      // A prompt exposed before this independent attempt cannot later become
+      // its fresh delayed check. Keep its code available as practice.
+      if(Number.isInteger(skill.activeReview)&&!skill.passed.transfer)skill.reviewPractice=true;
+    }
     if (stage === 'debug') { skill.guidedAt ||= now; skill.reviewAt ||= now + DELAY; }
     if (stage === 'transfer' && due(skill,now)) {
       if (!usedHelp) {
@@ -121,7 +145,7 @@
     if(!merged.importArchive.length)delete merged.importArchive;
     return merged;
   }
-  const api = {KEY,LEGACY_KEY,DELAY,fresh,validate,load,record,evidence,ready,due,assess,migrateAliases,merge,untouched,assisted,noteHelp,beginReview};
+  const api = {KEY,LEGACY_KEY,DELAY,fresh,validate,load,record,evidence,ready,reviewDueAt,due,retained,reviewAction,assess,migrateAliases,merge,untouched,assisted,noteHelp,beginReview};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.LearningState = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

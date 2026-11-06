@@ -82,6 +82,7 @@ Biological and computational: [Python for Biologists](https://www.pythonforbiolo
 
 - One task, supplied data, editor, Run and feedback on the default screen; course map and extended guidance collapsed. A microscope image is shown only when used in the current task.
 - Every new lesson evaluates code on three changing datasets; wrong/hardcoded answers fail. Correct independently solved lessons and guided solutions are recorded distinctly.
+- Delayed retention requires an unseen prompt at least 24 hours after guided and independent work. Early exposure remains practice; unfinished checks resume the same prompt and draft. Correcting eligibility never deletes previous timestamps or attempt history.
 - Each lesson has three explanatory steps, expected result, check semantics, two hints, scientific relevance and a scientifically honest caution.
 - Preserve earlier `id` keys, `localStorage` key and lesson order through future changes. Never move or remove the original 25 without an explicit migration.
 - Browser image arrays must come from actual decoded HPA source JPEGs; no fake fallback masquerading as real data. Show errors/retry on corrupted or inaccessible source files.

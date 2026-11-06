@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import subprocess
 import threading
+from datetime import datetime,timezone,timedelta
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
 CAT=json.loads((ROOT/'curriculum/v3_pilot.json').read_text())['activities']
@@ -176,7 +177,9 @@ try:
     assert before==after
     assert page.locator('#feedback-note').input_value()=='Automated fixture: explain the variable naming step.'
     # Advancing the test clock exercises the real delayed-transfer UI, not a 24h sleep.
-    page.evaluate('''() => { const a=catalog.activities[1];state.skills[a.id].reviewAt=Date.now()-1;select(a.id); }''')
+    review_clock=datetime.now(timezone.utc)
+    page.clock.set_fixed_time(review_clock+timedelta(days=1,seconds=10))
+    page.evaluate('''() => {select(catalog.activities[1].id);}''')
     assert page.locator('#review-reminder').is_visible()
     page.locator('#start-review').click()
     assert page.locator('#pilot-editor').input_value()==''
@@ -185,7 +188,8 @@ try:
     run(page)
     assert page.locator('#evidence').inner_text()=='retained'
     assert page.locator('#pilot-run').is_enabled()
-    page.evaluate('() => {skill.reviewAt=Date.now()-1;render();}')
+    page.clock.set_fixed_time(review_clock+timedelta(days=2,seconds=20))
+    page.evaluate('updateReviewReminder()')
     page.locator('#start-review').click()
     assert page.locator('#pilot-editor').input_value()==''
     assert page.evaluate('skill.activeReview')==1
@@ -234,8 +238,63 @@ try:
     assert imported.evaluate('lessons.length')==61
     migration.close();fresh.close()
     print('PASS legacy 61-ID export/import and original draft handoff',flush=True)
+    # A dedicated, explicitly simulated clock verifies the late-write interval,
+    # one-click reminders and resume behavior using actual Python execution.
+    review_context=browser.new_context();review_page=review_context.new_page()
+    a=next(a for a in CAT if a['number']=='005')
+    review_page.goto(URL+'/?activity='+a['id']);review_page.wait_for_function('!!activity')
+    clock_start=datetime.now(timezone.utc)
+    review_page.clock.set_fixed_time(clock_start)
+    review_page.locator('#phase-track').get_by_role('button',name='Debug',exact=True).click()
+    review_page.locator('#pilot-editor').fill(a['stages']['debug']['reference']);run(review_page)
+    review_page.clock.set_fixed_time(clock_start+timedelta(hours=12))
+    review_page.locator('#phase-track').get_by_role('button',name='Write',exact=True).click()
+    review_page.locator('#pilot-editor').fill(a['stages']['write']['reference']);run(review_page)
+    assert review_page.evaluate('S.reviewDueAt(skill)===skill.independentAt+S.DELAY')
+    review_page.clock.set_fixed_time(clock_start+timedelta(hours=24))
+    review_page.evaluate('updateReviewReminder()')
+    assert review_page.locator('#review-reminder').is_hidden()
+    assert review_page.locator('#start-review').inner_text()=='Transfer practice'
+    review_page.locator('#start-review').click()
+    review_page.locator('#pilot-editor').fill('# unfinished practice')
+    review_page.locator('#start-review').click()
+    assert review_page.locator('#pilot-editor').input_value()=='# unfinished practice'
+    assert review_page.evaluate('skill.reviewCursor')==1
+    review_page.locator('#pilot-editor').fill(a['transfers'][0]['reference']);run(review_page)
+    assert review_page.locator('#evidence').inner_text()=='independent'
+    assert review_page.evaluate('skill.attempts.at(-1).stage')=='transfer_practice'
+    review_page.clock.set_fixed_time(clock_start+timedelta(hours=36))
+    review_page.evaluate('updateReviewReminder()')
+    assert review_page.locator('#start-review').inner_text()=='Start fresh delayed check'
+    review_page.locator('#open-review').click()
+    assert review_page.evaluate('skill.activeReview')==1
+    assert review_page.locator('#phase-title').inner_text()=='Delayed transfer'
+    review_page.locator('#pilot-editor').fill('# unfinished delayed check')
+    review_page.locator('#start-review').click()
+    assert review_page.evaluate('skill.reviewCursor')==2
+    assert review_page.locator('#pilot-editor').input_value()=='# unfinished delayed check'
+    review_page.evaluate('select(catalog.activities[0].id)')
+    review_page.locator('#open-review').click()
+    assert review_page.evaluate('activity.number')=='005'
+    assert review_page.locator('#pilot-editor').input_value()=='# unfinished delayed check'
+    review_page.reload();review_page.wait_for_function('!!activity')
+    assert review_page.locator('#pilot-editor').input_value()=='# unfinished delayed check'
+    review_page.locator('#pilot-editor').fill(a['transfers'][1]['reference']);run(review_page)
+    assert review_page.locator('#evidence').inner_text()=='retained'
+    review_page.clock.set_fixed_time(clock_start+timedelta(hours=60))
+    review_page.evaluate('updateReviewReminder()');review_page.locator('#open-review').click()
+    assert review_page.evaluate('skill.activeReview')==2
+    review_page.locator('#pilot-editor').fill('# unfinished final prompt')
+    review_page.evaluate('select(catalog.activities[0].id)')
+    assert review_page.locator('#review-reminder').is_visible()
+    review_page.locator('#open-review').click()
+    assert review_page.evaluate('skill.reviewCursor')==3
+    assert review_page.locator('#pilot-editor').input_value()=='# unfinished final prompt'
+    review_page.locator('#pilot-editor').fill(a['transfers'][2]['reference']);run(review_page)
+    assert review_page.locator('#evidence').inner_text()=='retained'
+    review_context.close()
+    print('PASS real-Python late-write interval, early practice, timer labels and resume through the final delayed prompt',flush=True)
     # Goal workflow uses real Python checks and an explicitly advanced test clock.
-    from datetime import datetime,timezone,timedelta
     goal_context=browser.new_context(accept_downloads=True)
     goal_page=goal_context.new_page()
     full_state=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
