@@ -31,3 +31,10 @@
 }
 
 #raw-tiff-link[hidden], #supplement-wrapper[hidden], #learn-step-controls[hidden], #image-figure[hidden]{display:none!important}
+
+.worked-example{padding:0;margin:0 0 15px;font-size:13px;color:var(--muted)}
+.worked-example summary{cursor:pointer;color:var(--accent);font-weight:650;width:max-content;max-width:100%}
+.worked-example pre{background:#f2f6f4;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.65 var(--mono);color:#284245}
+.worked-example p{margin:7px 0;color:var(--muted);font-size:12px;line-height:1.5}
+.worked-example a{font-size:12px}
+#worked-example[hidden]{display:none!important}
