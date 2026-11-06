@@ -2,40 +2,43 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const STORE = "biopython.ui-first.v1";
-  const memory = { drafts: {}, theme: "dark" };
+  const memory = { drafts: {}, theme: "dark", layout: { editorShare: 54, consoleHeight: 160, lessonOpen: false } };
   try {
     const saved = JSON.parse(localStorage.getItem(STORE) || "null");
     if (saved && typeof saved === "object" && !Array.isArray(saved)) {
       if (saved.drafts && typeof saved.drafts === "object" && !Array.isArray(saved.drafts)) {
         memory.drafts = saved.drafts;
       }
-      if (saved.theme === "dark" || saved.theme === "light") memory.theme = saved.theme;
+      if (["dark", "light"].includes(saved.theme)) memory.theme = saved.theme;
+      if (saved.layout && typeof saved.layout === "object") {
+        if (Number.isFinite(saved.layout.editorShare)) memory.layout.editorShare = Math.min(75, Math.max(30, saved.layout.editorShare));
+        if (Number.isFinite(saved.layout.consoleHeight)) memory.layout.consoleHeight = Math.min(380, Math.max(100, saved.layout.consoleHeight));
+        if (typeof saved.layout.lessonOpen === "boolean") memory.layout.lessonOpen = saved.layout.lessonOpen;
+      }
     }
-  } catch { /* Browsers without storage still get a working editor. */ }
+  } catch { /* The workspace still works when storage is blocked. */ }
 
   const STAGES = {
-    Python: { title: "Python workspace", crumb: "Python foundations", subtitle: "Learn, write and investigate Python in one focused space.", mode: "python" },
-    Microscopy: { title: "Image analysis workspace", crumb: "Microscopy", subtitle: "Inspect images alongside your Python code and results.", mode: "image" },
-    NGS: { title: "Sequence analysis workspace", crumb: "Sequence analysis", subtitle: "Work with biological sequence data using Python.", mode: "python" },
-    ML: { title: "Machine learning workspace", crumb: "Machine learning", subtitle: "Explore models and results in a practical Python environment.", mode: "python" }
+    Python: { title: "Python workspace", crumb: "Python foundations", subtitle: "A focused environment to learn and explore Python.", mode: "python" },
+    Microscopy: { title: "Image analysis workspace", crumb: "Microscopy", subtitle: "Write code and inspect microscopy image previews side by side.", mode: "image" },
+    NGS: { title: "Sequence analysis workspace", crumb: "Sequence analysis", subtitle: "A workspace for biological sequence analysis in Python.", mode: "python" },
+    ML: { title: "Machine learning workspace", crumb: "Machine learning", subtitle: "A workspace for models, data and scientific predictions.", mode: "python" }
   };
   const PHASES = {
     learn: ["Your lesson will appear here", "A concise explanation and one clear task will appear when lessons are added."],
-    apply: ["Your practice task will appear here", "The applied exercise will use the same editor and output workspace."],
-    prove: ["Your independent task will appear here", "An independent challenge will appear when the learning engine is connected."]
+    apply: ["Your practice task will appear here", "Practice will use the same editor, viewer and results workspace."],
+    prove: ["Your independent task will appear here", "Independent challenges will appear once lesson content is connected."]
   };
-
-  let stage = "Python";
-  let initialized = false;
-  let mode = "python";
-  let phase = "learn";
-  let result = "output";
-  let imageURL = null;
-  let imageScale = 1;
-  let imageX = 0;
-  let imageY = 0;
-  let drag = null;
-  let hasImage = false;
+  const RESULTS = {
+    output: "Python output will appear here after execution is connected.",
+    measurements: "Scientific measurements will appear here when image and data processing are connected.",
+    histogram: "Histograms will appear here when image-analysis processing is connected."
+  };
+  let stage = "Python", mode = "python", phase = "learn", result = "output";
+  let initialized = false, restoring = false, focusMode = false;
+  let cm = null, hasImage = false, imageURL = null, imageScale = 1, imageX = 0, imageY = 0, drag = null;
+  let originalImage = null, pixelData = null, pixelWidth = 0, pixelHeight = 0;
+  let dividerDrag = null;
 
   function save() {
     try {
@@ -45,229 +48,392 @@
       $("save-status").textContent = "Local saving unavailable";
     }
   }
-  function key() { return stage + ":" + mode; }
+  function draftKey() { return stage + ":" + mode; }
+  function getCode() { return cm ? cm.getValue() : $("code-editor").value; }
+  function setCode(value) {
+    restoring = true;
+    if (cm) cm.setValue(value); else $("code-editor").value = value;
+    restoring = false;
+    updateCursor();
+  }
   function saveEditor() {
-    memory.drafts[key()] = $("code-editor").value;
+    if (restoring) return;
+    memory.drafts[draftKey()] = getCode();
     save();
   }
   function restoreEditor() {
-    $("code-editor").value = typeof memory.drafts[key()] === "string" ? memory.drafts[key()] : "";
-    updateEditor();
+    const value = memory.drafts[draftKey()];
+    setCode(typeof value === "string" ? value : "");
   }
-  function updateEditor() {
+  function updateCursor() {
+    if (cm) {
+      const at = cm.getCursor();
+      $("cursor").textContent = "Ln " + (at.line + 1) + ", Col " + (at.ch + 1);
+      return;
+    }
     const editor = $("code-editor");
-    const count = editor.value.split("\n").length;
-    $("line-numbers").textContent = Array.from({ length: count }, (_, i) => String(i + 1)).join("\n");
-    const at = editor.selectionStart;
-    const before = editor.value.slice(0, at);
-    const line = before.split("\n").length;
-    const col = before.length - before.lastIndexOf("\n");
-    $("cursor").textContent = "Ln " + line + ", Col " + col;
+    const lines = editor.value.split("\n").length;
+    $("line-numbers").textContent = Array.from({length:lines}, (_, i) => String(i + 1)).join("\n");
+    const before = editor.value.slice(0, editor.selectionStart);
+    const ln = before.split("\n").length;
+    $("cursor").textContent = "Ln " + ln + ", Col " + (before.length - before.lastIndexOf("\n"));
   }
-  function switchMode(nextMode, skipSave = false) {
-    if (nextMode !== "python" && nextMode !== "image") return;
-    if (nextMode !== mode && !skipSave) saveEditor();
-    mode = nextMode;
+  function startEditor() {
+    if (window.CodeMirror && typeof window.CodeMirror.fromTextArea === "function") {
+      cm = window.CodeMirror.fromTextArea($("code-editor"), {
+        mode: "python", lineNumbers: true, lineWrapping: false,
+        indentUnit: 4, tabSize: 4, indentWithTabs: false,
+        matchBrackets: true, autoCloseBrackets: true, viewportMargin: 10,
+        extraKeys: {
+          Tab: editor => editor.somethingSelected() ? editor.indentSelection("add") : editor.replaceSelection("    ", "end"),
+          "Shift-Tab": "indentLess"
+        }
+      });
+      $("code-wrapper").classList.add("cm-ready");
+      cm.on("change", saveEditor);
+      cm.on("cursorActivity", updateCursor);
+      $("editor-engine").textContent = "Python · CodeMirror editor";
+    } else {
+      $("editor-engine").textContent = "Python · Basic editor (offline fallback)";
+      const native = $("code-editor");
+      native.addEventListener("input", () => { saveEditor(); updateCursor(); });
+      native.addEventListener("click", updateCursor);
+      native.addEventListener("keyup", updateCursor);
+      native.addEventListener("scroll", event => { $("line-numbers").scrollTop = event.target.scrollTop; });
+      native.addEventListener("keydown", event => {
+        if (event.key !== "Tab" || event.ctrlKey || event.metaKey || event.altKey) return;
+        event.preventDefault();
+        if (!event.shiftKey) {
+          native.setRangeText("    ", native.selectionStart, native.selectionEnd, "end");
+          saveEditor(); updateCursor();
+        }
+      });
+    }
+  }
+
+  function switchMode(next, skipSave = false) {
+    if (!["python", "image"].includes(next)) return;
+    if (!skipSave && next !== mode) saveEditor();
+    mode = next;
     for (const button of document.querySelectorAll("[data-mode]")) {
       button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
     }
-    $("image-panel").hidden = mode !== "image";
-    $("workspace-grid").classList.toggle("with-image", mode === "image");
-    $("mode-label").textContent = mode === "image" ? "Code + image viewer" : "Python editor";
+    const showImage = mode === "image";
+    $("image-panel").hidden = !showImage;
+    $("horizontal-resizer").hidden = !showImage;
+    $("workspace-grid").classList.toggle("with-image", showImage);
+    $("mode-label").textContent = showImage ? "Code + image viewer" : "Python editor";
     restoreEditor();
+    if (cm) requestAnimationFrame(() => cm.refresh());
   }
-  function chooseStage(nextStage) {
-    if (!Object.prototype.hasOwnProperty.call(STAGES, nextStage)) return;
+  function chooseStage(next) {
+    if (!Object.prototype.hasOwnProperty.call(STAGES, next)) return;
     if (initialized) saveEditor();
-    stage = nextStage;
+    stage = next;
     const info = STAGES[stage];
     $("page-title").textContent = info.title;
     $("page-subtitle").textContent = info.subtitle;
     $("crumb").textContent = info.crumb;
-    for (const link of document.querySelectorAll("[data-stage]")) {
-      const active = link.dataset.stage === stage;
-      link.classList.toggle("selected", active);
-      if (active) link.setAttribute("aria-current", "page");
-      else link.removeAttribute("aria-current");
+    for (const item of document.querySelectorAll("[data-stage]")) {
+      const selected = item.dataset.stage === stage;
+      item.classList.toggle("selected", selected);
+      if (selected) item.setAttribute("aria-current", "page");
+      else item.removeAttribute("aria-current");
     }
     switchMode(info.mode, true);
     initialized = true;
     $("sidebar").classList.remove("open");
     $("nav-toggle").setAttribute("aria-expanded", "false");
   }
-  function choosePhase(nextPhase) {
-    if (!Object.prototype.hasOwnProperty.call(PHASES, nextPhase)) return;
-    phase = nextPhase;
-    for (const tab of document.querySelectorAll("[data-phase]")) {
-      const active = tab.dataset.phase === phase;
-      tab.setAttribute("aria-selected", String(active));
-      tab.tabIndex = active ? 0 : -1;
+  function choosePhase(next) {
+    if (!Object.prototype.hasOwnProperty.call(PHASES, next)) return;
+    phase = next;
+    $("phase-caption").textContent = next.toUpperCase();
+    $("phase-title").textContent = PHASES[next][0];
+    $("phase-description").textContent = PHASES[next][1];
+    for (const item of document.querySelectorAll("[data-phase]")) {
+      const active = item.dataset.phase === next;
+      item.setAttribute("aria-selected", String(active));
+      item.tabIndex = active ? 0 : -1;
     }
-    $("phase-panel").setAttribute("aria-labelledby", "tab-" + phase);
-    $("phase-caption").textContent = phase.toUpperCase();
-    $("phase-title").textContent = PHASES[phase][0];
-    $("phase-description").textContent = PHASES[phase][1];
+    $("phase-panel").setAttribute("aria-labelledby", "tab-" + next);
   }
-  function chooseResult(nextResult) {
-    if (nextResult !== "output" && nextResult !== "measurements") return;
-    result = nextResult;
-    for (const tab of document.querySelectorAll("[data-result]")) {
-      const active = tab.dataset.result === result;
-      tab.setAttribute("aria-selected", String(active));
-      tab.tabIndex = active ? 0 : -1;
+  function chooseResult(next) {
+    if (!Object.prototype.hasOwnProperty.call(RESULTS, next)) return;
+    result = next;
+    for (const item of document.querySelectorAll("[data-result]")) {
+      const active = item.dataset.result === next;
+      item.setAttribute("aria-selected", String(active));
+      item.tabIndex = active ? 0 : -1;
     }
-    $("output-body").setAttribute("aria-labelledby", "result-" + result);
-    $("output-placeholder").textContent =
-      result === "output"
-        ? "Python output will appear here after the execution engine is added."
-        : "Measurement tables and plots will appear here after the analysis engine is added.";
+    $("output-body").setAttribute("aria-labelledby", "result-" + next);
+    $("output-placeholder").textContent = RESULTS[next];
   }
-  function reference(open) {
-    $("reference").hidden = !open;
-    $("app-layout").classList.toggle("reference-open", open);
-    $("reference-toggle").setAttribute("aria-expanded", String(open));
+  function openLesson(show, remember = true) {
+    $("phase-panel").hidden = !show;
+    $("lesson-toggle").setAttribute("aria-expanded", String(show));
+    $("lesson-toggle").setAttribute("aria-label", show ? "Collapse lesson" : "Expand lesson");
+    if (remember) { memory.layout.lessonOpen = show; save(); }
+  }
+  function openReference(show) {
+    $("reference").hidden = !show;
+    $("app-layout").classList.toggle("reference-open", show);
+    $("reference-toggle").setAttribute("aria-expanded", String(show));
+    if (cm) requestAnimationFrame(() => cm.refresh());
+  }
+  function setFocus(show) {
+    focusMode = show;
+    if (show) openReference(false);
+    document.body.classList.toggle("focus-mode", show);
+    $("focus-toggle").textContent = show ? "Exit focus" : "Focus";
+    $("focus-toggle").setAttribute("aria-pressed", String(show));
+    if (cm) requestAnimationFrame(() => cm.refresh());
   }
   function theme(next) {
     if (next !== "dark" && next !== "light") return;
     document.body.dataset.theme = next;
     $("theme-toggle").setAttribute("aria-label", next === "dark" ? "Switch to light theme" : "Switch to dark theme");
-    memory.theme = next;
-    save();
+    memory.theme = next; save();
   }
-  function resetImageView() {
-    imageScale = 1;
-    imageX = 0;
-    imageY = 0;
-    transformImage();
+  function setEditorShare(value) {
+    const limited = Math.max(30, Math.min(75, Math.round(value)));
+    memory.layout.editorShare = limited;
+    document.documentElement.style.setProperty("--editor-share", limited + "%");
+    $("horizontal-resizer").setAttribute("aria-valuenow", String(limited));
+    if (cm) requestAnimationFrame(() => cm.refresh());
   }
+  function setConsoleHeight(value) {
+    const limited = Math.max(100, Math.min(380, Math.round(value)));
+    memory.layout.consoleHeight = limited;
+    document.documentElement.style.setProperty("--console-height", limited + "px");
+    $("vertical-resizer").setAttribute("aria-valuenow", String(limited));
+  }
+  function configureResizableHandle(id, axis, start, setter, keyStep, range) {
+    const handle = $(id);
+    handle.addEventListener("pointerdown", event => {
+      if (event.button !== 0 || (axis === "x" && window.matchMedia("(max-width: 1050px)").matches)) return;
+      event.preventDefault();
+      dividerDrag = { id, axis, startPos: axis === "x" ? event.clientX : event.clientY, initial: start(), width: $("workspace-grid").getBoundingClientRect().width };
+      document.body.classList.add(axis === "x" ? "is-resizing" : "is-resizing-row");
+      handle.setPointerCapture(event.pointerId);
+    });
+    handle.addEventListener("pointermove", event => {
+      if (!dividerDrag || dividerDrag.id !== id) return;
+      const delta = axis === "x" ? event.clientX - dividerDrag.startPos : event.clientY - dividerDrag.startPos;
+      setter(axis === "x" ? dividerDrag.initial + delta / dividerDrag.width * 100 : dividerDrag.initial - delta);
+    });
+    const stop = () => {
+      if (!dividerDrag || dividerDrag.id !== id) return;
+      dividerDrag = null;
+      document.body.classList.remove("is-resizing", "is-resizing-row");
+      save();
+    };
+    handle.addEventListener("pointerup", stop);
+    handle.addEventListener("pointercancel", stop);
+    handle.addEventListener("keydown", event => {
+      const along = axis === "x" ? ["ArrowLeft", "ArrowRight"] : ["ArrowUp", "ArrowDown"];
+      if (![...along, "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      if (event.key === "Home") setter(range[0]);
+      else if (event.key === "End") setter(range[1]);
+      else setter(start() + (event.key === along[0] ? -keyStep : keyStep));
+      save();
+    });
+  }
+
   function transformImage() {
     $("image-preview").style.transform = "translate(" + imageX + "px," + imageY + "px) scale(" + imageScale + ")";
     $("image-zoom").textContent = hasImage ? Math.round(imageScale * 100) + "%" : "—";
   }
-  function scaleImage(direction) {
+  function resetImageView() {
+    imageScale = 1; imageX = 0; imageY = 0; transformImage();
+  }
+  function scaleImage(factor) {
     if (!hasImage) return;
-    imageScale = Math.max(.25, Math.min(8, +(imageScale * direction).toFixed(3)));
+    imageScale = Math.max(.25, Math.min(8, +(imageScale * factor).toFixed(3)));
     if (imageScale <= 1) { imageX = 0; imageY = 0; }
     transformImage();
   }
+
+  function renderChannel() {
+    if (!hasImage || !originalImage || !pixelData) return;
+    const selected = $("preview-channel").value;
+    if (selected === "rgb") { $("image-preview").src = imageURL; return; }
+    const canvas = document.createElement("canvas");
+    canvas.width = pixelWidth; canvas.height = pixelHeight;
+    const context = canvas.getContext("2d", { willReadFrequently: false });
+    if (!context) return;
+    const filtered = context.createImageData(pixelWidth, pixelHeight);
+    const raw = pixelData.data, dest = filtered.data;
+    for (let i = 0; i < raw.length; i += 4) {
+      let r = raw[i], g = raw[i + 1], b = raw[i + 2];
+      if (selected === "red") { g = 0; b = 0; }
+      else if (selected === "green") { r = 0; b = 0; }
+      else if (selected === "blue") { r = 0; g = 0; }
+      else if (selected === "gray") {
+        const v = Math.round(.2126 * r + .7152 * g + .0722 * b);
+        r = v; g = v; b = v;
+      }
+      dest[i] = r; dest[i + 1] = g; dest[i + 2] = b; dest[i + 3] = raw[i + 3];
+    }
+    context.putImageData(filtered, 0, 0);
+    $("image-preview").src = canvas.toDataURL("image/png");
+  }
   function openImage(file) {
     if (!file) return;
-    const supported = ["image/png", "image/jpeg", "image/webp", "image/gif"];
-    if (!supported.includes(file.type)) {
-      $("image-meta").textContent = "Unsupported image preview format";
+    if (!["image/png", "image/jpeg", "image/webp", "image/gif"].includes(file.type)) {
+      $("image-meta").textContent = "Unsupported preview format";
       return;
     }
+    // Preview only: RGB browser pixels, not calibrated microscopy intensities.
     const candidate = URL.createObjectURL(file);
-    const image = $("image-preview");
     const checker = new Image();
+    $("image-loading").hidden = false;
     checker.onload = () => {
+      $("image-loading").hidden = true;
+      const width = checker.naturalWidth, height = checker.naturalHeight;
+      const scale = Math.min(1, 2048 / Math.max(width, height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(width * scale));
+      canvas.height = Math.max(1, Math.round(height * scale));
+      const context = canvas.getContext("2d", {willReadFrequently:true});
+      if (context) {
+        try {
+          context.drawImage(checker, 0, 0, canvas.width, canvas.height);
+          pixelData = context.getImageData(0, 0, canvas.width, canvas.height);
+          pixelWidth = canvas.width; pixelHeight = canvas.height;
+        } catch { pixelData = null; pixelWidth = 0; pixelHeight = 0; }
+      }
       if (imageURL) URL.revokeObjectURL(imageURL);
-      imageURL = candidate;
-      image.src = candidate;
-      image.hidden = false;
+      imageURL = candidate; originalImage = {width, height};
+      hasImage = true;
+      $("image-preview").src = candidate;
+      $("image-preview").hidden = false;
       $("image-empty").hidden = true;
       $("image-canvas").classList.add("loaded");
-      hasImage = true;
-      $("image-meta").textContent = file.name + " · " + checker.naturalWidth + " × " + checker.naturalHeight + " px";
+      $("image-meta").textContent = file.name + " · " + width + " × " + height + " px";
+      $("image-meta").title = "Browser RGB preview only — not a calibrated TIFF";
+      $("preview-channel").disabled = !pixelData;
+      $("preview-channel").value = "rgb";
       for (const id of ["zoom-in", "zoom-out", "zoom-reset"]) $(id).disabled = false;
       resetImageView();
     };
     checker.onerror = () => {
       URL.revokeObjectURL(candidate);
+      $("image-loading").hidden = true;
       $("image-meta").textContent = "Could not open image";
     };
     checker.src = candidate;
   }
-
-  $("code-editor").addEventListener("input", () => { saveEditor(); updateEditor(); });
-  $("code-editor").addEventListener("click", updateEditor);
-  $("code-editor").addEventListener("keyup", updateEditor);
-  $("code-editor").addEventListener("scroll", (event) => { $("line-numbers").scrollTop = event.target.scrollTop; });
-  $("code-editor").addEventListener("keydown", (event) => {
-    if (event.key !== "Tab" || event.ctrlKey || event.metaKey || event.altKey) return;
-    event.preventDefault();
-    if (!event.shiftKey) {
-      const editor = event.currentTarget;
-      editor.setRangeText("    ", editor.selectionStart, editor.selectionEnd, "end");
-      saveEditor(); updateEditor();
+  function inspectPixel(event) {
+    if (!hasImage || !originalImage) return;
+    const bounds = $("image-preview").getBoundingClientRect();
+    const px = (event.clientX - bounds.left) / bounds.width;
+    const py = (event.clientY - bounds.top) / bounds.height;
+    if (px < 0 || py < 0 || px >= 1 || py >= 1) { $("pixel-readout").textContent = "x — y —"; return; }
+    const x = Math.min(originalImage.width - 1, Math.floor(px * originalImage.width));
+    const y = Math.min(originalImage.height - 1, Math.floor(py * originalImage.height));
+    let detail = "x " + x + "  y " + y;
+    if (pixelData) {
+      const dx = Math.min(pixelWidth - 1, Math.floor(px * pixelWidth));
+      const dy = Math.min(pixelHeight - 1, Math.floor(py * pixelHeight));
+      const index = (dy * pixelWidth + dx) * 4;
+      const data = pixelData.data;
+      detail += "  RGB " + data[index] + "," + data[index + 1] + "," + data[index + 2];
     }
-  });
+    $("pixel-readout").textContent = detail;
+  }
+
+  startEditor();
+  theme(memory.theme);
+  setEditorShare(memory.layout.editorShare);
+  setConsoleHeight(memory.layout.consoleHeight);
+  openLesson(memory.layout.lessonOpen, false);
+  chooseStage("Python");
+  choosePhase("learn");
+  chooseResult("output");
+
   $("clear-code").addEventListener("click", () => {
-    if ($("code-editor").value && !window.confirm("Clear the current editor draft?")) return;
-    $("code-editor").value = "";
-    saveEditor();
-    updateEditor();
-    $("code-editor").focus();
+    if (getCode() && !window.confirm("Clear the current editor draft?")) return;
+    setCode(""); saveEditor();
+    if (cm) cm.focus(); else $("code-editor").focus();
   });
-  for (const link of document.querySelectorAll("[data-stage]")) link.addEventListener("click", () => chooseStage(link.dataset.stage));
-  for (const button of document.querySelectorAll("[data-mode]")) button.addEventListener("click", () => switchMode(button.dataset.mode));
-  for (const tab of document.querySelectorAll("[data-phase]")) {
-    tab.addEventListener("click", () => choosePhase(tab.dataset.phase));
-    tab.addEventListener("keydown", event => {
-      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+  document.querySelectorAll("[data-stage]").forEach(item => item.addEventListener("click", () => chooseStage(item.dataset.stage)));
+  document.querySelectorAll("[data-mode]").forEach(item => item.addEventListener("click", () => switchMode(item.dataset.mode)));
+  document.querySelectorAll("[data-phase]").forEach(item => {
+    item.addEventListener("click", () => choosePhase(item.dataset.phase));
+    item.addEventListener("keydown", event => {
+      if (!["ArrowLeft","ArrowRight"].includes(event.key)) return;
       event.preventDefault();
-      const order = ["learn", "apply", "prove"];
-      const current = order.indexOf(phase);
-      const next = order[(current + (event.key === "ArrowRight" ? 1 : 2)) % 3];
-      choosePhase(next);
-      $("tab-" + next).focus();
+      const order=["learn","apply","prove"];
+      const next=order[(order.indexOf(phase)+(event.key==="ArrowRight"?1:2))%3];
+      choosePhase(next); $("tab-"+next).focus();
     });
-  }
-  for (const tab of document.querySelectorAll("[data-result]")) {
-    tab.addEventListener("click", () => chooseResult(tab.dataset.result));
-    tab.addEventListener("keydown", event => {
-      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+  });
+  document.querySelectorAll("[data-result]").forEach(item => {
+    item.addEventListener("click", () => chooseResult(item.dataset.result));
+    item.addEventListener("keydown", event => {
+      if (!["ArrowLeft","ArrowRight"].includes(event.key)) return;
       event.preventDefault();
-      chooseResult(result === "output" ? "measurements" : "output");
-      $("result-" + result).focus();
+      const order=["output","measurements","histogram"];
+      const next=order[(order.indexOf(result)+(event.key==="ArrowRight"?1:2))%3];
+      chooseResult(next); $("result-"+next).focus();
     });
-  }
-  $("reference-toggle").addEventListener("click", () => reference($("reference").hidden));
-  $("reference-close").addEventListener("click", () => reference(false));
-  $("theme-toggle").addEventListener("click", () => theme(document.body.dataset.theme === "dark" ? "light" : "dark"));
+  });
+  $("lesson-toggle").addEventListener("click", () => openLesson($("phase-panel").hidden));
+  $("reference-toggle").addEventListener("click", () => openReference($("reference").hidden));
+  $("reference-close").addEventListener("click", () => openReference(false));
+  $("focus-toggle").addEventListener("click", () => setFocus(!focusMode));
+  $("theme-toggle").addEventListener("click", () => theme(memory.theme === "dark" ? "light" : "dark"));
   $("nav-toggle").addEventListener("click", () => {
-    const open = !$("sidebar").classList.contains("open");
-    $("sidebar").classList.toggle("open", open);
-    $("nav-toggle").setAttribute("aria-expanded", String(open));
+    const show = !$("sidebar").classList.contains("open");
+    $("sidebar").classList.toggle("open", show);
+    $("nav-toggle").setAttribute("aria-expanded", String(show));
   });
-  $("image-upload").addEventListener("change", e => { openImage(e.target.files?.[0]); e.target.value = ""; });
-  document.querySelector(".load-button").addEventListener("keydown", e => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("image-upload").click(); }
+  $("image-upload").addEventListener("change", event => {
+    openImage(event.target.files?.[0]); event.target.value = "";
   });
-  $("zoom-out").addEventListener("click", () => scaleImage(1 / 1.25));
+  document.querySelector(".load-button").addEventListener("keydown", event => {
+    if (event.key === " " || event.key === "Enter") { event.preventDefault(); $("image-upload").click(); }
+  });
+  $("preview-channel").addEventListener("change", renderChannel);
   $("zoom-in").addEventListener("click", () => scaleImage(1.25));
+  $("zoom-out").addEventListener("click", () => scaleImage(1/1.25));
   $("zoom-reset").addEventListener("click", resetImageView);
   $("image-canvas").addEventListener("wheel", event => {
     if (!hasImage) return;
-    event.preventDefault();
-    scaleImage(event.deltaY < 0 ? 1.12 : 1 / 1.12);
-  }, { passive: false });
+    event.preventDefault(); scaleImage(event.deltaY < 0 ? 1.12 : 1/1.12);
+  }, {passive:false});
   $("image-canvas").addEventListener("pointerdown", event => {
     if (!hasImage || imageScale <= 1 || event.button !== 0) return;
-    drag = { x: event.clientX - imageX, y: event.clientY - imageY };
+    drag = {x:event.clientX - imageX, y:event.clientY - imageY};
     $("image-canvas").classList.add("dragging");
     $("image-canvas").setPointerCapture(event.pointerId);
   });
   $("image-canvas").addEventListener("pointermove", event => {
-    if (!drag) return;
-    imageX = event.clientX - drag.x; imageY = event.clientY - drag.y;
-    transformImage();
+    if (drag) { imageX=event.clientX-drag.x; imageY=event.clientY-drag.y; transformImage(); }
+    inspectPixel(event);
   });
-  const stopDrag = () => { drag = null; $("image-canvas").classList.remove("dragging"); };
-  $("image-canvas").addEventListener("pointerup", stopDrag);
-  $("image-canvas").addEventListener("pointercancel", stopDrag);
-  window.addEventListener("beforeunload", () => { if (imageURL) URL.revokeObjectURL(imageURL); });
-
+  const stopImageDrag = () => { drag=null; $("image-canvas").classList.remove("dragging"); };
+  $("image-canvas").addEventListener("pointerup", stopImageDrag);
+  $("image-canvas").addEventListener("pointercancel", stopImageDrag);
+  $("image-canvas").addEventListener("pointerleave", () => $("pixel-readout").textContent = "x — y —");
+  $("image-canvas").addEventListener("dragover", event => { if (mode === "image") event.preventDefault(); });
+  $("image-canvas").addEventListener("drop", event => {
+    event.preventDefault();
+    if (mode === "image") openImage(event.dataTransfer?.files?.[0]);
+  });
+  configureResizableHandle("horizontal-resizer", "x", () => memory.layout.editorShare, setEditorShare, 5, [30,75]);
+  configureResizableHandle("vertical-resizer", "y", () => memory.layout.consoleHeight, setConsoleHeight, 20, [100,380]);
   document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
-      reference(false);
+      if (focusMode) setFocus(false);
+      openReference(false);
       $("sidebar").classList.remove("open");
       $("nav-toggle").setAttribute("aria-expanded", "false");
     }
   });
-  theme(memory.theme);
-  chooseStage("Python");
-  choosePhase("learn");
-  chooseResult("output");
+  window.addEventListener("beforeunload", () => { if (imageURL) URL.revokeObjectURL(imageURL); });
+  window.addEventListener("resize", () => { if (cm) cm.refresh(); });
   $("run-button").disabled = true;
 })();
