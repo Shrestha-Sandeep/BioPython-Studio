@@ -94,6 +94,14 @@ function draw(){
  const source=$("source-link");
  source.href=exercise?exercise.sourceUrl:primarySource(m);
  text(source,exercise?"Witz · "+exercise.sourcePath+" · source cell "+exercise.sourceCell:m.source.startsWith("https://")?"Supporting scientific reference":"Witz · "+m.source);
+ const worked=activeTab==="learn"?sourceInventory?.worked_examples?.find(x=>x.mission===m.id):null;
+ $("worked-example").hidden=!worked;
+ if(worked){
+  text($("worked-example-code"),worked.code);
+  text($("worked-example-context"),worked.context+" This is a cited notebook excerpt; it may require the notebook's earlier cells.");
+  $("worked-example-source").href=worked.source_url;
+  text($("worked-example-source"),"Original Witz notebook · cell "+worked.source_cell);
+ }
  const extra=SUPPLEMENTS[m.id];
  $("supplement-wrapper").hidden=!extra;
  if(extra){$("support-source").href=extra.url;text($("support-source"),extra.title);}
