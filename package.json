@@ -1,0 +1,9 @@
+{
+  "name": "biopython-studio-rebuild",
+  "private": true,
+  "type": "module",
+  "description": "Source-led Python-to-microscopy learning app frontend rebuild",
+  "scripts": {
+    "test": "node --test tests/preview.test.mjs"
+  }
+}
