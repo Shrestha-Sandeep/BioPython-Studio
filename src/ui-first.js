@@ -38,6 +38,7 @@
   let initialized = false, restoring = false, focusMode = false;
   let cm = null, hasImage = false, imageURL = null, imageScale = 1, imageX = 0, imageY = 0, drag = null;
   let originalImage = null, pixelData = null, pixelWidth = 0, pixelHeight = 0;
+  let comparisonURL = null, comparisonImage = null, compareEnabled = false;
   let dividerDrag = null;
 
   function save() {
@@ -242,7 +243,9 @@
   }
 
   function transformImage() {
-    $("image-preview").style.transform = "translate(" + imageX + "px," + imageY + "px) scale(" + imageScale + ")";
+    const transform = "translate(" + imageX + "px," + imageY + "px) scale(" + imageScale + ")";
+    $("image-preview").style.transform = transform;
+    $("comparison-preview").style.transform = transform;
     $("image-zoom").textContent = hasImage ? Math.round(imageScale * 100) + "%" : "—";
   }
   function resetImageView() {
@@ -309,6 +312,7 @@
       hasImage = true;
       $("image-preview").src = candidate;
       $("image-preview").hidden = false;
+      $("source-image-frame").hidden = false;
       $("image-empty").hidden = true;
       $("image-canvas").classList.add("loaded");
       $("image-meta").textContent = file.name + " · " + width + " × " + height + " px";
@@ -316,6 +320,8 @@
       $("preview-channel").disabled = !pixelData;
       $("preview-channel").value = "rgb";
       for (const id of ["zoom-in", "zoom-out", "zoom-reset"]) $(id).disabled = false;
+      $("compare-toggle").disabled = false;
+      updateComparison();
       resetImageView();
     };
     checker.onerror = () => {
@@ -325,6 +331,67 @@
     };
     checker.src = candidate;
   }
+
+  // Comparison is visual only. No alignment, segmentation or quantified analysis is inferred.
+  function updateComparison() {
+    const canvas = $("image-canvas");
+    canvas.classList.remove("comparison-side", "comparison-overlay", "comparison-wipe");
+    const valid = compareEnabled && hasImage && !!comparisonImage;
+    $("comparison-image-frame").hidden = !valid;
+    if (!valid) return;
+    const matched = originalImage.width === comparisonImage.width &&
+      originalImage.height === comparisonImage.height;
+    const overlay = $("comparison-mode").querySelector('option[value="overlay"]');
+    const wipe = $("comparison-mode").querySelector('option[value="wipe"]');
+    overlay.disabled = !matched;
+    wipe.disabled = !matched;
+    if (!matched && $("comparison-mode").value !== "side") $("comparison-mode").value = "side";
+    const mode = $("comparison-mode").value;
+    canvas.classList.add("comparison-" + mode);
+    $("comparison-opacity").disabled = mode === "side";
+    const pct = Number($("comparison-opacity").value);
+    $("comparison-opacity-value").textContent = mode === "side" ? "—" : pct + "%";
+    const frame = $("comparison-image-frame");
+    frame.style.opacity = mode === "overlay" ? String(pct / 100) : "1";
+    frame.style.clipPath = mode === "wipe" ? "inset(0 " + (100 - pct) + "% 0 0)" : "";
+    const notice = $("comparison-notice");
+    notice.hidden = matched;
+    notice.textContent = matched ? "" : "Dimensions differ. Only side-by-side comparison is available; no alignment has been applied.";
+    transformImage();
+  }
+  function enableComparison(enable) {
+    compareEnabled = !!enable;
+    $("comparison-tools").hidden = !compareEnabled;
+    $("compare-toggle").setAttribute("aria-expanded", String(compareEnabled));
+    $("compare-toggle").classList.toggle("is-active", compareEnabled);
+    updateComparison();
+  }
+  function openComparison(file) {
+    if (!file) return;
+    if (!["image/png", "image/jpeg", "image/webp", "image/gif"].includes(file.type)) {
+      $("comparison-filename").textContent = "Unsupported comparison file";
+      return;
+    }
+    const candidate = URL.createObjectURL(file);
+    const checker = new Image();
+    checker.onload = () => {
+      if (comparisonURL) URL.revokeObjectURL(comparisonURL);
+      comparisonURL = candidate;
+      comparisonImage = { width: checker.naturalWidth, height: checker.naturalHeight };
+      $("comparison-preview").src = candidate;
+      $("comparison-preview").hidden = false;
+      $("comparison-filename").textContent = file.name;
+      $("comparison-filename").title = file.name;
+      $("comparison-mode").disabled = false;
+      updateComparison();
+    };
+    checker.onerror = () => {
+      URL.revokeObjectURL(candidate);
+      $("comparison-filename").textContent = "Could not read comparison image";
+    };
+    checker.src = candidate;
+  }
+
   function inspectPixel(event) {
     if (!hasImage || !originalImage) return;
     const bounds = $("image-preview").getBoundingClientRect();
@@ -397,6 +464,18 @@
     if (event.key === " " || event.key === "Enter") { event.preventDefault(); $("image-upload").click(); }
   });
   $("preview-channel").addEventListener("change", renderChannel);
+  $("compare-toggle").addEventListener("click", () => enableComparison(!compareEnabled));
+  $("comparison-upload").addEventListener("change", event => {
+    openComparison(event.target.files?.[0]);
+    event.target.value = "";
+  });
+  document.querySelector('label[for="comparison-upload"]').addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault(); $("comparison-upload").click();
+    }
+  });
+  $("comparison-mode").addEventListener("change", updateComparison);
+  $("comparison-opacity").addEventListener("input", updateComparison);
   $("zoom-in").addEventListener("click", () => scaleImage(1.25));
   $("zoom-out").addEventListener("click", () => scaleImage(1/1.25));
   $("zoom-reset").addEventListener("click", resetImageView);
@@ -433,7 +512,11 @@
       $("nav-toggle").setAttribute("aria-expanded", "false");
     }
   });
-  window.addEventListener("beforeunload", () => { if (imageURL) URL.revokeObjectURL(imageURL); });
+  window.addEventListener("beforeunload", () => {
+    if (imageURL) URL.revokeObjectURL(imageURL);
+    if (comparisonURL) URL.revokeObjectURL(comparisonURL);
+  });
   window.addEventListener("resize", () => { if (cm) cm.refresh(); });
   $("run-button").disabled = true;
+  $("compare-toggle").disabled = true;
 })();
