@@ -6,7 +6,7 @@ export const EXERCISE_ASSIGNMENTS = Object.freeze({
   "py-01": { notebook:"e01", cells:[1,2,3,4,5,6] },
   "py-03": { notebook:"e08", cells:[1,2,3,4,5,6] },
   "im-01": { notebook:"e02", cells:[1,2,3,4,5] },
-  "im-02": { notebook:"e03", cells:[8,9,10,11,12] },
+  "im-02": { notebook:"e03", cells:[8,9,10,11,12,13] },
   "im-03": { notebook:"e03", cells:[1,2,3,4,5,6] },
   "im-04": { notebook:"e04", cells:[1,2,3,4,5,6,7] },
   "im-05": { notebook:"e05", cells:[2,3,4,5] },
@@ -21,18 +21,18 @@ const MODERNIZED = Object.freeze({
   "e06:2":"Load Witz's image images/46658_784_B12_1.tif for region measurements; inspect its channel order before applying a mask."
 });
 export const SUPPLEMENTS = Object.freeze({
-  "py-01":{title:"Python for Biologists · beginner Python",url:"https://www.pythonforbiologists.org/"},
-  "py-02":{title:"Python for Biologists · scientific coding",url:"https://www.pythonforbiologists.org/"},
-  "py-03":{title:"Python for Biologists · loop practice",url:"https://www.pythonforbiologists.org/"},
+  "py-01":{title:"Python for Biologists · beginner Python",url:"https://www.pythonforbiologists.org/",enhancement:"Supporting practice: use descriptive sample names and explain the printed value rather than copying a fixed output."},
+  "py-02":{title:"Python for Biologists · scientific coding",url:"https://www.pythonforbiologists.org/",enhancement:"Biological extension: compare relative changes only when the baseline is valid and denominators are defined."},
+  "py-03":{title:"Python for Biologists · loop practice",url:"https://www.pythonforbiologists.org/",enhancement:"Transfer: replace generic number lists with per-field measurements while keeping biological replicate IDs separate."},
   "py-04":{title:"Python Data Science Handbook · scientific Python",url:"https://jakevdp.github.io/PythonDataScienceHandbook/"},
-  "im-01":{title:"Python Data Science Handbook · NumPy",url:"https://jakevdp.github.io/PythonDataScienceHandbook/"},
-  "im-02":{title:"Introduction to Bioimage Analysis · image pixels",url:"https://bioimagebook.github.io/"},
-  "im-03":{title:"Data Carpentry · image histograms",url:"https://datacarpentry.github.io/image-processing/"},
-  "im-04":{title:"scikit-image · thresholding",url:"https://scikit-image.org/docs/stable/auto_examples/applications/plot_thresholding_guide.html"},
+  "im-01":{title:"Python Data Science Handbook · NumPy",url:"https://jakevdp.github.io/PythonDataScienceHandbook/",enhancement:"NumPy extension: inspect dtype, shape and axis meaning before doing arithmetic on image pixels."},
+  "im-02":{title:"Introduction to Bioimage Analysis · image pixels",url:"https://bioimagebook.github.io/",enhancement:"Reproducibility check: record ROI coordinates and confirm a crop does not silently modify the source array."},
+  "im-03":{title:"Data Carpentry · image histograms",url:"https://datacarpentry.github.io/image-processing/",enhancement:"Scientific check: distinguish a display color map from underlying pixel values, and select histogram bins deliberately."},
+  "im-04":{title:"scikit-image · thresholding",url:"https://scikit-image.org/docs/stable/auto_examples/applications/plot_thresholding_guide.html",enhancement:"Validate a binary mask visually; an algorithmic threshold is not proof that each foreground region is one nucleus."},
   "im-05":{title:"Bio-image Analysis Notebooks · filtering",url:"https://haesleinhuepf.github.io/BioImageAnalysisNotebooks/"},
-  "im-06":{title:"Introduction to Bioimage Analysis · segmentation",url:"https://bioimagebook.github.io/"},
-  "im-07":{title:"Data Carpentry · image measurements",url:"https://datacarpentry.github.io/image-processing/"},
-  "im-08":{title:"Python Data Science Handbook · tables",url:"https://jakevdp.github.io/PythonDataScienceHandbook/"}
+  "im-06":{title:"Introduction to Bioimage Analysis · segmentation",url:"https://bioimagebook.github.io/",enhancement:"Evaluate candidate labels against annotations where possible; touching nuclei and border truncation bias counts."},
+  "im-07":{title:"Data Carpentry · image measurements",url:"https://datacarpentry.github.io/image-processing/",enhancement:"A nuclear/edge enrichment score depends on segmentation quality, channel assignment and the biological sampling unit."},
+  "im-08":{title:"Python Data Science Handbook · tables",url:"https://jakevdp.github.io/PythonDataScienceHandbook/",enhancement:"Persist per-object and per-sample identifiers; group fields by independent biological replicate before inference."}
 });
 export const WITZ_FIGURES = Object.freeze({
   "py-01":{path:"assets/witz/fluorescence-single.png",notebook:"Demo.ipynb",cell:12,alt:"Witz's Human Protein Atlas fluorescence image example"},
