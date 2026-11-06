@@ -343,7 +343,7 @@ const initial = {step:0,completed:{},drafts:{},hintUsed:{}};
 let saved = {...initial};
 try { const restored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.parse(localStorage.getItem('biopython_studio_v3') || '{}').legacySnapshots?.at(-1) || 'null'); if(restored && typeof restored==='object') saved={...initial,...restored}; } catch(_) {}
 saved.completed ||= {}; saved.drafts ||= {}; saved.hintUsed ||= {};
-let unifiedPath=null;
+let unifiedPath=null,courseManifest=null;
 const unlocked = () => lessons.length-1;
 saved.step=Math.min(Math.max(0,Number(saved.step)||0),Math.min(unlocked(),lessons.length-1));
 let current=saved.step, helpCount=0, running=false,worker=null,requestSeq=0, lastMask=null, maskVisible=true;
@@ -424,10 +424,13 @@ function showGeneratedResult(report){
  }
 }
 function showLinks(lesson){const dest=$('source-links');dest.replaceChildren();const make=(url,label)=>{const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=label+' ↗';dest.append(a);};
+ if(courseManifest&&CoursePath.sourceFor(courseManifest,lesson.id))CoursePath.renderSource(dest,courseManifest,lesson.id);
+ else {
  if(lesson.sourceImage)make(IMAGE_SOURCE+'/blob/master/'+lesson.sourceImage,'Image Processing for Beginners');
  else make(IMAGE_SOURCE,'Image Processing for Beginners');
  make(lesson.sourceHandbook?HANDBOOK_SOURCE+lesson.sourceHandbook:HANDBOOK_SOURCE,'Python Data Science Handbook');
  if(lesson.extraSources){for(const item of lesson.extraSources)make(item.url,item.label);}
+ }
  if(['imaging_pipeline','reproducible_report','final_research_pipeline'].includes(lesson.id))make('./notebooks/BioPython_Research_Companion.ipynb','Download runnable research notebook');
  if(IMAGE_LESSONS.has(lesson.id))make('https://www.proteinatlas.org/about/licence','HPA data license');
 }
@@ -483,7 +486,7 @@ async function run(){
  tell('Running scientific checks','Your code is being tested with changed specimen data.');
  let timer;
  try{
-   if(!worker)worker=new Worker('./worker.js');
+   if(!worker)worker=new Worker('./worker.js?v=v3-python-audit-1');
    const active=worker;
    const response=await new Promise((resolve,reject)=>{
      timer=setTimeout(()=>{stopWorker();reject(new Error('The Python runtime exceeded the time limit. Check for an infinite loop.'))},95000);
@@ -534,7 +537,7 @@ render();
 $('curriculum-toggle').open=false;
 const requestedLesson=new URLSearchParams(location.search).get('lesson');
 if(requestedLesson&&lessons.some(l=>l.id===requestedLesson))switchLesson(lessons.findIndex(l=>l.id===requestedLesson));
-if(window.CoursePath)Promise.all([fetch('./curriculum/v3_manifest.json').then(r=>r.json()),fetch('./curriculum/v3_pilot.json').then(r=>r.json())]).then(([manifest,catalog])=>{unifiedPath=CoursePath.build(manifest,catalog);renderCurriculum();renderCourseControls();}).catch(()=>{});
+if(window.CoursePath)Promise.all([fetch('./curriculum/v3_manifest.json').then(r=>r.json()),fetch('./curriculum/v3_pilot.json').then(r=>r.json())]).then(([manifest,catalog])=>{courseManifest=manifest;unifiedPath=CoursePath.build(manifest,catalog);renderCurriculum();renderCourseControls();showLinks(lessons[current]);}).catch(()=>{});
 
 function moveCourse(offset){
  if(running)return;

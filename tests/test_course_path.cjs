@@ -13,6 +13,23 @@ test('old aliases remain addressable without duplicate course entries',()=>{
  for(const alias of manifest.legacy_migration)assert.ok(path.find(c=>c.id===alias.target_competency_id).legacyIds.includes(alias.legacy_id));
  const a=C.available(path)[0];assert.equal(C.adjacent(path,a.id,1).id,C.available(path)[1].id);
 });
+test('the source audit covers exactly the 47 available Python entries and resolves historical IDs',()=>{
+ const entries=C.available(C.build(manifest,catalog)).filter(c=>c.stage==='Python');
+ assert.equal(entries.length,47);
+ assert.deepEqual(manifest.python_source_audit.entries.map(e=>e.number).sort(),entries.map(c=>c.number).sort());
+ assert.equal(new Set(manifest.python_source_audit.entries.map(e=>e.number)).size,47);
+ for(const entry of entries){
+  const source=C.sourceFor(manifest,entry.id);
+  assert.ok(['adapted','reference','authored'].includes(source.status));
+  assert.match(source.source.source_blob,/^[a-f0-9]{40}$/);
+  assert.ok(source.source.url.startsWith('https://github.com/'));
+  assert.ok(source.note.length>40);
+  for(const alias of entry.legacyIds)assert.deepEqual(C.sourceFor(manifest,alias),source);
+ }
+ assert.equal(C.sourceFor(manifest,'037').status,'adapted');
+ assert.equal(C.sourceFor(manifest,'bio_replicate_n').status,'authored');
+ assert.equal(C.sourceFor(manifest,'071'),null);
+});
 test('early transfer practice stays open, consumes the exposed prompt, and preserves drafts without awarding evidence',()=>{
  const r=S.record(S.fresh(),'a');r.independentAt=100;r.guidedAt=101;r.reviewAt=101+S.DELAY;
  r.drafts.transfer='saved unrun code';S.beginReview(r,3,200);assert.equal(r.reviewPractice,true);assert.equal(r.activeReview,0);

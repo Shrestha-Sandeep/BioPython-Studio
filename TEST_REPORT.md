@@ -1,6 +1,6 @@
 # BioPython Studio — QA status
 
-**Verified:** 6 November 2026. **Scope:** evaluation branch `feature/v3-pilot-milestone`, stacked on `feature/v3-foundations-collections`, stacked on `feature/v3-learning-engine-pilot`, based on frozen v3 commit `87b87a9` and 61-lesson baseline `c6aaae5`. Production and curriculum PR #1 remain unmerged.
+**Verified:** 6 November 2026. **Scope:** source-audit branch `feature/v3-python-exercise-audit`, stacked on `feature/v3-pilot-milestone`, above the foundation/pilot branches, frozen v3 commit `87b87a9` and 61-lesson baseline `c6aaae5`. Production and curriculum PR #1 remain unmerged.
 
 ## Repository reconciliation
 
@@ -11,8 +11,8 @@
 
 ## Automated verification
 
-- **251 CPython tests passed**, covering all historical assessments, wrong-answer rejection, actual Matplotlib output, companion notebook execution with a controlled image response, frozen 156-node graph, 28 activities and all three delayed-transfer input sets. Notebook mocking is limited to its existing controlled image response; it is not evidence of a live notebook HPA download.
-- **24 Node state/path/policy tests passed:** complete 25/61 legacy fixtures, byte-preserved snapshots, no inferred mastery, real local prerequisites for optional paths, assistance-aware evidence, delayed review, fresh-prompt requirements, and lossless conflict archives.
+- **256 CPython tests passed**, covering all historical assessments, wrong-answer rejection, actual Matplotlib output, companion notebook execution with a controlled image response, frozen 156-node graph, 28 activities and all three delayed-transfer input sets. Notebook mocking is limited to its existing controlled image response; it is not evidence of a live notebook HPA download.
+- **25 Node state/path/policy tests passed:** complete 25/61 legacy fixtures, byte-preserved snapshots, no inferred mastery, real local prerequisites for optional paths, assistance-aware evidence, delayed review, fresh-prompt requirements, lossless conflict archives and complete coverage of the 47 available Python-stage source records.
 - JavaScript syntax and whitespace checks passed.
 - **Live Chromium pilot walkthrough passed all 28 activities** using a real Web Worker and Pyodide 0.28.3, including real `help`, intentional traceback, NumPy import and execution. There is no mocked Worker or simulated Python in this test.
 - Live pilot QA passed saved-state reload, hint-assisted versus independent evidence, delayed review with an advanced test clock, a second fresh transfer, completed-prompt replay prevention, genuine HPA image retry without draft loss, 1440/1024/390-pixel overflow checks and a 61-ID export/import → legacy-editor handoff. Clock advancement tests scheduling mechanics, not actual human retention.
@@ -77,3 +77,11 @@ Transfer practice opens before its scheduled review and after prompt exhaustion.
 Two existing array worked examples reuse attributed source material: Witz’s BSD-licensed array-of-ones/shape exercise and VanderPlas’s MIT-licensed explicit typed-array code. The book’s separately licensed prose is not adapted. Python execution tests cover both examples, while original independent-task contracts and saved code remain intact. Full licenses/attribution are distributed with the app.
 
 Added checks cover the complete route, no duplicate competency entries, preservation of all 61 aliases, fresh-session unrestricted navigation (including ML), direct stage jumps, early real-Python transfer practice, no fabricated mastery, cross-page course navigation and responsive layout. Existing 28-activity execution, legacy 61-lesson UI, goal/evidence export/import and notebook tests remain required.
+
+## Python exercise audit and feedback
+
+All 47 distinct available Python-stage entries now have reviewed book/course source records with notebook blob hashes and cell indices. Thirteen entries adapt source exercises or code; others distinguish background references from authored scientific checks. Witz's multiplication, list-copy/edit and dictionary examples are reused within existing activities. The manifest's frozen design content is byte-equivalent after removing the added source-audit metadata; no competency, prerequisite or alias changed.
+
+Every assessment check in the 27 current Python activities has behavior-specific feedback, including all delayed prompts. Regression tests distinguish missing results, incorrect output and cutoff equality, and retain fallback behavior for older specs. Wrong image contents now fail even with plausible shape metadata; equivalent NumPy construction passes. Metadata dictionaries accept extra fields while missing/incorrect required fields fail. These checks run across all corresponding practice and delayed specs.
+
+The real Pyodide browser test additionally rejects those incorrect arrays and missing metadata, accepts extra metadata, displays precise feedback and resolves attribution on both current and historical pages. Read-only Run examples always display the code that will execute, while preserving earlier stored records. The existing live 28-activity walkthrough, HPA retry, notebook restart/export, 61-ID backup restoration, unlocked 78-entry path and milestone fixtures pass. Human evaluation and actual elapsed retention remain unverified.

@@ -113,7 +113,7 @@ function render() {
   activity.investigate.options.forEach((_,i)=>{const original=(i+offset)%activity.investigate.options.length;const label=document.createElement('label'),input=document.createElement('input');input.type='radio';input.name='explanation';input.value=original;input.checked=skill.explanation===original;label.append(input,document.createTextNode(activity.investigate.options[original]));options.append(label);});
   if(coding) {
     const spec=stage==='run'?{starter:activity.example.source,cases:[activity.example.case],input_types:activity.example.input_types||{}}:stage==='transfer'?activity.transfers[skill.activeReview??0]:activity.stages[stage];
-    el('pilot-editor').value=skill.drafts[stage] ?? spec.starter;el('pilot-editor').readOnly=stage==='run';
+    el('pilot-editor').value=stage==='run'?activity.example.source:(skill.drafts[stage] ?? spec.starter);el('pilot-editor').readOnly=stage==='run';
     el('provided-data').textContent=Object.entries(spec.cases[0]).map(([key,value])=>`${key}${spec.input_types?.[key]?" ("+spec.input_types[key]+")":""} = ${pythonValue(value,spec.input_types?.[key])}`).join('\n');
     el('pilot-run').textContent=stage==='run'?'Run worked example ▶':'Run & check Python ▶';
     el('restore-starter').hidden=stage==='run';
@@ -142,7 +142,7 @@ function render() {
   for(const cell of ['setup','analysis'])el('notebook-'+cell).value=skill.drafts['notebook.'+cell]??notebookDefaults[cell];
   el('feedback-clarity').value=skill.feedback?.clarity||'';el('feedback-note').value=skill.feedback?.note||'';el('activity-feedback-status').textContent='';
   el('learning-note').textContent=activity.investigate.explanation;
-  const attribution=activity.provenance;const target=el('exercise-source');target.replaceChildren();if(attribution){const a=document.createElement('a');a.href=attribution.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=attribution.title+' · '+attribution.author+' · '+attribution.license;target.append(document.createTextNode('Adapted from '),a,document.createTextNode('. '+attribution.adaptation));}
+  CoursePath.renderSource(el('exercise-source'),manifest,activity.id);
   const history=aliases[activity.id]||[];
   el('legacy-history').textContent=history.length?`Preserved historical records: ${[...new Set(history.map(x=>x.legacyId))].join(', ')}. They do not award v3 mastery. Access the original drafts through the existing lessons.`:'';
   goalUI?.renderActivity();renderNavigation();updateReviewReminder();save();
@@ -156,7 +156,7 @@ async function runPython() {
   el('pilot-output-area').hidden=false;el('pilot-output').textContent='Executing real Python…';el('pilot-traceback').hidden=true;el('pilot-runtime').textContent='Starting Python…';el('pilot-feedback').hidden=true;
   const seq=++requestId;let timer;
   try {
-    worker ||= new Worker('./worker.js?v=v3-open-course-1');
+    worker ||= new Worker('./worker.js?v=v3-python-audit-1');
     const result=await new Promise((resolve,reject)=>{
       timer=setTimeout(()=>{worker.terminate();worker=null;reject(new Error('Python exceeded the time limit. Retry after checking for an infinite loop.'));},120000);
       worker.onmessage=event=>{const msg=event.data;if(msg.type==='status'){el('pilot-runtime').textContent=msg.message;return;}if(msg.requestId!==seq)return;clearTimeout(timer);if(msg.type==='error')reject(new Error(msg.message));else resolve(msg);};
@@ -190,7 +190,7 @@ async function notebookRun(cell,reset=false) {
   setBusy(true);const seq=++requestId;let timer;
   el('notebook-output').textContent=reset?'Restarting kernel…':'Running cell…';
   try {
-    worker ||= new Worker('./worker.js?v=v3-open-course-1');
+    worker ||= new Worker('./worker.js?v=v3-python-audit-1');
     const result=await new Promise((resolve,reject)=>{
       timer=setTimeout(()=>{worker.terminate();worker=null;reject(new Error('Notebook cell exceeded the time limit; the lab kernel was stopped.'));},120000);
       worker.onmessage=event=>{const msg=event.data;if(msg.type==='status'){el('notebook-output').textContent=msg.message;return;}if(msg.requestId!==seq)return;if(msg.type==='error')reject(new Error(msg.message));else resolve(msg);};
