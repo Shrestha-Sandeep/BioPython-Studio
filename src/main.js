@@ -90,7 +90,7 @@ function draw(){
   $("learn-step-prev").disabled=n===0;
   $("learn-step-next").textContent=n===steps.length-1?"Continue to Apply":"Next exercise";
  }
- text($("science-context"),m.why);
+ text($("science-context"),m.why+(SUPPLEMENTS[m.id]?.enhancement?" "+SUPPLEMENTS[m.id].enhancement:""));
  const source=$("source-link");
  source.href=exercise?exercise.sourceUrl:primarySource(m);
  text(source,exercise?"Witz · "+exercise.sourcePath+" · source cell "+exercise.sourceCell:m.source.startsWith("https://")?"Supporting scientific reference":"Witz · "+m.source);
