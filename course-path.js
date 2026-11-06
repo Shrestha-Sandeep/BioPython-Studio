@@ -8,23 +8,32 @@
   if(['M07','M08','M09'].includes(c.module)||['153','154'].includes(c.number))return 'Microscopy';
   return 'Python';
  }
- function build(manifest,catalog){
+ function build(manifest,catalog,spine=null){
+  const missionByNumber=new Map();
+  if(spine?.missions&&spine?.ordered_competency_numbers){
+   for(const mission of spine.missions)for(const number of mission.competency_numbers){
+    if(missionByNumber.has(number))throw new Error('Witz spine assigns a competency twice: '+number);
+    missionByNumber.set(number,mission);
+   }
+   if(missionByNumber.size!==manifest.competencies.length)throw new Error('Witz spine must map every frozen competency exactly once.');
+  }
+  const assignedStage=c=>missionByNumber.get(c.number)?.stage||stage(c);
   const byId=new Map(manifest.competencies.map(c=>[c.id,c]));
   const modern=new Set(catalog.activities.map(a=>a.id));
   const aliases=new Map();
   for(const a of manifest.legacy_migration){
    if(!aliases.has(a.target_competency_id)||a.action!=='MERGE')aliases.set(a.target_competency_id,a.legacy_id);
   }
-  const preferred=manifest.recommended_complete_route||[...manifest.recommended_default_route,...manifest.optional_sequence_route,...manifest.optional_ml_route];
+  const preferred=spine?.ordered_competency_numbers||manifest.recommended_complete_route||[...manifest.recommended_default_route,...manifest.optional_sequence_route,...manifest.optional_ml_route];
   const order=new Map(preferred.map((n,i)=>[n,i]));
   const done=new Set(),result=[];
   for(const label of stages){
-   const pending=manifest.competencies.filter(c=>stage(c)===label).sort((a,b)=>order.get(a.number)-order.get(b.number));
+   const pending=manifest.competencies.filter(c=>assignedStage(c)===label).sort((a,b)=>order.get(a.number)-order.get(b.number));
    while(pending.length){
     const i=pending.findIndex(c=>c.prerequisites.every(id=>done.has(id)));
     if(i<0)throw new Error('Course stage order conflicts with a prerequisite.');
     const c=pending.splice(i,1)[0],legacy=aliases.get(c.id),kind=modern.has(c.id)?'activity':legacy?'legacy':'planned';
-    result.push({...c,stage:label,kind,legacyId:legacy,legacyIds:manifest.legacy_migration.filter(a=>a.target_competency_id===c.id).map(a=>a.legacy_id),href:kind==='activity'?'./index.html?activity='+encodeURIComponent(c.id):kind==='legacy'?'./legacy.html?lesson='+encodeURIComponent(legacy):null});done.add(c.id);
+    result.push({...c,stage:label,mission:missionByNumber.get(c.number)||null,kind,legacyId:legacy,legacyIds:manifest.legacy_migration.filter(a=>a.target_competency_id===c.id).map(a=>a.legacy_id),href:kind==='activity'?'./index.html?activity='+encodeURIComponent(c.id):kind==='legacy'?'./legacy.html?lesson='+encodeURIComponent(legacy):null});done.add(c.id);
    }
   }
   return result;
