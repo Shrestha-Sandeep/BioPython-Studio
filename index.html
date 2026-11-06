@@ -3,85 +3,125 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f8f7">
-  <meta name="description" content="Learn Python by completing authentic scientific image-analysis missions.">
-  <title>BioPython Studio · Scientific Python</title>
+  <meta name="theme-color" content="#0b1118">
+  <meta name="description" content="BioPython Studio: focused Python and microscopy learning workspace.">
+  <title>BioPython Studio — Workspace</title>
   <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./src/main.js"></script>
+  <script src="./src/ui-first.js" defer></script>
 </head>
-<body>
-  <header class="topbar">
-    <a class="identity" href="./" aria-label="BioPython Studio home"><span class="identity-mark">B</span><span>BioPython <strong>Studio</strong></span></a>
-    <span class="build-label">Design preview · Python runtime next</span>
-  </header>
-  <div class="shell">
-    <nav class="stage-nav" aria-label="Course path" id="stage-nav"></nav>
-    <div class="content-layout">
-      <aside class="sidebar" aria-label="Missions">
-        <div class="sidebar-head"><h2>Course</h2><span id="mission-count">Loading…</span></div>
-        <nav id="mission-list" aria-label="Choose a mission"></nav>
-      </aside>
-      <main class="main-column">
-        <div class="lesson-meta"><span id="lesson-position">Python · 01</span><span class="access-note">All missions open</span></div>
-        <h1 id="mission-title">Your first scientific script</h1>
-        <p class="deck" id="mission-summary">Learn Python by reaching a scientific goal.</p>
-        <section class="goal-panel" aria-label="Scientific outcome">
-          <div class="goal-kicker">WHAT YOU WILL BUILD</div>
-          <p id="mission-outcome"></p>
-        </section>
-        <section class="workspace" aria-label="Mission learning workspace">
-          <div class="tabs" role="tablist" aria-label="Mission steps">
-            <button role="tab" id="tab-learn" aria-controls="stage-panel" aria-selected="true" tabindex="0" data-tab="learn">Learn</button>
-            <button role="tab" id="tab-apply" aria-controls="stage-panel" aria-selected="false" tabindex="-1" data-tab="apply">Apply</button>
-            <button role="tab" id="tab-prove" aria-controls="stage-panel" aria-selected="false" tabindex="-1" data-tab="prove">Prove</button>
-          </div>
-          <div class="workspace-grid" id="stage-panel" role="tabpanel" aria-labelledby="tab-learn">
-            <div class="task-column">
-              <h2 id="step-title">Understand one useful idea</h2>
-              <p class="step-description" id="step-text"></p>
-              <div id="learn-step-controls" class="learn-step-controls" hidden>
-                <span id="learn-step-position">Follow the Witz exercises in order.</span>
-                <div class="learn-step-actions">
-                  <button type="button" id="learn-step-prev" aria-label="Previous source exercise">Back</button>
-                  <button type="button" id="learn-step-next">Next exercise</button>
-                </div>
-              </div>
-              <div class="source-row"><span>Primary source</span><a id="source-link" href="https://github.com/guiwitz/PyImageCourse_beginner" target="_blank" rel="noopener noreferrer">Witz · Image Processing for Beginners</a></div>
-              <details class="worked-example" id="worked-example" hidden>
-                <summary>See Witz's worked code example</summary>
-                <pre id="worked-example-code" aria-label="Code from Witz's original notebook"></pre>
-                <p id="worked-example-context"></p>
-                <a id="worked-example-source" target="_blank" rel="noopener noreferrer">Original source notebook</a>
-              </details>
-              <details class="supplement" id="supplement-wrapper" hidden>
-                <summary>Optional supporting reference</summary>
-                <a id="support-source" target="_blank" rel="noopener noreferrer">Supporting material</a>
-              </details>
-              <div class="code-box">
-                <div class="code-topline"><label for="code-editor">Your Python</label><span class="code-status">Draft saved on this device</span></div>
-                <textarea id="code-editor" spellcheck="false" aria-label="Editable Python code" rows="11"></textarea>
-                <div class="code-bottomline">
-                  <span id="runtime-message" role="status">Real Python execution arrives in the next development step.</span>
-                  <button id="run-button" type="button" disabled title="Python engine is not installed in this first frontend build">Run Python</button>
-                </div>
-              </div>
-            </div>
-            <aside class="context-column" aria-label="Scientific destination">
-              <div class="context-title">Why this matters</div>
-              <p id="science-context"></p>
-              <figure id="image-figure" hidden>
-                <img id="context-image" alt="Human Protein Atlas RGB fluorescence microscopy composite" loading="lazy">
-                <figcaption><span id="image-caption"></span> <a id="figure-source" target="_blank" rel="noopener noreferrer">Witz notebook</a> <a id="raw-tiff-link" target="_blank" rel="noopener noreferrer" hidden>Original Witz TIFF</a></figcaption>
-              </figure>
-              <p id="image-fallback" class="image-fallback" hidden>Bundled Witz figure could not be displayed; check the source notebook link.</p>
-              <div class="next-note" id="preview-note">This is a frontend preview. No exercise is marked complete without executing and assessing real Python.</div>
-            </aside>
-          </div>
-        </section>
-        <div class="lesson-footer"><button class="text-button" type="button" id="prev-mission">Previous mission</button><button class="primary-button" type="button" id="next-mission">Next mission <span aria-hidden="true">→</span></button></div>
-      </main>
-    </div>
+<body data-theme="dark">
+<header class="topbar">
+  <button id="nav-toggle" class="icon-button mobile-only" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><span aria-hidden="true">☰</span></button>
+  <a class="brand" href="./"><span class="dna-mark" aria-hidden="true">⌁</span><span>BioPython <strong>Studio</strong></span></a>
+  <div class="header-right">
+    <span class="shell-label">Learning workspace</span>
+    <button class="utility-button" id="reference-toggle" aria-controls="reference" aria-expanded="false" type="button">Reference</button>
+    <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch to light theme" title="Toggle theme">☼</button>
   </div>
-  <footer class="site-footer">Built around <a href="https://github.com/guiwitz/PyImageCourse_beginner" target="_blank" rel="noopener noreferrer">Guillaume Witz’s image-processing course</a>. This preview contains no assessment claims.</footer>
+</header>
+<div class="app-layout" id="app-layout">
+  <aside class="sidebar" id="sidebar" aria-label="Learning navigation">
+    <div class="sidebar-top">
+      <p class="eyebrow">Course path</p>
+      <nav id="course-nav" aria-label="Course stages">
+        <button class="course-link selected" data-stage="Python" aria-current="page"><span class="course-num">01</span><span>Python foundations</span></button>
+        <button class="course-link" data-stage="Microscopy"><span class="course-num">02</span><span>Microscopy</span></button>
+        <button class="course-link" data-stage="NGS"><span class="course-num">03</span><span>Sequence analysis</span></button>
+        <button class="course-link" data-stage="ML"><span class="course-num">04</span><span>Machine learning</span></button>
+      </nav>
+      <div class="sidebar-section">
+        <p class="eyebrow">Lessons</p>
+        <p class="quiet-text">No lessons loaded yet.</p>
+      </div>
+    </div>
+    <p class="sidebar-bottom">Interface-only preview</p>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-top">
+      <div>
+        <p class="breadcrumbs"><span id="crumb">Python foundations</span><span class="slash">/</span> Workspace</p>
+        <h1 id="page-title">Python workspace</h1>
+        <p class="subtitle" id="page-subtitle">Learn, write and investigate Python in one focused space.</p>
+      </div>
+      <div class="mode-switch" role="group" aria-label="Workspace mode">
+        <button id="mode-python" data-mode="python" aria-pressed="true">Code</button>
+        <button id="mode-image" data-mode="image" aria-pressed="false">Image analysis</button>
+      </div>
+    </div>
+
+    <section class="lesson" aria-label="Learning activity">
+      <div class="section-header">
+        <h2>Lesson</h2>
+        <div class="phase-tabs" role="tablist" aria-label="Learning phase">
+          <button role="tab" id="tab-learn" data-phase="learn" aria-controls="phase-panel" aria-selected="true" tabindex="0">Learn</button>
+          <button role="tab" id="tab-apply" data-phase="apply" aria-controls="phase-panel" aria-selected="false" tabindex="-1">Apply</button>
+          <button role="tab" id="tab-prove" data-phase="prove" aria-controls="phase-panel" aria-selected="false" tabindex="-1">Prove</button>
+        </div>
+      </div>
+      <div class="lesson-panel" id="phase-panel" role="tabpanel" aria-labelledby="tab-learn" tabindex="0">
+        <p class="phase-caption" id="phase-caption">LEARN</p>
+        <h3 id="phase-title">Your lesson will appear here</h3>
+        <p id="phase-description">A concise explanation and one clear task will appear when lessons are added.</p>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Programming workspace">
+      <div class="section-header workspace-header">
+        <h2>Workspace</h2>
+        <span class="mode-label" id="mode-label">Python editor</span>
+      </div>
+      <div class="workspace-grid" id="workspace-grid">
+        <section class="editor card" aria-label="Python editor">
+          <div class="panel-toolbar">
+            <span class="file-label"><span class="file-icon" aria-hidden="true">⌘</span> main.py</span>
+            <div class="panel-actions">
+              <span id="save-status" class="save-status" role="status">Saved locally</span>
+              <button id="clear-code" class="subtle-button" type="button" title="Clear editor">Clear</button>
+              <button class="run-button" id="run-button" type="button" disabled title="Python runtime not connected">▶ Run</button>
+            </div>
+          </div>
+          <div class="code-wrapper"><div class="gutter" id="line-numbers" aria-hidden="true">1</div><textarea id="code-editor" aria-label="Python code editor" placeholder="# Write your Python here" rows="14" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off"></textarea></div>
+          <div class="panel-footer"><span>Python 3 <span class="separator">·</span> Editor preview</span><span id="cursor">Ln 1, Col 1</span></div>
+        </section>
+        <section class="image card" id="image-panel" aria-label="Scientific image viewer" hidden>
+          <div class="panel-toolbar image-toolbar">
+            <span class="file-label">Image viewer</span>
+            <div class="panel-actions">
+              <button id="zoom-out" class="icon-button compact" type="button" aria-label="Zoom out" disabled>−</button>
+              <button id="zoom-reset" class="subtle-button" type="button" disabled>Fit</button>
+              <button id="zoom-in" class="icon-button compact" type="button" aria-label="Zoom in" disabled>+</button>
+              <label class="load-button" for="image-upload" tabindex="0">Open image</label>
+              <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+            </div>
+          </div>
+          <div class="image-canvas" id="image-canvas">
+            <div id="image-empty" class="image-empty">
+              <svg width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden="true"><rect x="6" y="7" width="40" height="38" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="18" cy="19" r="4" stroke="currentColor" stroke-width="1.5"/><path d="m9 39 10-11 8 7 9-12 7 11" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              <strong>Open a microscopy image</strong>
+              <p>Preview PNG, JPEG or WebP files locally. No data is loaded.</p>
+            </div>
+            <img id="image-preview" alt="Opened microscopy image" draggable="false" hidden>
+          </div>
+          <div class="panel-footer"><span id="image-meta">No image loaded</span><span id="image-zoom">—</span></div>
+        </section>
+      </div>
+      <section class="output card" aria-label="Results">
+        <div class="output-header">
+          <div class="result-tabs" role="tablist" aria-label="Result view">
+            <button type="button" role="tab" data-result="output" id="result-output" aria-controls="output-body" aria-selected="true" tabindex="0">Output</button>
+            <button type="button" role="tab" data-result="measurements" id="result-measurements" aria-controls="output-body" aria-selected="false" tabindex="-1">Measurements</button>
+          </div>
+          <span class="runtime-state"><span aria-hidden="true" class="status-dot"></span> Python engine not connected</span>
+        </div>
+        <div id="output-body" role="tabpanel" aria-labelledby="result-output" tabindex="0"><p id="output-placeholder">Python output will appear here after the execution engine is added.</p></div>
+      </section>
+    </section>
+  </main>
+  <aside id="reference" class="reference" aria-label="Contextual reference" hidden>
+    <div class="reference-head"><h2>Reference</h2><button id="reference-close" class="icon-button" type="button" aria-label="Close reference">×</button></div>
+    <div class="reference-empty"><span aria-hidden="true">{ }</span><h3>Nothing selected</h3><p>Relevant syntax, parameters and scientific notes will appear here when lesson content is added.</p></div>
+  </aside>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
 </body>
 </html>
