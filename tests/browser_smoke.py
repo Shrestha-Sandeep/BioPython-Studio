@@ -58,7 +58,7 @@ def main():
                 errors = []
                 outgoing = []
                 page.on("pageerror", lambda error: errors.append(str(error)))
-                page.on("request", lambda request: outgoing.append(request.url) if not request.url.startswith(url) else None)
+                page.on("request", lambda request: outgoing.append(request.url) if not (request.url.startswith(url) or request.url.startswith("blob:")) else None)
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
                 page.get_by_role("heading", name="Python workspace").wait_for()
                 assert page.get_by_role("button", name="Run").is_disabled()
