@@ -58,3 +58,22 @@ def test_nonredundancy_and_path_character():
     assert "optional" in DATA["path_policy"]
     module_types = {x["track"] for x in DATA["modules"]}
     assert {"foundation", "microscopy", "sequence", "ml", "projects"}.issubset(module_types)
+
+def test_default_route_and_elective_branches():
+    skills = {x["number"]: x for x in DATA["competencies"]}
+    route = DATA["recommended_default_route"]
+    pilot = DATA["recommended_first_15"]
+    assert len(route) == 127
+    assert len(pilot) == 15
+    assert route[:15] == pilot
+    assert len(set(route)) == len(route)
+    completed = set()
+    for number in route:
+        assert number in skills
+        assert set(skills[number]["prerequisite_numbers"]) <= completed, number
+        completed.add(number)
+    assert len(DATA["optional_sequence_route"]) == 17
+    assert len(DATA["optional_ml_route"]) == 12
+    assert set(DATA["optional_sequence_route"]).isdisjoint(completed)
+    assert set(DATA["optional_ml_route"]).isdisjoint(completed)
+    assert completed | set(DATA["optional_sequence_route"]) | set(DATA["optional_ml_route"]) == set(skills)
