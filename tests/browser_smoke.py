@@ -47,7 +47,7 @@ def main():
                 assert page.get_by_role("button",name="Run Python").is_disabled()
                 page.get_by_role("button",name="Microscopy",exact=True).click()
                 assert page.get_by_role("heading",name="Open a real fluorescence image").is_visible()
-                assert page.locator("#image-fallback").is_visible()
+                page.locator("#image-fallback").wait_for(state="visible",timeout=15000)
                 page.get_by_role("tab",name="Apply").click()
                 assert page.get_by_role("heading",name="Build your program").is_visible()
                 page.locator("#code-editor").fill("print('saved scientific draft')")
