@@ -36,6 +36,7 @@ Witz and Carpentries contain ready-made problems, not a fully tested browser lea
 ## Current Witz ingestion (source-first preview)
 
 - Indexed **12** Witz main/appendix/demo notebooks with **90** headings and **7** exercise notebooks with **54** numbered source tasks. Full source-cell provenance and original texts reside in [`curriculum/witz_exercise_inventory.json`](../curriculum/witz_exercise_inventory.json).
+- **12** original worked-code excerpts from Witz's lesson notebooks are available in the Learn interface with their original notebook paths and cell indices. They may require preceding notebook setup and are not claimed to be ready-to-run standalone code.
 - **47** of the numbered source tasks are currently surfaced as step-by-step exercises inside eight connected Python/image-analysis preview missions; the remaining seven are still inventoried. This is **not yet a completion or mastery claim** because the real Python engine is not installed in this clean rebuild.
 - Bundled **six** Witz-rendered figures under [`assets/witz/`](../assets/witz/) with copyright, notebook cell and HPA attribution in [`assets/witz/CREDITS.md`](../assets/witz/CREDITS.md). The source TIFF images are linked but not bundled. All pixel-based measurements await actual scientific array files.
 - Added targeted support from VanderPlas, Martin Jones, Carpentries, Bankhead, BioImageAnalysisNotebooks and scikit-image to address meaningful gaps without establishing a competing syllabus.
