@@ -3619,6 +3619,3285 @@
           "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
         }
       ]
+    },
+    {
+      "id": "bps3.m00.understand_a_notebook_workflow",
+      "number": "004",
+      "title": "Understand a notebook workflow",
+      "context": "A notebook kernel remembers values between cells. Editing a setup cell does not update the kernel until you run that cell. Restart & Run All checks whether a notebook works from a clean state. Use the two-cell lab below, then write a reproducible cell sequence.",
+      "example": {
+        "source": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
+        "case": {
+          "initial_fields": 3,
+          "extra_fields": 2
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "After editing a setup cell, why can a later cell still show the old result?",
+        "options": [
+          "The kernel still holds the old value until the setup cell runs.",
+          "Saving text automatically executes all cells.",
+          "Notebook output always proves the code is reproducible."
+        ],
+        "answer": 0,
+        "explanation": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+      },
+      "stages": {
+        "modify": {
+          "task": "Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
+          "starter": "field_count = initial_fields\nupdated_count = extra_fields\nprint(updated_count)",
+          "cases": [
+            {
+              "initial_fields": 3,
+              "extra_fields": 2
+            },
+            {
+              "initial_fields": 0,
+              "extra_fields": 0
+            },
+            {
+              "initial_fields": 7,
+              "extra_fields": 1
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_count\") == case[\"initial_fields\"]",
+            "ns.get(\"updated_count\") == case[\"initial_fields\"]+case[\"extra_fields\"]",
+            "printed_number(output,ns[\"updated_count\"])"
+          ],
+          "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+        },
+        "write": {
+          "task": "Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
+          "starter": "",
+          "cases": [
+            {
+              "initial_fields": 12,
+              "extra_fields": 3
+            },
+            {
+              "initial_fields": 1,
+              "extra_fields": 0
+            },
+            {
+              "initial_fields": 0,
+              "extra_fields": 4
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_count\") == case[\"initial_fields\"]",
+            "ns.get(\"updated_count\") == case[\"initial_fields\"]+case[\"extra_fields\"]",
+            "printed_number(output,ns[\"updated_count\"])"
+          ],
+          "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+        },
+        "debug": {
+          "task": "Repair the bug. Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
+          "starter": "updated_count = field_count + extra_fields\nfield_count = initial_fields\nprint(updated_count)",
+          "cases": [
+            {
+              "initial_fields": 3,
+              "extra_fields": 2
+            },
+            {
+              "initial_fields": 0,
+              "extra_fields": 0
+            },
+            {
+              "initial_fields": 7,
+              "extra_fields": 1
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_count\") == case[\"initial_fields\"]",
+            "ns.get(\"updated_count\") == case[\"initial_fields\"]+case[\"extra_fields\"]",
+            "printed_number(output,ns[\"updated_count\"])"
+          ],
+          "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+        },
+        "transfer": {
+          "task": "Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
+          "starter": "",
+          "cases": [
+            {
+              "initial_fields": 5,
+              "extra_fields": 4
+            },
+            {
+              "initial_fields": 0,
+              "extra_fields": 1
+            },
+            {
+              "initial_fields": 9,
+              "extra_fields": 0
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_count\") == case[\"initial_fields\"]",
+            "ns.get(\"updated_count\") == case[\"initial_fields\"]+case[\"extra_fields\"]",
+            "printed_number(output,ns[\"updated_count\"])"
+          ],
+          "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+        }
+      },
+      "hints": [
+        "Identify the setup assignment and the later statement that depends on it.",
+        "Assign field_count before using it to calculate updated_count.",
+        "# Setup cell\nfield_count = initial_fields\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)"
+      ],
+      "transfers": [
+        {
+          "task": "Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
+          "starter": "",
+          "cases": [
+            {
+              "initial_fields": 5,
+              "extra_fields": 4
+            },
+            {
+              "initial_fields": 0,
+              "extra_fields": 1
+            },
+            {
+              "initial_fields": 9,
+              "extra_fields": 0
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_count\") == case[\"initial_fields\"]",
+            "ns.get(\"updated_count\") == case[\"initial_fields\"]+case[\"extra_fields\"]",
+            "printed_number(output,ns[\"updated_count\"])"
+          ],
+          "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
+          "starter": "",
+          "cases": [
+            {
+              "initial_fields": 7,
+              "extra_fields": 6,
+              "review_batch": 2
+            },
+            {
+              "initial_fields": 2,
+              "extra_fields": 3
+            },
+            {
+              "initial_fields": 11,
+              "extra_fields": 2
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_count\") == case[\"initial_fields\"]",
+            "ns.get(\"updated_count\") == case[\"initial_fields\"]+case[\"extra_fields\"]",
+            "printed_number(output,ns[\"updated_count\"])"
+          ],
+          "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Write the setup cell first: assign initial_fields to field_count. Then write the analysis cell: set updated_count = field_count + extra_fields and print updated_count. Each assessment input starts with a fresh namespace.",
+          "starter": "",
+          "cases": [
+            {
+              "initial_fields": 8,
+              "extra_fields": 7,
+              "review_batch": 3
+            },
+            {
+              "initial_fields": 3,
+              "extra_fields": 4
+            },
+            {
+              "initial_fields": 12,
+              "extra_fields": 3
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_count\") == case[\"initial_fields\"]",
+            "ns.get(\"updated_count\") == case[\"initial_fields\"]+case[\"extra_fields\"]",
+            "printed_number(output,ns[\"updated_count\"])"
+          ],
+          "reference": "# Setup cell\nfield_count = initial_fields\n\n# Analysis cell\nupdated_count = field_count + extra_fields\nprint(updated_count)",
+          "feedback": "Code order and execution order can differ. Run the setup before dependent analysis, and restart then run all cells to detect hidden state."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.parse_a_specimen_identifier",
+      "number": "009",
+      "title": "Parse a specimen identifier",
+      "context": "A documented specimen ID has exactly three hyphen-separated fields: condition, well and replicate. Parsing follows that schema; it cannot establish biological identity from an image.",
+      "example": {
+        "source": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+        "case": {
+          "sample_id": "CTRL-A01-R1"
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "Why use an explicit delimiter?",
+        "options": [
+          "It follows the documented ID schema.",
+          "It proves every field is a biological replicate.",
+          "It repairs arbitrary undocumented identifiers."
+        ],
+        "answer": 0,
+        "explanation": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+      },
+      "stages": {
+        "modify": {
+          "task": "Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
+          "starter": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[0]\nreplicate = parts[0]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "cases": [
+            {
+              "sample_id": "CTRL-A01-R1"
+            },
+            {
+              "sample_id": "TREAT-B07-R2"
+            },
+            {
+              "sample_id": "BLANK-Z00-R0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"parts\") == case[\"sample_id\"].split(\"-\")",
+            "[ns.get(k) for k in [\"condition\",\"well\",\"replicate\"]] == case[\"sample_id\"].split(\"-\")",
+            "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
+          ],
+          "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+        },
+        "write": {
+          "task": "Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "RECOVERY-C03-R4"
+            },
+            {
+              "sample_id": "YEAST-D12-R3"
+            },
+            {
+              "sample_id": "MEDIA-A00-R0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"parts\") == case[\"sample_id\"].split(\"-\")",
+            "[ns.get(k) for k in [\"condition\",\"well\",\"replicate\"]] == case[\"sample_id\"].split(\"-\")",
+            "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
+          ],
+          "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+        },
+        "debug": {
+          "task": "Repair the bug. Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
+          "starter": "parts = sample_id.split(\"_\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "cases": [
+            {
+              "sample_id": "CTRL-A01-R1"
+            },
+            {
+              "sample_id": "TREAT-B07-R2"
+            },
+            {
+              "sample_id": "BLANK-Z00-R0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"parts\") == case[\"sample_id\"].split(\"-\")",
+            "[ns.get(k) for k in [\"condition\",\"well\",\"replicate\"]] == case[\"sample_id\"].split(\"-\")",
+            "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
+          ],
+          "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+        },
+        "transfer": {
+          "task": "Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-E02-R5"
+            },
+            {
+              "sample_id": "LEAF-F09-R7"
+            },
+            {
+              "sample_id": "MOCK-G00-R0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"parts\") == case[\"sample_id\"].split(\"-\")",
+            "[ns.get(k) for k in [\"condition\",\"well\",\"replicate\"]] == case[\"sample_id\"].split(\"-\")",
+            "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
+          ],
+          "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+        }
+      },
+      "hints": [
+        "Check the delimiter in the supplied ID.",
+        "After splitting, use [0], [1] and [2] to select the three fields.",
+        "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")"
+      ],
+      "transfers": [
+        {
+          "task": "Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-E02-R5"
+            },
+            {
+              "sample_id": "LEAF-F09-R7"
+            },
+            {
+              "sample_id": "MOCK-G00-R0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"parts\") == case[\"sample_id\"].split(\"-\")",
+            "[ns.get(k) for k in [\"condition\",\"well\",\"replicate\"]] == case[\"sample_id\"].split(\"-\")",
+            "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
+          ],
+          "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-2E02-R5",
+              "review_batch": 2
+            },
+            {
+              "sample_id": "LEAF-2F09-R7"
+            },
+            {
+              "sample_id": "MOCK-2G00-R0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"parts\") == case[\"sample_id\"].split(\"-\")",
+            "[ns.get(k) for k in [\"condition\",\"well\",\"replicate\"]] == case[\"sample_id\"].split(\"-\")",
+            "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
+          ],
+          "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Split sample_id on \"-\" into parts. Set condition, well and replicate from indices 0, 1 and 2. Print condition | well | replicate.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "ROOT-3E02-R5",
+              "review_batch": 3
+            },
+            {
+              "sample_id": "LEAF-3F09-R7"
+            },
+            {
+              "sample_id": "MOCK-3G00-R0"
+            }
+          ],
+          "checks": [
+            "ns.get(\"parts\") == case[\"sample_id\"].split(\"-\")",
+            "[ns.get(k) for k in [\"condition\",\"well\",\"replicate\"]] == case[\"sample_id\"].split(\"-\")",
+            "output.strip() == \" | \".join(case[\"sample_id\"].split(\"-\"))"
+          ],
+          "reference": "parts = sample_id.split(\"-\")\ncondition = parts[0]\nwell = parts[1]\nreplicate = parts[2]\nprint(f\"{condition} | {well} | {replicate}\")",
+          "feedback": "split(\"-\") separates fields at the documented delimiter. Indices start at zero. Validate a different schema before reusing this parser."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.use_range_and_enumerate",
+      "number": "013",
+      "title": "Use range and enumerate",
+      "context": "range generates integer positions; enumerate pairs each observation with a position. Display field numbers start at one, while Python indexing starts at zero.",
+      "example": {
+        "source": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+        "case": {
+          "signals": [
+            4,
+            7,
+            2
+          ]
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "Why add one to the range stop?",
+        "options": [
+          "range excludes its stop value.",
+          "range always starts at one.",
+          "An empty list must have a field numbered one."
+        ],
+        "answer": 0,
+        "explanation": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+      },
+      "stages": {
+        "modify": {
+          "task": "Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
+          "starter": "field_numbers = list(range(len(signals)))\nprint(field_numbers)\nfor number, signal in enumerate(signals):\n    print(f\"Field {number}: {signal}\")",
+          "cases": [
+            {
+              "signals": [
+                4,
+                7,
+                2
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                0
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_numbers\") == list(range(1,len(case[\"signals\"])+1))",
+            "output.strip().splitlines() == [str(list(range(1,len(case[\"signals\"])+1)))]+[f\"Field {i}: {v}\" for i,v in enumerate(case[\"signals\"],1)]",
+            "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
+          ],
+          "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+        },
+        "write": {
+          "task": "Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                9,
+                8
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                1,
+                2,
+                3,
+                4
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_numbers\") == list(range(1,len(case[\"signals\"])+1))",
+            "output.strip().splitlines() == [str(list(range(1,len(case[\"signals\"])+1)))]+[f\"Field {i}: {v}\" for i,v in enumerate(case[\"signals\"],1)]",
+            "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
+          ],
+          "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+        },
+        "debug": {
+          "task": "Repair the bug. Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
+          "starter": "field_numbers = list(range(1, len(signals)))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+          "cases": [
+            {
+              "signals": [
+                4,
+                7,
+                2
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                0
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_numbers\") == list(range(1,len(case[\"signals\"])+1))",
+            "output.strip().splitlines() == [str(list(range(1,len(case[\"signals\"])+1)))]+[f\"Field {i}: {v}\" for i,v in enumerate(case[\"signals\"],1)]",
+            "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
+          ],
+          "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+        },
+        "transfer": {
+          "task": "Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                6,
+                0,
+                11
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                20
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_numbers\") == list(range(1,len(case[\"signals\"])+1))",
+            "output.strip().splitlines() == [str(list(range(1,len(case[\"signals\"])+1)))]+[f\"Field {i}: {v}\" for i,v in enumerate(case[\"signals\"],1)]",
+            "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
+          ],
+          "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+        }
+      },
+      "hints": [
+        "Decide whether you need Python indices or display labels.",
+        "For labels 1 through n, the stop is n + 1; enumerate also needs start=1.",
+        "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")"
+      ],
+      "transfers": [
+        {
+          "task": "Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                6,
+                0,
+                11
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                20
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_numbers\") == list(range(1,len(case[\"signals\"])+1))",
+            "output.strip().splitlines() == [str(list(range(1,len(case[\"signals\"])+1)))]+[f\"Field {i}: {v}\" for i,v in enumerate(case[\"signals\"],1)]",
+            "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
+          ],
+          "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                8,
+                2,
+                13
+              ],
+              "review_batch": 2
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                22
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_numbers\") == list(range(1,len(case[\"signals\"])+1))",
+            "output.strip().splitlines() == [str(list(range(1,len(case[\"signals\"])+1)))]+[f\"Field {i}: {v}\" for i,v in enumerate(case[\"signals\"],1)]",
+            "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
+          ],
+          "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Use list(range(1, len(signals) + 1)) to create field_numbers and print it. Then use enumerate(signals, start=1) to print Field number: signal for every observation.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                9,
+                3,
+                14
+              ],
+              "review_batch": 3
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                23
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"field_numbers\") == list(range(1,len(case[\"signals\"])+1))",
+            "output.strip().splitlines() == [str(list(range(1,len(case[\"signals\"])+1)))]+[f\"Field {i}: {v}\" for i,v in enumerate(case[\"signals\"],1)]",
+            "has_call(tree,\"range\") and has_call(tree,\"enumerate\")"
+          ],
+          "reference": "field_numbers = list(range(1, len(signals) + 1))\nprint(field_numbers)\nfor number, signal in enumerate(signals, start=1):\n    print(f\"Field {number}: {signal}\")",
+          "feedback": "range includes its start and excludes its stop. enumerate(start=1) supplies human-facing labels without changing list indices."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.make_a_bounded_while_loop",
+      "number": "014",
+      "title": "Make a bounded while loop",
+      "context": "A simulated acquisition check must have a bound. This loop counts permitted attempts; it does not communicate with a microscope or repeat biological observations.",
+      "example": {
+        "source": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
+        "case": {
+          "max_attempts": 3
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "Which condition permits exactly zero iterations when max_attempts is zero?",
+        "options": [
+          "attempt < max_attempts",
+          "attempt <= max_attempts",
+          "while True without an exit"
+        ],
+        "answer": 0,
+        "explanation": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+      },
+      "stages": {
+        "modify": {
+          "task": "Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
+          "starter": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 2\nprint(attempt)",
+          "cases": [
+            {
+              "max_attempts": 3
+            },
+            {
+              "max_attempts": 0
+            },
+            {
+              "max_attempts": 1
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"attempt\")) is int and ns[\"attempt\"] == case[\"max_attempts\"]",
+            "printed_number(output,case[\"max_attempts\"])",
+            "has_node(tree,ast.While)"
+          ],
+          "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+        },
+        "write": {
+          "task": "Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
+          "starter": "",
+          "cases": [
+            {
+              "max_attempts": 5
+            },
+            {
+              "max_attempts": 0
+            },
+            {
+              "max_attempts": 2
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"attempt\")) is int and ns[\"attempt\"] == case[\"max_attempts\"]",
+            "printed_number(output,case[\"max_attempts\"])",
+            "has_node(tree,ast.While)"
+          ],
+          "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+        },
+        "debug": {
+          "task": "Repair the bug. Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
+          "starter": "attempt = 0\nwhile attempt <= max_attempts:\n    attempt += 1\nprint(attempt)",
+          "cases": [
+            {
+              "max_attempts": 3
+            },
+            {
+              "max_attempts": 0
+            },
+            {
+              "max_attempts": 1
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"attempt\")) is int and ns[\"attempt\"] == case[\"max_attempts\"]",
+            "printed_number(output,case[\"max_attempts\"])",
+            "has_node(tree,ast.While)"
+          ],
+          "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+        },
+        "transfer": {
+          "task": "Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
+          "starter": "",
+          "cases": [
+            {
+              "max_attempts": 7
+            },
+            {
+              "max_attempts": 0
+            },
+            {
+              "max_attempts": 4
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"attempt\")) is int and ns[\"attempt\"] == case[\"max_attempts\"]",
+            "printed_number(output,case[\"max_attempts\"])",
+            "has_node(tree,ast.While)"
+          ],
+          "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+        }
+      },
+      "hints": [
+        "Check the initial counter, condition and increment separately.",
+        "Use attempt < max_attempts and increment by one.",
+        "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)"
+      ],
+      "transfers": [
+        {
+          "task": "Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
+          "starter": "",
+          "cases": [
+            {
+              "max_attempts": 7
+            },
+            {
+              "max_attempts": 0
+            },
+            {
+              "max_attempts": 4
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"attempt\")) is int and ns[\"attempt\"] == case[\"max_attempts\"]",
+            "printed_number(output,case[\"max_attempts\"])",
+            "has_node(tree,ast.While)"
+          ],
+          "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
+          "starter": "",
+          "cases": [
+            {
+              "max_attempts": 9,
+              "review_batch": 2
+            },
+            {
+              "max_attempts": 2
+            },
+            {
+              "max_attempts": 6
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"attempt\")) is int and ns[\"attempt\"] == case[\"max_attempts\"]",
+            "printed_number(output,case[\"max_attempts\"])",
+            "has_node(tree,ast.While)"
+          ],
+          "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Start attempt at zero. Use a while loop that increments attempt until it reaches max_attempts. Print attempt; zero allowed attempts must perform zero iterations.",
+          "starter": "",
+          "cases": [
+            {
+              "max_attempts": 10,
+              "review_batch": 3
+            },
+            {
+              "max_attempts": 3
+            },
+            {
+              "max_attempts": 7
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"attempt\")) is int and ns[\"attempt\"] == case[\"max_attempts\"]",
+            "printed_number(output,case[\"max_attempts\"])",
+            "has_node(tree,ast.While)"
+          ],
+          "reference": "attempt = 0\nwhile attempt < max_attempts:\n    attempt += 1\nprint(attempt)",
+          "feedback": "A bound, an initial value and an update must agree. Strictly less than stops when the counter reaches the allowed number."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m01.skip_and_stop_intentionally",
+      "number": "015",
+      "title": "Skip and stop intentionally",
+      "context": "In these authored acquisition records, -1 marks the end and other negative values mark invalid entries. Document such sentinel conventions before processing real data.",
+      "example": {
+        "source": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+        "case": {
+          "signals": [
+            4,
+            -2,
+            6,
+            -1,
+            999
+          ]
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "How do break and continue differ?",
+        "options": [
+          "break ends the loop; continue skips just the current iteration.",
+          "Both stop the entire program.",
+          "continue resets the accumulator."
+        ],
+        "answer": 0,
+        "explanation": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+      },
+      "stages": {
+        "modify": {
+          "task": "Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
+          "starter": "total = 0\nfor signal in signals:\n    if signal == -1:\n        continue\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+          "cases": [
+            {
+              "signals": [
+                4,
+                -2,
+                6,
+                -1,
+                999
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -1,
+                30
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sentinel_total(case[\"signals\"])",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
+          ],
+          "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+        },
+        "write": {
+          "task": "Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                0,
+                -3,
+                8,
+                -1,
+                50
+              ]
+            },
+            {
+              "signals": [
+                -2,
+                3,
+                4
+              ]
+            },
+            {
+              "signals": []
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sentinel_total(case[\"signals\"])",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
+          ],
+          "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+        },
+        "debug": {
+          "task": "Repair the bug. Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
+          "starter": "total = 0\nfor signal in signals:\n    if signal < 0:\n        break\n    total += signal\nprint(total)",
+          "cases": [
+            {
+              "signals": [
+                4,
+                -2,
+                6,
+                -1,
+                999
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -1,
+                30
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sentinel_total(case[\"signals\"])",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
+          ],
+          "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+        },
+        "transfer": {
+          "task": "Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                9,
+                -8,
+                1,
+                -1,
+                70
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -1,
+                10
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sentinel_total(case[\"signals\"])",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
+          ],
+          "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+        }
+      },
+      "hints": [
+        "Distinguish an invalid record from an end-of-acquisition marker.",
+        "Test -1 first, then skip other negative values.",
+        "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)"
+      ],
+      "transfers": [
+        {
+          "task": "Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                9,
+                -8,
+                1,
+                -1,
+                70
+              ]
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -1,
+                10
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sentinel_total(case[\"signals\"])",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
+          ],
+          "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                18,
+                -8,
+                2,
+                -1,
+                140
+              ],
+              "review_batch": 2
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -1,
+                20
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sentinel_total(case[\"signals\"])",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
+          ],
+          "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Sum valid nonnegative signals in total. Use break at the first -1 and continue for other negative values. Ignore all records after the stop marker, then print total.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                27,
+                -8,
+                3,
+                -1,
+                210
+              ],
+              "review_batch": 3
+            },
+            {
+              "signals": []
+            },
+            {
+              "signals": [
+                -1,
+                30
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sentinel_total(case[\"signals\"])",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.Break) and has_node(tree,ast.Continue)"
+          ],
+          "reference": "total = 0\nfor signal in signals:\n    if signal == -1:\n        break\n    if signal < 0:\n        continue\n    total += signal\nprint(total)",
+          "feedback": "Handle the end marker before the invalid-value rule. A skipped record should not prevent later valid records from being processed."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.change_a_list_safely",
+      "number": "017",
+      "title": "Change a list safely",
+      "context": "Keep original field counts intact when correcting a working list. Assignment alone creates another name for the same list; copy creates a separate list.",
+      "example": {
+        "source": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+        "case": {
+          "counts": [
+            3,
+            5
+          ],
+          "index": 0,
+          "replacement": 9,
+          "new_count": 1
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "Why is updated = counts insufficient for an independent working copy?",
+        "options": [
+          "Both names refer to the same mutable list.",
+          "It creates a deep copy automatically.",
+          "Lists cannot be changed."
+        ],
+        "answer": 0,
+        "explanation": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+      },
+      "stages": {
+        "modify": {
+          "task": "Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
+          "starter": "updated = counts.copy()\nupdated[index] = replacement\nprint(updated)\nprint(counts)",
+          "cases": [
+            {
+              "counts": [
+                3,
+                5
+              ],
+              "index": 0,
+              "replacement": 9,
+              "new_count": 1
+            },
+            {
+              "counts": [
+                0
+              ],
+              "index": 0,
+              "replacement": 2,
+              "new_count": 0
+            },
+            {
+              "counts": [
+                7,
+                8,
+                9
+              ],
+              "index": 2,
+              "replacement": 4,
+              "new_count": 6
+            }
+          ],
+          "checks": [
+            "ns.get(\"counts\") == case[\"counts\"]",
+            "ns.get(\"updated\") == case[\"counts\"][:case[\"index\"]]+[case[\"replacement\"]]+case[\"counts\"][case[\"index\"]+1:]+[case[\"new_count\"]]",
+            "ns[\"updated\"] is not ns[\"counts\"]",
+            "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
+          ],
+          "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+        },
+        "write": {
+          "task": "Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                10,
+                12
+              ],
+              "index": 1,
+              "replacement": 11,
+              "new_count": 14
+            },
+            {
+              "counts": [
+                4
+              ],
+              "index": 0,
+              "replacement": 0,
+              "new_count": 7
+            },
+            {
+              "counts": [
+                1,
+                2,
+                3
+              ],
+              "index": 0,
+              "replacement": 8,
+              "new_count": 9
+            }
+          ],
+          "checks": [
+            "ns.get(\"counts\") == case[\"counts\"]",
+            "ns.get(\"updated\") == case[\"counts\"][:case[\"index\"]]+[case[\"replacement\"]]+case[\"counts\"][case[\"index\"]+1:]+[case[\"new_count\"]]",
+            "ns[\"updated\"] is not ns[\"counts\"]",
+            "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
+          ],
+          "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+        },
+        "debug": {
+          "task": "Repair the bug. Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
+          "starter": "updated = counts\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+          "cases": [
+            {
+              "counts": [
+                3,
+                5
+              ],
+              "index": 0,
+              "replacement": 9,
+              "new_count": 1
+            },
+            {
+              "counts": [
+                0
+              ],
+              "index": 0,
+              "replacement": 2,
+              "new_count": 0
+            },
+            {
+              "counts": [
+                7,
+                8,
+                9
+              ],
+              "index": 2,
+              "replacement": 4,
+              "new_count": 6
+            }
+          ],
+          "checks": [
+            "ns.get(\"counts\") == case[\"counts\"]",
+            "ns.get(\"updated\") == case[\"counts\"][:case[\"index\"]]+[case[\"replacement\"]]+case[\"counts\"][case[\"index\"]+1:]+[case[\"new_count\"]]",
+            "ns[\"updated\"] is not ns[\"counts\"]",
+            "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
+          ],
+          "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+        },
+        "transfer": {
+          "task": "Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                8,
+                6
+              ],
+              "index": 0,
+              "replacement": 5,
+              "new_count": 4
+            },
+            {
+              "counts": [
+                9
+              ],
+              "index": 0,
+              "replacement": 1,
+              "new_count": 2
+            },
+            {
+              "counts": [
+                0,
+                3,
+                7
+              ],
+              "index": 1,
+              "replacement": 6,
+              "new_count": 10
+            }
+          ],
+          "checks": [
+            "ns.get(\"counts\") == case[\"counts\"]",
+            "ns.get(\"updated\") == case[\"counts\"][:case[\"index\"]]+[case[\"replacement\"]]+case[\"counts\"][case[\"index\"]+1:]+[case[\"new_count\"]]",
+            "ns[\"updated\"] is not ns[\"counts\"]",
+            "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
+          ],
+          "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+        }
+      },
+      "hints": [
+        "Preserve the original before editing a working list.",
+        "Call counts.copy(), change one index, then call updated.append(new_count).",
+        "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)"
+      ],
+      "transfers": [
+        {
+          "task": "Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                8,
+                6
+              ],
+              "index": 0,
+              "replacement": 5,
+              "new_count": 4
+            },
+            {
+              "counts": [
+                9
+              ],
+              "index": 0,
+              "replacement": 1,
+              "new_count": 2
+            },
+            {
+              "counts": [
+                0,
+                3,
+                7
+              ],
+              "index": 1,
+              "replacement": 6,
+              "new_count": 10
+            }
+          ],
+          "checks": [
+            "ns.get(\"counts\") == case[\"counts\"]",
+            "ns.get(\"updated\") == case[\"counts\"][:case[\"index\"]]+[case[\"replacement\"]]+case[\"counts\"][case[\"index\"]+1:]+[case[\"new_count\"]]",
+            "ns[\"updated\"] is not ns[\"counts\"]",
+            "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
+          ],
+          "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                10,
+                8
+              ],
+              "index": 0,
+              "replacement": 7,
+              "new_count": 6,
+              "review_batch": 2
+            },
+            {
+              "counts": [
+                11
+              ],
+              "index": 0,
+              "replacement": 3,
+              "new_count": 4
+            },
+            {
+              "counts": [
+                2,
+                5,
+                9
+              ],
+              "index": 1,
+              "replacement": 8,
+              "new_count": 12
+            }
+          ],
+          "checks": [
+            "ns.get(\"counts\") == case[\"counts\"]",
+            "ns.get(\"updated\") == case[\"counts\"][:case[\"index\"]]+[case[\"replacement\"]]+case[\"counts\"][case[\"index\"]+1:]+[case[\"new_count\"]]",
+            "ns[\"updated\"] is not ns[\"counts\"]",
+            "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
+          ],
+          "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Copy counts into updated. Replace updated[index] with replacement, then append new_count. Print updated, then the unchanged original counts.",
+          "starter": "",
+          "cases": [
+            {
+              "counts": [
+                11,
+                9
+              ],
+              "index": 0,
+              "replacement": 8,
+              "new_count": 7,
+              "review_batch": 3
+            },
+            {
+              "counts": [
+                12
+              ],
+              "index": 0,
+              "replacement": 4,
+              "new_count": 5
+            },
+            {
+              "counts": [
+                3,
+                6,
+                10
+              ],
+              "index": 1,
+              "replacement": 9,
+              "new_count": 13
+            }
+          ],
+          "checks": [
+            "ns.get(\"counts\") == case[\"counts\"]",
+            "ns.get(\"updated\") == case[\"counts\"][:case[\"index\"]]+[case[\"replacement\"]]+case[\"counts\"][case[\"index\"]+1:]+[case[\"new_count\"]]",
+            "ns[\"updated\"] is not ns[\"counts\"]",
+            "output.strip().splitlines() == [str(ns[\"updated\"]),str(case[\"counts\"])]"
+          ],
+          "reference": "updated = counts.copy()\nupdated[index] = replacement\nupdated.append(new_count)\nprint(updated)\nprint(counts)",
+          "feedback": "Use counts.copy() for a separate flat list, then mutate only that copy. The original observations must remain unchanged."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.unpack_immutable_tuples",
+      "number": "018",
+      "title": "Unpack immutable tuples",
+      "context": "A documented position tuple has two coordinates in row, column order. Tuples are immutable: replace the record when correcting coordinates rather than changing one element in place.",
+      "example": {
+        "source": "row, column = position\nprint(row)\nprint(column)",
+        "case": {
+          "position": [
+            4,
+            7
+          ]
+        },
+        "input_types": {
+          "position": "tuple"
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "What fixes a coordinate in an immutable tuple?",
+        "options": [
+          "Create a new tuple with the corrected values.",
+          "Assign position[0] in place.",
+          "Assume the tuple tells you pixel calibration."
+        ],
+        "answer": 0,
+        "explanation": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself."
+      },
+      "stages": {
+        "modify": {
+          "task": "Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
+          "starter": "row = position[1]\ncolumn = position[0]\nprint(row)\nprint(column)",
+          "cases": [
+            {
+              "position": [
+                4,
+                7
+              ]
+            },
+            {
+              "position": [
+                0,
+                0
+              ]
+            },
+            {
+              "position": [
+                12,
+                3
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"position\")) is tuple",
+            "ns.get(\"row\") == case[\"position\"][0] and ns.get(\"column\") == case[\"position\"][1]",
+            "ns[\"position\"] == tuple(case[\"position\"])",
+            "output.strip().splitlines() == [str(v) for v in case[\"position\"]]"
+          ],
+          "reference": "row, column = position\nprint(row)\nprint(column)",
+          "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
+          "input_types": {
+            "position": "tuple"
+          }
+        },
+        "write": {
+          "task": "Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
+          "starter": "",
+          "cases": [
+            {
+              "position": [
+                8,
+                2
+              ]
+            },
+            {
+              "position": [
+                0,
+                9
+              ]
+            },
+            {
+              "position": [
+                15,
+                1
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"position\")) is tuple",
+            "ns.get(\"row\") == case[\"position\"][0] and ns.get(\"column\") == case[\"position\"][1]",
+            "ns[\"position\"] == tuple(case[\"position\"])",
+            "output.strip().splitlines() == [str(v) for v in case[\"position\"]]"
+          ],
+          "reference": "row, column = position\nprint(row)\nprint(column)",
+          "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
+          "input_types": {
+            "position": "tuple"
+          }
+        },
+        "debug": {
+          "task": "Repair the bug. Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
+          "starter": "column, row = position\nprint(row)\nprint(column)",
+          "cases": [
+            {
+              "position": [
+                4,
+                7
+              ]
+            },
+            {
+              "position": [
+                0,
+                0
+              ]
+            },
+            {
+              "position": [
+                12,
+                3
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"position\")) is tuple",
+            "ns.get(\"row\") == case[\"position\"][0] and ns.get(\"column\") == case[\"position\"][1]",
+            "ns[\"position\"] == tuple(case[\"position\"])",
+            "output.strip().splitlines() == [str(v) for v in case[\"position\"]]"
+          ],
+          "reference": "row, column = position\nprint(row)\nprint(column)",
+          "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
+          "input_types": {
+            "position": "tuple"
+          }
+        },
+        "transfer": {
+          "task": "Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
+          "starter": "",
+          "cases": [
+            {
+              "position": [
+                6,
+                11
+              ]
+            },
+            {
+              "position": [
+                1,
+                0
+              ]
+            },
+            {
+              "position": [
+                20,
+                4
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"position\")) is tuple",
+            "ns.get(\"row\") == case[\"position\"][0] and ns.get(\"column\") == case[\"position\"][1]",
+            "ns[\"position\"] == tuple(case[\"position\"])",
+            "output.strip().splitlines() == [str(v) for v in case[\"position\"]]"
+          ],
+          "reference": "row, column = position\nprint(row)\nprint(column)",
+          "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
+          "input_types": {
+            "position": "tuple"
+          }
+        }
+      },
+      "hints": [
+        "Two names on the left can receive two tuple values.",
+        "Keep row first and column second.",
+        "row, column = position\nprint(row)\nprint(column)"
+      ],
+      "transfers": [
+        {
+          "task": "Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
+          "starter": "",
+          "cases": [
+            {
+              "position": [
+                6,
+                11
+              ]
+            },
+            {
+              "position": [
+                1,
+                0
+              ]
+            },
+            {
+              "position": [
+                20,
+                4
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"position\")) is tuple",
+            "ns.get(\"row\") == case[\"position\"][0] and ns.get(\"column\") == case[\"position\"][1]",
+            "ns[\"position\"] == tuple(case[\"position\"])",
+            "output.strip().splitlines() == [str(v) for v in case[\"position\"]]"
+          ],
+          "reference": "row, column = position\nprint(row)\nprint(column)",
+          "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
+          "input_types": {
+            "position": "tuple"
+          }
+        },
+        {
+          "task": "Fresh acquisition batch 2. Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
+          "starter": "",
+          "cases": [
+            {
+              "position": [
+                8,
+                13
+              ],
+              "review_batch": 2
+            },
+            {
+              "position": [
+                3,
+                2
+              ]
+            },
+            {
+              "position": [
+                22,
+                6
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"position\")) is tuple",
+            "ns.get(\"row\") == case[\"position\"][0] and ns.get(\"column\") == case[\"position\"][1]",
+            "ns[\"position\"] == tuple(case[\"position\"])",
+            "output.strip().splitlines() == [str(v) for v in case[\"position\"]]"
+          ],
+          "reference": "row, column = position\nprint(row)\nprint(column)",
+          "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
+          "input_types": {
+            "position": "tuple"
+          }
+        },
+        {
+          "task": "Fresh acquisition batch 3. Unpack the provided position tuple into row and column, preserving their order. Print row, then column. Do not change position.",
+          "starter": "",
+          "cases": [
+            {
+              "position": [
+                9,
+                14
+              ],
+              "review_batch": 3
+            },
+            {
+              "position": [
+                4,
+                3
+              ]
+            },
+            {
+              "position": [
+                23,
+                7
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"position\")) is tuple",
+            "ns.get(\"row\") == case[\"position\"][0] and ns.get(\"column\") == case[\"position\"][1]",
+            "ns[\"position\"] == tuple(case[\"position\"])",
+            "output.strip().splitlines() == [str(v) for v in case[\"position\"]]"
+          ],
+          "reference": "row, column = position\nprint(row)\nprint(column)",
+          "feedback": "Tuple unpacking assigns values by position. Coordinate meaning comes from the documented row/column convention, not the container itself.",
+          "input_types": {
+            "position": "tuple"
+          }
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.map_ids_to_metadata",
+      "number": "019",
+      "title": "Map IDs to metadata",
+      "context": "A dictionary maps named keys to metadata. An explicit specimen ID and condition belong in the analysis record; their names are not inferred from image appearance.",
+      "example": {
+        "source": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+        "case": {
+          "sample_id": "A01",
+          "condition": "control"
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "What does record[\"sample_id\"] select?",
+        "options": [
+          "The value stored under that exact key.",
+          "The first numerical position in every dictionary.",
+          "A specimen identified automatically from fluorescence."
+        ],
+        "answer": 0,
+        "explanation": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+      },
+      "stages": {
+        "modify": {
+          "task": "Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
+          "starter": "record = {\"sample_id\": sample_id, \"condition\": \"unknown\"}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "cases": [
+            {
+              "sample_id": "A01",
+              "condition": "control"
+            },
+            {
+              "sample_id": "B07",
+              "condition": "treated"
+            },
+            {
+              "sample_id": "Z00",
+              "condition": "blank"
+            }
+          ],
+          "checks": [
+            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
+          ],
+          "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+        },
+        "write": {
+          "task": "Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "C04",
+              "condition": "recovery"
+            },
+            {
+              "sample_id": "D08",
+              "condition": "vehicle"
+            },
+            {
+              "sample_id": "E00",
+              "condition": "medium"
+            }
+          ],
+          "checks": [
+            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
+          ],
+          "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+        },
+        "debug": {
+          "task": "Repair the bug. Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
+          "starter": "record = {\"sample_id\": \"sample_id\", \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "cases": [
+            {
+              "sample_id": "A01",
+              "condition": "control"
+            },
+            {
+              "sample_id": "B07",
+              "condition": "treated"
+            },
+            {
+              "sample_id": "Z00",
+              "condition": "blank"
+            }
+          ],
+          "checks": [
+            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
+          ],
+          "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+        },
+        "transfer": {
+          "task": "Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "F02",
+              "condition": "stress"
+            },
+            {
+              "sample_id": "G03",
+              "condition": "baseline"
+            },
+            {
+              "sample_id": "H00",
+              "condition": "negative"
+            }
+          ],
+          "checks": [
+            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
+          ],
+          "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+        }
+      },
+      "hints": [
+        "Put the stable key names in quotes and the changing values outside quotes.",
+        "Create {\"sample_id\": sample_id, \"condition\": condition}.",
+        "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])"
+      ],
+      "transfers": [
+        {
+          "task": "Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "F02",
+              "condition": "stress"
+            },
+            {
+              "sample_id": "G03",
+              "condition": "baseline"
+            },
+            {
+              "sample_id": "H00",
+              "condition": "negative"
+            }
+          ],
+          "checks": [
+            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
+          ],
+          "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "F02-B2",
+              "condition": "stress-B2",
+              "review_batch": 2
+            },
+            {
+              "sample_id": "G03-B2",
+              "condition": "baseline-B2"
+            },
+            {
+              "sample_id": "H00-B2",
+              "condition": "negative-B2"
+            }
+          ],
+          "checks": [
+            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
+          ],
+          "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Create record with keys \"sample_id\" and \"condition\" containing the provided values. Print the sample ID, then the condition using dictionary lookup.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_id": "F02-B3",
+              "condition": "stress-B3",
+              "review_batch": 3
+            },
+            {
+              "sample_id": "G03-B3",
+              "condition": "baseline-B3"
+            },
+            {
+              "sample_id": "H00-B3",
+              "condition": "negative-B3"
+            }
+          ],
+          "checks": [
+            "ns.get(\"record\") == {\"sample_id\":case[\"sample_id\"],\"condition\":case[\"condition\"]}",
+            "output.strip().splitlines() == [case[\"sample_id\"],case[\"condition\"]]"
+          ],
+          "reference": "record = {\"sample_id\": sample_id, \"condition\": condition}\nprint(record[\"sample_id\"])\nprint(record[\"condition\"])",
+          "feedback": "Keys are names, values hold the metadata. Keep literal key strings distinct from the variable values assigned to them."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.navigate_nested_records",
+      "number": "020",
+      "title": "Navigate nested records",
+      "context": "Nested records separate specimen metadata from acquisition metadata. Follow the documented key path before reading a value.",
+      "example": {
+        "source": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+        "case": {
+          "experiment": {
+            "specimen": {
+              "sample_id": "A01"
+            },
+            "acquisition": {
+              "channel": "blue"
+            }
+          }
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "Why does experiment[\"sample_id\"] fail for this schema?",
+        "options": [
+          "sample_id is nested inside the specimen record.",
+          "Every record has a top-level sample_id.",
+          "A nested dictionary cannot hold text."
+        ],
+        "answer": 0,
+        "explanation": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+      },
+      "stages": {
+        "modify": {
+          "task": "Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
+          "starter": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = \"blue\"\nprint(f\"{sample} | {channel}\")",
+          "cases": [
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "A01"
+                },
+                "acquisition": {
+                  "channel": "blue"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "B02"
+                },
+                "acquisition": {
+                  "channel": "green"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "Z00"
+                },
+                "acquisition": {
+                  "channel": "red"
+                }
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"sample\") == case[\"experiment\"][\"specimen\"][\"sample_id\"]",
+            "ns.get(\"channel\") == case[\"experiment\"][\"acquisition\"][\"channel\"]",
+            "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
+          ],
+          "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+        },
+        "write": {
+          "task": "Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
+          "starter": "",
+          "cases": [
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "C03"
+                },
+                "acquisition": {
+                  "channel": "far-red"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "D04"
+                },
+                "acquisition": {
+                  "channel": "cyan"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "E05"
+                },
+                "acquisition": {
+                  "channel": "yellow"
+                }
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"sample\") == case[\"experiment\"][\"specimen\"][\"sample_id\"]",
+            "ns.get(\"channel\") == case[\"experiment\"][\"acquisition\"][\"channel\"]",
+            "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
+          ],
+          "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+        },
+        "debug": {
+          "task": "Repair the bug. Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
+          "starter": "sample = experiment[\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+          "cases": [
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "A01"
+                },
+                "acquisition": {
+                  "channel": "blue"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "B02"
+                },
+                "acquisition": {
+                  "channel": "green"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "Z00"
+                },
+                "acquisition": {
+                  "channel": "red"
+                }
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"sample\") == case[\"experiment\"][\"specimen\"][\"sample_id\"]",
+            "ns.get(\"channel\") == case[\"experiment\"][\"acquisition\"][\"channel\"]",
+            "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
+          ],
+          "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+        },
+        "transfer": {
+          "task": "Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
+          "starter": "",
+          "cases": [
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "F06"
+                },
+                "acquisition": {
+                  "channel": "magenta"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "G07"
+                },
+                "acquisition": {
+                  "channel": "blue"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "H08"
+                },
+                "acquisition": {
+                  "channel": "green"
+                }
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"sample\") == case[\"experiment\"][\"specimen\"][\"sample_id\"]",
+            "ns.get(\"channel\") == case[\"experiment\"][\"acquisition\"][\"channel\"]",
+            "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
+          ],
+          "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+        }
+      },
+      "hints": [
+        "Inspect the outer keys before looking for sample_id.",
+        "Two bracket lookups reach a value inside a nested dictionary.",
+        "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")"
+      ],
+      "transfers": [
+        {
+          "task": "Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
+          "starter": "",
+          "cases": [
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "F06"
+                },
+                "acquisition": {
+                  "channel": "magenta"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "G07"
+                },
+                "acquisition": {
+                  "channel": "blue"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "H08"
+                },
+                "acquisition": {
+                  "channel": "green"
+                }
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"sample\") == case[\"experiment\"][\"specimen\"][\"sample_id\"]",
+            "ns.get(\"channel\") == case[\"experiment\"][\"acquisition\"][\"channel\"]",
+            "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
+          ],
+          "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
+          "starter": "",
+          "cases": [
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "F06-B2"
+                },
+                "acquisition": {
+                  "channel": "magenta-2"
+                }
+              },
+              "review_batch": 2
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "G07-B2"
+                },
+                "acquisition": {
+                  "channel": "blue-2"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "H08-B2"
+                },
+                "acquisition": {
+                  "channel": "green-2"
+                }
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"sample\") == case[\"experiment\"][\"specimen\"][\"sample_id\"]",
+            "ns.get(\"channel\") == case[\"experiment\"][\"acquisition\"][\"channel\"]",
+            "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
+          ],
+          "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Read sample from experiment[\"specimen\"][\"sample_id\"] and channel from experiment[\"acquisition\"][\"channel\"]. Print sample | channel.",
+          "starter": "",
+          "cases": [
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "F06-B3"
+                },
+                "acquisition": {
+                  "channel": "magenta-3"
+                }
+              },
+              "review_batch": 3
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "G07-B3"
+                },
+                "acquisition": {
+                  "channel": "blue-3"
+                }
+              }
+            },
+            {
+              "experiment": {
+                "specimen": {
+                  "sample_id": "H08-B3"
+                },
+                "acquisition": {
+                  "channel": "green-3"
+                }
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"sample\") == case[\"experiment\"][\"specimen\"][\"sample_id\"]",
+            "ns.get(\"channel\") == case[\"experiment\"][\"acquisition\"][\"channel\"]",
+            "output.strip() == ns[\"sample\"]+\" | \"+ns[\"channel\"]"
+          ],
+          "reference": "sample = experiment[\"specimen\"][\"sample_id\"]\nchannel = experiment[\"acquisition\"][\"channel\"]\nprint(f\"{sample} | {channel}\")",
+          "feedback": "Read one key level at a time. A KeyError points to a missing key at the level being accessed."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.deduplicate_using_sets",
+      "number": "021",
+      "title": "Deduplicate using sets",
+      "context": "Sets deduplicate identifiers. Deduplicating names is not a rule for discarding biological observations, and a unique ID is not proof of an independent experimental unit.",
+      "example": {
+        "source": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
+        "case": {
+          "sample_ids": [
+            "A",
+            "B",
+            "A"
+          ]
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "Why sort before displaying a set?",
+        "options": [
+          "Set iteration order is not a reporting contract.",
+          "Sets retain every duplicate.",
+          "Sorting establishes biological independence."
+        ],
+        "answer": 0,
+        "explanation": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+      },
+      "stages": {
+        "modify": {
+          "task": "Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
+          "starter": "unique_ids = sample_ids\nprint(sorted(unique_ids))",
+          "cases": [
+            {
+              "sample_ids": [
+                "A",
+                "B",
+                "A"
+              ]
+            },
+            {
+              "sample_ids": []
+            },
+            {
+              "sample_ids": [
+                "Z",
+                "Z"
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"unique_ids\")) is set",
+            "ns[\"unique_ids\"] == set(case[\"sample_ids\"])",
+            "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
+          ],
+          "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+        },
+        "write": {
+          "task": "Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "D",
+                "C",
+                "D",
+                "E"
+              ]
+            },
+            {
+              "sample_ids": []
+            },
+            {
+              "sample_ids": [
+                "Q"
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"unique_ids\")) is set",
+            "ns[\"unique_ids\"] == set(case[\"sample_ids\"])",
+            "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
+          ],
+          "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+        },
+        "debug": {
+          "task": "Repair the bug. Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
+          "starter": "unique_ids = set(sample_ids)\nprint(sample_ids)",
+          "cases": [
+            {
+              "sample_ids": [
+                "A",
+                "B",
+                "A"
+              ]
+            },
+            {
+              "sample_ids": []
+            },
+            {
+              "sample_ids": [
+                "Z",
+                "Z"
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"unique_ids\")) is set",
+            "ns[\"unique_ids\"] == set(case[\"sample_ids\"])",
+            "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
+          ],
+          "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+        },
+        "transfer": {
+          "task": "Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "H",
+                "F",
+                "H",
+                "G"
+              ]
+            },
+            {
+              "sample_ids": []
+            },
+            {
+              "sample_ids": [
+                "R",
+                "R"
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"unique_ids\")) is set",
+            "ns[\"unique_ids\"] == set(case[\"sample_ids\"])",
+            "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
+          ],
+          "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+        }
+      },
+      "hints": [
+        "Choose a container that stores each identifier once.",
+        "Convert with set(sample_ids), then use sorted for display.",
+        "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))"
+      ],
+      "transfers": [
+        {
+          "task": "Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "H",
+                "F",
+                "H",
+                "G"
+              ]
+            },
+            {
+              "sample_ids": []
+            },
+            {
+              "sample_ids": [
+                "R",
+                "R"
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"unique_ids\")) is set",
+            "ns[\"unique_ids\"] == set(case[\"sample_ids\"])",
+            "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
+          ],
+          "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "H-B2",
+                "F-B2",
+                "H-B2",
+                "G-B2"
+              ],
+              "review_batch": 2
+            },
+            {
+              "sample_ids": []
+            },
+            {
+              "sample_ids": [
+                "R-B2",
+                "R-B2"
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"unique_ids\")) is set",
+            "ns[\"unique_ids\"] == set(case[\"sample_ids\"])",
+            "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
+          ],
+          "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Create unique_ids as a set of sample_ids. Print sorted(unique_ids) so the displayed output has a stable order.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "H-B3",
+                "F-B3",
+                "H-B3",
+                "G-B3"
+              ],
+              "review_batch": 3
+            },
+            {
+              "sample_ids": []
+            },
+            {
+              "sample_ids": [
+                "R-B3",
+                "R-B3"
+              ]
+            }
+          ],
+          "checks": [
+            "type(ns.get(\"unique_ids\")) is set",
+            "ns[\"unique_ids\"] == set(case[\"sample_ids\"])",
+            "output.strip() == str(sorted(set(case[\"sample_ids\"])))"
+          ],
+          "reference": "unique_ids = set(sample_ids)\nprint(sorted(unique_ids))",
+          "feedback": "A set removes duplicate values; sorted returns a deterministic list for display. Keep the original measurement records when deduplicating an ID inventory."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.express_a_simple_comprehension",
+      "number": "022",
+      "title": "Express a simple comprehension",
+      "context": "A simple comprehension expresses one transformation or filtering rule. Reuse the earlier field-QC boundary instead of introducing a new biological decision.",
+      "example": {
+        "source": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
+        "case": {
+          "signals": [
+            5,
+            10,
+            12
+          ],
+          "minimum": 10
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "Which values does the if clause retain?",
+        "options": [
+          "Only those for which the condition is True.",
+          "All values, reordered by the condition.",
+          "Only values strictly larger than any supplied boundary."
+        ],
+        "answer": 0,
+        "explanation": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+      },
+      "stages": {
+        "modify": {
+          "task": "Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
+          "starter": "accepted = [signal for signal in signals if signal > minimum]\nprint(accepted)",
+          "cases": [
+            {
+              "signals": [
+                5,
+                10,
+                12
+              ],
+              "minimum": 10
+            },
+            {
+              "signals": [],
+              "minimum": 0
+            },
+            {
+              "signals": [
+                0,
+                1,
+                0
+              ],
+              "minimum": 0
+            }
+          ],
+          "checks": [
+            "ns.get(\"accepted\") == [v for v in case[\"signals\"] if v>=case[\"minimum\"]]",
+            "output.strip() == str(ns[\"accepted\"])",
+            "has_node(tree,ast.ListComp)"
+          ],
+          "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+        },
+        "write": {
+          "task": "Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                8,
+                3,
+                8
+              ],
+              "minimum": 8
+            },
+            {
+              "signals": [],
+              "minimum": 4
+            },
+            {
+              "signals": [
+                4,
+                5,
+                6
+              ],
+              "minimum": 5
+            }
+          ],
+          "checks": [
+            "ns.get(\"accepted\") == [v for v in case[\"signals\"] if v>=case[\"minimum\"]]",
+            "output.strip() == str(ns[\"accepted\"])",
+            "has_node(tree,ast.ListComp)"
+          ],
+          "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+        },
+        "debug": {
+          "task": "Repair the bug. Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
+          "starter": "accepted = [signal for signal in signals if signal < minimum]\nprint(accepted)",
+          "cases": [
+            {
+              "signals": [
+                5,
+                10,
+                12
+              ],
+              "minimum": 10
+            },
+            {
+              "signals": [],
+              "minimum": 0
+            },
+            {
+              "signals": [
+                0,
+                1,
+                0
+              ],
+              "minimum": 0
+            }
+          ],
+          "checks": [
+            "ns.get(\"accepted\") == [v for v in case[\"signals\"] if v>=case[\"minimum\"]]",
+            "output.strip() == str(ns[\"accepted\"])",
+            "has_node(tree,ast.ListComp)"
+          ],
+          "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+        },
+        "transfer": {
+          "task": "Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                20,
+                18,
+                20
+              ],
+              "minimum": 20
+            },
+            {
+              "signals": [],
+              "minimum": 6
+            },
+            {
+              "signals": [
+                2,
+                7,
+                4
+              ],
+              "minimum": 4
+            }
+          ],
+          "checks": [
+            "ns.get(\"accepted\") == [v for v in case[\"signals\"] if v>=case[\"minimum\"]]",
+            "output.strip() == str(ns[\"accepted\"])",
+            "has_node(tree,ast.ListComp)"
+          ],
+          "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+        }
+      },
+      "hints": [
+        "Translate the earlier filtering loop into one expression.",
+        "Use [signal for signal in signals if signal >= minimum].",
+        "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)"
+      ],
+      "transfers": [
+        {
+          "task": "Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                20,
+                18,
+                20
+              ],
+              "minimum": 20
+            },
+            {
+              "signals": [],
+              "minimum": 6
+            },
+            {
+              "signals": [
+                2,
+                7,
+                4
+              ],
+              "minimum": 4
+            }
+          ],
+          "checks": [
+            "ns.get(\"accepted\") == [v for v in case[\"signals\"] if v>=case[\"minimum\"]]",
+            "output.strip() == str(ns[\"accepted\"])",
+            "has_node(tree,ast.ListComp)"
+          ],
+          "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                22,
+                20,
+                22
+              ],
+              "minimum": 22,
+              "review_batch": 2
+            },
+            {
+              "signals": [],
+              "minimum": 8
+            },
+            {
+              "signals": [
+                4,
+                9,
+                6
+              ],
+              "minimum": 6
+            }
+          ],
+          "checks": [
+            "ns.get(\"accepted\") == [v for v in case[\"signals\"] if v>=case[\"minimum\"]]",
+            "output.strip() == str(ns[\"accepted\"])",
+            "has_node(tree,ast.ListComp)"
+          ],
+          "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Use a list comprehension to create accepted containing signals >= minimum, preserving input order. Print accepted.",
+          "starter": "",
+          "cases": [
+            {
+              "signals": [
+                23,
+                21,
+                23
+              ],
+              "minimum": 23,
+              "review_batch": 3
+            },
+            {
+              "signals": [],
+              "minimum": 9
+            },
+            {
+              "signals": [
+                5,
+                10,
+                7
+              ],
+              "minimum": 7
+            }
+          ],
+          "checks": [
+            "ns.get(\"accepted\") == [v for v in case[\"signals\"] if v>=case[\"minimum\"]]",
+            "output.strip() == str(ns[\"accepted\"])",
+            "has_node(tree,ast.ListComp)"
+          ],
+          "reference": "accepted = [signal for signal in signals if signal >= minimum]\nprint(accepted)",
+          "feedback": "The comprehension follows the same >= rule as the explicit loop. Preserve equality, input order and empty-list behavior."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.iterate_over_dictionary_records",
+      "number": "023",
+      "title": "Iterate over dictionary records",
+      "context": "Dictionary items provide the field identifier together with its count. Aggregating fields is descriptive; fields from one specimen remain subsamples.",
+      "example": {
+        "source": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
+        "case": {
+          "counts_by_field": {
+            "A01": 4,
+            "A02": 6
+          }
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "What does .items() supply to each iteration?",
+        "options": [
+          "A key and its corresponding value.",
+          "Only the numerical values.",
+          "A new biological replicate per field."
+        ],
+        "answer": 0,
+        "explanation": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+      },
+      "stages": {
+        "modify": {
+          "task": "Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
+          "starter": "total = 0\nfor field_id, count in counts_by_field.items():\n    total = count\nprint(total)",
+          "cases": [
+            {
+              "counts_by_field": {
+                "A01": 4,
+                "A02": 6
+              }
+            },
+            {
+              "counts_by_field": {}
+            },
+            {
+              "counts_by_field": {
+                "B01": 0
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sum(case[\"counts_by_field\"].values())",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.For) and has_method(tree,\"items\")"
+          ],
+          "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+        },
+        "write": {
+          "task": "Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
+          "starter": "",
+          "cases": [
+            {
+              "counts_by_field": {
+                "C01": 8,
+                "C02": 2,
+                "C03": 1
+              }
+            },
+            {
+              "counts_by_field": {}
+            },
+            {
+              "counts_by_field": {
+                "D01": 7
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sum(case[\"counts_by_field\"].values())",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.For) and has_method(tree,\"items\")"
+          ],
+          "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+        },
+        "debug": {
+          "task": "Repair the bug. Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
+          "starter": "total = 0\nfor field_id, count in counts_by_field:\n    total += count\nprint(total)",
+          "cases": [
+            {
+              "counts_by_field": {
+                "A01": 4,
+                "A02": 6
+              }
+            },
+            {
+              "counts_by_field": {}
+            },
+            {
+              "counts_by_field": {
+                "B01": 0
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sum(case[\"counts_by_field\"].values())",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.For) and has_method(tree,\"items\")"
+          ],
+          "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+        },
+        "transfer": {
+          "task": "Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
+          "starter": "",
+          "cases": [
+            {
+              "counts_by_field": {
+                "E01": 3,
+                "E02": 9
+              }
+            },
+            {
+              "counts_by_field": {}
+            },
+            {
+              "counts_by_field": {
+                "F01": 0,
+                "F02": 5
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sum(case[\"counts_by_field\"].values())",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.For) and has_method(tree,\"items\")"
+          ],
+          "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+        }
+      },
+      "hints": [
+        "Use the method that yields both names and counts.",
+        "Initialize total before the loop, then add count on each iteration.",
+        "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)"
+      ],
+      "transfers": [
+        {
+          "task": "Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
+          "starter": "",
+          "cases": [
+            {
+              "counts_by_field": {
+                "E01": 3,
+                "E02": 9
+              }
+            },
+            {
+              "counts_by_field": {}
+            },
+            {
+              "counts_by_field": {
+                "F01": 0,
+                "F02": 5
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sum(case[\"counts_by_field\"].values())",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.For) and has_method(tree,\"items\")"
+          ],
+          "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+        },
+        {
+          "task": "Fresh acquisition batch 2. Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
+          "starter": "",
+          "cases": [
+            {
+              "counts_by_field": {
+                "E01-B2": 5,
+                "E02-B2": 11
+              },
+              "review_batch": 2
+            },
+            {
+              "counts_by_field": {}
+            },
+            {
+              "counts_by_field": {
+                "F01-B2": 2,
+                "F02-B2": 7
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sum(case[\"counts_by_field\"].values())",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.For) and has_method(tree,\"items\")"
+          ],
+          "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+        },
+        {
+          "task": "Fresh acquisition batch 3. Iterate over counts_by_field.items(), unpacking field_id and count. Accumulate counts in total and print total. An empty record should give zero.",
+          "starter": "",
+          "cases": [
+            {
+              "counts_by_field": {
+                "E01-B3": 6,
+                "E02-B3": 12
+              },
+              "review_batch": 3
+            },
+            {
+              "counts_by_field": {}
+            },
+            {
+              "counts_by_field": {
+                "F01-B3": 3,
+                "F02-B3": 8
+              }
+            }
+          ],
+          "checks": [
+            "ns.get(\"total\") == sum(case[\"counts_by_field\"].values())",
+            "printed_number(output,ns[\"total\"])",
+            "has_node(tree,ast.For) and has_method(tree,\"items\")"
+          ],
+          "reference": "total = 0\nfor field_id, count in counts_by_field.items():\n    total += count\nprint(total)",
+          "feedback": "Iterating directly over a dictionary yields keys. items() supplies key-value pairs that can be unpacked."
+        }
+      ]
+    },
+    {
+      "id": "bps3.m02.pair_related_arrays_with_zip",
+      "number": "024",
+      "title": "Pair related arrays with zip",
+      "context": "zip pairs observations by position and stops at the shorter input. Check lengths before pairing specimen IDs and counts; silently truncating an acquisition record loses data.",
+      "example": {
+        "source": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+        "case": {
+          "sample_ids": [
+            "A",
+            "B"
+          ],
+          "counts": [
+            4,
+            6
+          ]
+        }
+      },
+      "predict": "Predict the output and explain which input values determine it.",
+      "investigate": {
+        "question": "Why compare lengths before zip?",
+        "options": [
+          "zip would silently truncate unequal inputs.",
+          "zip always raises an error on unequal lengths.",
+          "Matching lengths proves IDs refer to the correct specimens."
+        ],
+        "answer": 0,
+        "explanation": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+      },
+      "stages": {
+        "modify": {
+          "task": "When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
+          "starter": "paired = []\nfor sample, count in zip(sample_ids, counts):\n    paired.append((sample, count))\nprint(paired)",
+          "cases": [
+            {
+              "sample_ids": [
+                "A",
+                "B"
+              ],
+              "counts": [
+                4,
+                6
+              ]
+            },
+            {
+              "sample_ids": [],
+              "counts": []
+            },
+            {
+              "sample_ids": [
+                "X",
+                "Y"
+              ],
+              "counts": [
+                1
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"paired\",\"missing\") == (list(zip(case[\"sample_ids\"],case[\"counts\"])) if len(case[\"sample_ids\"])==len(case[\"counts\"]) else None)",
+            "output.strip() == str(ns[\"paired\"])",
+            "has_call(tree,\"zip\")"
+          ],
+          "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+        },
+        "write": {
+          "task": "When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "C",
+                "D",
+                "E"
+              ],
+              "counts": [
+                0,
+                8,
+                2
+              ]
+            },
+            {
+              "sample_ids": [],
+              "counts": []
+            },
+            {
+              "sample_ids": [
+                "Q"
+              ],
+              "counts": [
+                1,
+                2
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"paired\",\"missing\") == (list(zip(case[\"sample_ids\"],case[\"counts\"])) if len(case[\"sample_ids\"])==len(case[\"counts\"]) else None)",
+            "output.strip() == str(ns[\"paired\"])",
+            "has_call(tree,\"zip\")"
+          ],
+          "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+        },
+        "debug": {
+          "task": "Repair the bug. When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
+          "starter": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for count, sample in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+          "cases": [
+            {
+              "sample_ids": [
+                "A",
+                "B"
+              ],
+              "counts": [
+                4,
+                6
+              ]
+            },
+            {
+              "sample_ids": [],
+              "counts": []
+            },
+            {
+              "sample_ids": [
+                "X",
+                "Y"
+              ],
+              "counts": [
+                1
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"paired\",\"missing\") == (list(zip(case[\"sample_ids\"],case[\"counts\"])) if len(case[\"sample_ids\"])==len(case[\"counts\"]) else None)",
+            "output.strip() == str(ns[\"paired\"])",
+            "has_call(tree,\"zip\")"
+          ],
+          "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+        },
+        "transfer": {
+          "task": "When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "F",
+                "G"
+              ],
+              "counts": [
+                7,
+                3
+              ]
+            },
+            {
+              "sample_ids": [],
+              "counts": []
+            },
+            {
+              "sample_ids": [
+                "H",
+                "I"
+              ],
+              "counts": [
+                5
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"paired\",\"missing\") == (list(zip(case[\"sample_ids\"],case[\"counts\"])) if len(case[\"sample_ids\"])==len(case[\"counts\"]) else None)",
+            "output.strip() == str(ns[\"paired\"])",
+            "has_call(tree,\"zip\")"
+          ],
+          "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+        }
+      },
+      "hints": [
+        "Check the lengths before creating a paired list.",
+        "Use None for a mismatch; only zip and append tuples when lengths match.",
+        "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)"
+      ],
+      "transfers": [
+        {
+          "task": "When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "F",
+                "G"
+              ],
+              "counts": [
+                7,
+                3
+              ]
+            },
+            {
+              "sample_ids": [],
+              "counts": []
+            },
+            {
+              "sample_ids": [
+                "H",
+                "I"
+              ],
+              "counts": [
+                5
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"paired\",\"missing\") == (list(zip(case[\"sample_ids\"],case[\"counts\"])) if len(case[\"sample_ids\"])==len(case[\"counts\"]) else None)",
+            "output.strip() == str(ns[\"paired\"])",
+            "has_call(tree,\"zip\")"
+          ],
+          "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+        },
+        {
+          "task": "Fresh acquisition batch 2. When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "F2",
+                "G2"
+              ],
+              "counts": [
+                9,
+                5
+              ],
+              "review_batch": 2
+            },
+            {
+              "sample_ids": [],
+              "counts": []
+            },
+            {
+              "sample_ids": [
+                "H2",
+                "I2"
+              ],
+              "counts": [
+                7
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"paired\",\"missing\") == (list(zip(case[\"sample_ids\"],case[\"counts\"])) if len(case[\"sample_ids\"])==len(case[\"counts\"]) else None)",
+            "output.strip() == str(ns[\"paired\"])",
+            "has_call(tree,\"zip\")"
+          ],
+          "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+        },
+        {
+          "task": "Fresh acquisition batch 3. When sample_ids and counts have equal lengths, use zip to build paired as a list of (sample, count) tuples. Otherwise set paired = None to signal an invalid pairing. Print paired. None means no valid paired record was created.",
+          "starter": "",
+          "cases": [
+            {
+              "sample_ids": [
+                "F3",
+                "G3"
+              ],
+              "counts": [
+                10,
+                6
+              ],
+              "review_batch": 3
+            },
+            {
+              "sample_ids": [],
+              "counts": []
+            },
+            {
+              "sample_ids": [
+                "H3",
+                "I3"
+              ],
+              "counts": [
+                8
+              ]
+            }
+          ],
+          "checks": [
+            "ns.get(\"paired\",\"missing\") == (list(zip(case[\"sample_ids\"],case[\"counts\"])) if len(case[\"sample_ids\"])==len(case[\"counts\"]) else None)",
+            "output.strip() == str(ns[\"paired\"])",
+            "has_call(tree,\"zip\")"
+          ],
+          "reference": "paired = None\nif len(sample_ids) == len(counts):\n    paired = []\n    for sample, count in zip(sample_ids, counts):\n        paired.append((sample, count))\nprint(paired)",
+          "feedback": "Equal length is a necessary positional-pairing check, not a proof of correct identity. Here unequal lengths return None rather than a partial table."
+        }
+      ]
     }
-  ]
+  ],
+  "pilot_count": 15
 }

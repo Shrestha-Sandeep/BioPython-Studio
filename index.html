@@ -4,10 +4,10 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Learn scientific Python through prediction, investigation and independent practice.">
 <title>BioPython Studio — Scientific Python</title>
-<link rel="stylesheet" href="./styles.css?v=v3-pilot-2">
+<link rel="stylesheet" href="./styles.css?v=v3-foundations-1">
 </head>
 <body>
-<header class="sitebar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">B</span><span>BioPython <strong>Studio</strong></span></a><span class="site-progress" id="pilot-progress">15-activity pilot</span></header>
+<header class="sitebar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">B</span><span>BioPython <strong>Studio</strong></span></a><span class="site-progress" id="pilot-progress">Foundations preview</span></header>
 <main class="app pilot-app">
 <p id="storage-warning" class="feedback error" role="alert" hidden></p>
 <div class="work-layout">
@@ -15,7 +15,7 @@
 <details id="path-menu"><summary>Learning path</summary><nav id="activity-list" aria-label="Pilot activities"></nav></details>
 <details class="lesson-bottom"><summary>Optional pathways &amp; progress</summary>
 <label for="pathway">Explore a pathway</label><select id="pathway"><option value="microscopy">Microscopy · recommended</option><option value="sequence">Sequence / NGS · optional</option><option value="ml">Machine learning · optional</option></select>
-<p>156 competencies are planned. This preview implements the first 15. Readiness follows each skill’s prerequisites.</p><div id="path-readiness"></div>
+<p>156 competencies are planned. This preview implements the first 28. Readiness follows each skill’s prerequisites.</p><div id="path-readiness"></div>
 <p id="legacy-summary"></p><a href="./legacy.html">Open the existing 61 lessons and drafts →</a>
 <div class="backup-actions"><button id="export-progress" class="small-button">Export progress</button><label class="small-button" for="import-progress">Import progress</label><input id="import-progress" type="file" accept="application/json" hidden></div>
 <p id="backup-status" role="status"></p>
@@ -32,6 +32,16 @@
 <p>Human Protein Atlas · Thul et al., Science (2017) · <a href="https://www.proteinatlas.org/about/licence" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. RGB JPEG visualization; no raw calibration or validated object labels.</p>
 <a id="image-source" target="_blank" rel="noopener noreferrer">Original publisher image ↗</a> <button id="image-retry" class="small-button" hidden>Retry image</button>
 </aside>
+<details id="notebook-lab" class="notebook-lab" hidden>
+<summary>Try a two-cell notebook kernel</summary>
+<p>Run the analysis cell before setup to see the dependency. Then run setup and analysis. Edit the setup value and run analysis again before rerunning setup. Finally restart the kernel and run both cells in order.</p>
+<p>This lab keeps values between cell runs. Assessment checks start fresh. Reloading the page starts a new lab kernel; your cell drafts are saved.</p>
+<label for="notebook-setup">Setup cell</label><textarea id="notebook-setup" spellcheck="false" aria-label="Notebook setup cell"></textarea><button id="run-setup" class="small-button">Run setup cell</button>
+<label for="notebook-analysis">Analysis cell</label><textarea id="notebook-analysis" spellcheck="false" aria-label="Notebook analysis cell"></textarea><button id="run-analysis" class="small-button">Run analysis cell</button>
+<div class="backup-actions"><button id="restart-kernel" class="small-button">Restart kernel</button><button id="download-notebook" class="small-button">Download notebook</button></div>
+<pre id="notebook-output" role="status" aria-live="polite">Kernel starts empty. No cells have run.</pre>
+<p>Open the downloaded .ipynb in Jupyter, run all cells, then restart and run all again. The download contains your code and no precomputed outputs.</p>
+</details>
 <section class="code-panel pilot-workspace" aria-label="Activity workspace">
 <div id="prediction-panel" hidden><pre id="prediction-code"></pre><label for="prediction">Your prediction (saved before you run)</label><textarea id="prediction" rows="3" maxlength="2000"></textarea><button id="save-prediction" class="main-button">Save prediction →</button></div>
 <div id="investigate-panel" hidden><fieldset><legend id="investigate-question"></legend><div id="investigate-options"></div></fieldset><button id="check-explanation" class="main-button">Check explanation</button></div>
@@ -48,7 +58,13 @@
 </section>
 <section id="activity-complete" class="mission-brief" hidden><p id="completion-message"></p><button id="next-activity" class="main-button">Next activity →</button><button id="start-review" class="small-button" hidden>Try delayed transfer</button></section>
 <details class="lesson-bottom"><summary>Learning notes &amp; sources</summary><p id="learning-note"></p><p id="legacy-history"></p><a href="https://www.pythonforbiologists.org/" target="_blank" rel="noopener noreferrer">Python for Biologists</a> · <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener noreferrer">Python Data Science Handbook</a> · <a href="./docs/CURRICULUM_V3_FROZEN.md">Frozen v3 curriculum</a></details>
+<details class="lesson-bottom" id="activity-feedback"><summary>Feedback on this activity</summary>
+<p>Your feedback stays in this browser and in progress exports. It does not change mastery evidence.</p>
+<label for="feedback-clarity">How clear was the activity?</label><select id="feedback-clarity"><option value="">Choose a response</option><option value="clear">Clear</option><option value="needs-example">Needs more explanation or an example</option><option value="technical-issue">A technical issue blocked me</option></select>
+<label for="feedback-note">What helped or caused difficulty? (optional)</label><textarea id="feedback-note" rows="3" maxlength="2000"></textarea>
+<button id="save-activity-feedback" class="small-button">Save feedback</button><p id="activity-feedback-status" role="status"></p>
+</details>
 </section></div>
 </main>
-<script src="./learning-state.js?v=v3-pilot-2"></script><script src="./pilot.js?v=v3-pilot-2"></script>
+<script src="./learning-state.js?v=v3-foundations-1"></script><script src="./pilot.js?v=v3-foundations-1"></script>
 </body></html>

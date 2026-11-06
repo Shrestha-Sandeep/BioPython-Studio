@@ -390,3 +390,10 @@ The syllabus, graph, competency IDs and preservation map above are unchanged. Th
 The Python runtime and source-image portions of G0 have browser evidence: cold Pyodide execution, reload persistence, original HPA CORS images and NumPy/SciPy/scikit-image/Biopython/scikit-learn tasks ran successfully. The Vercel preview requires authentication; deployed HTML/JS/CSS were retrieved through the authenticated Vercel connector and relayed unchanged into Chromium at that origin. Worker execution, runtime/package downloads and publisher image requests were real and unmocked. Direct authenticated navigation to the protected preview remains an access limitation; this is not a production release sign-off.
 
 Automated pilot walkthrough and 25/61-record preservation fixtures exercise G1/G2 mechanics. Evaluation with a real learner and genuinely elapsed delayed transfer is still required. The three transfer prompts are finite; after they have been attempted the UI does not recycle them into new retention claims. Future expansion follows the unchanged graph and G3–G5 gates. See [TEST_REPORT.md](../TEST_REPORT.md) for reproducible verification and remaining release limits.
+
+
+### Foundation continuation — development only
+
+The separate branch `feature/v3-foundations-collections` extends the unchanged pilot with the next 13 entries in `recommended_default_route`: 004, 009, 013, 014, 015, 017, 018, 019, 020, 021, 022, 023 and 024. There are 28 implemented v3 activities and 128 still planned. No IDs, prerequisites, legacy aliases, default-route order or optional-path membership changed.
+
+The notebook-workflow competency now demonstrates real persistent Python cell state, a fresh Worker/runtime on kernel restart, isolated clean-state assessments and an unexecuted Jupyter-compatible notebook export. This is a partial G3 handoff; local environment/terminal/Git competencies remain upcoming. Automated usability review corrected changed-input traceback display, untouched-record import restoration and due-review discovery. Human learner evaluation and actual elapsed delayed retention remain outstanding. Neither development PR is production approval.

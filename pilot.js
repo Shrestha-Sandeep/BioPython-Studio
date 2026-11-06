@@ -4,13 +4,15 @@ const el = id => document.getElementById(id);
 const phases = ['predict','run','investigate','modify','write','debug'];
 const labels = {predict:'Predict',run:'Run',investigate:'Investigate',modify:'Modify',write:'Write',debug:'Debug / transfer',transfer:'Delayed transfer'};
 let manifest, catalog, state, aliases, activity, skill, worker, requestId=0, busy=false, storageBlocked=false;
+const notebookDefaults={setup:'specimen = "CTRL-A01"\nfield_count = 3',analysis:'print(specimen)\nprint(field_count)'};
 const source = 'https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg';
 let imageLoaded=false, imagePending=false, imageURL=null;
-function pythonValue(value) {
+function pythonValue(value,kind) {
+  if(kind==='tuple')return '('+value.map(v=>pythonValue(v)).join(', ')+(value.length===1?',':'')+')';
   if(value===null)return 'None';
   if(value===true)return 'True';
   if(value===false)return 'False';
-  if(Array.isArray(value))return '['+value.map(pythonValue).join(', ')+']';
+  if(Array.isArray(value))return '['+value.map(v=>pythonValue(v)).join(', ')+']';
   if(typeof value==='object')return '{'+Object.entries(value).map(([k,v])=>JSON.stringify(k)+': '+pythonValue(v)).join(', ')+'}';
   return JSON.stringify(value);
 }
@@ -37,8 +39,9 @@ function save() {
 function draftKey() { return skill.stage; }
 function setBusy(value) {
   busy=value;
-  for (const id of ['pilot-run','restore-starter','pilot-hint','phase-back','phase-next','next-activity','start-review','save-prediction','check-explanation']) el(id).disabled=value;
+  for (const id of ['pilot-run','restore-starter','pilot-hint','phase-back','phase-next','next-activity','start-review','save-prediction','check-explanation','run-setup','run-analysis','restart-kernel','download-notebook']) el(id).disabled=value;
   el('pilot-editor').readOnly=value || skill.stage==='run';
+  el('notebook-setup').readOnly=value;el('notebook-analysis').readOnly=value;
   if(!value){el('pilot-hint').disabled=(skill.hints[skill.stage]||0)>=3;el('pilot-run').disabled=skill.stage==='transfer'&&!!skill.passed.transfer;}
   renderNavigation();updateReviewReminder();
 }
@@ -77,7 +80,7 @@ function renderNavigation() {
     button.title=button.disabled?'Complete the actual prerequisite activities first.':a.title;
     button.onclick=()=>select(a.id);nav.append(button);
   });
-  el('pilot-progress').textContent=`${catalog.activities.filter(a=>state.skills[a.id]?.guidedAt).length} of 15 activities practiced`;
+  el('pilot-progress').textContent=`${catalog.activities.filter(a=>state.skills[a.id]?.guidedAt).length} of ${catalog.activities.length} activities practiced`;
   const route=el('pathway').value==='sequence'?manifest.optional_sequence_route:el('pathway').value==='ml'?manifest.optional_ml_route:manifest.recommended_default_route;
   const out=el('path-readiness');out.replaceChildren();
   for (const num of route) {
@@ -96,7 +99,7 @@ function select(id) {
 }
 function render() {
   const stage=skill.stage, index=catalog.activities.indexOf(activity);
-  el('activity-position').textContent=`Activity ${index+1} of 15 · Microscopy-first foundations`;
+  el('activity-position').textContent=`Activity ${index+1} of ${catalog.activities.length} · Microscopy-first foundations`;
   el('activity-title').textContent=activity.title;el('activity-context').textContent=activity.context;
   el('evidence').textContent=S.evidence(skill);el('evidence').className='pill '+(skill.independentAt?'verified':'guided');
   const track=el('phase-track');track.replaceChildren();
@@ -114,7 +117,7 @@ function render() {
   if(coding) {
     const spec=stage==='run'?{starter:activity.example.source,cases:[activity.example.case],input_types:activity.example.input_types||{}}:stage==='transfer'?activity.transfers[skill.activeReview??0]:activity.stages[stage];
     el('pilot-editor').value=skill.drafts[stage] ?? spec.starter;el('pilot-editor').readOnly=stage==='run';
-    el('provided-data').textContent=Object.entries(spec.cases[0]).map(([key,value])=>`${key}${spec.input_types?.[key]?" ("+spec.input_types[key]+")":""} = ${pythonValue(value)}`).join('\n');
+    el('provided-data').textContent=Object.entries(spec.cases[0]).map(([key,value])=>`${key}${spec.input_types?.[key]?" ("+spec.input_types[key]+")":""} = ${pythonValue(value,spec.input_types?.[key])}`).join('\n');
     el('pilot-run').textContent=stage==='run'?'Run worked example ▶':'Run & check Python ▶';
     el('restore-starter').hidden=stage==='run';
   }
@@ -134,6 +137,9 @@ function render() {
   el('pilot-run').disabled=stage==='transfer'&&!!skill.passed.transfer;
   el('context-image').hidden=!['001','071'].includes(activity.number);el('image-source').href=source;
   if(!el('context-image').hidden)loadImage();
+  el('notebook-lab').hidden=activity.number!=='004'||['write','transfer','predict'].includes(stage);
+  for(const cell of ['setup','analysis'])el('notebook-'+cell).value=skill.drafts['notebook.'+cell]??notebookDefaults[cell];
+  el('feedback-clarity').value=skill.feedback?.clarity||'';el('feedback-note').value=skill.feedback?.note||'';el('activity-feedback-status').textContent='';
   el('learning-note').textContent=activity.investigate.explanation;
   const history=aliases[activity.id]||[];
   el('legacy-history').textContent=history.length?`Preserved historical records: ${[...new Set(history.map(x=>x.legacyId))].join(', ')}. They do not award v3 mastery. Access the original drafts through the existing lessons.`:'';
@@ -150,7 +156,7 @@ async function runPython() {
   el('pilot-output-area').hidden=false;el('pilot-output').textContent='Executing real Python…';el('pilot-traceback').hidden=true;el('pilot-runtime').textContent='Starting Python…';el('pilot-feedback').hidden=true;
   const seq=++requestId;let timer;
   try {
-    worker ||= new Worker('./worker.js?v=v3-pilot-2');
+    worker ||= new Worker('./worker.js?v=v3-foundations-1');
     const result=await new Promise((resolve,reject)=>{
       timer=setTimeout(()=>{worker.terminate();worker=null;reject(new Error('Python exceeded the time limit. Retry after checking for an infinite loop.'));},120000);
       worker.onmessage=event=>{const msg=event.data;if(msg.type==='status'){el('pilot-runtime').textContent=msg.message;return;}if(msg.requestId!==seq)return;clearTimeout(timer);if(msg.type==='error')reject(new Error(msg.message));else resolve(msg);};
@@ -176,6 +182,35 @@ async function runPython() {
   } catch(error){feedback(error.message+' No result was simulated.');el('pilot-output').textContent='Execution unavailable.';}
   finally {clearTimeout(timer);setBusy(false);el('pilot-runtime').textContent='Python runs on this device';}
 }
+async function notebookRun(cell,reset=false) {
+  if(busy)return;
+  const code=reset?'':el('notebook-'+cell).value;
+  if(!reset){skill.drafts['notebook.'+cell]=code;save();}
+  if(reset&&worker){worker.terminate();worker=null;}
+  setBusy(true);const seq=++requestId;let timer;
+  el('notebook-output').textContent=reset?'Restarting kernel…':'Running cell…';
+  try {
+    worker ||= new Worker('./worker.js?v=v3-foundations-1');
+    const result=await new Promise((resolve,reject)=>{
+      timer=setTimeout(()=>{worker.terminate();worker=null;reject(new Error('Notebook cell exceeded the time limit; the lab kernel was stopped.'));},120000);
+      worker.onmessage=event=>{const msg=event.data;if(msg.type==='status'){el('notebook-output').textContent=msg.message;return;}if(msg.requestId!==seq)return;if(msg.type==='error')reject(new Error(msg.message));else resolve(msg);};
+      worker.onerror=()=>{worker.terminate();worker=null;reject(new Error('The notebook kernel could not load. Retry after checking the connection.'));};
+      worker.postMessage({type:'notebook',requestId:seq,source:code,reset});
+    });
+    const report=result.cases?.[0];
+    el('notebook-output').textContent=reset?result.message:report?.error?report.error+'\n'+result.message:report?.output?.trim()||'(Cell ran without printed output)';
+  }catch(error){el('notebook-output').textContent=error.message+' No output was simulated.';}
+  finally{clearTimeout(timer);setBusy(false);}
+}
+for(const cell of ['setup','analysis']) {
+  el('run-'+cell).onclick=()=>notebookRun(cell);
+  el('notebook-'+cell).oninput=()=>{skill.drafts['notebook.'+cell]=el('notebook-'+cell).value;save();};
+}
+el('restart-kernel').onclick=()=>notebookRun(null,true);
+el('download-notebook').onclick=()=>{
+  const notebook={nbformat:4,nbformat_minor:5,metadata:{kernelspec:{display_name:'Python 3',language:'python',name:'python3'},language_info:{name:'python'}},cells:[{id:'workflow-notes',cell_type:'markdown',metadata:{},source:['# BioPython Studio: notebook workflow\n','Run setup before analysis. Restart the kernel and Run All to check reproducibility. These are authored teaching values.\n']},...['setup','analysis'].map(cell=>({id:cell,cell_type:'code',metadata:{},execution_count:null,outputs:[],source:el('notebook-'+cell).value.split(/(?<=\n)/)}))]};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(notebook,null,2)],{type:'application/x-ipynb+json'})),link=document.createElement('a');link.href=url;link.download='BioPython_Notebook_Workflow.ipynb';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
 el('save-prediction').onclick=()=>{const text=el('prediction').value.trim();if(!text){feedback('Write a prediction before running the example.');return;}skill.prediction=text;skill.passed.predict=true;skill.stage='run';save();render();};
 el('prediction').oninput=()=>{skill.prediction=el('prediction').value;save();};
 el('check-explanation').onclick=()=>{const checked=document.querySelector('input[name=explanation]:checked');if(!checked){feedback('Choose an explanation first.');return;}skill.explanation=Number(checked.value);skill.passed.investigate=skill.explanation===activity.investigate.answer;save();feedback(activity.investigate.explanation,skill.passed.investigate);el('phase-next').hidden=!skill.passed.investigate;};
@@ -188,6 +223,10 @@ el('restore-starter').onclick=()=>{if(busy)return;el('pilot-editor').value=activ
 el('pilot-hint').onclick=()=>{if(busy)return;skill.hints[skill.stage]=Math.min(3,(skill.hints[skill.stage]||0)+1);save();el('pilot-hint-text').textContent=activity.hints[skill.hints[skill.stage]-1];el('pilot-hint-text').hidden=false;el('pilot-hint').textContent=skill.hints[skill.stage]>=3?'All hints opened':`Hint ${skill.hints[skill.stage]+1} of 3`;el('pilot-hint').disabled=skill.hints[skill.stage]>=3;};
 el('next-activity').onclick=()=>{const next=catalog.activities[catalog.activities.indexOf(activity)+1];if(next)select(next.id);};
 el('start-review').onclick=()=>{if(busy||!S.due(skill))return;if((skill.reviewCursor||0)>=activity.transfers.length)return;skill.activeReview=skill.reviewCursor||0;skill.reviewCursor=skill.activeReview+1;skill.stage='transfer';skill.drafts.transfer='';skill.passed.transfer=false;save();render();};
+el('save-activity-feedback').onclick=()=>{
+  if(!el('feedback-clarity').value){el('activity-feedback-status').textContent='Choose a response before saving.';return;}
+  skill.feedback={clarity:el('feedback-clarity').value,note:el('feedback-note').value.trim(),at:Date.now()};save();el('activity-feedback-status').textContent='Feedback saved with your progress.';
+};
 el('pathway').onchange=renderNavigation;
 el('open-review').onclick=()=>{const next=dueActivities()[0];if(next&&!busy)select(next.id);};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateReviewReminder();});
@@ -195,7 +234,7 @@ setInterval(updateReviewReminder,60000);
 el('image-retry').onclick=loadImage;
 el('export-progress').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='biopython-studio-progress.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 el('import-progress').onchange=async event=>{try{if(busy)throw new Error('Finish the current Python run before importing progress.');const file=event.target.files[0];if(!file)return;if(file.size>10000000)throw new Error('Progress file is larger than 10 MB.');const incoming=S.validate(JSON.parse(await file.text()));state=S.merge(state,incoming);aliases=S.migrateAliases(state,manifest);save();select(state.current||activity.id);el('backup-status').textContent='Progress imported. Existing drafts were kept; conflicting imported records are preserved in the export archive.';}catch(error){el('backup-status').textContent=error.message;}finally{event.target.value='';}};
-document.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)&&!el('coding-panel').hidden){event.preventDefault();runPython();}});
+document.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){if(['notebook-setup','notebook-analysis'].includes(event.target.id)){event.preventDefault();notebookRun(event.target.id.replace('notebook-',''));}else if(!el('coding-panel').hidden){event.preventDefault();runPython();}}});
 async function boot() {
   try {
     const responses=await Promise.all([fetch('./curriculum/v3_manifest.json'),fetch('./curriculum/v3_pilot.json')]);

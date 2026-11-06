@@ -30,7 +30,8 @@ def test_worked_example_is_real_execution_including_intentional_traceback(activi
     else: assert result['ok'],result
 
 def test_pilot_order_and_unseen_delayed_inputs():
-    assert [a['number'] for a in CAT]==MANIFEST['recommended_first_15']
+    assert [a['number'] for a in CAT[:15]]==MANIFEST['recommended_first_15']
+    assert [a['number'] for a in CAT]==MANIFEST['recommended_default_route'][:28]
     done=set()
     for a in CAT:
         c=next(c for c in MANIFEST['competencies'] if c['id']==a['id'])
@@ -72,3 +73,26 @@ def test_each_delayed_prompt_is_novel_and_executes(activity):
         assert spec['cases'] not in seen
         assert evaluate(spec['reference'],spec)['ok']
         seen.append(spec['cases'])
+
+def test_notebook_kernel_retains_state_until_restart_and_isolates_assessment():
+    ns['NOTEBOOK_NAMESPACE']={}
+    run=lambda code,reset=False:json.loads(ns['notebook_json'](code,reset))
+    assert 'NameError' in run('print(field_count)')['cases'][0]['error']
+    assert run('field_count = 3')['ok']
+    assert run('print(field_count)')['cases'][0]['output'].strip()=='3'
+    assert run('field_count = 7')['ok']
+    assert run('print(field_count)')['cases'][0]['output'].strip()=='7'
+    # A normal assessment has no access to notebook kernel variables.
+    result=evaluate('print(field_count)',dict(cases=[{}],checks=[]),True)
+    assert not result['ok'] and 'NameError' in result['cases'][0]['error']
+    assert run('',True)['ok']
+    assert 'NameError' in run('print(field_count)')['cases'][0]['error']
+
+def test_notebook_saved_function_traceback_from_earlier_cell_does_not_crash_feedback():
+    ns['NOTEBOOK_NAMESPACE']={}
+    run=lambda code:json.loads(ns['notebook_json'](code))
+    assert run('\n\n\n\ndef fail():\n    return missing_value')['ok']
+    result=run('fail()')
+    assert not result['ok']
+    assert 'NameError' in result['cases'][0]['error']
+    assert 'earlier cell' in result['cases'][0]['error']
