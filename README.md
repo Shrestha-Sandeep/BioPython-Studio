@@ -15,6 +15,7 @@ Open http://localhost:8000. This build requires **no npm installation** for its 
 ## Witz source integration
 
 - The rebuild now audits **all 54 numbered exercises** from Witz's seven exercise notebooks. **47 are reachable** inside eight source-driven preview missions, one exercise at a time, with cumulative editable code.
+- **Twelve** original Witz worked-code excerpts are now available as a collapsed reference inside the relevant Learn screens, each linked to a precise source cell.
 - **Six** Witz notebook figure PNGs are bundled and load from the project itself, with exact source-cell attribution. The original microscopy TIFFs remain linked upstream and are **not bundled yet**.
 - Supporting references strengthen specific missing concepts (NumPy, biological files, segmentation validity and reproducibility) rather than duplicating the Witz teaching path.
 - The figures are visualization examples, **not calibrated numeric image files**. The real Python engine, image-array processing and grading remain subsequent work.
