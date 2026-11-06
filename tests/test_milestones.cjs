@@ -68,3 +68,19 @@ test('old drafts and new evaluation records survive progress import and conflict
  const merged=S.merge(S.fresh(),JSON.parse(JSON.stringify(incoming)));assert.deepEqual(merged.skills,incoming.skills);
  const local=S.fresh();S.record(local,key).drafts.write='local code';const conflict=S.merge(local,incoming);assert.equal(conflict.skills[key].drafts.write,'local code');assert.deepEqual(conflict.importArchive.find(x=>x.id===key).record.pilotIssueNotes,incoming.skills[key].pilotIssueNotes);
 });
+test('recommended review and wait dates honor a later independent attempt and resume the final prompt',()=>{
+ const state=complete(fixture()),c=M.summary(state,catalog,now).checkpoints[0],r=state.skills[c.id];
+ r.retainedAt=null;r.independentAt=start+M.DELAY/2;r.attempts.push({stage:'write',ok:true,assisted:false,at:r.independentAt,source:'late independent code'});
+ r.reviewAt=start+M.DELAY;r.activeReview=2;r.reviewCursor=3;r.passed.transfer=false;r.reviewPractice=false;r.stage='debug';
+ // No fresh prompts remain, but the unfinished final check can be resumed.
+ const action=M.next(state,catalog,manifest,start+2*M.DELAY);
+ assert.equal(action.kind,'transfer');assert.match(action.label,/Continue delayed/);
+ r.reviewCursor=2;r.activeReview=undefined;
+ const wait=M.next(state,catalog,manifest,start+M.DELAY+10);
+ assert.notEqual(wait.kind,'transfer');
+ // With the existing explanations reviewed against the new independent code,
+ // the recommendation is a wait at the corrected timestamp.
+ const code=M.sourceForReview(r,start+M.DELAY+10);r.pilotReflection={text:'New explanation',code,at:start+M.DELAY/2,review:{text:'New explanation',code,at:start+M.DELAY/2+1,input:true,reasoning:true,boundary:true}};
+ const next=M.next(state,catalog,manifest,start+M.DELAY+10);
+ assert.equal(next.kind,'wait');assert.equal(next.at,start+1.5*M.DELAY);
+});

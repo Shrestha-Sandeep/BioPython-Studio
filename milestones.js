@@ -1,7 +1,8 @@
 /* Pilot evaluation policy: reuse existing competencies; never award mastery here. */
 (function(root){
   'use strict';
-  const DELAY=24*60*60*1000;
+  const S=typeof module!=='undefined'&&module.exports?require('./learning-state.js'):root.LearningState;
+  const DELAY=S.DELAY;
   const goal='Independently write, debug and explain a reproducible microscopy analysis using real, appropriately documented data.';
   const probes=[
     {number:'008',label:'Build a specimen label',prompt:'Explain where the specimen ID and channel come from, how the label is built, and what would go wrong if you copied a fixed ID.'},
@@ -54,8 +55,8 @@
     if(practice)return {kind:'practice',id:practice.id,label:'Continue pilot: '+practice.title};
     for(const c of s.checkpoints.filter(c=>!c.retained)){
       const r=state.skills[c.id],a=pilot.find(a=>a.id===c.id);
-      if(r?.stage==='transfer'&&!r.passed.transfer&&!r.reviewPractice&&r.reviewAt<=now)return {kind:'transfer',id:c.id,label:'Continue delayed check: '+c.label};
-      if(r?.reviewAt<=now&&(r.reviewCursor||0)<a.transfers.length)return {kind:'transfer',id:c.id,label:'Try delayed check: '+c.label};
+      const action=S.reviewAction(r,a.transfers.length,now);
+      if(action.due&&!action.practice)return {kind:'transfer',id:c.id,label:(action.kind==='resume'?'Continue delayed check: ':'Try delayed check: ')+c.label};
     }
     const reflect=s.checkpoints.find(c=>!c.explanation);
     if(reflect)return {kind:'reflection',id:reflect.id,label:'Explain your code: '+reflect.label};
@@ -65,8 +66,8 @@
     if(review)return {kind:'review',id:review.id,label:'Review explanation: '+review.label};
     if(s.ready)return {kind:'report',label:'Export pilot evidence for sign-off'};
     const pending=s.checkpoints.filter(c=>!c.retained).map(c=>({c,r:state.skills[c.id],a:pilot.find(a=>a.id===c.id)}));
-    const wait=pending.filter(x=>x.r?.reviewAt>now&&(x.r.reviewCursor||0)<x.a.transfers.length).sort((a,b)=>a.r.reviewAt-b.r.reviewAt)[0];
-    if(wait)return {kind:'wait',id:wait.c.id,at:wait.r.reviewAt,label:'View the next scheduled review'};
+    const wait=pending.map(x=>({...x,at:S.reviewDueAt(x.r)})).filter(x=>x.at>now&&(x.r.reviewCursor||0)<x.a.transfers.length).sort((a,b)=>a.at-b.at)[0];
+    if(wait)return {kind:'wait',id:wait.c.id,at:wait.at,label:'View the next scheduled review'};
     return {kind:'blocked',label:'Review missing evidence or exhausted prompts'};
   }
   function report(state,catalog,manifest,now=Date.now()){
@@ -79,7 +80,7 @@
     function open(id,view){
       if(context().busy||!canOpen(id))return;
       navigate(id);$('study-tools').open=true;
-      if(view==='transfer'){if(context().skill.stage!=='transfer'||context().skill.passed.transfer||context().skill.reviewPractice)beginReview();return;}
+      if(view==='transfer'){beginReview();return;}
       if(view==='reflection'||view==='review'){
         $('pilot-reflection').open=true;if(view==='review')$('reflection-review').open=true;
         $('pilot-reflection').scrollIntoView({behavior:'smooth',block:'start'});

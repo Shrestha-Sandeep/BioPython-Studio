@@ -1,6 +1,6 @@
 # BioPython Studio — QA status
 
-**Verified:** 6 November 2026. **Scope:** source-audit branch `feature/v3-python-exercise-audit`, stacked on `feature/v3-pilot-milestone`, above the foundation/pilot branches, frozen v3 commit `87b87a9` and 61-lesson baseline `c6aaae5`. Production and curriculum PR #1 remain unmerged.
+**Verified:** 6 November 2026. **Scope:** review-reliability branch `fix/v3-delayed-review`, stacked on the Python source audit, above the foundation/pilot branches, frozen v3 commit `87b87a9` and 61-lesson baseline `c6aaae5`. Production and curriculum PR #1 remain unmerged.
 
 ## Repository reconciliation
 
@@ -12,7 +12,7 @@
 ## Automated verification
 
 - **256 CPython tests passed**, covering all historical assessments, wrong-answer rejection, actual Matplotlib output, companion notebook execution with a controlled image response, frozen 156-node graph, 28 activities and all three delayed-transfer input sets. Notebook mocking is limited to its existing controlled image response; it is not evidence of a live notebook HPA download.
-- **25 Node state/path/policy tests passed:** complete 25/61 legacy fixtures, byte-preserved snapshots, no inferred mastery, real local prerequisites for optional paths, assistance-aware evidence, delayed review, fresh-prompt requirements, lossless conflict archives and complete coverage of the 47 available Python-stage source records.
+- **32 Node state/path/policy tests passed:** complete 25/61 legacy fixtures, byte-preserved snapshots, no inferred mastery, real local prerequisites for optional paths, assistance-aware evidence, delayed review, fresh-prompt requirements, lossless conflict archives and complete coverage of the 47 available Python-stage source records. New checks cover late independent attempts, the exact eligibility boundary, preserved old timestamps, prompt exposure, review resumption/import and the final unfinished prompt.
 - JavaScript syntax and whitespace checks passed.
 - **Live Chromium pilot walkthrough passed all 28 activities** using a real Web Worker and Pyodide 0.28.3, including real `help`, intentional traceback, NumPy import and execution. There is no mocked Worker or simulated Python in this test.
 - Live pilot QA passed saved-state reload, hint-assisted versus independent evidence, delayed review with an advanced test clock, a second fresh transfer, completed-prompt replay prevention, genuine HPA image retry without draft loss, 1440/1024/390-pixel overflow checks and a 61-ID export/import → legacy-editor handoff. Clock advancement tests scheduling mechanics, not actual human retention.
@@ -85,3 +85,11 @@ All 47 distinct available Python-stage entries now have reviewed book/course sou
 Every assessment check in the 27 current Python activities has behavior-specific feedback, including all delayed prompts. Regression tests distinguish missing results, incorrect output and cutoff equality, and retain fallback behavior for older specs. Wrong image contents now fail even with plausible shape metadata; equivalent NumPy construction passes. Metadata dictionaries accept extra fields while missing/incorrect required fields fail. These checks run across all corresponding practice and delayed specs.
 
 The real Pyodide browser test additionally rejects those incorrect arrays and missing metadata, accepts extra metadata, displays precise feedback and resolves attribution on both current and historical pages. Read-only Run examples always display the code that will execute, while preserving earlier stored records. The existing live 28-activity walkthrough, HPA retry, notebook restart/export, 61-ID backup restoration, unlocked 78-entry path and milestone fixtures pass. Human evaluation and actual elapsed retention remain unverified.
+
+## First-session review reliability
+
+The learner has not started the pilot yet. This increment supplies no human teaching-effectiveness or retention results. Two software defects were reproduced before correction: a late independent attempt could receive a retained badge only 12 hours later, and reopening an unfinished review advanced to another prompt while clearing the editor. Earlier history remained archived, but the default action did not resume it.
+
+Eligibility now uses the latest of the scheduled review, guided practice plus 24 hours and independent work plus 24 hours. The badge, reminder, button labels and milestone recommendation use that policy. Old mistimed timestamps remain in saved records without awarding retention. A pending prompt exposed before new independent work remains practice. Reopening a pending check preserves its draft and cursor; this includes the final prompt after the fresh-prompt pool is exhausted. Existing early/exhausted practice stays open.
+
+Real-Pyodide browser QA uses an explicitly simulated clock and actual changed-input Python checks to verify late independent work, early practice, timer-driven labels, one-click reminders, cross-activity resumption, reload persistence, exact-boundary retention and the last pending prompt. The previous browser timing fixture now advances the clock instead of making a fresh attempt appear due by editing its stored date. These checks validate scheduling mechanics, not elapsed human retention. The next action is the learner's first session using the linked evaluation preview, followed by feedback and genuinely delayed checks.

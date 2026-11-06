@@ -19,6 +19,8 @@ A focused, beginner-to-applied **scientific Python training app for a biologist 
 
 Milestone 1 uses a small, explicit evaluation protocol for one learner:
 
+For a first session, [open the evaluation preview at the first activity](https://biopython-git-fix-v3-delayed-review-sunsstha-1695.vercel.app/?activity=bps3.m00.run_a_scientific_python_cell), make a prediction and run the example. Use the existing activity feedback control to record anything confusing. Progress & study tools recommends the next pilot activity. Use the same preview address throughout the evaluation: progress is stored per browser and site address. Export progress before changing devices or preview addresses.
+
 1. Practice the frozen first 15 activities; record confusion or technical blockers with the existing feedback control.
 2. Collect unassisted changed-input evidence for **008 (specimen labels), 025 (QC function), and 038 (array shape/axes)**. These are representative existing competencies, not three new lessons or a certification of all 15.
 3. For those same competencies, complete fresh delayed checks at least 24 hours after independent evidence. Hints and self-declared outside help count as assistance; assisted practice may need two review intervals. Failed/repeated prompts do not create retained evidence, and exhausted prompts require human follow-up.
@@ -31,7 +33,7 @@ Every development increment must identify **the milestone, the concrete learner 
 
 ## v3 development preview
 
-The current `feature/v3-python-exercise-audit` branch builds on `feature/v3-pilot-milestone`, above the foundation continuation and the unchanged frozen design in [PR #1](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/1). This work is a development preview; production and the curriculum PR remain unmerged.
+The current `fix/v3-delayed-review` evaluation branch builds on the Python source audit in `feature/v3-python-exercise-audit`, above the foundation continuation and the unchanged frozen design in [PR #1](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/1). This work is a development preview; production and the curriculum PR remain unmerged.
 
 - The preview includes **28 current activities**, plus preserved historical exercises in the same course menu. Predict, Run, Investigate, Modify, Write and Debug can be opened directly; navigation never awards completion. The first-15 pilot group remains available for evaluation, while `recommended_complete_route` defines the single visible course order. Authentic HPA microscopy is visible from the first activity.
 - A real Pyodide Worker executes examples and assessments, including traceback/help behavior, changed-input and edge checks, explicit floating-point input types, bounded loops, and progressive hints.
@@ -42,6 +44,7 @@ The current `feature/v3-python-exercise-audit` branch builds on `feature/v3-pilo
 - The continuation teaches ID parsing, range/enumerate, bounded while loops, break/continue, list copying, tuple unpacking, dictionaries/nested records, sets, comprehensions, dictionary iteration and length-checked zip pairing. It preserves original data during list edits and rejects silently truncated pairings.
 - Optional activity feedback records clarity/difficulty notes locally and in progress exports so a real learner can document pilot friction without awarding mastery.
 - Transfer practice is always available. Opening an early prompt records exposure and consumes that prompt from the fresh-review pool; it never awards independent or retained evidence. Exhausted prompts remain available for practice. Due reviews have a visible reminder. Failed checks show the actual failing input and traceback. Progress imports restore untouched landing records and the saved position; existing substantive drafts remain protected in conflicts.
+- A delayed check waits at least 24 hours after both guided practice and the independent attempt. Later independent work moves that date, and any previously exposed unfinished prompt remains practice. Reopening an unfinished check resumes its code and prompt instead of spending another prompt, including the final one. Reminders open/resume the check directly, and review labels update as the clock passes the due time. Earlier mistimed retention timestamps remain saved without displaying a retained badge.
 - V3 state lives in `biopython_studio_v3`. The original `biopython_studio_personal_v1` key stays intact; complete raw legacy snapshots, aliases, drafts and hint history are preserved. Legacy completion never awards v3 mastery. Export/import keeps conflicting records in an archive rather than overwriting local drafts. On another device, the [legacy page](legacy.html) can reopen imported historical drafts when the original key is absent.
 
 The frozen syllabus and [manifest](curriculum/v3_manifest.json) remain authoritative. Activity content is in `curriculum/v3_pilot.json`; state/graph rules are in `learning-state.js`; the UI is `pilot.js`; both old and new Python assessments execute in `worker.js`. No framework, backend account or AI service was introduced.

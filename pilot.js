@@ -17,11 +17,19 @@ function pythonValue(value,kind) {
   return JSON.stringify(value);
 }
 function dueActivities() {
-  return catalog.activities.filter(a=>S.due(state.skills[a.id]) && (state.skills[a.id].reviewCursor||0)<a.transfers.length && !(state.skills[a.id].stage==='transfer'&&!state.skills[a.id].passed.transfer&&!state.skills[a.id].reviewPractice))
-    .sort((a,b)=>state.skills[a.id].reviewAt-state.skills[b.id].reviewAt);
+  return catalog.activities.filter(a=>{const action=S.reviewAction(state.skills[a.id],a.transfers.length);return action.due&&!action.practice;})
+    .sort((a,b)=>S.reviewDueAt(state.skills[a.id])-S.reviewDueAt(state.skills[b.id]));
+}
+function updateReviewControls(){
+  if(!activity||!skill)return;
+  const action=S.reviewAction(skill,activity.transfers.length),fresh=(skill.reviewCursor||0)<activity.transfers.length;
+  el('completion-message').textContent=S.retained(skill)?'You demonstrated delayed transfer without assistance.':`Practice recorded as ${S.evidence(skill)}. ${action.kind==='resume'?'Your unfinished transfer check is saved.':!fresh?'All current transfer prompts have been attempted. More unseen checks are planned.':action.due?'A delayed, blank-editor transfer check is ready.':action.at?'Your delayed transfer check opens '+new Date(action.at).toLocaleString()+'.':'Transfer practice is open. Complete guided practice to schedule a delayed check.'}`;
+  el('start-review').hidden=false;
+  el('start-review').textContent=action.kind==='resume'?(action.practice?'Continue transfer practice':'Continue delayed check'):action.kind==='fresh'?'Start fresh delayed check':'Transfer practice';
 }
 function updateReviewReminder() {
   if(!catalog||!state)return;
+  updateReviewControls();
   const due=dueActivities();el('review-reminder').hidden=!due.length;
   el('review-summary').textContent=due.length?`${due.length} delayed review${due.length===1?' is':'s are'} ready. Next: ${due[0].title}.`:'';
   el('open-review').disabled=busy;goalUI?.renderGoal();
@@ -129,12 +137,10 @@ function render() {
   el('phase-back').hidden=stage==='predict'||stage==='transfer';
   el('phase-next').hidden=stage==='predict'||stage==='transfer'||stage==='debug';
   el('activity-complete').hidden=false;
-  const due=S.due(skill),freshReview=(skill.reviewCursor||0)<activity.transfers.length;
-  el('completion-message').textContent=skill.retainedAt?'You demonstrated delayed transfer without assistance.':`Practice recorded as ${S.evidence(skill)}. ${!freshReview?'All current transfer prompts have been attempted. More unseen checks are planned.':due?'A delayed, blank-editor transfer check is ready.':'Your delayed transfer check opens '+new Date(skill.reviewAt||Date.now()+S.DELAY).toLocaleString()+'.'}`;
+  updateReviewControls();
   const next=CoursePath.adjacent(coursePath,activity.id,1),previous=CoursePath.adjacent(coursePath,activity.id,-1);
   el('next-activity').textContent='Next exercise →';el('next-activity').hidden=!next;el('next-activity').disabled=busy;
   el('previous-activity').hidden=!previous;el('previous-activity').disabled=busy;
-  el('start-review').hidden=false;el('start-review').textContent=due&&freshReview?'Start fresh delayed check':'Transfer practice';
   el('pilot-run').disabled=false;
   el('context-image').hidden=!['001','071'].includes(activity.number);el('image-source').href=source;
   if(!el('context-image').hidden)loadImage();
@@ -156,7 +162,7 @@ async function runPython() {
   el('pilot-output-area').hidden=false;el('pilot-output').textContent='Executing real Python…';el('pilot-traceback').hidden=true;el('pilot-runtime').textContent='Starting Python…';el('pilot-feedback').hidden=true;
   const seq=++requestId;let timer;
   try {
-    worker ||= new Worker('./worker.js?v=v3-python-audit-1');
+    worker ||= new Worker('./worker.js?v=v3-delayed-review-1');
     const result=await new Promise((resolve,reject)=>{
       timer=setTimeout(()=>{worker.terminate();worker=null;reject(new Error('Python exceeded the time limit. Retry after checking for an infinite loop.'));},120000);
       worker.onmessage=event=>{const msg=event.data;if(msg.type==='status'){el('pilot-runtime').textContent=msg.message;return;}if(msg.requestId!==seq)return;clearTimeout(timer);if(msg.type==='error')reject(new Error(msg.message));else resolve(msg);};
@@ -190,7 +196,7 @@ async function notebookRun(cell,reset=false) {
   setBusy(true);const seq=++requestId;let timer;
   el('notebook-output').textContent=reset?'Restarting kernel…':'Running cell…';
   try {
-    worker ||= new Worker('./worker.js?v=v3-python-audit-1');
+    worker ||= new Worker('./worker.js?v=v3-delayed-review-1');
     const result=await new Promise((resolve,reject)=>{
       timer=setTimeout(()=>{worker.terminate();worker=null;reject(new Error('Notebook cell exceeded the time limit; the lab kernel was stopped.'));},120000);
       worker.onmessage=event=>{const msg=event.data;if(msg.type==='status'){el('notebook-output').textContent=msg.message;return;}if(msg.requestId!==seq)return;if(msg.type==='error')reject(new Error(msg.message));else resolve(msg);};
@@ -231,7 +237,7 @@ el('save-activity-feedback').onclick=()=>{
   skill.feedback={clarity:el('feedback-clarity').value,note:el('feedback-note').value.trim(),at:Date.now()};save();goalUI?.renderGoal();el('activity-feedback-status').textContent='Feedback saved with your progress.';
 };
 for(const button of document.querySelectorAll('[data-stage]'))button.onclick=()=>navigateCourse(CoursePath.available(coursePath).find(c=>c.stage===button.dataset.stage));
-el('open-review').onclick=()=>{const next=dueActivities()[0];if(next&&!busy)select(next.id);};
+el('open-review').onclick=()=>{const next=dueActivities()[0];if(next&&!busy){select(next.id);startReview();}};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateReviewReminder();});
 setInterval(updateReviewReminder,60000);
 el('image-retry').onclick=loadImage;
