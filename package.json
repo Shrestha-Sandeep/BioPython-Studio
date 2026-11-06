@@ -1,0 +1,9 @@
+{
+  "name": "biopython-studio-rebuild",
+  "private": true,
+  "type": "module",
+  "description": "Content-free UI-first BioPython Studio learning workspace",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  }
+}
