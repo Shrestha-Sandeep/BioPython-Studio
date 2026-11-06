@@ -124,7 +124,10 @@
     $("horizontal-resizer").hidden = !showImage;
     $("workspace-grid").classList.toggle("with-image", showImage);
     $("mode-label").textContent = showImage ? "Code + image viewer" : "Python editor";
+    $("page-title").textContent = showImage ? "Image analysis workspace" : STAGES[stage].title;
+    $("page-subtitle").textContent = showImage ? "Inspect your images alongside code and results." : STAGES[stage].subtitle;
     restoreEditor();
+    requestAnimationFrame(fitImageDisplays);
     if (cm) requestAnimationFrame(() => cm.refresh());
   }
   function chooseStage(next) {
@@ -242,6 +245,22 @@
     });
   }
 
+  function fitImageDisplays() {
+    if (!hasImage || !originalImage) return;
+    for (const [frameID, imageID, dimensions] of [
+      ["source-image-frame", "image-preview", originalImage],
+      ["comparison-image-frame", "comparison-preview", comparisonImage]
+    ]) {
+      if (!dimensions || $(frameID).hidden) continue;
+      const frame = $(frameID);
+      const availableWidth = frame.clientWidth, availableHeight = frame.clientHeight;
+      if (!availableWidth || !availableHeight) continue;
+      const fraction = Math.min(availableWidth / dimensions.width, availableHeight / dimensions.height);
+      const image = $(imageID);
+      image.style.width = Math.max(1, Math.floor(dimensions.width * fraction)) + "px";
+      image.style.height = Math.max(1, Math.floor(dimensions.height * fraction)) + "px";
+    }
+  }
   function transformImage() {
     const transform = "translate(" + imageX + "px," + imageY + "px) scale(" + imageScale + ")";
     $("image-preview").style.transform = transform;
@@ -323,6 +342,7 @@
       $("compare-toggle").disabled = false;
       updateComparison();
       resetImageView();
+      requestAnimationFrame(fitImageDisplays);
     };
     checker.onerror = () => {
       URL.revokeObjectURL(candidate);
@@ -338,7 +358,8 @@
     canvas.classList.remove("comparison-side", "comparison-overlay", "comparison-wipe");
     const valid = compareEnabled && hasImage && !!comparisonImage;
     $("comparison-image-frame").hidden = !valid;
-    if (!valid) return;
+    $("opacity-tools").hidden = true;
+    if (!valid) { requestAnimationFrame(fitImageDisplays); return; }
     const matched = originalImage.width === comparisonImage.width &&
       originalImage.height === comparisonImage.height;
     const overlay = $("comparison-mode").querySelector('option[value="overlay"]');
@@ -349,6 +370,7 @@
     const mode = $("comparison-mode").value;
     canvas.classList.add("comparison-" + mode);
     $("comparison-opacity").disabled = mode === "side";
+    $("opacity-tools").hidden = mode === "side";
     const pct = Number($("comparison-opacity").value);
     $("comparison-opacity-value").textContent = mode === "side" ? "—" : pct + "%";
     const frame = $("comparison-image-frame");
@@ -358,6 +380,7 @@
     notice.hidden = matched;
     notice.textContent = matched ? "" : "Dimensions differ. Only side-by-side comparison is available; no alignment has been applied.";
     transformImage();
+    requestAnimationFrame(fitImageDisplays);
   }
   function enableComparison(enable) {
     compareEnabled = !!enable;
@@ -516,7 +539,13 @@
     if (imageURL) URL.revokeObjectURL(imageURL);
     if (comparisonURL) URL.revokeObjectURL(comparisonURL);
   });
-  window.addEventListener("resize", () => { if (cm) cm.refresh(); });
+  window.addEventListener("resize", () => { if (cm) cm.refresh(); fitImageDisplays(); });
+  if (typeof ResizeObserver === "function") {
+    const imageObserver = new ResizeObserver(fitImageDisplays);
+    imageObserver.observe($("image-canvas"));
+    imageObserver.observe($("source-image-frame"));
+    imageObserver.observe($("comparison-image-frame"));
+  }
   $("run-button").disabled = true;
   $("compare-toggle").disabled = true;
 })();
