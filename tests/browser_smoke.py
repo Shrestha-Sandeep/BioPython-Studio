@@ -34,7 +34,7 @@ def main():
     try:
         with sync_playwright() as p:
             browser=p.chromium.launch(headless=True)
-            for width,height in [(360,780),(390,844),(768,1000),(1280,850)]:
+            for width,height in [(360,780),(390,844),(768,1000),(1280,850),(1440,900)]:
                 page=browser.new_page(viewport={"width":width,"height":height})
                 # Test image failure gracefully, without relying on publisher connectivity.
                 page.route("https://images.proteinatlas.org/**", lambda route: route.abort())
@@ -44,6 +44,27 @@ def main():
                 page.wait_for_function("document.querySelectorAll('#stage-nav button').length === 4")
                 assert page.get_by_role("heading",name="Run your first scientific script").is_visible()
                 assert page.get_by_role("tab",name="Learn").get_attribute("aria-selected")=="true"
+                typography = page.evaluate("""() => {
+                    const size = selector => parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
+                    return {
+                        title: size("#mission-title"),
+                        body: size(".deck"),
+                        lesson_text: size(".step-description"),
+                        navigation: size(".mission-link"),
+                        stage: size(".stage-button"),
+                        code: size("#code-editor"),
+                        helper: size(".code-status"),
+                        source: size(".source-row")
+                    };
+                }""")
+                minimum = {"title": 30, "body": 16, "lesson_text": 16, "navigation": 13,
+                           "stage": 13, "code": 15, "helper": 12, "source": 13}
+                for key, expected in minimum.items():
+                    assert typography[key] >= expected, (
+                        f"Unreadable {key} font at viewport {width}: "
+                        f"{typography[key]:.1f}px; expected >= {expected}px"
+                    )
+
                 assert page.get_by_role("button",name="Run Python").is_disabled()
                 page.get_by_role("button",name="Microscopy",exact=True).click()
                 assert page.get_by_role("heading",name="Open a real fluorescence image").is_visible()
@@ -65,7 +86,7 @@ def main():
                 assert not exceptions,f"JS exceptions at {width}: {exceptions}"
                 page.close()
             browser.close()
-        print("Frontend browser QA PASS: navigation, tab state, saved drafts, error fallback and 4 viewport sizes.")
+        print("Frontend browser QA PASS: navigation, tab state, saved drafts, error fallback and 5 viewport sizes with typography thresholds.")
     finally:
         server.terminate()
         server.wait(timeout=5)
