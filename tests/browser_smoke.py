@@ -1,6 +1,7 @@
 """Browser regression checks for the IDE-first UI (no Python execution)."""
 from pathlib import Path
 import socket
+import base64
 import subprocess
 import sys
 import time
@@ -9,6 +10,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 SAMPLE = ROOT / "assets" / "witz" / "fluorescence-single.png"
+SHOTS = ROOT / "artifacts" / "ui-preview"
 
 def serve():
     with socket.socket() as sock:
@@ -50,17 +52,23 @@ def main():
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
+            SHOTS.mkdir(parents=True, exist_ok=True)
             for width, height in [(360,780), (390,844), (768,1000), (1280,850), (1440,900)]:
                 page = browser.new_page(viewport={"width": width, "height": height})
                 errors = []
+                outgoing = []
                 page.on("pageerror", lambda error: errors.append(str(error)))
+                page.on("request", lambda request: outgoing.append(request.url) if not request.url.startswith(url) else None)
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
                 page.get_by_role("heading", name="Python workspace").wait_for()
                 assert page.get_by_role("button", name="Run").is_disabled()
                 assert page.get_by_text("No lessons loaded yet.").count() == 1
                 assert not page.locator("#phase-panel").is_visible()
                 assert not page.locator("#image-panel").is_visible()
-                # The code editor works both with CodeMirror and without a CDN connection.
+                # Vendored CodeMirror must load without CDN or outside network.
+                assert page.locator(".CodeMirror").count() == 1
+                assert page.locator("#editor-engine").inner_text() == "Python · CodeMirror editor"
+                assert not outgoing, f"Unexpected external browser requests: {outgoing}"
                 set_code(page, "sample = 5\nprint(sample)")
                 assert code_value(page) == "sample = 5\nprint(sample)"
                 assert page.locator("#cursor").inner_text().startswith("Ln ")
@@ -97,6 +105,36 @@ def main():
                 assert "data:image/png" in page.locator("#image-preview").get_attribute("src")
                 page.locator("#image-canvas").hover(position={"x": 150, "y": 150})
                 assert page.locator("#pixel-readout").inner_text().startswith(("x ", "x —"))
+                # Compare two user-chosen images. No synthetic segmentation or Python execution.
+                page.get_by_role("button", name="Compare", exact=True).click()
+                assert page.locator("#comparison-tools").is_visible()
+                page.locator("#comparison-upload").set_input_files(str(SAMPLE))
+                page.wait_for_function("document.getElementById('comparison-preview').naturalWidth > 0")
+                assert page.locator("#comparison-mode").is_enabled()
+                page.locator("#comparison-mode").select_option("overlay")
+                assert "comparison-overlay" in page.locator("#image-canvas").get_attribute("class")
+                page.locator("#comparison-opacity").fill("65")
+                assert page.locator("#comparison-opacity-value").inner_text() == "65%"
+                assert "0.65" in page.locator("#comparison-image-frame").get_attribute("style")
+                page.locator("#comparison-mode").select_option("wipe")
+                assert "comparison-wipe" in page.locator("#image-canvas").get_attribute("class")
+                page.locator("#comparison-mode").select_option("side")
+                assert "comparison-side" in page.locator("#image-canvas").get_attribute("class")
+                if width in (390, 1440):
+                    page.screenshot(path=str(SHOTS / f"microscopy-{width}.png"), full_page=True)
+                page.get_by_role("button", name="Compare", exact=True).click()
+                assert not page.locator("#comparison-tools").is_visible()
+                assert not page.locator("#comparison-image-frame").is_visible()
+                # Mismatched pixel dimensions must not be visually registered by overlay.
+                if width == 1440:
+                    page.get_by_role("button", name="Compare", exact=True).click()
+                    tiny = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9qYfrt4AAAAASUVORK5CYII=")
+                    page.locator("#comparison-upload").set_input_files({"name": "tiny.png", "mimeType": "image/png", "buffer": tiny})
+                    page.wait_for_function("document.getElementById('comparison-preview').naturalWidth === 1")
+                    assert page.locator("#comparison-mode option[value=overlay]").is_disabled()
+                    assert page.locator("#comparison-mode option[value=wipe]").is_disabled()
+                    assert page.locator("#comparison-notice").is_visible()
+                    page.get_by_role("button", name="Compare", exact=True).click()
                 page.get_by_role("tab", name="Histogram").click()
                 assert "Histograms will appear" in page.locator("#output-placeholder").inner_text()
                 page.get_by_role("button", name="Reference").click()
@@ -134,10 +172,11 @@ def main():
                     page.locator('[data-stage="Microscopy"]').click()
                     assert page.get_by_role("heading", name="Image analysis workspace").is_visible()
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), f"Horizontal overflow at {width}px"
+                assert not outgoing, f"Unexpected external browser requests: {outgoing}"
                 assert not errors, f"JavaScript errors at {width}px: {errors}"
                 page.close()
             browser.close()
-        print("IDE-first browser QA PASS: five sizes, CodeMirror/fallback, lesson, image RGB, splitters, focus, theme, drafts.")
+        print("IDE-first browser QA PASS: five sizes, offline CodeMirror, image comparison/dimension checks, splitters, focus, theme, drafts.")
     finally:
         server.terminate()
         server.wait(timeout=5)
