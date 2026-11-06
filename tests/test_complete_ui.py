@@ -58,7 +58,7 @@ with sync_playwright() as pw:
         page.locator('#curriculum-toggle summary').click()
         assert page.locator('#curriculum button.step').count()==61
         page.locator('#curriculum-toggle summary').click()
-        page.evaluate("() => {for(const l of lessons) saved.completed[l.id]='independent'; switchLesson(25);}")
+        page.evaluate("() => {switchLesson(25);}")
         assert page.locator('#mission-title').inner_text()=='Understand pixel bit depth'
         page.locator('#image-credit').wait_for(state='visible',timeout=16000)
         assert len(requests)==3
@@ -117,7 +117,7 @@ with sync_playwright() as pw:
     page.set_content(html)
     page.add_style_tag(content=css)
     page.add_script_tag(content=js)
-    page.evaluate("() => {for(const l of lessons) saved.completed[l.id]='independent'; switchLesson(26);}")
+    page.evaluate("() => {switchLesson(26);}")
     page.locator('#retry-images').wait_for(state='visible',timeout=10000)
     assert 'incomplete or invalid' in page.locator('#image-caption').inner_text()
     page.unroute('https://images.proteinatlas.org/**')

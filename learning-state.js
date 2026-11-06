@@ -45,18 +45,31 @@
   }
   function due(skill,now=Date.now()) { return !!skill?.reviewAt && now >= skill.reviewAt; }
   function noteHelp(skill,stage,now=Date.now()) {
-    const key=stage==='transfer'?'transfer:'+skill.activeReview:stage;
+    const key=stage==='transfer'?(skill.reviewPractice?'transfer_practice:':'transfer:')+skill.activeReview:stage;
     (skill.externalHelp||={})[key]=true;
-    const affected=skill.attempts.filter(a=>a.stage===stage&&(stage!=='transfer'||a.reviewIndex===skill.activeReview));
+    const attemptStage=stage==='transfer'&&skill.reviewPractice?'transfer_practice':stage;
+    const affected=skill.attempts.filter(a=>a.stage===attemptStage&&(stage!=='transfer'||a.reviewIndex===skill.activeReview));
     for(const a of affected){a.assisted=true;a.assistanceReportedAt=now;}
     if(affected.some(a=>a.at===skill.independentAt)){skill.independentAt=null;skill.retainedAt=null;skill.needsReview=true;}
     if(affected.some(a=>a.at===skill.retainedAt)){skill.retainedAt=null;skill.needsReview=true;}
   }
   function assisted(skill,stage) {
-    const key=stage==='transfer'?'transfer:'+skill.activeReview:stage;
+    const key=stage==='transfer'?(skill.reviewPractice?'transfer_practice:':'transfer:')+skill.activeReview:stage;
     return (skill.hints[stage]||0)>0||skill.externalHelp?.[key]===true;
   }
+  function beginReview(skill,count,now=Date.now()) {
+    if(typeof skill.drafts.transfer==='string'&&skill.drafts.transfer.length)(skill.transferDraftHistory||=[]).push({source:skill.drafts.transfer,reviewIndex:skill.activeReview,practice:!!skill.reviewPractice,at:now});
+    const cursor=skill.reviewCursor||0;
+    skill.reviewPractice=!due(skill,now)||cursor>=count;
+    skill.activeReview=Math.min(cursor,count-1);skill.reviewCursor=Math.min(cursor+1,count);
+    skill.stage='transfer';skill.drafts.transfer='';skill.passed.transfer=false;
+  }
   function assess(skill,stage,result,now=Date.now()) {
+    if(stage==='transfer'&&(skill.reviewPractice||skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&a.ok))){
+      skill.reviewPractice=true;
+      skill.attempts.push({stage:'transfer_practice',ok:!!result.ok,assisted:assisted(skill,stage),at:now,reviewIndex:skill.activeReview,source:result.source||''});
+      skill.passed.transfer=!!result.ok;return;
+    }
     if(stage==='transfer' && (!due(skill,now) || skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&a.ok))) return;
     const usedHelp = assisted(skill,stage);
     const priorFailure=stage==='transfer' && skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&!a.ok);
@@ -108,7 +121,7 @@
     if(!merged.importArchive.length)delete merged.importArchive;
     return merged;
   }
-  const api = {KEY,LEGACY_KEY,DELAY,fresh,validate,load,record,evidence,ready,due,assess,migrateAliases,merge,untouched,assisted,noteHelp};
+  const api = {KEY,LEGACY_KEY,DELAY,fresh,validate,load,record,evidence,ready,due,assess,migrateAliases,merge,untouched,assisted,noteHelp,beginReview};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.LearningState = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -54,7 +54,7 @@
     if(practice)return {kind:'practice',id:practice.id,label:'Continue pilot: '+practice.title};
     for(const c of s.checkpoints.filter(c=>!c.retained)){
       const r=state.skills[c.id],a=pilot.find(a=>a.id===c.id);
-      if(r?.stage==='transfer'&&!r.passed.transfer&&r.reviewAt<=now)return {kind:'transfer',id:c.id,label:'Continue delayed check: '+c.label};
+      if(r?.stage==='transfer'&&!r.passed.transfer&&!r.reviewPractice&&r.reviewAt<=now)return {kind:'transfer',id:c.id,label:'Continue delayed check: '+c.label};
       if(r?.reviewAt<=now&&(r.reviewCursor||0)<a.transfers.length)return {kind:'transfer',id:c.id,label:'Try delayed check: '+c.label};
     }
     const reflect=s.checkpoints.find(c=>!c.explanation);
@@ -75,11 +75,11 @@
   }
   function createUI({context,navigate,canOpen,beginReview,save,download}){
     const $=id=>document.getElementById(id);
-    function focusGoal(){ $('goal-details').open=true;$('goal-panel').scrollIntoView({behavior:'smooth',block:'start'}); }
+    function focusGoal(){ $('study-tools').open=true;$('goal-details').open=true;$('goal-panel').scrollIntoView({behavior:'smooth',block:'start'}); }
     function open(id,view){
       if(context().busy||!canOpen(id))return;
-      navigate(id);
-      if(view==='transfer'){if(context().skill.stage!=='transfer'||context().skill.passed.transfer)beginReview();return;}
+      navigate(id);$('study-tools').open=true;
+      if(view==='transfer'){if(context().skill.stage!=='transfer'||context().skill.passed.transfer||context().skill.reviewPractice)beginReview();return;}
       if(view==='reflection'||view==='review'){
         $('pilot-reflection').open=true;if(view==='review')$('reflection-review').open=true;
         $('pilot-reflection').scrollIntoView({behavior:'smooth',block:'start'});

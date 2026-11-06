@@ -60,7 +60,7 @@ test('a completed transfer cannot award retention again after another day',()=>{
  const skill=S.record(S.fresh(),'a');skill.guidedAt=100;skill.reviewAt=200;skill.activeReview=0;
  S.assess(skill,'transfer',{ok:true},300);assert.equal(S.evidence(skill),'independent');
  S.assess(skill,'transfer',{ok:true},300+S.DELAY);assert.equal(S.evidence(skill),'independent');
- skill.activeReview=1;S.assess(skill,'transfer',{ok:true},300+S.DELAY);assert.equal(S.evidence(skill),'retained');
+ skill.reviewCursor=1;S.beginReview(skill,3,300+S.DELAY);S.assess(skill,'transfer',{ok:true},300+S.DELAY);assert.equal(S.evidence(skill),'retained');
 });
 test('repeating an old write check cannot clear a failed transfer review',()=>{
  const skill=S.record(S.fresh(),'a');skill.independentAt=10;skill.reviewAt=20;skill.activeReview=0;

@@ -343,17 +343,18 @@ const initial = {step:0,completed:{},drafts:{},hintUsed:{}};
 let saved = {...initial};
 try { const restored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.parse(localStorage.getItem('biopython_studio_v3') || '{}').legacySnapshots?.at(-1) || 'null'); if(restored && typeof restored==='object') saved={...initial,...restored}; } catch(_) {}
 saved.completed ||= {}; saved.drafts ||= {}; saved.hintUsed ||= {};
-const unlocked = () => {let i=0; while(i<lessons.length && saved.completed[lessons[i].id])i++;return i;};
+let unifiedPath=null;
+const unlocked = () => lessons.length-1;
 saved.step=Math.min(Math.max(0,Number(saved.step)||0),Math.min(unlocked(),lessons.length-1));
 let current=saved.step, helpCount=0, running=false,worker=null,requestSeq=0, lastMask=null, maskVisible=true;
 function persist(){saved.step=current;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(saved));}catch(_){}}
 function tell(title,body,type=''){$('feedback').hidden=false;$('feedback').className='feedback'+(type?' '+type:'');$('feedback').replaceChildren();const t=document.createElement('strong');t.textContent=title;const p=document.createElement('p');p.textContent=body;$('feedback').append(t,p);}
 function renderCurriculum(){
  const nav=$('curriculum');nav.replaceChildren();let previous='';const limit=unlocked();
- lessons.forEach((lesson,i)=>{
+ if(unifiedPath){const id=unifiedPath.find(c=>c.legacyIds.includes(lessons[current].id))?.id;CoursePath.render(nav,unifiedPath,id,c=>{if(running)return;if(c.kind==='legacy')switchLesson(lessons.findIndex(l=>l.id===c.legacyId));else location.href=c.href;});}else lessons.forEach((lesson,i)=>{
    if(lesson.chapter!==previous){const d=document.createElement('div');d.className='group-title';d.textContent=lesson.chapter;nav.append(d);previous=lesson.chapter;}
    const b=document.createElement('button');b.className='step'+(i===current?' active':'')+(saved.completed[lesson.id]?' done':'');
-   b.disabled=i>limit;b.title=b.disabled?'Complete previous skills first':lesson.name;
+   b.disabled=running;b.title=lesson.name;
    const num=document.createElement('span');num.className='step-number';num.textContent=saved.completed[lesson.id]?'✓':String(i+1);
    const txt=document.createElement('span');txt.textContent=lesson.name;b.append(num,txt);
    b.addEventListener('click',()=>switchLesson(i));nav.append(b);
@@ -450,8 +451,8 @@ function render(){
  $('output-area').hidden=true;$('feedback').hidden=true;
  $('generated-result').hidden=true;$('generated-result').replaceChildren();
  $('back').disabled=current===0;$('back').hidden=current===0;
- $('next').disabled=current>=lessons.length-1||!already;
- $('next').hidden=current>=lessons.length-1||!already;
+ $('next').disabled=current>=lessons.length-1;
+ $('next').hidden=current>=lessons.length-1;
  $('navigation').hidden=$('back').hidden&&$('next').hidden;
  const proof=$('proof-label');proof.className='pill'+(already?(saved.completed[mission.id]==='independent'?' verified':' guided'):'');
  proof.textContent=already?(saved.completed[mission.id]==='independent'?'Completed independently':'Completed with a hint'):'Ready';
@@ -462,12 +463,12 @@ function render(){
  const usesImage=IMAGE_LESSONS.has(mission.id);
  $('image-panel').hidden=!usesImage;
  $('workspace-layout').classList.toggle('has-image',usesImage);
- renderMetadata();renderCurriculum();drawImage();showLinks(mission);
+ renderMetadata();renderCurriculum();drawImage();showLinks(mission);renderCourseControls();
  if(usesImage&&!imageReady&&!imageLoading&&!imageError)loadMicroscopy();
  // No placeholder feedback: only show results after a code run.
  persist();
 }
-function switchLesson(index){if(running||index<0||index>=lessons.length||index>unlocked())return;current=index;render();$('curriculum-toggle').open=false;window.scrollTo({top:0,behavior:'auto'});}
+function switchLesson(index){if(running||index<0||index>=lessons.length)return;current=index;if(['http:','https:'].includes(location.protocol)){const url=new URL(location.href);url.searchParams.set('lesson',lessons[index].id);history.replaceState(null,'',url);}render();$('curriculum-toggle').open=false;window.scrollTo({top:0,behavior:'auto'});}
 function hint(){const lesson=lessons[current],i=helpCount%lesson.hints.length;$('hint').textContent=lesson.hints[i];$('hint').hidden=false;helpCount++;saved.hintUsed[lesson.id]=true;persist();$('hint-button').textContent=helpCount%lesson.hints.length===0?'Repeat hints':'Another hint';}
 function stopWorker(){if(worker){worker.terminate();worker=null;}}
 async function run(){
@@ -507,15 +508,15 @@ async function run(){
    $('next').disabled=current>=lessons.length-1;
    $('next').hidden=current>=lessons.length-1;
    $('navigation').hidden=$('back').hidden&&$('next').hidden;
-   renderCurriculum();
-   if(current===lessons.length-1)tell('Research curriculum completed','You completed all scientific Python practice milestones. Export your notebook and apply the workflow to your own images after verifying image provenance and annotations.','success');
+   renderCurriculum();renderCourseControls();
+   if(current===lessons.length-1)tell('Microscopy project practiced','This project passed its practice checks. Continue along the course path and verify provenance, calibration and annotations before applying the workflow to research data.','success');
  }catch(error){tell('Python runtime problem',String(error?.message||error),'error');$('python-output').textContent='Execution unavailable. No result was simulated.';}
  finally{clearTimeout(timer);running=false;$('run').disabled=false;$('runtime-state').textContent='Ctrl+Enter to run';}
 }
 $('run').addEventListener('click',run);
 $('hint-button').addEventListener('click',hint);
-$('back').addEventListener('click',()=>switchLesson(current-1));
-$('next').addEventListener('click',()=>switchLesson(current+1));
+$('back').addEventListener('click',()=>moveCourse(-1));
+$('next').addEventListener('click',()=>moveCourse(1));
 $('reset-code').addEventListener('click',()=>{if(running)return;$('editor').value=lessons[current].starter;saved.drafts[lessons[current].id]=lessons[current].starter;persist();tell('Starter code restored','You can edit and run this code again.');});
 $('editor').addEventListener('input',()=>{saved.drafts[lessons[current].id]=$('editor').value;persist()});
 $('editor').addEventListener('keydown',event=>{
@@ -531,3 +532,23 @@ document.addEventListener('keydown',e=>{
 });
 render();
 $('curriculum-toggle').open=false;
+const requestedLesson=new URLSearchParams(location.search).get('lesson');
+if(requestedLesson&&lessons.some(l=>l.id===requestedLesson))switchLesson(lessons.findIndex(l=>l.id===requestedLesson));
+if(window.CoursePath)Promise.all([fetch('./curriculum/v3_manifest.json').then(r=>r.json()),fetch('./curriculum/v3_pilot.json').then(r=>r.json())]).then(([manifest,catalog])=>{unifiedPath=CoursePath.build(manifest,catalog);renderCurriculum();renderCourseControls();}).catch(()=>{});
+
+function moveCourse(offset){
+ if(running)return;
+ if(!unifiedPath){switchLesson(current+offset);return;}
+ const id=unifiedPath.find(c=>c.legacyIds.includes(lessons[current].id))?.id;
+ const next=CoursePath.adjacent(unifiedPath,id,offset);if(!next)return;
+ if(next.kind==='legacy')switchLesson(lessons.findIndex(l=>l.id===next.legacyId));else location.href=next.href;
+}
+function renderCourseControls(){
+ if(!unifiedPath)return;
+ const id=unifiedPath.find(c=>c.legacyIds.includes(lessons[current].id))?.id;
+ const entries=CoursePath.available(unifiedPath),position=entries.findIndex(c=>c.id===id)+1;
+ $('chapter').textContent=(unifiedPath.find(c=>c.id===id)?.stage||lessons[current].chapter)+' · Exercise '+position+' of '+entries.length;
+ $('curriculum-now').textContent=position+' / '+entries.length;
+ for(const [button,offset] of [['back',-1],['next',1]]){const next=CoursePath.adjacent(unifiedPath,id,offset);$(button).hidden=!next;$(button).disabled=!next;}
+ $('navigation').hidden=false;
+}

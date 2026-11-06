@@ -4,6 +4,12 @@
 **Base:** 61-lesson branch `feature/complete-61-lesson-curriculum`, commit `c6aaae508ff50e87958222ecb5826e2f0b367a96`.  
 **Machine-readable authority:** [`curriculum/v3_manifest.json`](../curriculum/v3_manifest.json) records every distinct competency, its prerequisites, and a preservation map for all 61 legacy IDs.
 
+## Current presentation policy — user-directed update, 6 November 2026
+
+The current user instruction is **one open path: Python → Microscopy → NGS → ML**, with no prerequisite or completion locks on implemented exercises/stages. This supersedes the earlier optional-path/default-route presentation below. `recommended_complete_route` is the new 156-entry, prerequisite-safe teaching order; the older route arrays remain for historical compatibility. The 156 semantic IDs, competency objectives, prerequisite edges and 61 preservation aliases are unchanged. Duplicate aliases share one course entry; raw historical drafts stay available. Current and nonoverlapping historical exercises expose 78 distinct entries, without claiming that every historical exercise is a completed v3 upgrade.
+
+Goals/evaluation tools are secondary, collapsed controls. Early transfer is practice; exposed prompts cannot later become unseen retention checks. Source-first exercise reuse is preferred when licensing permits: the existing array examples now adapt credited Witz exercises and VanderPlas code, with notices in `docs/THIRD_PARTY_NOTICES.md`. No additional duplicate competency was introduced. This is an explicit user-directed change to access and presentation, not an automatic mastery award or production sign-off.
+
 ## Final decision
 
 **156 distinct competencies**, not 160 obligatory lessons. Starting from the v2 inventory, eight tasks that tested previously learned skills or repeated report construction become embedded practice/transfer assessments. Four genuinely needed competencies are added: local Python environment, Git, robust statistics and GC composition. The 61 saved lesson IDs are preserved as migration aliases.
