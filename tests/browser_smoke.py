@@ -1,111 +1,77 @@
-"""Browser-level checks for the intentionally engine-free frontend preview."""
+"""Browser checks for the UI-only Python and microscopy IDE."""
 from pathlib import Path
-import contextlib
-import http.server
 import socket
 import subprocess
 import sys
 import time
 import urllib.request
-
 from playwright.sync_api import sync_playwright
 
-ROOT=Path(__file__).resolve().parents[1]
-
-def free_port():
-    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as sock:
-        sock.bind(("127.0.0.1",0))
-        return sock.getsockname()[1]
+ROOT = Path(__file__).resolve().parents[1]
 
 def serve():
-    port=free_port()
-    proc=subprocess.Popen([sys.executable,"-m","http.server",str(port),"--bind","127.0.0.1","--directory",str(ROOT)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        port = sock.getsockname()[1]
+    proc = subprocess.Popen(
+        [sys.executable, "-m", "http.server", str(port), "--bind", "127.0.0.1", "--directory", str(ROOT)],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    )
+    url = f"http://127.0.0.1:{port}/"
     for _ in range(60):
         try:
-            urllib.request.urlopen(f"http://127.0.0.1:{port}/",timeout=.5).close()
-            return proc,f"http://127.0.0.1:{port}/"
+            urllib.request.urlopen(url, timeout=.5).close()
+            return proc, url
         except Exception:
             time.sleep(.1)
     proc.terminate()
-    raise AssertionError("HTTP preview server failed")
+    raise AssertionError("Preview server did not start")
 
 def main():
-    server,url=serve()
+    server, url = serve()
     try:
         with sync_playwright() as p:
-            browser=p.chromium.launch(headless=True)
-            for width,height in [(360,780),(390,844),(768,1000),(1280,850),(1440,900)]:
-                page=browser.new_page(viewport={"width":width,"height":height})
-                # Original Witz figures are bundled. No publisher network required.
-                page.route("https://images.proteinatlas.org/**", lambda route: route.abort())
-                exceptions=[]
-                page.on("pageerror",lambda e: exceptions.append(str(e)))
-                page.goto(url,wait_until="domcontentloaded")
-                page.wait_for_function("document.querySelectorAll('#stage-nav button').length === 4")
-                assert page.get_by_role("heading",name="Run your first scientific script").is_visible()
-                page.get_by_role("heading",name="Witz exercise 1 of 6").wait_for()
-                assert page.locator("#worked-example").is_visible()
-                page.locator("#worked-example summary").click()
-                assert page.locator("#worked-example-code").is_visible()
-                assert len(page.locator("#worked-example-code").inner_text())>3
-
-                assert page.locator("#source-link").get_attribute("href").endswith("e01-Python_basics.ipynb")
-                page.locator("#code-editor").fill("var1 = 5\nprint(var1)")
-                page.get_by_role("button",name="Next exercise").click()
-                assert page.get_by_role("heading",name="Witz exercise 2 of 6").is_visible()
-                assert page.locator("#code-editor").input_value()=="var1 = 5\nprint(var1)"
-                assert page.get_by_role("tab",name="Learn").get_attribute("aria-selected")=="true"
-                typography = page.evaluate("""() => {
-                    const size = selector => parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
-                    return {
-                        title: size("#mission-title"),
-                        body: size(".deck"),
-                        lesson_text: size(".step-description"),
-                        navigation: size(".mission-link"),
-                        stage: size(".stage-button"),
-                        code: size("#code-editor"),
-                        helper: size(".code-status"),
-                        source: size(".source-row")
-                    };
-                }""")
-                minimum = {"title": 30, "body": 16, "lesson_text": 16, "navigation": 13,
-                           "stage": 13, "code": 15, "helper": 12, "source": 13}
-                for key, expected in minimum.items():
-                    assert typography[key] >= expected, (
-                        f"Unreadable {key} font at viewport {width}: "
-                        f"{typography[key]:.1f}px; expected >= {expected}px"
-                    )
-
-                assert page.get_by_role("button",name="Run Python").is_disabled()
-                page.get_by_role("button",name="Microscopy",exact=True).click()
-                assert page.get_by_role("heading",name="Open a real fluorescence image").is_visible()
-                page.locator("#context-image").wait_for(state="visible",timeout=15000)
-                page.wait_for_function("document.getElementById('context-image').complete && document.getElementById('context-image').naturalWidth > 100")
-                assert "/assets/witz/fluorescence-single.png" in page.locator("#context-image").get_attribute("src")
-                assert page.locator("#figure-source").get_attribute("href").endswith("Demo.ipynb")
-                assert page.locator("#raw-tiff-link").is_visible()
-                page.get_by_role("heading",name="Witz exercise 1 of 5").wait_for()
-                page.get_by_role("tab",name="Apply").click()
-                assert page.get_by_role("heading",name="Build your program").is_visible()
-                page.locator("#code-editor").fill("print('saved scientific draft')")
+            browser = p.chromium.launch(headless=True)
+            for width, height in [(360, 780), (390, 844), (768, 1000), (1280, 850), (1440, 900)]:
+                page = browser.new_page(viewport={"width": width, "height": height})
+                errors = []
+                page.on("pageerror", lambda error: errors.append(str(error)))
+                page.goto(url, wait_until="domcontentloaded")
+                assert page.get_by_role("heading", name="Python workspace").is_visible()
+                assert page.get_by_role("button", name="Run").is_disabled()
+                assert page.get_by_text("No lessons loaded yet.").count() == 1
+                assert not page.locator("#image-panel").is_visible()
+                editor = page.locator("#code-editor")
+                editor.fill("sample = 5\nprint(sample)")
+                assert page.locator("#line-numbers").inner_text() == "1\n2"
+                page.get_by_role("tab", name="Apply").click()
+                assert page.get_by_role("heading", name="Your practice task will appear here").is_visible()
+                page.get_by_role("button", name="Image analysis").click()
+                assert page.locator("#image-panel").is_visible()
+                page.locator("#image-upload").set_input_files(str(ROOT / "assets" / "witz" / "fluorescence-single.png"))
+                page.wait_for_function("document.getElementById('image-preview').naturalWidth > 0")
+                assert "px" in page.locator("#image-meta").inner_text()
+                page.get_by_role("button", name="Zoom in").click()
+                assert page.locator("#image-zoom").inner_text() == "125%"
+                page.get_by_role("button", name="Fit").click()
+                assert page.locator("#image-zoom").inner_text() == "100%"
+                page.get_by_role("button", name="Reference").click()
+                assert page.locator("#reference").is_visible()
+                page.get_by_role("button", name="Close reference").click()
+                assert not page.locator("#reference").is_visible()
+                page.get_by_role("button", name="Switch to light theme").click()
+                assert page.locator("body").get_attribute("data-theme") == "light"
                 page.reload(wait_until="domcontentloaded")
-                page.wait_for_function("document.querySelectorAll('#stage-nav button').length === 4")
-                page.get_by_role("tab",name="Apply").click()
-                assert page.locator("#code-editor").input_value()=="print('saved scientific draft')"
-                page.get_by_role("tab",name="Prove").click()
-                assert page.get_by_role("heading",name="Show what you can do").is_visible()
-                page.get_by_role("button",name="NGS",exact=True).click()
-                assert page.get_by_role("heading",name="Build a DNA sequence checker").is_visible()
-                page.get_by_role("button",name="ML",exact=True).click()
-                assert page.get_by_role("heading",name="Define a valid biological prediction").is_visible()
-                assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"),f"Overflow at {width}"
-                assert not exceptions,f"JS exceptions at {width}: {exceptions}"
+                assert page.locator("body").get_attribute("data-theme") == "light"
+                assert page.locator("#code-editor").input_value() == "sample = 5\nprint(sample)"
+                assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), f"Horizontal overflow at {width}px"
+                assert not errors, f"JavaScript errors at {width}px: {errors}"
                 page.close()
             browser.close()
-        print("Frontend browser QA PASS: navigation, tab state, saved drafts, error fallback and 5 viewport sizes with typography thresholds.")
+        print("UI-first browser QA PASS: responsive layouts, editable code, image preview, viewer zoom, reference, theme and draft storage.")
     finally:
         server.terminate()
         server.wait(timeout=5)
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
