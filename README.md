@@ -12,9 +12,17 @@ Serve the folder rather than double-clicking the HTML file, because the interfac
 
 Open http://localhost:8000. This build requires **no npm installation** for its frontend.
 
+## Witz source integration
+
+- The rebuild now audits **all 54 numbered exercises** from Witz's seven exercise notebooks. **47 are reachable** inside eight source-driven preview missions, one exercise at a time, with cumulative editable code.
+- **Six** Witz notebook figure PNGs are bundled and load from the project itself, with exact source-cell attribution. The original microscopy TIFFs remain linked upstream and are **not bundled yet**.
+- Supporting references strengthen specific missing concepts (NumPy, biological files, segmentation validity and reproducibility) rather than duplicating the Witz teaching path.
+- The figures are visualization examples, **not calibrated numeric image files**. The real Python engine, image-array processing and grading remain subsequent work.
+- Exercise inventory: [`curriculum/witz_exercise_inventory.json`](curriculum/witz_exercise_inventory.json). License and images: [`assets/witz/CREDITS.md`](assets/witz/CREDITS.md).
+
 ## Current boundary
 
-- **Implemented:** responsive accessible frontend; one linear course; 18 representative mission previews (not a claim of finished content); clear Learn/Apply/Prove stages; editable drafts saved locally; existing Human Protein Atlas publisher image shown where available; original source links.
+- **Implemented:** responsive accessible frontend; one linear course; 18 representative mission previews (not a claim of finished content); clear Learn/Apply/Prove stages; editable drafts saved locally; six authentic bundled Witz/HPA-derived notebook figure images; original source links.
 - **Not implemented:** Pyodide/real Python execution, grading, full Witz exercise extraction, packaged microscopy images, mastery/retention, notebook export, NGS/ML teaching content depth. The Run Python button is intentionally disabled and states why. Nothing is marked complete.
 - **Important:** progress in the previous app lives under other storage formats. A careful, opt-in migration tool is planned; this preview only saves drafts in its own key.
 
