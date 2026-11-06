@@ -159,3 +159,31 @@ body.is-resizing-row{cursor:row-resize}
 @media(max-width:1050px){:root{--work-height:380px}.workspace-grid.with-image{grid-template-columns:minmax(0,1fr);gap:13px}.workspace-grid.with-image .editor,.workspace-grid.with-image .image{grid-column:1}.split-resizer{display:none!important}.code-wrapper{min-height:var(--work-height);height:var(--work-height)}.image-canvas{height:320px;min-height:320px}.pixel-readout{display:block}.console-resizer{height:12px}.page-top{align-items:flex-start}body.focus-mode{--work-height:460px}}
 @media(max-width:720px){:root{--work-height:360px;--console-height:130px}.page-top{margin-bottom:15px}.page-actions{margin-top:14px;flex-wrap:wrap}.lesson{margin-bottom:16px}.lesson-strip{padding:6px 7px 6px 12px}.lesson-controls{gap:2px}.lesson-caption{max-width:36%}.lesson-caption .lesson-divider,#lesson-summary{display:none}.phase-tabs button{padding:8px 10px}.lesson-expand{width:28px;height:28px}.code-wrapper{height:var(--work-height);min-height:var(--work-height)}.CodeMirror{font-size:13px}.CodeMirror-lines{padding:14px 0}.image-toolbar{min-height:48px}.viewer-options{flex-wrap:wrap}.viewer-options input[type=range]{width:36px}.pixel-readout{display:none}.runtime-state{font-size:10px}body.focus-mode .main{padding:14px 12px 30px}body.focus-mode{--work-height:420px}}
 @media(max-width:420px){.viewer-controls .compact{width:25px}.image-toolbar .file-label{font-size:11px}.image-toolbar .load-button{font-size:10px}.editor-type{display:none}.phase-tabs button{padding:7px 9px}}
+
+
+/* UI-first final refinement: user-supplied image comparisons. Never imply analysis. */
+.compare-toggle{margin-left:auto;flex-shrink:0;padding:4px 9px;border-color:var(--line)}
+.compare-toggle.is-active{color:var(--green);background:var(--green-soft);border-color:var(--green-edge)}
+.comparison-tools{display:flex;align-items:center;gap:10px;min-height:47px;padding:7px 11px;background:var(--surface2);border-bottom:1px solid var(--line);font-size:11px;flex-wrap:wrap}
+.comparison-filename{max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dim);min-width:0;flex-shrink:1}
+.comparison-tools select{max-width:122px;padding:5px 7px;font-size:11px;color:var(--text);border:1px solid var(--line);background:var(--surface);border-radius:6px}
+.comparison-tools select:disabled{opacity:.55}
+.comparison-tools input[type="range"]{accent-color:var(--green);width:75px;min-width:52px}
+.comparison-tools input[type="range"]:disabled{opacity:.4}
+.comparison-tools output{font:11px var(--mono);width:33px;text-align:right;color:var(--muted)}
+.comparison-notice{font-size:11px;color:var(--muted);background:var(--green-soft);padding:7px 11px;border-bottom:1px solid var(--green-edge)}
+.image-frame{position:relative;flex:1 1 100%;height:100%;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.image-frame img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transform-origin:center center;pointer-events:none;user-select:none}
+.image-frame .frame-tag{position:absolute;top:11px;left:11px;z-index:3;background:#070c12b8;color:#e4f0f0;border:1px solid #ffffff20;border-radius:5px;padding:4px 7px;font-size:10px;font-weight:630;line-height:1}
+.image-frame.source-frame .frame-tag{display:none}
+.image-canvas.comparison-side{gap:1px}
+.image-canvas.comparison-side .source-frame,.image-canvas.comparison-side .comparison-frame{flex:1 1 50%;width:50%;border-right:1px solid #34434c}
+.image-canvas.comparison-side .source-frame .frame-tag{display:block}
+.image-canvas.comparison-overlay .source-frame,.image-canvas.comparison-wipe .source-frame{flex:1 1 100%;width:100%}
+.image-canvas.comparison-overlay .comparison-frame,.image-canvas.comparison-wipe .comparison-frame{position:absolute;inset:0;pointer-events:none;z-index:2}
+.image-canvas.comparison-overlay .source-frame .frame-tag,.image-canvas.comparison-wipe .source-frame .frame-tag{display:block}
+.image-canvas.comparison-overlay .comparison-frame .frame-tag,.image-canvas.comparison-wipe .comparison-frame .frame-tag{right:11px;left:auto}
+.image:has(.comparison-tools:not([hidden])) .image-canvas{height:max(240px,calc(var(--work-height) - 83px));min-height:max(240px,calc(var(--work-height) - 83px))}
+.image:has(.comparison-notice:not([hidden])) .image-canvas{height:max(225px,calc(var(--work-height) - 122px));min-height:max(225px,calc(var(--work-height) - 122px))}
+@media(max-width:1050px){.image:has(.comparison-tools:not([hidden])) .image-canvas{height:310px;min-height:310px}.image:has(.comparison-notice:not([hidden])) .image-canvas{height:285px;min-height:285px}}
+@media(max-width:720px){.comparison-tools{gap:8px;padding:8px 10px}.comparison-filename{max-width:110px}.comparison-tools input[type="range"]{width:54px}.image-frame .frame-tag{top:7px;left:7px;font-size:9px}.comparison-tools .control-label{font-size:10px}}
