@@ -2923,7 +2923,8 @@
           "signals": [
             1,
             2,
-            3
+            3,
+            4
           ]
         }
       },
@@ -3156,7 +3157,15 @@
           "reference": "import numpy as np\nvalues = np.array(signals, dtype=float)\nprint(values.dtype)",
           "feedback": "An explicit dtype controls numerical representation. It cannot recover information absent from the source."
         }
-      ]
+      ],
+      "provenance": {
+        "author": "Jake VanderPlas",
+        "title": "Python Data Science Handbook \u00b7 Understanding Data Types",
+        "url": "https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/notebooks_v1/02.01-Understanding-Data-Types.ipynb",
+        "source_blob": "82b128e486cc58fd9d4297115dfa0abe0aa5c90d",
+        "license": "MIT (code)",
+        "adaptation": "Explicit typed-array code adapted to supplied signals and dtype=float; biological changed-input assessments are retained."
+      }
     },
     {
       "id": "bps3.m04.understand_shape_and_ndim",
@@ -3164,20 +3173,10 @@
       "title": "Understand shape and ndim",
       "context": "A two-dimensional array has rows and columns. Shape alone does not tell you whether an axis represents space, time or channels.",
       "example": {
-        "source": "import numpy as np\nimage = np.array(grid)\nprint(image.shape)\nprint(image.ndim)",
+        "source": "import numpy as np\nimage = np.ones((rows, columns))\nprint(image.shape)\nprint(image.ndim)",
         "case": {
-          "grid": [
-            [
-              1,
-              2,
-              3
-            ],
-            [
-              4,
-              5,
-              6
-            ]
-          ]
+          "rows": 6,
+          "columns": 4
         }
       },
       "predict": "Predict the shape tuple and the number of axes.",
@@ -3618,7 +3617,15 @@
           "reference": "import numpy as np\nimage = np.array(grid)\ndimensions = image.shape\naxes = image.ndim\nprint(dimensions)\nprint(axes)",
           "feedback": "shape reports the length of each axis. Axis meaning comes from metadata; ndim counts axes."
         }
-      ]
+      ],
+      "provenance": {
+        "author": "Guillaume Witz / University of Bern",
+        "title": "Image Processing for Beginners \u00b7 Images as arrays, exercise 2",
+        "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e02-Numpy_basics.ipynb",
+        "source_blob": "aa23c2269061a66a1ac9cb8a9d9d7166c85ecd3f",
+        "license": "BSD-3-Clause",
+        "adaptation": "The six-row, four-column array-of-ones exercise is parameterized and prints shape/ndim. Existing grid assessments are retained."
+      }
     },
     {
       "id": "bps3.m00.understand_a_notebook_workflow",

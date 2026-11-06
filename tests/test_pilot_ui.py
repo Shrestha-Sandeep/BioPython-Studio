@@ -38,6 +38,33 @@ def run(page,success=True):
 try:
  with sync_playwright() as p:
     browser=p.chromium.launch(executable_path='/usr/bin/chromium' if Path('/usr/bin/chromium').exists() else None,headless=True,args=args,proxy=proxy)
+    access=browser.new_context();free=access.new_page();free.goto(URL);free.wait_for_function('!!activity')
+    assert free.locator('#goal-panel').is_hidden()
+    free.locator('#path-menu summary').click()
+    assert free.locator('#activity-list button').count()==78
+    assert free.locator('#activity-list button:disabled').count()==0
+    assert free.locator('#activity-list .group-title').all_text_contents()==['Python','Microscopy','NGS','ML']
+    free.locator('#activity-list button').last.click()
+    free.wait_for_url('**/legacy.html?lesson=*')
+    free.wait_for_function('!!unifiedPath')
+    assert free.locator('#curriculum button:disabled').count()==0
+    assert free.evaluate('Object.keys(saved.completed).length')==0
+    a=next(a for a in CAT if a['number']=='024')
+    free.goto(URL+'/?activity='+a['id']);free.wait_for_function('activity?.number==="024"')
+    free.locator('#phase-track button').filter(has_text='Debug').click()
+    assert free.locator('#phase-title').inner_text()=='Debug'
+    free.locator('#start-review').click();assert free.evaluate('skill.reviewPractice') is True
+    free.locator('#pilot-editor').fill(a['transfers'][0]['reference']);run(free)
+    assert free.evaluate('!!skill.retainedAt || !!skill.independentAt') is False
+    assert free.evaluate('skill.attempts.at(-1).stage')=='transfer_practice'
+    free.locator('#phase-track').get_by_role('button',name='Write',exact=True).click()
+    assert free.locator('#pilot-editor').input_value()==''
+    next_entry=free.evaluate('CoursePath.adjacent(coursePath,activity.id,1)')
+    free.locator('#next-activity').click()
+    if next_entry['kind']=='legacy':free.wait_for_url('**/legacy.html?lesson=*')
+    else:free.wait_for_function('(id)=>activity.id===id',arg=next_entry['id'])
+    access.close()
+    print('PASS fresh unlocked 78-entry course, all stages, early real-Python transfer practice and no fabricated mastery',flush=True)
     page=browser.new_page(viewport={'width':1440,'height':1000})
     errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
@@ -88,13 +115,15 @@ try:
         page.locator('#pilot-editor').fill(a['stages']['debug']['reference'])
         run(page)
         assert page.locator('#evidence').inner_text()==('guided' if i==0 else 'independent')
-        assert page.locator('#start-review').is_hidden()
+        assert page.locator('#start-review').is_visible()
         print('PASS live activity',a['number'],a['title'],flush=True)
         if i==14:
             saved=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
             page.reload();page.wait_for_function('!!activity')
             assert page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')==saved
-        if i<len(CAT)-1:page.locator('#next-activity').click()
+        if i<len(CAT)-1:
+            page.locator('#path-menu summary').click()
+            page.locator('#activity-list button[data-competency="'+CAT[i+1]['id']+'"]').click()
     assert not errors,errors
     page.evaluate("() => { select(catalog.activities[0].id);skill.stage='modify';render(); }")
     page.locator('#pilot-editor').fill('if field_name != "Field B07":\n    print(field_name)\n    print("Recorded")\nelse:\n    print(missing_second_input)')
@@ -102,6 +131,7 @@ try:
     assert 'NameError' in page.locator('#pilot-traceback').inner_text()
     assert 'Input 2:' in page.locator('#output-case').inner_text()
     assert 'Field B07' in page.locator('#output-case').inner_text()
+    page.locator('#study-tools > summary').click()
     page.locator('#activity-feedback summary').click()
     page.locator('#feedback-clarity').select_option('needs-example')
     page.locator('#feedback-note').fill('Automated fixture: explain the variable naming step.')
@@ -124,7 +154,7 @@ try:
     page.locator('#pilot-editor').fill(CAT[1]['stages']['transfer']['reference'])
     run(page)
     assert page.locator('#evidence').inner_text()=='retained'
-    assert page.locator('#pilot-run').is_disabled()
+    assert page.locator('#pilot-run').is_enabled()
     page.evaluate('() => {skill.reviewAt=Date.now()-1;render();}')
     page.locator('#start-review').click()
     assert page.locator('#pilot-editor').input_value()==''
@@ -156,7 +186,7 @@ try:
     assert old.evaluate('Object.keys(state.skills).length')==1
     assert old.locator('#evidence').inner_text()=='explored'
     assert old.evaluate('localStorage.getItem(S.LEGACY_KEY)')==raw
-    old.locator('.sidebar details.lesson-bottom summary').click()
+    old.locator('#study-tools > summary').click()
     with old.expect_download() as download:old.locator('#export-progress').click()
     exported=json.loads(Path(download.value.path()).read_text())
     assert exported['legacySnapshots']==[raw]
@@ -174,5 +204,62 @@ try:
     assert imported.evaluate('lessons.length')==61
     migration.close();fresh.close()
     print('PASS legacy 61-ID export/import and original draft handoff',flush=True)
+    # Goal workflow uses real Python checks and an explicitly advanced test clock.
+    from datetime import datetime,timezone,timedelta
+    goal_context=browser.new_context(accept_downloads=True)
+    goal_page=goal_context.new_page()
+    full_state=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
+    goal_page.add_init_script('if(!localStorage.getItem("biopython_studio_v3"))localStorage.setItem("biopython_studio_v3",'+json.dumps(json.dumps(full_state))+')')
+    goal_page.goto(URL);goal_page.wait_for_function('!!activity')
+    goal_page.evaluate("() => { select(catalog.activities.find(a=>a.number==='008').id);skill.stage='write';render(); }")
+    goal_page.locator('#study-tools > summary').click()
+    goal_page.locator('#outside-help').check()
+    assert goal_page.locator('#outside-help').is_disabled()
+    assert goal_page.evaluate('PilotMilestones.summary(state,catalog).counts.independent')==2
+    clock_start=datetime.now(timezone.utc)
+    goal_page.clock.set_fixed_time(clock_start+timedelta(days=1,seconds=10))
+    for number in ['008','025','038']:
+        goal_page.locator('#goal-next').click()
+        assert goal_page.evaluate('activity.number')==number
+        assert goal_page.locator('#pilot-editor').input_value()==''
+        a=next(a for a in CAT if a['number']==number)
+        goal_page.locator('#pilot-editor').fill(a['transfers'][0]['reference']);run(goal_page)
+    assert goal_page.evaluate('PilotMilestones.summary(state,catalog).counts.retained')==2
+    for number in ['008','025','038']:
+        goal_page.locator('#goal-next').click()
+        assert goal_page.evaluate('activity.number')==number
+        goal_page.locator('#reflection-text').fill('Automated fixture: inputs change; the operations transform them; a boundary or scientific limitation must be checked.')
+        if not goal_page.locator('#reflection-review').evaluate('(e)=>e.open'):goal_page.locator('#reflection-review summary').click()
+        for criterion in ['input','reasoning','boundary']:goal_page.locator('#rubric-'+criterion).check()
+        goal_page.locator('#save-reflection-review').click()
+    goal_page.locator('#goal-next').click()
+    goal_page.locator('#pilot-issues textarea').fill('Automated fixture: the reported difficulty has been reproduced and the correction verified.')
+    goal_page.locator('#pilot-issues button').click()
+    assert goal_page.evaluate('PilotMilestones.summary(state,catalog).counts.openIssues')==0
+    assert 'scheduled review' in goal_page.locator('#goal-next').inner_text()
+    goal_page.clock.set_fixed_time(clock_start+timedelta(days=2,seconds=20))
+    goal_page.evaluate('goalUI.renderGoal()')
+    goal_page.locator('#goal-next').click()
+    goal_page.locator('#pilot-editor').fill(next(a for a in CAT if a['number']=='008')['transfers'][1]['reference']);run(goal_page)
+    assert 'ready for human sign-off' in goal_page.locator('#goal-status').inner_text()
+    with goal_page.expect_download() as report_file:goal_page.locator('#goal-next').click()
+    report=json.loads(Path(report_file.value.path()).read_text())
+    assert report['ready'] and report['counts']['retained']==3 and report['counts']['reviewed']==3
+    assert 'Pending human sign-off' in report['releaseDecision']
+    assert 'Device clock' in report['timeBasis']
+    for width in [1440,1024,390]:
+        goal_page.set_viewport_size({'width':width,'height':950})
+        assert goal_page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),width
+    # Text edits invalidate a human review; complete progress backup retains that revision.
+    goal_page.locator('#reflection-text').fill('Automated fixture: revised explanation requiring a new review.')
+    assert not goal_page.evaluate('PilotMilestones.summary(state,catalog).ready')
+    backup=goal_page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
+    restore_context=browser.new_context();restore=restore_context.new_page();restore.goto(URL);restore.wait_for_function('!!activity')
+    restore.locator('#import-progress').set_input_files(dict(name='progress.json',mimeType='application/json',buffer=json.dumps(backup).encode()))
+    restore.wait_for_function('Object.keys(state.skills).length===28')
+    assert restore.evaluate('state.skills[activity.id].pilotReflection.text')=='Automated fixture: revised explanation requiring a new review.'
+    assert not restore.evaluate('PilotMilestones.summary(state,catalog).ready')
+    goal_context.close();restore_context.close()
+    print('PASS goal recommendation, assistance, explanations, issue triage, timed real transfer, evidence export and progress restoration',flush=True)
     browser.close()
 finally: server.shutdown()

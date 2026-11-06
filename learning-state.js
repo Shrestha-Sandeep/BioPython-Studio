@@ -13,6 +13,11 @@
       if (!object(skill) || !['predict','run','investigate','modify','write','debug','transfer'].includes(skill.stage) || !object(skill.drafts) || !object(skill.passed) || !object(skill.hints) || !Array.isArray(skill.attempts)) throw new Error('A saved activity record is invalid.');
       if (Object.values(skill.drafts).some(v=>typeof v!=='string') || Object.values(skill.hints).some(v=>!Number.isInteger(v)||v<0||v>3)) throw new Error('Invalid draft or assistance record.');
     }
+    for(const skill of Object.values(state.skills)) {
+      if(skill.externalHelp && (!object(skill.externalHelp)||Object.values(skill.externalHelp).some(v=>typeof v!=='boolean'))) throw new Error('Invalid assistance record.');
+      if(skill.pilotReflection && (!object(skill.pilotReflection)||typeof skill.pilotReflection.text!=='string'||!Number.isFinite(skill.pilotReflection.at))) throw new Error('Invalid pilot explanation.');
+      if(skill.pilotIssueNotes && (!Array.isArray(skill.pilotIssueNotes)||skill.pilotIssueNotes.some(n=>!object(n)||typeof n.note!=='string'||typeof n.feedbackKey!=='string'||!['open','resolved'].includes(n.status)))) throw new Error('Invalid pilot feedback review.');
+    }
     if (!state.legacySnapshots.every(x => typeof x === 'string')) throw new Error('Invalid legacy archive.');
     if (state.importArchive && !Array.isArray(state.importArchive)) throw new Error('Invalid import archive.');
     return state;
@@ -39,18 +44,43 @@
     return competency.prerequisites.every(id => !!state.skills[id]?.guidedAt);
   }
   function due(skill,now=Date.now()) { return !!skill?.reviewAt && now >= skill.reviewAt; }
+  function noteHelp(skill,stage,now=Date.now()) {
+    const key=stage==='transfer'?(skill.reviewPractice?'transfer_practice:':'transfer:')+skill.activeReview:stage;
+    (skill.externalHelp||={})[key]=true;
+    const attemptStage=stage==='transfer'&&skill.reviewPractice?'transfer_practice':stage;
+    const affected=skill.attempts.filter(a=>a.stage===attemptStage&&(stage!=='transfer'||a.reviewIndex===skill.activeReview));
+    for(const a of affected){a.assisted=true;a.assistanceReportedAt=now;}
+    if(affected.some(a=>a.at===skill.independentAt)){skill.independentAt=null;skill.retainedAt=null;skill.needsReview=true;}
+    if(affected.some(a=>a.at===skill.retainedAt)){skill.retainedAt=null;skill.needsReview=true;}
+  }
+  function assisted(skill,stage) {
+    const key=stage==='transfer'?(skill.reviewPractice?'transfer_practice:':'transfer:')+skill.activeReview:stage;
+    return (skill.hints[stage]||0)>0||skill.externalHelp?.[key]===true;
+  }
+  function beginReview(skill,count,now=Date.now()) {
+    if(typeof skill.drafts.transfer==='string'&&skill.drafts.transfer.length)(skill.transferDraftHistory||=[]).push({source:skill.drafts.transfer,reviewIndex:skill.activeReview,practice:!!skill.reviewPractice,at:now});
+    const cursor=skill.reviewCursor||0;
+    skill.reviewPractice=!due(skill,now)||cursor>=count;
+    skill.activeReview=Math.min(cursor,count-1);skill.reviewCursor=Math.min(cursor+1,count);
+    skill.stage='transfer';skill.drafts.transfer='';skill.passed.transfer=false;
+  }
   function assess(skill,stage,result,now=Date.now()) {
+    if(stage==='transfer'&&(skill.reviewPractice||skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&a.ok))){
+      skill.reviewPractice=true;
+      skill.attempts.push({stage:'transfer_practice',ok:!!result.ok,assisted:assisted(skill,stage),at:now,reviewIndex:skill.activeReview,source:result.source||''});
+      skill.passed.transfer=!!result.ok;return;
+    }
     if(stage==='transfer' && (!due(skill,now) || skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&a.ok))) return;
-    const assisted = (skill.hints[stage] || 0) > 0;
+    const usedHelp = assisted(skill,stage);
     const priorFailure=stage==='transfer' && skill.attempts.some(a=>a.stage==='transfer'&&a.reviewIndex===skill.activeReview&&!a.ok);
-    skill.attempts.push({stage,ok:!!result.ok,assisted,at:now,...(stage==='transfer'?{reviewIndex:skill.activeReview}: {})});
+    skill.attempts.push({stage,ok:!!result.ok,assisted:usedHelp,at:now,...(stage==='transfer'?{reviewIndex:skill.activeReview}: {}),...(['write','transfer'].includes(stage)&&typeof result.source==='string'?{source:result.source}:{})});
     skill.passed[stage] = !!result.ok;
     if (stage === 'transfer' && !result.ok) {skill.needsReview = true;skill.retainedAt = null;}
     if (!result.ok) return;
-    if (stage === 'write' && !assisted) { skill.independentAt ||= now; }
+    if (stage === 'write' && !usedHelp) { skill.independentAt ||= now; }
     if (stage === 'debug') { skill.guidedAt ||= now; skill.reviewAt ||= now + DELAY; }
     if (stage === 'transfer' && due(skill,now)) {
-      if (!assisted) {
+      if (!usedHelp) {
         if (skill.independentAt && !priorFailure) skill.retainedAt = now;
         else skill.independentAt ||= now;
         skill.needsReview = false;
@@ -73,7 +103,7 @@
     return aliases;
   }
   function untouched(skill) {
-    return skill && skill.stage==='predict' && !skill.prediction && !skill.guidedAt && !skill.independentAt && !skill.retainedAt && !skill.needsReview && !skill.feedback && !Object.keys(skill.drafts).length && !Object.keys(skill.passed).length && !Object.keys(skill.hints).length && !skill.attempts.length;
+    return skill && skill.stage==='predict' && !skill.prediction && !skill.guidedAt && !skill.independentAt && !skill.retainedAt && !skill.needsReview && !skill.feedback && !skill.pilotReflection && !skill.externalHelp && !Object.keys(skill.drafts).length && !Object.keys(skill.passed).length && !Object.keys(skill.hints).length && !skill.attempts.length;
   }
   function merge(local, incoming) {
     validate(incoming);
@@ -91,7 +121,7 @@
     if(!merged.importArchive.length)delete merged.importArchive;
     return merged;
   }
-  const api = {KEY,LEGACY_KEY,DELAY,fresh,validate,load,record,evidence,ready,due,assess,migrateAliases,merge,untouched};
+  const api = {KEY,LEGACY_KEY,DELAY,fresh,validate,load,record,evidence,ready,due,assess,migrateAliases,merge,untouched,assisted,noteHelp,beginReview};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.LearningState = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

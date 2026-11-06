@@ -1,6 +1,6 @@
 # BioPython Studio — QA status
 
-**Verified:** 6 November 2026. **Scope:** development continuation `feature/v3-foundations-collections`, stacked on `feature/v3-learning-engine-pilot`, based on frozen v3 commit `87b87a9` and 61-lesson baseline `c6aaae5`. Production and curriculum PR #1 remain unmerged.
+**Verified:** 6 November 2026. **Scope:** evaluation branch `feature/v3-pilot-milestone`, stacked on `feature/v3-foundations-collections`, stacked on `feature/v3-learning-engine-pilot`, based on frozen v3 commit `87b87a9` and 61-lesson baseline `c6aaae5`. Production and curriculum PR #1 remain unmerged.
 
 ## Repository reconciliation
 
@@ -11,8 +11,8 @@
 
 ## Automated verification
 
-- **250 CPython tests passed**, covering all historical assessments, wrong-answer rejection, actual Matplotlib output, companion notebook execution with a controlled image response, frozen 156-node graph, 28 activities and all three delayed-transfer input sets. Notebook mocking is limited to its existing controlled image response; it is not evidence of a live notebook HPA download.
-- **11 Node state tests passed:** complete 25/61 legacy fixtures, byte-preserved snapshots, no inferred mastery, real local prerequisites for optional paths, assistance-aware evidence, delayed review, fresh-prompt requirements, and lossless conflict archives.
+- **251 CPython tests passed**, covering all historical assessments, wrong-answer rejection, actual Matplotlib output, companion notebook execution with a controlled image response, frozen 156-node graph, 28 activities and all three delayed-transfer input sets. Notebook mocking is limited to its existing controlled image response; it is not evidence of a live notebook HPA download.
+- **24 Node state/path/policy tests passed:** complete 25/61 legacy fixtures, byte-preserved snapshots, no inferred mastery, real local prerequisites for optional paths, assistance-aware evidence, delayed review, fresh-prompt requirements, and lossless conflict archives.
 - JavaScript syntax and whitespace checks passed.
 - **Live Chromium pilot walkthrough passed all 28 activities** using a real Web Worker and Pyodide 0.28.3, including real `help`, intentional traceback, NumPy import and execution. There is no mocked Worker or simulated Python in this test.
 - Live pilot QA passed saved-state reload, hint-assisted versus independent evidence, delayed review with an advanced test clock, a second fresh transfer, completed-prompt replay prevention, genuine HPA image retry without draft loss, 1440/1024/390-pixel overflow checks and a 61-ID export/import → legacy-editor handoff. Clock advancement tests scheduling mechanics, not actual human retention.
@@ -56,6 +56,24 @@ The first 15 activities and every frozen competency/legacy ID remain unchanged. 
 
 The real-browser walkthrough runs all 28 activities and reloads the completed first-15 state before entering the continuation. Notebook QA runs analysis before setup (NameError), setup then analysis, edits without executing (stale output), reruns setup (updated output), restarts the actual Worker/runtime and verifies missing state, then downloads and validates the notebook with nbformat and executes its code cells in a clean CPython namespace. Ordinary assessments cannot read notebook state. Ctrl+Enter runs the focused notebook cell. The real Jupyter GUI itself and learner effectiveness are not claimed as verified.
 
-The next implementation increment is function parameters/defaults, scope, docstrings, errors/imports/files and the prerequisite-safe local environment/Git handoff. Optional sequence/NGS and ML content remains separate from the default microscopy route.
+Further curriculum expansion is paused. The active increment is milestone-1 evaluation; function parameters/defaults, scope, docstrings, errors/imports/files and the prerequisite-safe environment/Git handoff follow after that review. Sequence/NGS and ML follow microscopy on the same open course path.
 
 Activity feedback can record clarity, explanation needs or technical blockers with optional notes. It stays local and travels in progress exports; feedback does not award evidence. Browser QA uses an explicitly labeled automated feedback fixture, not human evaluation data.
+
+## Milestone-1 evaluation tooling
+
+The app now shows the main goal, four outcome milestones, the current first-15 focus and one recommended next action. It derives representative evidence for existing competencies 008/025/038 from successful unassisted attempts, not completion badges. Delayed evidence must match a fresh successful attempt at least 24 hours after independent evidence; time is based on the device clock. Explicit outside-help declarations remain attached to each write check or transfer prompt. Reporting assistance after a pass corrects that evidence without deleting code or practice history.
+
+Learner explanations are saved with code snapshots and a three-part human-review rubric. Text/code changes invalidate acceptance, and reviewed revisions remain in history. Feedback triage records resolution/reopening against the exact feedback entry, retaining the original report. A local JSON export states the sampled scope, missing evidence, raw relevant attempts, device-clock limits and pending human sign-off. It never certifies the whole course or merges/deploys changes. All new evaluation records travel with full progress exports and conflict archives.
+
+Policy/state tests cover early/repeated/assisted/failing checks, fabricated timestamp-only badges, legacy-only progress, explanation changes, issue reopening, exhausted prompts and lossless import. Browser QA extends the real 28-activity Pyodide walkthrough with recommended-action navigation, retrospective help declaration, human-review fixtures, issue triage, two explicitly simulated review intervals, real fresh Python checks, evidence download, responsive layout and progress restoration. These are automated fixtures, not genuine learner retention or human effectiveness results.
+
+## Open, uncluttered course update
+
+All implemented content is freely browsable: 28 current activities, 61 historical lesson IDs and every current activity stage. A shared course-path module presents 78 distinct available competency entries with no duplicated aliases, under Python → Microscopy → NGS → ML. The complete 156-entry presentation route is stage-ordered and topological; prerequisite edges remain guidance rather than access locks. Browser URLs preserve selected activities and historical lessons across reloads. Goals, progress exports, feedback and human-review tools are collapsed; the main screen retains the path, task, stage controls, code and immediate feedback.
+
+Transfer practice opens before its scheduled review and after prompt exhaustion. Early exposure consumes a fresh prompt and records `transfer_practice`, never independent/retained evidence. Genuine delayed review uses a remaining fresh prompt. Prior drafts are archived before switching transfer prompts. Repeated practice does not manufacture new retention.
+
+Two existing array worked examples reuse attributed source material: Witz’s BSD-licensed array-of-ones/shape exercise and VanderPlas’s MIT-licensed explicit typed-array code. The book’s separately licensed prose is not adapted. Python execution tests cover both examples, while original independent-task contracts and saved code remain intact. Full licenses/attribution are distributed with the app.
+
+Added checks cover the complete route, no duplicate competency entries, preservation of all 61 aliases, fresh-session unrestricted navigation (including ML), direct stage jumps, early real-Python transfer practice, no fabricated mastery, cross-page course navigation and responsive layout. Existing 28-activity execution, legacy 61-lesson UI, goal/evidence export/import and notebook tests remain required.

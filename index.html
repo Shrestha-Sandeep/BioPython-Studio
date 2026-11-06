@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Learn scientific Python through prediction, investigation and independent practice.">
 <title>BioPython Studio — Scientific Python</title>
-<link rel="stylesheet" href="./styles.css?v=v3-foundations-1">
+<link rel="stylesheet" href="./styles.css?v=v3-open-course-1">
 </head>
 <body>
 <header class="sitebar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">B</span><span>BioPython <strong>Studio</strong></span></a><span class="site-progress" id="pilot-progress">Foundations preview</span></header>
@@ -12,14 +12,9 @@
 <p id="storage-warning" class="feedback error" role="alert" hidden></p>
 <div class="work-layout">
 <aside class="sidebar" aria-label="Learning navigation">
-<details id="path-menu"><summary>Learning path</summary><nav id="activity-list" aria-label="Pilot activities"></nav></details>
-<details class="lesson-bottom"><summary>Optional pathways &amp; progress</summary>
-<label for="pathway">Explore a pathway</label><select id="pathway"><option value="microscopy">Microscopy · recommended</option><option value="sequence">Sequence / NGS · optional</option><option value="ml">Machine learning · optional</option></select>
-<p>156 competencies are planned. This preview implements the first 28. Readiness follows each skill’s prerequisites.</p><div id="path-readiness"></div>
-<p id="legacy-summary"></p><a href="./legacy.html">Open the existing 61 lessons and drafts →</a>
-<div class="backup-actions"><button id="export-progress" class="small-button">Export progress</button><label class="small-button" for="import-progress">Import progress</label><input id="import-progress" type="file" accept="application/json" hidden></div>
-<p id="backup-status" role="status"></p>
-</details>
+<nav class="course-order" aria-label="Course stages"><button data-stage="Python">Python</button><span aria-hidden="true">→</span><button data-stage="Microscopy">Microscopy</button><span aria-hidden="true">→</span><button data-stage="NGS">NGS</button><span aria-hidden="true">→</span><button data-stage="ML">ML</button></nav>
+<details id="path-menu"><summary>Learning path</summary><nav id="activity-list" aria-label="Course exercises"></nav></details>
+
 </aside>
 <section class="lesson-area" aria-label="Learning activity">
 <div id="review-reminder" class="review-reminder" hidden><span id="review-summary"></span><button id="open-review" class="small-button">Open due review</button></div>
@@ -29,7 +24,7 @@
 <section class="mission-brief"><span class="brief-kicker" id="phase-title"></span><p id="phase-task"></p></section>
 <aside id="context-image" class="pilot-image" hidden aria-label="Authentic microscopy context">
 <figure><img id="hpa-image" alt="Human Protein Atlas RGB fluorescence microscopy composite" hidden><figcaption id="image-status">Loading original publisher image…</figcaption></figure>
-<p>Human Protein Atlas · Thul et al., Science (2017) · <a href="https://www.proteinatlas.org/about/licence" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. RGB JPEG visualization; no raw calibration or validated object labels.</p>
+<p>Human Protein Atlas · <a href="https://www.proteinatlas.org/about/licence" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. RGB composite; uncalibrated.</p>
 <a id="image-source" target="_blank" rel="noopener noreferrer">Original publisher image ↗</a> <button id="image-retry" class="small-button" hidden>Retry image</button>
 </aside>
 <details id="notebook-lab" class="notebook-lab" hidden>
@@ -50,21 +45,48 @@
 <div class="code-heading"><label for="pilot-editor">Python</label><button id="restore-starter" class="link-button">Restore starter</button></div>
 <textarea id="pilot-editor" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-label="Python code editor"></textarea>
 <div class="editor-actions"><button id="pilot-run" class="main-button">Run Python ▶</button><button id="pilot-hint" class="small-button">Hint 1 of 3</button><span class="shortcut">Ctrl+Enter</span></div>
+<label id="outside-help-row" class="outside-help" hidden><input id="outside-help" type="checkbox"> I used outside help or a supplied solution for this check.</label><p id="outside-help-note" class="panel-sub" hidden>Help stays recorded for this check. A fresh delayed prompt can provide independent evidence.</p>
 <p id="pilot-hint-text" class="hint" hidden></p>
 <div class="output-area" id="pilot-output-area" hidden><div class="output-head">Actual Python output <span id="pilot-runtime"></span></div><p id="output-case" class="panel-sub"></p><pre id="pilot-output"></pre><pre id="pilot-traceback" class="traceback" hidden></pre></div>
 </div>
 <div id="pilot-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
-<div class="navigation"><button id="phase-back" class="nav-button">← Back</button><button id="phase-next" class="main-button" hidden>Continue →</button></div>
+<div class="navigation"><button id="phase-back" class="nav-button">← Back</button><button id="phase-next" class="nav-button" hidden>Continue →</button></div>
 </section>
-<section id="activity-complete" class="mission-brief" hidden><p id="completion-message"></p><button id="next-activity" class="main-button">Next activity →</button><button id="start-review" class="small-button" hidden>Try delayed transfer</button></section>
-<details class="lesson-bottom"><summary>Learning notes &amp; sources</summary><p id="learning-note"></p><p id="legacy-history"></p><a href="https://www.pythonforbiologists.org/" target="_blank" rel="noopener noreferrer">Python for Biologists</a> · <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener noreferrer">Python Data Science Handbook</a> · <a href="./docs/CURRICULUM_V3_FROZEN.md">Frozen v3 curriculum</a></details>
+<section id="activity-complete" class="navigation"><button id="previous-activity" class="nav-button">← Previous exercise</button><p id="completion-message" hidden></p><button id="next-activity" class="nav-button">Next activity →</button><button id="start-review" class="link-button" hidden>Try delayed transfer</button></section>
+<details class="lesson-bottom"><summary>Notes &amp; book exercise</summary><p id="exercise-source"></p><p id="learning-note"></p><p id="legacy-history"></p><a href="https://www.pythonforbiologists.org/" target="_blank" rel="noopener noreferrer">Python for Biologists</a> · <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener noreferrer">Python Data Science Handbook</a> · <a href="./docs/CURRICULUM_V3_FROZEN.md">Curriculum</a> · <a href="./docs/THIRD_PARTY_NOTICES.md">Credits &amp; reuse notices</a></details>
+<details id="study-tools" class="lesson-bottom"><summary>Progress &amp; study tools</summary><section class="goal-panel" id="goal-panel" aria-labelledby="goal-title">
+<p class="brief-kicker">OUR GOAL</p><h2 id="goal-title">Build an independent, reproducible microscopy analysis.</h2>
+<p id="goal-status">Milestone 1 · Validate the beginner learning experience</p><p id="goal-counts"></p>
+<button id="goal-next" class="main-button" disabled>Loading next action…</button><p id="goal-wait" role="status"></p>
+<details id="goal-details"><summary>Milestones &amp; pilot evidence</summary>
+<ol><li><strong>Current: validate beginner teaching.</strong> Complete the first 15 activities, explain representative code, and demonstrate independent and delayed transfer.</li><li>Complete a small biological Python project independently.</li><li>Analyze real microscopy data and explain calibration and validation limits.</li><li>Reproduce the analysis from a clean environment.</li></ol>
+<p>Current focus: evaluate the first 15. Every available exercise and stage is open; the recommended course runs Python → Microscopy → NGS → ML.</p>
+<h3>Three representative checks</h3><div id="checkpoint-list"></div>
+<p>Transfer practice is always open. Retention checks need a fresh prompt after at least 24 hours. Assisted work may require a second review interval. These three checks sample the pilot; they do not certify every competency or the effectiveness of the whole course.</p>
+<h3>Reported difficulties</h3><div id="pilot-issues"></div>
+<p>Technical verification is recorded separately in <a href="./TEST_REPORT.md">the QA report</a>. Learning evidence uses this device’s clock and saved attempts. A person must review explanations and make the final pilot decision.</p>
+<button id="export-pilot-report" class="small-button">Export pilot evidence report</button><p>The report includes saved code, explanations and feedback. It stays local until you choose to share it. Use progress export for a full backup.</p>
+</details></section>
+<p id="legacy-summary"></p><a href="./legacy.html">Open the existing 61 lessons and drafts →</a>
+<div class="backup-actions"><button id="export-progress" class="small-button">Export progress</button><label class="small-button" for="import-progress">Import progress</label><input id="import-progress" type="file" accept="application/json" hidden></div>
+<p id="backup-status" role="status"></p>
+<details class="lesson-bottom" id="pilot-reflection" hidden><summary>Explain this code for pilot review</summary>
+<p id="reflection-prompt"></p><pre id="reflection-code"></pre>
+<label for="reflection-text">Your explanation, in your own words</label><textarea id="reflection-text" rows="4" maxlength="4000"></textarea><p id="reflection-status" role="status"></p>
+<details id="reflection-review"><summary>Human reviewer checklist</summary><p>Review the explanation against the saved code. These checks record a person’s judgment; Python tests do not grade this explanation.</p>
+<label><input id="rubric-input" type="checkbox"> Identifies the changing inputs and relevant outputs.</label>
+<label><input id="rubric-reasoning" type="checkbox"> Explains how the operations produce the result.</label>
+<label><input id="rubric-boundary" type="checkbox"> Explains the relevant boundary, error or scientific limitation.</label>
+<label for="reflection-review-note">Reviewer notes (optional)</label><textarea id="reflection-review-note" rows="2" maxlength="2000"></textarea><button id="save-reflection-review" class="small-button">Record explanation review</button></details>
+</details>
 <details class="lesson-bottom" id="activity-feedback"><summary>Feedback on this activity</summary>
 <p>Your feedback stays in this browser and in progress exports. It does not change mastery evidence.</p>
 <label for="feedback-clarity">How clear was the activity?</label><select id="feedback-clarity"><option value="">Choose a response</option><option value="clear">Clear</option><option value="needs-example">Needs more explanation or an example</option><option value="technical-issue">A technical issue blocked me</option></select>
 <label for="feedback-note">What helped or caused difficulty? (optional)</label><textarea id="feedback-note" rows="3" maxlength="2000"></textarea>
 <button id="save-activity-feedback" class="small-button">Save feedback</button><p id="activity-feedback-status" role="status"></p>
 </details>
+</details>
 </section></div>
 </main>
-<script src="./learning-state.js?v=v3-foundations-1"></script><script src="./pilot.js?v=v3-foundations-1"></script>
+<script src="./course-path.js?v=v3-open-course-1"></script><script src="./learning-state.js?v=v3-open-course-1"></script><script src="./milestones.js?v=v3-open-course-1"></script><script src="./pilot.js?v=v3-open-course-1"></script>
 </body></html>

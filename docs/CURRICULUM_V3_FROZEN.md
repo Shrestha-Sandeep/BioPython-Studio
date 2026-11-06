@@ -4,6 +4,12 @@
 **Base:** 61-lesson branch `feature/complete-61-lesson-curriculum`, commit `c6aaae508ff50e87958222ecb5826e2f0b367a96`.  
 **Machine-readable authority:** [`curriculum/v3_manifest.json`](../curriculum/v3_manifest.json) records every distinct competency, its prerequisites, and a preservation map for all 61 legacy IDs.
 
+## Current presentation policy — user-directed update, 6 November 2026
+
+The current user instruction is **one open path: Python → Microscopy → NGS → ML**, with no prerequisite or completion locks on implemented exercises/stages. This supersedes the earlier optional-path/default-route presentation below. `recommended_complete_route` is the new 156-entry, prerequisite-safe teaching order; the older route arrays remain for historical compatibility. The 156 semantic IDs, competency objectives, prerequisite edges and 61 preservation aliases are unchanged. Duplicate aliases share one course entry; raw historical drafts stay available. Current and nonoverlapping historical exercises expose 78 distinct entries, without claiming that every historical exercise is a completed v3 upgrade.
+
+Goals/evaluation tools are secondary, collapsed controls. Early transfer is practice; exposed prompts cannot later become unseen retention checks. Source-first exercise reuse is preferred when licensing permits: the existing array examples now adapt credited Witz exercises and VanderPlas code, with notices in `docs/THIRD_PARTY_NOTICES.md`. No additional duplicate competency was introduced. This is an explicit user-directed change to access and presentation, not an automatic mastery award or production sign-off.
+
 ## Final decision
 
 **156 distinct competencies**, not 160 obligatory lessons. Starting from the v2 inventory, eight tasks that tested previously learned skills or repeated report construction become embedded practice/transfer assessments. Four genuinely needed competencies are added: local Python environment, Git, robust statistics and GC composition. The 61 saved lesson IDs are preserved as migration aliases.
@@ -397,3 +403,8 @@ Automated pilot walkthrough and 25/61-record preservation fixtures exercise G1/G
 The separate branch `feature/v3-foundations-collections` extends the unchanged pilot with the next 13 entries in `recommended_default_route`: 004, 009, 013, 014, 015, 017, 018, 019, 020, 021, 022, 023 and 024. There are 28 implemented v3 activities and 128 still planned. No IDs, prerequisites, legacy aliases, default-route order or optional-path membership changed.
 
 The notebook-workflow competency now demonstrates real persistent Python cell state, a fresh Worker/runtime on kernel restart, isolated clean-state assessments and an unexecuted Jupyter-compatible notebook export. This is a partial G3 handoff; local environment/terminal/Git competencies remain upcoming. Automated usability review corrected changed-input traceback display, untouched-record import restoration and due-review discovery. Human learner evaluation and actual elapsed delayed retention remain outstanding. Neither development PR is production approval.
+
+
+### Goal-directed pilot evaluation — current development focus
+
+Curriculum expansion is paused at the 28 implemented activities. The active milestone is evaluating the first 15, with the goal and acceptance protocol recorded in [README.md](../README.md#goal-and-current-development-focus). Existing competencies 008, 025 and 038 supply representative independent/delayed checks; this adds no new competency or prerequisite. Written explanations require a recorded human rubric review, and reported difficulties require documented follow-up. The app recommends the next pilot action and exports evidence with explicit self-study/device-clock limits. Technical verification and learner effectiveness remain separate; the final pilot decision and production approval remain human decisions. All 61 aliases and progress records, the first-15 order, the 156-node graph and optional pathways are preserved.

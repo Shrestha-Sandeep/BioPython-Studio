@@ -55,11 +55,11 @@ def test_legacy_aliases_cover_all_old_lessons_exactly_once():
 def test_nonredundancy_and_path_character():
     assert len(DATA["removed_v2"]) == 8
     assert len(DATA["added_v3"]) == 4
-    assert "optional" in DATA["path_policy"]
+    assert "Python" in DATA["path_policy"] and "NGS" in DATA["path_policy"]
     module_types = {x["track"] for x in DATA["modules"]}
     assert {"foundation", "microscopy", "sequence", "ml", "projects"}.issubset(module_types)
 
-def test_default_route_and_elective_branches():
+def test_archived_routes_remain_compatible():
     skills = {x["number"]: x for x in DATA["competencies"]}
     route = DATA["recommended_default_route"]
     pilot = DATA["recommended_first_15"]
@@ -77,3 +77,19 @@ def test_default_route_and_elective_branches():
     assert set(DATA["optional_sequence_route"]).isdisjoint(completed)
     assert set(DATA["optional_ml_route"]).isdisjoint(completed)
     assert completed | set(DATA["optional_sequence_route"]) | set(DATA["optional_ml_route"]) == set(skills)
+
+def test_complete_course_is_one_prerequisite_safe_path_with_all_four_stages():
+    skills={c['number']:c for c in DATA['competencies']}
+    route=DATA['recommended_complete_route']
+    assert len(route)==156 and len(set(route))==156
+    def stage(c):
+        if c['module']=='M11' or c['number']=='155': return 2
+        if c['module']=='M12' or c['number']=='156': return 3
+        if c['module'] in ['M07','M08','M09'] or c['number'] in ['153','154']: return 1
+        return 0
+    seen=set();previous=0
+    for number in route:
+        c=skills[number]
+        assert set(c['prerequisite_numbers'])<=seen
+        assert stage(c)>=previous
+        previous=stage(c);seen.add(number)
