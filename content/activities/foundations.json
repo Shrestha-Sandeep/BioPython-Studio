@@ -1,0 +1,862 @@
+{
+  "schema_version": "1.0.0",
+  "scope": "P01-P03, authoring pilot; not graded UI",
+  "activities": [
+    {
+      "id": "P01-A",
+      "mission": "P01",
+      "title": "Run a specimen script",
+      "competencies": [
+        "001"
+      ],
+      "goal": "Understand assignments versus output.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "What will a program print if it assigns a variable but never calls print?",
+      "worked_example": "specimen = \"N2_P03\"\nprint(specimen)",
+      "task": "Use the supplied specimen and field_count to create a readable one-line summary, print it, and save it in summary.",
+      "starter_code": "# Available: specimen, field_count\n# Make summary and print it",
+      "reference_solution": "summary = f\"{specimen}: {field_count} fields\"\nprint(summary)",
+      "fixtures": [
+        {
+          "inputs": {
+            "specimen": "N2_P03",
+            "field_count": 4
+          },
+          "assertions": [
+            "summary == \"N2_P03: 4 fields\""
+          ]
+        },
+        {
+          "inputs": {
+            "specimen": "mutantA_P12",
+            "field_count": 0
+          },
+          "assertions": [
+            "summary == \"mutantA_P12: 0 fields\""
+          ]
+        },
+        {
+          "inputs": {
+            "specimen": "WT_P02",
+            "field_count": 13
+          },
+          "assertions": [
+            "summary.endswith(\"13 fields\")",
+            "summary.startswith(\"WT_P02:\")"
+          ]
+        }
+      ],
+      "transfer_prompt": "Starting with a blank editor, produce an equivalent summary for an unfamiliar sample identifier and count.",
+      "hints": [
+        "An assignment stores a value; use print to display it.",
+        "Use an f-string to combine the supplied specimen and count."
+      ],
+      "science_caution": "The count is a demonstration value, not a validated biological replicate count.",
+      "source_refs": [
+        "w01",
+        "we01"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P01-B",
+      "mission": "P01",
+      "title": "Calculate physical width",
+      "competencies": [
+        "005",
+        "006",
+        "007"
+      ],
+      "goal": "Distinguish int/float/bool and calculate with documented scale.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "If a 48-pixel segment has 4 pixels per micrometre, what is its width? What type does division produce?",
+      "worked_example": "pixels = 48\npixels_per_um = 4.0\nwidth_um = pixels / pixels_per_um\nprint(type(width_um).__name__)",
+      "task": "Calculate width_um from the supplied pixels and pixels_per_um. Save the Python type name in value_type.",
+      "starter_code": "# Available: pixels, pixels_per_um (positive)\n# Calculate width_um and value_type",
+      "reference_solution": "width_um = pixels / pixels_per_um\nvalue_type = type(width_um).__name__",
+      "fixtures": [
+        {
+          "inputs": {
+            "pixels": 48,
+            "pixels_per_um": 4
+          },
+          "assertions": [
+            "width_um == 12.0",
+            "value_type == \"float\""
+          ]
+        },
+        {
+          "inputs": {
+            "pixels": 75,
+            "pixels_per_um": 2.5
+          },
+          "assertions": [
+            "width_um == 30.0",
+            "value_type == \"float\""
+          ]
+        },
+        {
+          "inputs": {
+            "pixels": 0,
+            "pixels_per_um": 8
+          },
+          "assertions": [
+            "width_um == 0.0",
+            "value_type == \"float\""
+          ]
+        }
+      ],
+      "transfer_prompt": "Now describe in words why changing the scale changes width_um even if pixels is unchanged.",
+      "hints": [
+        "Physical width is pixel length divided by pixels per micrometre.",
+        "Call type(width_um).__name__ to obtain a readable type name."
+      ],
+      "science_caution": "Numbers are synthetic; physical calibration must come from verified microscope metadata.",
+      "source_refs": [
+        "w01",
+        "we01"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P01-C",
+      "mission": "P01",
+      "title": "Read and repair a traceback",
+      "competencies": [
+        "002",
+        "003"
+      ],
+      "goal": "Understand a NameError and inspect built-in help.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "What exception occurs when a misspelled variable is used after its correctly spelled counterpart is defined?",
+      "worked_example": "field_count = 5\nprint(field_cout)  # intentional mistake: inspect traceback",
+      "task": "Repair the incorrect name. Save the displayed count to reported and the first line of the print documentation to help_line.",
+      "starter_code": "# Available: field_count\nprint(field_cout)\n# Set reported and help_line after fixing",
+      "reference_solution": "reported = field_count\nhelp_line = (print.__doc__ or \"\").splitlines()[0]\nprint(reported)",
+      "fixtures": [
+        {
+          "inputs": {
+            "field_count": 5
+          },
+          "assertions": [
+            "reported == 5",
+            "isinstance(help_line, str)",
+            "len(help_line) > 0"
+          ]
+        },
+        {
+          "inputs": {
+            "field_count": 0
+          },
+          "assertions": [
+            "reported == 0",
+            "len(help_line) > 0"
+          ]
+        }
+      ],
+      "transfer_prompt": "Recreate the same error in a new two-line script, then fix it without replacing the input by a constant.",
+      "hints": [
+        "Tracebacks often end with the exception type and a description of the missing name.",
+        "Use print.__doc__ or help(print) for documented behavior; no external imports needed."
+      ],
+      "science_caution": "Repair the cause of an error; do not hide a failed calculation or treat it as a measurement.",
+      "source_refs": [
+        "w01",
+        "python-doc"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P01-D",
+      "mission": "P01",
+      "title": "Detect notebook state drift",
+      "competencies": [
+        "004"
+      ],
+      "goal": "Recompute dependent values when an earlier cell changes.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "Cell A set count=4; Cell B set doubled=count*2; only Cell A is changed to 8. What does an unchanged Cell C printing doubled show before B is rerun?",
+      "worked_example": "count = 4\ndoubled = count * 2\ncount = 8\nprint(doubled)  # old result, unless recomputed",
+      "task": "Assume count is supplied freshly. Recompute doubled from that count so no previous execution state can affect the result.",
+      "starter_code": "# Available: count\n# Set doubled from the current input",
+      "reference_solution": "doubled = count * 2",
+      "fixtures": [
+        {
+          "inputs": {
+            "count": 8
+          },
+          "assertions": [
+            "doubled == 16"
+          ]
+        },
+        {
+          "inputs": {
+            "count": 3
+          },
+          "assertions": [
+            "doubled == 6"
+          ]
+        },
+        {
+          "inputs": {
+            "count": 0
+          },
+          "assertions": [
+            "doubled == 0"
+          ]
+        }
+      ],
+      "transfer_prompt": "Explain why a notebook should be restarted and run from the top before reporting a result.",
+      "hints": [
+        "Changing source text does not update previously computed variables.",
+        "Every derived value must be recomputed from the current inputs."
+      ],
+      "science_caution": "An old notebook output can look plausible even when it was derived from stale data.",
+      "source_refs": [
+        "w01",
+        "pdsh"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P02-A",
+      "mission": "P02",
+      "title": "Create informative sample labels",
+      "competencies": [
+        "008"
+      ],
+      "goal": "Build formatted labels from scientific metadata.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "What label does plate 3 produce with formatting :02d?",
+      "worked_example": "strain = \"N2\"\nplate = 3\nprint(f\"{strain}_P{plate:02d}_control\")",
+      "task": "Construct sample_id from provided strain, plate and condition; plate must have at least two digits.",
+      "starter_code": "# Available: strain, plate, condition\n# Set sample_id",
+      "reference_solution": "sample_id = f\"{strain}_P{plate:02d}_{condition}\"",
+      "fixtures": [
+        {
+          "inputs": {
+            "strain": "N2",
+            "plate": 3,
+            "condition": "control"
+          },
+          "assertions": [
+            "sample_id == \"N2_P03_control\""
+          ]
+        },
+        {
+          "inputs": {
+            "strain": "ced1",
+            "plate": 12,
+            "condition": "heat"
+          },
+          "assertions": [
+            "sample_id == \"ced1_P12_heat\""
+          ]
+        },
+        {
+          "inputs": {
+            "strain": "WT",
+            "plate": 0,
+            "condition": "mock"
+          },
+          "assertions": [
+            "sample_id == \"WT_P00_mock\""
+          ]
+        }
+      ],
+      "transfer_prompt": "With a blank editor, format a different strain and a three-digit plate number without hardcoding the final text.",
+      "hints": [
+        "An f-string interpolates existing variables.",
+        "Use {plate:02d} inside the f-string to pad one-digit integers."
+      ],
+      "science_caution": "Formatting improves readability; it does not prove that an ID is unique or valid.",
+      "source_refs": [
+        "w01",
+        "we01"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P02-B",
+      "mission": "P02",
+      "title": "Check a specimen ID",
+      "competencies": [
+        "009"
+      ],
+      "goal": "Parse a simple fixed convention without silently accepting malformed labels.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "Does split('_') alone verify that N2_Pxx_control is a valid identifier?",
+      "worked_example": "label = \"N2_P03_control\"\nparts = label.split(\"_\")\nprint(parts)",
+      "task": "Use split, len, startswith and isdigit to set is_valid for a label with three non-empty pieces and a numeric P plate code.",
+      "starter_code": "# Available: label\n# Set is_valid to True or False",
+      "reference_solution": "parts = label.split(\"_\")\nis_valid = (len(parts) == 3 and bool(parts[0]) and bool(parts[2]) and parts[1].startswith(\"P\") and len(parts[1]) > 1 and parts[1][1:].isdigit())",
+      "fixtures": [
+        {
+          "inputs": {
+            "label": "N2_P03_control"
+          },
+          "assertions": [
+            "is_valid is True"
+          ]
+        },
+        {
+          "inputs": {
+            "label": "N2_Pxx_control"
+          },
+          "assertions": [
+            "is_valid is False"
+          ]
+        },
+        {
+          "inputs": {
+            "label": "N2_P04"
+          },
+          "assertions": [
+            "is_valid is False"
+          ]
+        },
+        {
+          "inputs": {
+            "label": "_P07_heat"
+          },
+          "assertions": [
+            "is_valid is False"
+          ]
+        },
+        {
+          "inputs": {
+            "label": "WT_P11_treated"
+          },
+          "assertions": [
+            "is_valid is True"
+          ]
+        }
+      ],
+      "transfer_prompt": "How would the parser need to change if condition names could contain underscores? Explain why the current policy is limited.",
+      "hints": [
+        "Split on underscores and inspect how many pieces were produced.",
+        "Short-circuit with and before indexing a plate-code substring."
+      ],
+      "science_caution": "This is a documented course ID convention, not a general laboratory sample-ID standard.",
+      "source_refs": [
+        "w01",
+        "python-doc"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P02-C",
+      "mission": "P02",
+      "title": "Apply a declared focus-QC rule",
+      "competencies": [
+        "010",
+        "011"
+      ],
+      "goal": "Write a conditional with explicit inclusive boundary.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "Does a score of exactly 0.70 pass a score >= 0.70 policy?",
+      "worked_example": "focus = 0.70\ncutoff = 0.70\nprint(focus >= cutoff)",
+      "task": "Set accepted as a Boolean, and reason to 'pass' or 'review' using the provided numeric score and cutoff.",
+      "starter_code": "# Available: focus, cutoff\n# Set accepted and reason using if / else",
+      "reference_solution": "accepted = focus >= cutoff\nif accepted:\n    reason = \"pass\"\nelse:\n    reason = \"review\"",
+      "fixtures": [
+        {
+          "inputs": {
+            "focus": 0.74,
+            "cutoff": 0.7
+          },
+          "assertions": [
+            "accepted is True",
+            "reason == \"pass\""
+          ]
+        },
+        {
+          "inputs": {
+            "focus": 0.7,
+            "cutoff": 0.7
+          },
+          "assertions": [
+            "accepted is True",
+            "reason == \"pass\""
+          ]
+        },
+        {
+          "inputs": {
+            "focus": 0.69,
+            "cutoff": 0.7
+          },
+          "assertions": [
+            "accepted is False",
+            "reason == \"review\""
+          ]
+        },
+        {
+          "inputs": {
+            "focus": 0.62,
+            "cutoff": 0.65
+          },
+          "assertions": [
+            "accepted is False"
+          ]
+        }
+      ],
+      "transfer_prompt": "Adapt the policy to exclude scores strictly below a newly chosen cutoff, and explain why changing QC thresholds after seeing groups can bias analysis.",
+      "hints": [
+        "Compare focus and cutoff with >=, not string comparison.",
+        "Use an if/else block or a clear conditional expression to assign the reason."
+      ],
+      "science_caution": "Focus score and thresholds are invented for teaching, not validated microscope QC criteria.",
+      "source_refs": [
+        "w08",
+        "python-doc"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P03-A",
+      "mission": "P03",
+      "title": "Index, slice and unpack field data",
+      "competencies": [
+        "016",
+        "018"
+      ],
+      "goal": "Use zero-based indexing, slices and tuple unpacking.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "What elements are selected by scores[1:3], and why does the item at position 3 not appear?",
+      "worked_example": "scores = [0.81, 0.63, 0.94, 0.70]\nprint(scores[1:3])",
+      "task": "From provided scores and pair, save first, last, middle (indices 1 and 2) and unpacked_sample/unpacked_score.",
+      "starter_code": "# Available: scores (nonempty), pair (two elements)\n# Define first, last, middle and unpacked_sample/unpacked_score",
+      "reference_solution": "first = scores[0]\nlast = scores[-1]\nmiddle = scores[1:3]\nunpacked_sample, unpacked_score = pair",
+      "fixtures": [
+        {
+          "inputs": {
+            "scores": [
+              0.81,
+              0.63,
+              0.94,
+              0.7
+            ],
+            "pair": [
+              "N2_P03",
+              0.81
+            ]
+          },
+          "assertions": [
+            "first == 0.81",
+            "last == 0.70",
+            "middle == [0.63,0.94]",
+            "unpacked_sample == \"N2_P03\"",
+            "unpacked_score == 0.81"
+          ]
+        },
+        {
+          "inputs": {
+            "scores": [
+              0.15,
+              0.95
+            ],
+            "pair": [
+              "WT_P11",
+              0.95
+            ]
+          },
+          "assertions": [
+            "first == 0.15",
+            "last == 0.95",
+            "middle == [0.95]",
+            "unpacked_sample == \"WT_P11\""
+          ]
+        }
+      ],
+      "transfer_prompt": "Explain what needs to change for an empty scores list; do not pretend scores[0] would work.",
+      "hints": [
+        "List indexes start at zero; use -1 for the last value.",
+        "A slice excludes its stop index; a pair can be unpacked with two names."
+      ],
+      "science_caution": "Field order is an acquisition convention, not evidence of independent biological samples.",
+      "source_refs": [
+        "w08",
+        "ws"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P03-B",
+      "mission": "P03",
+      "title": "Extend a list without overwriting data",
+      "competencies": [
+        "017"
+      ],
+      "goal": "Distinguish a new list from mutating the source measurements.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "If updated = original and updated.append(x), does original also change?",
+      "worked_example": "original = [0.8,0.9]\nupdated = original\nupdated.append(0.7)\nprint(original)",
+      "task": "Create an updated list from original and append next_score, without changing original.",
+      "starter_code": "# Available: original, next_score\n# Create updated without mutating original",
+      "reference_solution": "updated = original.copy()\nupdated.append(next_score)",
+      "fixtures": [
+        {
+          "inputs": {
+            "original": [
+              0.8,
+              0.9
+            ],
+            "next_score": 0.7
+          },
+          "assertions": [
+            "updated == [0.8,0.9,0.7]",
+            "original == [0.8,0.9]"
+          ]
+        },
+        {
+          "inputs": {
+            "original": [],
+            "next_score": 0.5
+          },
+          "assertions": [
+            "updated == [0.5]",
+            "original == []"
+          ]
+        }
+      ],
+      "transfer_prompt": "Build the result again without using .copy(), and explain the difference between aliasing and a new list.",
+      "hints": [
+        "Assignment does not copy a Python list.",
+        "Use original.copy() or original[:] before append()."
+      ],
+      "science_caution": "Keep raw observations intact; changes to a derived list should not silently rewrite source data.",
+      "source_refs": [
+        "ws",
+        "we08"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P03-C",
+      "mission": "P03",
+      "title": "Filter fields and preserve exclusions",
+      "competencies": [
+        "012",
+        "015"
+      ],
+      "goal": "Use for, if and continue to record accepted, rejected and missing fields.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "What happens to a missing score if you compare None >= 0.70 without checking it first?",
+      "worked_example": "records = [[\"f1\",0.8],[\"f2\",None],[\"f3\",0.6]]\nfor field_id,score in records:\n    if score is None:\n        continue\n    print(field_id,score)",
+      "task": "From records (field ID, focus score or None) and cutoff, construct accepted_ids, rejected_ids and missing_ids in source order.",
+      "starter_code": "# Available: records, cutoff\naccepted_ids = []\nrejected_ids = []\nmissing_ids = []\n# Use a for loop and continue for missing scores",
+      "reference_solution": "accepted_ids = []\nrejected_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n        continue\n    if score >= cutoff:\n        accepted_ids.append(field_id)\n    else:\n        rejected_ids.append(field_id)",
+      "fixtures": [
+        {
+          "inputs": {
+            "records": [
+              [
+                "f1",
+                0.81
+              ],
+              [
+                "f2",
+                null
+              ],
+              [
+                "f3",
+                0.69
+              ],
+              [
+                "f4",
+                0.7
+              ]
+            ],
+            "cutoff": 0.7
+          },
+          "assertions": [
+            "accepted_ids == [\"f1\",\"f4\"]",
+            "rejected_ids == [\"f3\"]",
+            "missing_ids == [\"f2\"]"
+          ]
+        },
+        {
+          "inputs": {
+            "records": [],
+            "cutoff": 0.7
+          },
+          "assertions": [
+            "accepted_ids == []",
+            "rejected_ids == []",
+            "missing_ids == []"
+          ]
+        },
+        {
+          "inputs": {
+            "records": [
+              [
+                "a",
+                0.49
+              ],
+              [
+                "b",
+                0.5
+              ],
+              [
+                "c",
+                null
+              ]
+            ],
+            "cutoff": 0.5
+          },
+          "assertions": [
+            "accepted_ids == [\"b\"]",
+            "rejected_ids == [\"a\"]",
+            "missing_ids == [\"c\"]"
+          ]
+        }
+      ],
+      "transfer_prompt": "Repeat on a fresh set of five fields and describe why missingness is not equivalent to low focus.",
+      "hints": [
+        "Handle score is None before comparing it with cutoff.",
+        "Append each field ID to exactly one of three result lists; continue skips to next record."
+      ],
+      "science_caution": "These are fields, not biological replicates. Excluded fields and reasons must be reported rather than erased.",
+      "source_refs": [
+        "w08",
+        "we08"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P03-D",
+      "mission": "P03",
+      "title": "Number recorded fields reliably",
+      "competencies": [
+        "013"
+      ],
+      "goal": "Use enumerate and range without off-by-one errors.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "What is the first label generated by enumerate(scores, start=1), and what does range(3) yield?",
+      "worked_example": "scores = [0.8,0.6]\nprint(list(enumerate(scores, start=1)))",
+      "task": "Build numbered as [field_number, score] pairs starting at 1, plus zero_based_positions using range(len(scores)).",
+      "starter_code": "# Available: scores\n# Set numbered and zero_based_positions",
+      "reference_solution": "numbered = []\nfor field_number, score in enumerate(scores, start=1):\n    numbered.append([field_number, score])\nzero_based_positions = list(range(len(scores)))",
+      "fixtures": [
+        {
+          "inputs": {
+            "scores": [
+              0.8,
+              0.6,
+              0.7
+            ]
+          },
+          "assertions": [
+            "numbered == [[1,0.8],[2,0.6],[3,0.7]]",
+            "zero_based_positions == [0,1,2]"
+          ]
+        },
+        {
+          "inputs": {
+            "scores": []
+          },
+          "assertions": [
+            "numbered == []",
+            "zero_based_positions == []"
+          ]
+        },
+        {
+          "inputs": {
+            "scores": [
+              0
+            ]
+          },
+          "assertions": [
+            "numbered == [[1,0.0]]",
+            "zero_based_positions == [0]"
+          ]
+        }
+      ],
+      "transfer_prompt": "Try the task on an arbitrary-length list without making the field number depend on a hardcoded constant.",
+      "hints": [
+        "Enumerate supplies a position and value together.",
+        "range(len(scores)) yields valid zero-based indices."
+      ],
+      "science_caution": "Display field numbering can start at 1 while Python sequence positions start at 0.",
+      "source_refs": [
+        "w08",
+        "we08"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    },
+    {
+      "id": "P03-E",
+      "mission": "P03",
+      "title": "Stop a bounded inspection loop",
+      "competencies": [
+        "014"
+      ],
+      "goal": "Use while with a changing index and a clear stopping condition.",
+      "stage": "Python",
+      "sequence": [
+        "predict",
+        "run",
+        "investigate",
+        "modify",
+        "write",
+        "debug_transfer"
+      ],
+      "predict": "What happens if index never increases inside a while loop whose condition depends on index?",
+      "worked_example": "limit = 3\nindex = 0\nwhile index < limit:\n    print(index)\n    index += 1",
+      "task": "Inspect at most max_fields scores, without accessing beyond list length. Save inspected and inspected_count.",
+      "starter_code": "# Available: scores, max_fields (>= 0)\n# Set inspected, inspected_count via while",
+      "reference_solution": "inspected = []\nindex = 0\nwhile index < len(scores) and index < max_fields:\n    inspected.append(scores[index])\n    index += 1\ninspected_count = index",
+      "fixtures": [
+        {
+          "inputs": {
+            "scores": [
+              0.8,
+              0.9,
+              0.4,
+              0.7
+            ],
+            "max_fields": 2
+          },
+          "assertions": [
+            "inspected == [0.8,0.9]",
+            "inspected_count == 2"
+          ]
+        },
+        {
+          "inputs": {
+            "scores": [
+              0.8,
+              0.9
+            ],
+            "max_fields": 8
+          },
+          "assertions": [
+            "inspected == [0.8,0.9]",
+            "inspected_count == 2"
+          ]
+        },
+        {
+          "inputs": {
+            "scores": [
+              0.8
+            ],
+            "max_fields": 0
+          },
+          "assertions": [
+            "inspected == []",
+            "inspected_count == 0"
+          ]
+        },
+        {
+          "inputs": {
+            "scores": [],
+            "max_fields": 3
+          },
+          "assertions": [
+            "inspected == []",
+            "inspected_count == 0"
+          ]
+        }
+      ],
+      "transfer_prompt": "Describe when stopping after a fixed number of fields is justified and why early termination must be declared before analyzing conditions.",
+      "hints": [
+        "The loop condition should check both the data length and the cap.",
+        "Increase index once each iteration; inspect only scores[index] while it is in bounds."
+      ],
+      "science_caution": "An early stopping rule can distort experimental sampling if it depends on observed treatment outcomes.",
+      "source_refs": [
+        "w08",
+        "python-doc"
+      ],
+      "assess_independence": "changed input; no solution revealed before blank-editor attempt"
+    }
+  ]
+}
