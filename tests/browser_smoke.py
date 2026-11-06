@@ -36,13 +36,19 @@ def main():
             browser=p.chromium.launch(headless=True)
             for width,height in [(360,780),(390,844),(768,1000),(1280,850),(1440,900)]:
                 page=browser.new_page(viewport={"width":width,"height":height})
-                # Test image failure gracefully, without relying on publisher connectivity.
+                # Original Witz figures are bundled. No publisher network required.
                 page.route("https://images.proteinatlas.org/**", lambda route: route.abort())
                 exceptions=[]
                 page.on("pageerror",lambda e: exceptions.append(str(e)))
                 page.goto(url,wait_until="domcontentloaded")
                 page.wait_for_function("document.querySelectorAll('#stage-nav button').length === 4")
                 assert page.get_by_role("heading",name="Run your first scientific script").is_visible()
+                page.get_by_role("heading",name="Witz exercise 1 of 6").wait_for()
+                assert page.locator("#source-link").get_attribute("href").endswith("e01-Python_basics.ipynb")
+                page.locator("#code-editor").fill("var1 = 5\nprint(var1)")
+                page.get_by_role("button",name="Next exercise").click()
+                assert page.get_by_role("heading",name="Witz exercise 2 of 6").is_visible()
+                assert page.locator("#code-editor").input_value()=="var1 = 5\nprint(var1)"
                 assert page.get_by_role("tab",name="Learn").get_attribute("aria-selected")=="true"
                 typography = page.evaluate("""() => {
                     const size = selector => parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
@@ -68,7 +74,12 @@ def main():
                 assert page.get_by_role("button",name="Run Python").is_disabled()
                 page.get_by_role("button",name="Microscopy",exact=True).click()
                 assert page.get_by_role("heading",name="Open a real fluorescence image").is_visible()
-                page.locator("#image-fallback").wait_for(state="visible",timeout=15000)
+                page.locator("#context-image").wait_for(state="visible",timeout=15000)
+                page.wait_for_function("document.getElementById('context-image').complete && document.getElementById('context-image').naturalWidth > 100")
+                assert "/assets/witz/fluorescence-single.png" in page.locator("#context-image").get_attribute("src")
+                assert page.locator("#figure-source").get_attribute("href").endswith("Demo.ipynb")
+                assert page.locator("#raw-tiff-link").is_visible()
+                page.get_by_role("heading",name="Witz exercise 1 of 5").wait_for()
                 page.get_by_role("tab",name="Apply").click()
                 assert page.get_by_role("heading",name="Build your program").is_visible()
                 page.locator("#code-editor").fill("print('saved scientific draft')")
