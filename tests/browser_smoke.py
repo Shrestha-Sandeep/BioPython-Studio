@@ -131,7 +131,7 @@ def main():
                 assert code_value(page) == "sample = 5\nprint(sample)"
                 if width <= 720:
                     page.get_by_role("button", name="Open navigation").click()
-                    page.get_by_role("button", name="Microscopy", exact=True).click()
+                    page.locator('[data-stage="Microscopy"]').click()
                     assert page.get_by_role("heading", name="Image analysis workspace").is_visible()
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), f"Horizontal overflow at {width}px"
                 assert not errors, f"JavaScript errors at {width}px: {errors}"
