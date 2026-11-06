@@ -113,10 +113,12 @@
             <select id="preview-channel" aria-label="Displayed RGB channel" disabled>
               <option value="rgb">RGB</option><option value="red">Red</option><option value="green">Green</option><option value="blue">Blue</option><option value="gray">Grayscale</option>
             </select>
-            <label class="control-label" for="z-plane">Z</label><input id="z-plane" type="range" min="0" max="0" value="0" disabled aria-label="Z plane" title="Z-stack viewer will be enabled for supported microscopy files">
-            <span class="viewer-value">0 / 0</span>
-            <label class="control-label" for="time-point">T</label><input id="time-point" type="range" min="0" max="0" value="0" disabled aria-label="Time point" title="Time-series viewer will be enabled for supported microscopy files">
-            <span class="viewer-value">0 / 0</span>
+            <div id="volume-controls" class="volume-controls" hidden>
+              <label class="control-label" for="z-plane">Z</label><input id="z-plane" type="range" min="0" max="0" value="0" disabled aria-label="Z plane" title="Z-stack viewer will be enabled for supported microscopy files">
+              <span class="viewer-value">0 / 0</span>
+              <label class="control-label" for="time-point">T</label><input id="time-point" type="range" min="0" max="0" value="0" disabled aria-label="Time point" title="Time-series viewer will be enabled for supported microscopy files">
+              <span class="viewer-value">0 / 0</span>
+            </div>
             <button type="button" id="compare-toggle" class="subtle-button compare-toggle" aria-expanded="false" aria-controls="comparison-tools">Compare</button>
           </div>
           <div class="comparison-tools" id="comparison-tools" hidden>
@@ -129,9 +131,11 @@
               <option value="overlay">Overlay</option>
               <option value="wipe">Wipe</option>
             </select>
-            <label class="control-label" for="comparison-opacity">Mix</label>
-            <input id="comparison-opacity" type="range" min="0" max="100" value="50" aria-label="Overlay opacity or wipe position" disabled>
-            <output id="comparison-opacity-value" for="comparison-opacity">50%</output>
+            <div id="opacity-tools" class="opacity-tools" hidden>
+              <label class="control-label" for="comparison-opacity">Mix</label>
+              <input id="comparison-opacity" type="range" min="0" max="100" value="50" aria-label="Overlay opacity or wipe position" disabled>
+              <output id="comparison-opacity-value" for="comparison-opacity">50%</output>
+            </div>
           </div>
           <div class="comparison-notice" id="comparison-notice" role="status" hidden></div>
           <div class="image-canvas" id="image-canvas" aria-label="Image preview area">
