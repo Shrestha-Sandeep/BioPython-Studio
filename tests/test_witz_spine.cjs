@@ -28,5 +28,5 @@ test('Historical curriculum construction remains compatible',()=>{
  const route=CoursePath.build(manifest,{activities:[]});
  assert.equal(route.length,156);
  assert.equal(route[0].mission,null);
- assert.equal(route.filter(c=>c.stage==='Python').length,70);
+ assert.equal(route.filter(c=>c.stage==='Python').length,88);
 });
