@@ -94,7 +94,12 @@ try:
             saved=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
             page.reload();page.wait_for_function('!!activity')
             assert page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')==saved
-        if i<len(CAT)-1:page.locator('#next-activity').click()
+        if i==14:
+            page.locator('#next-activity').click()
+            assert page.locator('#goal-details').evaluate('(e)=>e.open')
+            assert page.locator('#activity-title').inner_text()==a['title']
+            page.locator('#path-menu summary').click();page.locator('#activity-list button').nth(15).click()
+        elif i<len(CAT)-1:page.locator('#next-activity').click()
     assert not errors,errors
     page.evaluate("() => { select(catalog.activities[0].id);skill.stage='modify';render(); }")
     page.locator('#pilot-editor').fill('if field_name != "Field B07":\n    print(field_name)\n    print("Recorded")\nelse:\n    print(missing_second_input)')
@@ -174,5 +179,61 @@ try:
     assert imported.evaluate('lessons.length')==61
     migration.close();fresh.close()
     print('PASS legacy 61-ID export/import and original draft handoff',flush=True)
+    # Goal workflow uses real Python checks and an explicitly advanced test clock.
+    from datetime import datetime,timezone,timedelta
+    goal_context=browser.new_context(accept_downloads=True)
+    goal_page=goal_context.new_page()
+    full_state=page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
+    goal_page.add_init_script('if(!localStorage.getItem("biopython_studio_v3"))localStorage.setItem("biopython_studio_v3",'+json.dumps(json.dumps(full_state))+')')
+    goal_page.goto(URL);goal_page.wait_for_function('!!activity')
+    goal_page.evaluate("() => { select(catalog.activities.find(a=>a.number==='008').id);skill.stage='write';render(); }")
+    goal_page.locator('#outside-help').check()
+    assert goal_page.locator('#outside-help').is_disabled()
+    assert goal_page.evaluate('PilotMilestones.summary(state,catalog).counts.independent')==2
+    clock_start=datetime.now(timezone.utc)
+    goal_page.clock.set_fixed_time(clock_start+timedelta(days=1,seconds=10))
+    for number in ['008','025','038']:
+        goal_page.locator('#goal-next').click()
+        assert goal_page.evaluate('activity.number')==number
+        assert goal_page.locator('#pilot-editor').input_value()==''
+        a=next(a for a in CAT if a['number']==number)
+        goal_page.locator('#pilot-editor').fill(a['transfers'][0]['reference']);run(goal_page)
+    assert goal_page.evaluate('PilotMilestones.summary(state,catalog).counts.retained')==2
+    for number in ['008','025','038']:
+        goal_page.locator('#goal-next').click()
+        assert goal_page.evaluate('activity.number')==number
+        goal_page.locator('#reflection-text').fill('Automated fixture: inputs change; the operations transform them; a boundary or scientific limitation must be checked.')
+        if not goal_page.locator('#reflection-review').evaluate('(e)=>e.open'):goal_page.locator('#reflection-review summary').click()
+        for criterion in ['input','reasoning','boundary']:goal_page.locator('#rubric-'+criterion).check()
+        goal_page.locator('#save-reflection-review').click()
+    goal_page.locator('#goal-next').click()
+    goal_page.locator('#pilot-issues textarea').fill('Automated fixture: the reported difficulty has been reproduced and the correction verified.')
+    goal_page.locator('#pilot-issues button').click()
+    assert goal_page.evaluate('PilotMilestones.summary(state,catalog).counts.openIssues')==0
+    assert 'scheduled review' in goal_page.locator('#goal-next').inner_text()
+    goal_page.clock.set_fixed_time(clock_start+timedelta(days=2,seconds=20))
+    goal_page.evaluate('goalUI.renderGoal()')
+    goal_page.locator('#goal-next').click()
+    goal_page.locator('#pilot-editor').fill(next(a for a in CAT if a['number']=='008')['transfers'][1]['reference']);run(goal_page)
+    assert 'ready for human sign-off' in goal_page.locator('#goal-status').inner_text()
+    with goal_page.expect_download() as report_file:goal_page.locator('#goal-next').click()
+    report=json.loads(Path(report_file.value.path()).read_text())
+    assert report['ready'] and report['counts']['retained']==3 and report['counts']['reviewed']==3
+    assert 'Pending human sign-off' in report['releaseDecision']
+    assert 'Device clock' in report['timeBasis']
+    for width in [1440,1024,390]:
+        goal_page.set_viewport_size({'width':width,'height':950})
+        assert goal_page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),width
+    # Text edits invalidate a human review; complete progress backup retains that revision.
+    goal_page.locator('#reflection-text').fill('Automated fixture: revised explanation requiring a new review.')
+    assert not goal_page.evaluate('PilotMilestones.summary(state,catalog).ready')
+    backup=goal_page.evaluate('JSON.parse(localStorage.getItem(S.KEY))')
+    restore_context=browser.new_context();restore=restore_context.new_page();restore.goto(URL);restore.wait_for_function('!!activity')
+    restore.locator('#import-progress').set_input_files(dict(name='progress.json',mimeType='application/json',buffer=json.dumps(backup).encode()))
+    restore.wait_for_function('Object.keys(state.skills).length===28')
+    assert restore.evaluate('state.skills[activity.id].pilotReflection.text')=='Automated fixture: revised explanation requiring a new review.'
+    assert not restore.evaluate('PilotMilestones.summary(state,catalog).ready')
+    goal_context.close();restore_context.close()
+    print('PASS goal recommendation, assistance, explanations, issue triage, timed real transfer, evidence export and progress restoration',flush=True)
     browser.close()
 finally: server.shutdown()

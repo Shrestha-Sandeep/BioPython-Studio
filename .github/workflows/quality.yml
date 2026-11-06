@@ -24,7 +24,8 @@ jobs:
           node --check worker.js
           node --check learning-state.js
           node --check pilot.js
-          node --test tests/test_learning_state.cjs
+          node --check milestones.js
+          node --test tests/test_learning_state.cjs tests/test_milestones.cjs
       - name: Run all Python evaluations and companion notebook
         run: python -m pytest -q tests/test_harness.py tests/test_chunk1.py tests/test_full.py tests/test_notebook.py
       - name: Validate frozen v3 curriculum contract

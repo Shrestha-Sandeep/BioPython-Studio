@@ -62,3 +62,18 @@ html,body{overflow-x:clip}
 #activity-feedback label { display:block; margin:10px 0 6px; }
 #feedback-clarity { width:100%; max-width:420px; padding:8px; }
 #feedback-note { width:100%; min-height:90px; margin:0 0 10px; padding:12px; border:1px solid #cbded9; border-radius:8px; }
+
+.goal-panel { padding:18px 22px; margin:4px 0 24px; background:#fff; border:1px solid #cbded9; border-left:4px solid #087f73; border-radius:12px; }
+.goal-panel h2 { font-size:20px; margin:8px 0; line-height:1.35; }
+.goal-panel p { margin:10px 0; }
+#goal-counts { font-size:12px; color:#47616b; }
+#goal-details { margin-top:14px; }
+#goal-details summary { cursor:pointer; font-size:13px; font-weight:650; }
+.checkpoint-row { padding:12px 0; border-top:1px solid #dce7e3; }
+.checkpoint-row p { font-size:13px; }
+.checkpoint-row textarea, #reflection-text, #reflection-review-note { width:100%; margin:8px 0; padding:12px; min-height:90px; border:1px solid #cbded9; border-radius:8px; }
+#reflection-code { white-space:pre-wrap; overflow-wrap:anywhere; background:#eef5f3; padding:12px; }
+#pilot-reflection label { display:block; margin:12px 0; }
+.outside-help { display:flex; gap:10px; align-items:flex-start; padding:4px 14px 12px; font-size:13px; }
+.outside-help input { flex:none; margin-top:4px; }
+@media(max-width:600px) { .goal-panel {padding:15px;} .goal-panel h2 {font-size:18px;} .goal-panel .main-button {white-space:normal;text-align:left;} }

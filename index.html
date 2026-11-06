@@ -4,12 +4,25 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Learn scientific Python through prediction, investigation and independent practice.">
 <title>BioPython Studio — Scientific Python</title>
-<link rel="stylesheet" href="./styles.css?v=v3-foundations-1">
+<link rel="stylesheet" href="./styles.css?v=v3-milestone-1">
 </head>
 <body>
 <header class="sitebar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">B</span><span>BioPython <strong>Studio</strong></span></a><span class="site-progress" id="pilot-progress">Foundations preview</span></header>
 <main class="app pilot-app">
 <p id="storage-warning" class="feedback error" role="alert" hidden></p>
+<section class="goal-panel" id="goal-panel" aria-labelledby="goal-title">
+<p class="brief-kicker">OUR GOAL</p><h2 id="goal-title">Build an independent, reproducible microscopy analysis.</h2>
+<p id="goal-status">Milestone 1 · Validate the beginner learning experience</p><p id="goal-counts"></p>
+<button id="goal-next" class="main-button" disabled>Loading next action…</button><p id="goal-wait" role="status"></p>
+<details id="goal-details"><summary>Milestones &amp; pilot evidence</summary>
+<ol><li><strong>Current: validate beginner teaching.</strong> Complete the first 15 activities, explain representative code, and demonstrate independent and delayed transfer.</li><li>Complete a small biological Python project independently.</li><li>Analyze real microscopy data and explain calibration and validation limits.</li><li>Reproduce the analysis from a clean environment.</li></ol>
+<p>Current focus: evaluate the first 15. The existing foundation continuation remains available in Learning path. Further content expansion is paused.</p>
+<h3>Three representative checks</h3><div id="checkpoint-list"></div>
+<p>Delayed checks open after at least 24 hours. Assisted work may require a second review interval. These three checks sample the pilot; they do not certify every competency or the effectiveness of the whole course.</p>
+<h3>Reported difficulties</h3><div id="pilot-issues"></div>
+<p>Technical verification is recorded separately in <a href="./TEST_REPORT.md">the QA report</a>. Learning evidence uses this device’s clock and saved attempts. A person must review explanations and make the final pilot decision.</p>
+<button id="export-pilot-report" class="small-button">Export pilot evidence report</button><p>The report includes saved code, explanations and feedback. It stays local until you choose to share it. Use progress export for a full backup.</p>
+</details></section>
 <div class="work-layout">
 <aside class="sidebar" aria-label="Learning navigation">
 <details id="path-menu"><summary>Learning path</summary><nav id="activity-list" aria-label="Pilot activities"></nav></details>
@@ -50,6 +63,7 @@
 <div class="code-heading"><label for="pilot-editor">Python</label><button id="restore-starter" class="link-button">Restore starter</button></div>
 <textarea id="pilot-editor" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-label="Python code editor"></textarea>
 <div class="editor-actions"><button id="pilot-run" class="main-button">Run Python ▶</button><button id="pilot-hint" class="small-button">Hint 1 of 3</button><span class="shortcut">Ctrl+Enter</span></div>
+<label id="outside-help-row" class="outside-help" hidden><input id="outside-help" type="checkbox"> I used outside help or a supplied solution for this check.</label><p id="outside-help-note" class="panel-sub" hidden>Help stays recorded for this check. A fresh delayed prompt can provide independent evidence.</p>
 <p id="pilot-hint-text" class="hint" hidden></p>
 <div class="output-area" id="pilot-output-area" hidden><div class="output-head">Actual Python output <span id="pilot-runtime"></span></div><p id="output-case" class="panel-sub"></p><pre id="pilot-output"></pre><pre id="pilot-traceback" class="traceback" hidden></pre></div>
 </div>
@@ -58,6 +72,15 @@
 </section>
 <section id="activity-complete" class="mission-brief" hidden><p id="completion-message"></p><button id="next-activity" class="main-button">Next activity →</button><button id="start-review" class="small-button" hidden>Try delayed transfer</button></section>
 <details class="lesson-bottom"><summary>Learning notes &amp; sources</summary><p id="learning-note"></p><p id="legacy-history"></p><a href="https://www.pythonforbiologists.org/" target="_blank" rel="noopener noreferrer">Python for Biologists</a> · <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener noreferrer">Python Data Science Handbook</a> · <a href="./docs/CURRICULUM_V3_FROZEN.md">Frozen v3 curriculum</a></details>
+<details class="lesson-bottom" id="pilot-reflection" hidden><summary>Explain this code for pilot review</summary>
+<p id="reflection-prompt"></p><pre id="reflection-code"></pre>
+<label for="reflection-text">Your explanation, in your own words</label><textarea id="reflection-text" rows="4" maxlength="4000"></textarea><p id="reflection-status" role="status"></p>
+<details id="reflection-review"><summary>Human reviewer checklist</summary><p>Review the explanation against the saved code. These checks record a person’s judgment; Python tests do not grade this explanation.</p>
+<label><input id="rubric-input" type="checkbox"> Identifies the changing inputs and relevant outputs.</label>
+<label><input id="rubric-reasoning" type="checkbox"> Explains how the operations produce the result.</label>
+<label><input id="rubric-boundary" type="checkbox"> Explains the relevant boundary, error or scientific limitation.</label>
+<label for="reflection-review-note">Reviewer notes (optional)</label><textarea id="reflection-review-note" rows="2" maxlength="2000"></textarea><button id="save-reflection-review" class="small-button">Record explanation review</button></details>
+</details>
 <details class="lesson-bottom" id="activity-feedback"><summary>Feedback on this activity</summary>
 <p>Your feedback stays in this browser and in progress exports. It does not change mastery evidence.</p>
 <label for="feedback-clarity">How clear was the activity?</label><select id="feedback-clarity"><option value="">Choose a response</option><option value="clear">Clear</option><option value="needs-example">Needs more explanation or an example</option><option value="technical-issue">A technical issue blocked me</option></select>
@@ -66,5 +89,5 @@
 </details>
 </section></div>
 </main>
-<script src="./learning-state.js?v=v3-foundations-1"></script><script src="./pilot.js?v=v3-foundations-1"></script>
+<script src="./learning-state.js?v=v3-milestone-1"></script><script src="./milestones.js?v=v3-milestone-1"></script><script src="./pilot.js?v=v3-milestone-1"></script>
 </body></html>

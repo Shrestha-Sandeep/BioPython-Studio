@@ -4,9 +4,34 @@ A focused, beginner-to-applied **scientific Python training app for a biologist 
 
 **[Open the current GitHub-connected app](https://biopython-two.vercel.app/)** · [Complete curriculum](CURRICULUM.md) · [Companion research notebook](notebooks/BioPython_Research_Companion.ipynb)
 
+## Goal and current development focus
+
+**Goal:** enable a biologist with little Python experience to independently write, debug and explain a reproducible microscopy analysis using real, appropriately documented data.
+
+| Milestone | Evidence needed |
+|---|---|
+| **1 — Current: validate beginner teaching** | First-15 practice, representative independent and delayed checks, explanations reviewed by a person, and reported difficulties addressed. |
+| 2 — Independent Python foundations | A small biological project combining values, control flow, collections, functions and files without a supplied solution. |
+| 3 — Defensible microscopy workflow | Real-image provenance/axes, ROI/segmentation/measurement, and an explanation of calibration and validation limits. |
+| 4 — Reproducibility | A notebook and traceable outputs another person can reproduce from a clean environment. |
+
+**Further curriculum expansion is paused while milestone 1 is evaluated.** The 28 existing activities remain accessible, including the continuation while a learner waits for delayed review. The frozen syllabus, graph and optional sequence/NGS and ML paths are unchanged.
+
+Milestone 1 uses a small, explicit evaluation protocol for one learner:
+
+1. Practice the frozen first 15 activities; record confusion or technical blockers with the existing feedback control.
+2. Collect unassisted changed-input evidence for **008 (specimen labels), 025 (QC function), and 038 (array shape/axes)**. These are representative existing competencies, not three new lessons or a certification of all 15.
+3. For those same competencies, complete fresh delayed checks at least 24 hours after independent evidence. Hints and self-declared outside help count as assistance; assisted practice may need two review intervals. Failed/repeated prompts do not create retained evidence, and exhausted prompts require human follow-up.
+4. Explain the code in your own words. A person reviews inputs/outputs, reasoning and a relevant boundary or scientific limitation against the saved code. Text edits invalidate the review; earlier reviewed explanations are preserved in history.
+5. Review each reported explanation need or technical issue and record what changed. New feedback reopens the need for review. Export the pilot evidence report, then make a human decision about teaching quality, unresolved software issues and the next increment.
+
+The app recommends one next pilot action and reports what is missing. A report can become **ready for human sign-off**; it never automatically certifies teaching effectiveness, approves a release or expands the curriculum. Timing uses the learner’s device clock, and outside assistance/reviewer judgments are self-reported. CI/runtime verification remains separate in [TEST_REPORT.md](TEST_REPORT.md). Use the full progress export for backups; the narrower pilot report includes selected code, attempts, explanations and feedback for review.
+
+Every development increment must identify **the milestone, the concrete learner problem, the evidence that will show improvement, and the next unresolved action**. The PR template records those choices. The immediate next work is collecting genuine pilot evidence and correcting demonstrated friction; foundation expansion resumes after that review.
+
 ## v3 development preview
 
-The `feature/v3-foundations-collections` continuation is stacked on the `feature/v3-learning-engine-pilot` branch and builds on the unchanged frozen design in [PR #1](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/1), above the 61-lesson baseline. This work is a development preview; production and the curriculum PR remain unmerged.
+The `feature/v3-pilot-milestone` evaluation branch is stacked on `feature/v3-foundations-collections`; that continuation is stacked on the `feature/v3-learning-engine-pilot` branch and builds on the unchanged frozen design in [PR #1](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/1), above the 61-lesson baseline. This work is a development preview; production and the curriculum PR remain unmerged.
 
 - The preview home implements **28 activities**: the unchanged first-15 pilot followed by the next 13 entries of `recommended_default_route`. Every activity uses predict → run → investigate → modify → blank-editor write → debug. Authentic HPA microscopy is visible from the first activity.
 - A real Pyodide Worker executes examples and assessments, including traceback/help behavior, changed-input and edge checks, explicit floating-point input types, bounded loops, and progressive hints.
@@ -47,7 +72,7 @@ Static deployment: host this repository as files (Vercel, GitHub Pages or a loca
 ```bash
 python -m pip install numpy pandas scipy scikit-image scikit-learn biopython matplotlib pytest pillow playwright nbformat requests ipython
 python -m pytest -q tests/test_harness.py tests/test_chunk1.py tests/test_full.py tests/test_notebook.py tests/test_curriculum_v3_contract.py tests/test_pilot.py
-node --test tests/test_learning_state.cjs
+node --test tests/test_learning_state.cjs tests/test_milestones.cjs
 python -m playwright install chromium
 python tests/test_complete_ui.py
 python tests/test_pilot_ui.py  # live CDN + HPA access; no mocked runtime
