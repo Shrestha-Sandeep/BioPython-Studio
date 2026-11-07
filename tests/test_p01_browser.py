@@ -163,9 +163,14 @@ def main():
                 page_errors=[]
                 mobile.on("pageerror",lambda e: page_errors.append(str(e)))
                 mobile.goto(URL,wait_until="domcontentloaded")
-                mobile.locator("#p01-goal-select").wait_for(timeout=20000)
+                mobile.locator("#p01-goal-select").wait_for(state="attached",timeout=20000)
                 assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), ("Horizontal P01 overflow",width)
+                if width <= 720:
+                    mobile.locator("#nav-toggle").click()
+                    assert mobile.locator("#p01-goal-select").is_visible()
                 mobile.locator("#p01-goal-select").select_option("7")
+                if width <= 720:
+                    mobile.locator("#nav-toggle").click()
                 mobile.locator("#tab-prove").click()
                 mobile.locator("#p01-reflection").fill("Units, calibration and biological independence require interpretation.")
                 assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), ("Capstone overflow",width)
