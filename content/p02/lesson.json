@@ -102,8 +102,8 @@
           ],
           "practice_feedback": {
             "why": "The declared label grammar preserves strain spelling while standardizing only the plate and condition fields.",
-            "probe": "Change `condition` to `Control` and predict the suffix.",
-            "check": "Check the values of strain, plate and condition before interpolation."
+            "probe": "How could silently normalizing the strain name damage the link to recorded source metadata?",
+            "check": "Trim only permitted exterior whitespace and normalize plate and condition without changing strain case."
           }
         },
         "prove": {
@@ -149,8 +149,8 @@
           ],
           "practice_feedback": {
             "why": "A different delimiter and source names test the naming policy rather than the exact previously seen expression.",
-            "probe": "Change the strain from `N2` to `mutA`; verify its case remains unchanged.",
-            "check": "`plate.strip().upper()` removes the trailing space and makes P uppercase."
+            "probe": "What kind of sample-identity error could remain even when the string has correct syntax?",
+            "check": "Use slash separators and normalize acquisition/treatment, preserving specimen spelling."
           }
         }
       },
@@ -260,8 +260,8 @@
           ],
           "practice_feedback": {
             "why": "The parser tests precisely three nonempty components while making no claim about the actual specimen identity.",
-            "probe": "Replace `sample_id` with `N2__heat`. Why is the number of parts still three?",
-            "check": "A separator divides one string into a list of smaller strings."
+            "probe": "Could a label have three nonempty parts but still contain an unknown treatment?",
+            "check": "Check precisely three nonempty underscore-separated segments; do not validate biological meaning yet."
           }
         },
         "prove": {
@@ -308,8 +308,8 @@
           ],
           "practice_feedback": {
             "why": "Switching to the pipe delimiter still requires three nonempty components and must reject ambiguous field counts.",
-            "probe": "Try `N2_P03_heat_extra`, and inspect the fourth component.",
-            "check": "`len(parts)` reports the count, not whether the components make scientific sense."
+            "probe": "Why would silently discarding an extra component be unsafe in an audit trail?",
+            "check": "Use the pipe separator and ensure every component is nonempty before reporting valid_shape."
           }
         }
       },
@@ -426,8 +426,8 @@
           ],
           "practice_feedback": {
             "why": "A valid score must be within the illustrative 0–1 interval and meet an inclusive minimum to pass.",
-            "probe": "Set focus_score just below 0.8 and compare `>` versus `>=`.",
-            "check": "`focus_score >= minimum_focus` includes equality."
+            "probe": "How must a score of 1.2 be classified under a declared 0..1 teaching scale?",
+            "check": "Separate 0..1 range validity from inclusive minimum and exact boundary equality."
           }
         },
         "prove": {
@@ -487,8 +487,8 @@
           ],
           "practice_feedback": {
             "why": "Inclusive lower and upper limits both count as valid boundaries; exact equality is not an error.",
-            "probe": "Set focus_score to 1.2 and show why exceeding the minimum does not establish validity.",
-            "check": "`focus_score > minimum_focus` excludes equality."
+            "probe": "How would strict inequalities change the classification of records exactly on a boundary?",
+            "check": "Use inclusive minimum and maximum and detect equality at either limit."
           }
         }
       },
@@ -607,8 +607,8 @@
           ],
           "practice_feedback": {
             "why": "The first applicable identifier or focus failure produces the reported reason; structure precedes quality.",
-            "probe": "Change the sample to `N2_P03_control_extra` and identify the first matching branch.",
-            "check": "Inspect `parts = sample_id.split('_')` before accessing any segment."
+            "probe": "If shape and focus both fail, which rejection reason must appear and why?",
+            "check": "Evaluate segment count, empty components and then focus, returning the first applicable reason."
           }
         },
         "prove": {
@@ -668,8 +668,8 @@
           ],
           "practice_feedback": {
             "why": "The new pipe-separated convention retains first-failure priority and never lets a good signal rescue an invalid ID.",
-            "probe": "Change focus_score to 0.79 and verify the reason is specifically focus-related.",
-            "check": "The first branch rejects structurally malformed input, so the score is not interpreted for a bad label."
+            "probe": "Can a high signal ratio make an invalid identifier scientifically valid?",
+            "check": "Test pipe-separated structure before signal_ratio and preserve the raw record ID."
           }
         }
       },
@@ -892,8 +892,8 @@
         ],
         "practice_feedback": {
           "why": "The validator checks each declared syntax and QC rule in order, preserving the raw ID for audit.",
-          "probe": "Contrast `N2_P03_heat` with `N2_P03_heat_2`: the latter has four fields.",
-          "check": "Write down the declared ID grammar and the priority order before programming."
+          "probe": "Can two different faults occur in one record, and how do you prove the first-failure priority?",
+          "check": "Use all six staged validation passes and apply the specified reason order to raw sample_id."
         }
       },
       "prove": {
@@ -1020,8 +1020,8 @@
         ],
         "practice_feedback": {
           "why": "Transfer replaces plate IDs with acquisition IDs, yet still requires an explicit reason for every rejected record.",
-          "probe": "Try `N2_Px3_heat`, `_P03_heat`, `N2_P03_Heat`, and a low-focus valid record.",
-          "check": "Probe `P03`, `Px3`, `P3` and `P３3` with `.startswith`, `.removeprefix`, `.isascii` and `.isdigit` to understand each syntactic requirement."
+          "probe": "Why must acquisition metadata be verified externally even after a record passes syntactic checks?",
+          "check": "Rebuild the validator for specimen|F##|treatment, never reusing the old plate grammar."
         }
       }
     },
@@ -1095,8 +1095,8 @@
         "preview_inputs": {},
         "practice_feedback": {
           "why": "Writing a validation order from memory prevents missing components from being indexed before shape checks.",
-          "probe": "Try before reopening the prior chapter.",
-          "check": "Recall `.split`, conditional branches and `>=` without opening old answers."
+          "probe": "Can you state the validation hierarchy without referring to the previous capstone code?",
+          "check": "Recall shape, strain, site, condition, numerical range and threshold in that order."
         }
       },
       "prove": {
@@ -1157,8 +1157,8 @@
         ],
         "practice_feedback": {
           "why": "The tilde-separated acquisition convention tests reconstruction of the rules without copying plate-specific code.",
-          "probe": "Include a boundary-equality example.",
-          "check": "Write down the input grammar and precise reason priority."
+          "probe": "How would a plausible but unrecorded acquisition label still undermine experimental traceability?",
+          "check": "Use the new tilde-delimited site grammar and keep acquisition_id exactly as given."
         }
       }
     },
