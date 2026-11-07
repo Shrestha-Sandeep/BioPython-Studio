@@ -45,7 +45,10 @@ class P01AuthorChecks(unittest.TestCase):
                 self.assertTrue(goal["scientific_boundary"])
                 self.assertTrue(goal["misconception"])
                 self.assertTrue(goal["feedback"])
-                self.assertTrue(goal["worked_example"]["code"])
+                if goal["id"] != "P01-REVIEW":
+                    self.assertTrue(goal["worked_example"]["code"])
+                else:
+                    self.assertEqual(goal["worked_example"]["code"], "", "Retrieval should not reveal a worked solution")
                 for phase in ("learn", "apply", "prove"):
                     self.assertTrue(goal["phases"][phase]["starter_code"])
                 for phase in ("apply", "prove"):
