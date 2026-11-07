@@ -68,6 +68,88 @@ def main():
             assert "saved P01-G01 apply" in page.evaluate(
                 "() => document.querySelector('.CodeMirror').CodeMirror.getValue()"), "Reload lost draft"
             assert page.locator("#tab-apply").get_attribute("aria-selected") == "true", "Reload lost phase"
+
+            # New chapter: the full concept, prediction feedback and authentic source figure
+            page.locator("#p01-goal-select").select_option("0")
+            page.locator("#tab-learn").click()
+            assert "A program consists of statements" in page.locator("#p01-detail-root").inner_text()
+            page.locator(".p01-answer-toggle").click()
+            assert "Exactly one line" in page.locator(".p01-answer").inner_text()
+            page.get_by_text("See a genuine microscopy example").click()
+            page.wait_for_function("document.querySelector('.p01-real-figure img').naturalWidth > 0")
+            assert "Witz" in page.locator(".p01-real-figure figcaption").inner_text()
+
+            # Full capstone must execute as genuine Python, not a static expected output.
+            page.locator("#p01-goal-select").select_option("7")
+            page.locator("#tab-apply").click()
+            assert page.locator("#lesson-summary").inner_text().startswith("P01")
+            assert "Available example inputs" in page.locator("#p01-detail-root").inner_text()
+            page.evaluate("""code => document.querySelector('.CodeMirror').CodeMirror.setValue(code)""",
+                "width_um = width_pixels / pixels_per_um\n"
+                "type_name = type(width_um).__name__\n"
+                "summary = f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'\n"
+                "print(summary)")
+            page.locator("#p01-check").click()
+            page.wait_for_function("document.querySelector('#output-body').innerText.includes('Passed 3 changed-input checks')",
+                                   timeout=30000)
+            capstone_state = page.evaluate("JSON.parse(localStorage.getItem('biopython.p01.v1'))")
+            assert capstone_state["capstoneFirstPassAt"] > 0, "Capstone completion timestamp not recorded"
+
+            page.locator("#tab-prove").click()
+            page.evaluate("""code => document.querySelector('.CodeMirror').CodeMirror.setValue(code)""",
+                "length_um = roi_length_px / calibration_px_per_um\n"
+                "numeric_type = type(length_um).__name__\n"
+                "result_line = f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'\n"
+                "print(result_line)")
+            page.locator("#p01-check").click()
+            page.wait_for_function("document.querySelector('#output-body').innerText.includes('Passed 3 changed-input checks')",
+                                   timeout=30000)
+            reflection = "The conversion divides by pixels per micrometre to return um. A missing calibration makes physical interpretation invalid. Imaging fields are not independent biological replicates. I repaired a NameError by checking the variable spelling."
+            page.locator("#p01-reflection").fill(reflection)
+            assert reflection in page.evaluate("JSON.parse(localStorage.getItem('biopython.p01.v1')).reflections['P01-CAPSTONE']")
+
+            # Export must include input assignments, so this script runs outside the browser.
+            with page.expect_download() as download_event:
+                page.locator("#p01-export").click()
+            download=download_event.value
+            assert download.suggested_filename == "specimen_report.py"
+            exported=Path(download.path()).read_text(encoding="utf8")
+            assert "sample_code = " in exported
+            assert "length_um = roi_length_px / calibration_px_per_um" in exported
+            assert "Synthetic microscopy records" in exported
+
+            # Resume the capstone with the same phase, code and reflection.
+            page.reload(wait_until="domcontentloaded")
+            page.locator("#p01-goal-select").wait_for(timeout=20000)
+            assert page.locator("#p01-goal-select").input_value()=="7"
+            assert "length_um = roi_length_px" in page.evaluate(
+                "() => document.querySelector('.CodeMirror').CodeMirror.getValue()")
+            assert reflection in page.locator("#p01-reflection").input_value()
+
+            # Review is a distinct task; simulate elapsed time to verify classification
+            # without pretending that this automated check proves retained learning.
+            page.evaluate("""() => {
+              const x=JSON.parse(localStorage.getItem('biopython.p01.v1'));
+              x.capstoneFirstPassAt=Date.now()-25*3600*1000;
+              localStorage.setItem('biopython.p01.v1',JSON.stringify(x));
+            }""")
+            page.reload(wait_until="domcontentloaded")
+            page.locator("#p01-goal-select").wait_for(timeout=20000)
+            page.locator("#p01-goal-select").select_option("8")
+            page.locator("#tab-prove").click()
+            assert "delayed practice" in page.locator("#p01-detail-root").inner_text().lower()
+            page.evaluate("""code => document.querySelector('.CodeMirror').CodeMirror.setValue(code)""",
+                "physical_span_um = span_px / px_per_um\n"
+                "report_type = type(physical_span_um).__name__\n"
+                "report_line = f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'\n"
+                "print(report_line)")
+            page.locator("#p01-check").click()
+            page.wait_for_function("document.querySelector('#output-body').innerText.includes('Passed 3 changed-input checks')",
+                                   timeout=30000)
+            state_after = page.evaluate("JSON.parse(localStorage.getItem('biopython.p01.v1'))")
+            assert state_after["progress"]["P01-REVIEW:prove"]["status"] == "delayed_practice_passed"
+            assert not any(v.get("status") == "retained" for v in state_after["progress"].values())
+
             assert not errors, "Browser exceptions: %r" % errors
             browser.close()
         print("PASS: real Pyodide stdout/traceback, changed-input check, draft preservation, reload")
