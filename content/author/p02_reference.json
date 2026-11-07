@@ -1,0 +1,640 @@
+{
+  "schema_version": "bps.author.v1",
+  "chapter_id": "P02",
+  "goals": [
+    {
+      "id": "P02-G01",
+      "apply_solution": "label = f'{strain.strip()}_{plate_code.strip().upper()}_{condition.strip().lower()}'",
+      "prove_solution": "normalized_id = f'{specimen.strip()}/{acquisition.strip().upper()}/{treatment.strip().lower()}'",
+      "apply_checks": [
+        {
+          "inputs": {
+            "strain": "N2",
+            "plate_code": " p03 ",
+            "condition": " HEAT "
+          },
+          "assertions": [
+            "label == 'N2_P03_heat'"
+          ]
+        },
+        {
+          "inputs": {
+            "strain": "ced1",
+            "plate_code": "P12",
+            "condition": "control"
+          },
+          "assertions": [
+            "label == 'ced1_P12_control'"
+          ]
+        },
+        {
+          "inputs": {
+            "strain": "mutA ",
+            "plate_code": " p04",
+            "condition": " Recovery "
+          },
+          "assertions": [
+            "label == 'mutA_P04_recovery'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "specimen": "mutA",
+            "acquisition": "f07",
+            "treatment": " Heat "
+          },
+          "assertions": [
+            "normalized_id == 'mutA/F07/heat'"
+          ]
+        },
+        {
+          "inputs": {
+            "specimen": "N2 ",
+            "acquisition": " F02 ",
+            "treatment": "CONTROL"
+          },
+          "assertions": [
+            "normalized_id == 'N2/F02/control'"
+          ]
+        },
+        {
+          "inputs": {
+            "specimen": "WT_7",
+            "acquisition": "f19",
+            "treatment": " Recovery"
+          },
+          "assertions": [
+            "normalized_id == 'WT_7/F19/recovery'"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P02-G02",
+      "apply_solution": "tokens = raw_id.split('_')\ntoken_count = len(tokens)\nstructure_ok = token_count == 3 and tokens[0] != '' and tokens[1] != '' and tokens[2] != ''",
+      "prove_solution": "components = filename.split('|')\nvalid_shape = len(components) == 3 and components[0] != '' and components[1] != '' and components[2] != ''",
+      "apply_checks": [
+        {
+          "inputs": {
+            "raw_id": "N2_P03_heat"
+          },
+          "assertions": [
+            "tokens == ['N2','P03','heat']",
+            "token_count == 3",
+            "structure_ok is True"
+          ]
+        },
+        {
+          "inputs": {
+            "raw_id": "N2__heat"
+          },
+          "assertions": [
+            "token_count == 3",
+            "structure_ok is False"
+          ]
+        },
+        {
+          "inputs": {
+            "raw_id": "N2_P03_heat_extra"
+          },
+          "assertions": [
+            "token_count == 4",
+            "structure_ok is False"
+          ]
+        },
+        {
+          "inputs": {
+            "raw_id": "N2P03heat"
+          },
+          "assertions": [
+            "token_count == 1",
+            "structure_ok is False"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "filename": "N2|F07|control"
+          },
+          "assertions": [
+            "components == ['N2','F07','control']",
+            "valid_shape is True"
+          ]
+        },
+        {
+          "inputs": {
+            "filename": "N2||control"
+          },
+          "assertions": [
+            "valid_shape is False"
+          ]
+        },
+        {
+          "inputs": {
+            "filename": "N2|F07|control|extra"
+          },
+          "assertions": [
+            "valid_shape is False"
+          ]
+        },
+        {
+          "inputs": {
+            "filename": "|F07|heat"
+          },
+          "assertions": [
+            "valid_shape is False"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P02-G03",
+      "apply_solution": "in_range = 0 <= focus_score <= 1\npasses_threshold = in_range and focus_score >= minimum_focus\non_boundary = focus_score == minimum_focus",
+      "prove_solution": "within_limits = minimum_ratio <= measured_ratio <= maximum_ratio\nat_any_edge = measured_ratio == minimum_ratio or measured_ratio == maximum_ratio",
+      "apply_checks": [
+        {
+          "inputs": {
+            "focus_score": 0.8,
+            "minimum_focus": 0.8
+          },
+          "assertions": [
+            "in_range is True",
+            "passes_threshold is True",
+            "on_boundary is True"
+          ]
+        },
+        {
+          "inputs": {
+            "focus_score": 0.79,
+            "minimum_focus": 0.8
+          },
+          "assertions": [
+            "in_range is True",
+            "passes_threshold is False",
+            "on_boundary is False"
+          ]
+        },
+        {
+          "inputs": {
+            "focus_score": 1.2,
+            "minimum_focus": 0.8
+          },
+          "assertions": [
+            "in_range is False",
+            "passes_threshold is False"
+          ]
+        },
+        {
+          "inputs": {
+            "focus_score": 0,
+            "minimum_focus": 0
+          },
+          "assertions": [
+            "in_range is True",
+            "passes_threshold is True",
+            "on_boundary is True"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "measured_ratio": 2,
+            "minimum_ratio": 2,
+            "maximum_ratio": 5
+          },
+          "assertions": [
+            "within_limits is True",
+            "at_any_edge is True"
+          ]
+        },
+        {
+          "inputs": {
+            "measured_ratio": 5,
+            "minimum_ratio": 2,
+            "maximum_ratio": 5
+          },
+          "assertions": [
+            "within_limits is True",
+            "at_any_edge is True"
+          ]
+        },
+        {
+          "inputs": {
+            "measured_ratio": 5.1,
+            "minimum_ratio": 2,
+            "maximum_ratio": 5
+          },
+          "assertions": [
+            "within_limits is False",
+            "at_any_edge is False"
+          ]
+        },
+        {
+          "inputs": {
+            "measured_ratio": 3.2,
+            "minimum_ratio": 2,
+            "maximum_ratio": 5
+          },
+          "assertions": [
+            "within_limits is True",
+            "at_any_edge is False"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P02-G04",
+      "apply_solution": "parts = sample_id.split('_')\nif len(parts) != 3:\n    decision, reason = 'REJECT', 'wrong number of fields'\nelif parts[0] == '' or parts[1] == '' or parts[2] == '':\n    decision, reason = 'REJECT', 'empty field'\nelif focus_score < minimum_focus:\n    decision, reason = 'REJECT', 'focus below minimum'\nelse:\n    decision, reason = 'ACCEPT', 'shape and focus pass'",
+      "prove_solution": "parts = record_id.split('|')\nif len(parts) != 3 or parts[0] == '' or parts[1] == '' or parts[2] == '':\n    outcome, reason = 'REJECT', 'invalid identifier'\nelif signal_ratio < minimum_ratio:\n    outcome, reason = 'REJECT', 'signal below minimum'\nelse:\n    outcome, reason = 'ACCEPT', 'structure and signal pass'",
+      "apply_checks": [
+        {
+          "inputs": {
+            "sample_id": "N2_P03_heat",
+            "focus_score": 0.8,
+            "minimum_focus": 0.8
+          },
+          "assertions": [
+            "decision == 'ACCEPT'",
+            "reason == 'shape and focus pass'"
+          ]
+        },
+        {
+          "inputs": {
+            "sample_id": "N2_P03_heat_extra",
+            "focus_score": 1,
+            "minimum_focus": 0.7
+          },
+          "assertions": [
+            "decision == 'REJECT'",
+            "reason == 'wrong number of fields'"
+          ]
+        },
+        {
+          "inputs": {
+            "sample_id": "N2__heat",
+            "focus_score": 1,
+            "minimum_focus": 0.7
+          },
+          "assertions": [
+            "decision == 'REJECT'",
+            "reason == 'empty field'"
+          ]
+        },
+        {
+          "inputs": {
+            "sample_id": "N2_P03_heat",
+            "focus_score": 0.79,
+            "minimum_focus": 0.8
+          },
+          "assertions": [
+            "decision == 'REJECT'",
+            "reason == 'focus below minimum'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "record_id": "N2|F07|control",
+            "signal_ratio": 2,
+            "minimum_ratio": 2
+          },
+          "assertions": [
+            "outcome == 'ACCEPT'",
+            "reason == 'structure and signal pass'"
+          ]
+        },
+        {
+          "inputs": {
+            "record_id": "N2||control",
+            "signal_ratio": 4,
+            "minimum_ratio": 2
+          },
+          "assertions": [
+            "outcome == 'REJECT'",
+            "reason == 'invalid identifier'"
+          ]
+        },
+        {
+          "inputs": {
+            "record_id": "N2|F07|control|extra",
+            "signal_ratio": 4,
+            "minimum_ratio": 2
+          },
+          "assertions": [
+            "outcome == 'REJECT'",
+            "reason == 'invalid identifier'"
+          ]
+        },
+        {
+          "inputs": {
+            "record_id": "N2|F07|heat",
+            "signal_ratio": 1.9,
+            "minimum_ratio": 2
+          },
+          "assertions": [
+            "outcome == 'REJECT'",
+            "reason == 'signal below minimum'"
+          ]
+        }
+      ]
+    }
+  ],
+  "capstone": {
+    "id": "P02-CAPSTONE",
+    "apply_solution": "parts = sample_id.split(\"_\")\nif len(parts) != 3:\n    decision = 'REJECT'\n    reason = 'expected three fields'\nelse:\n    strain, code, condition = parts\n    if not strain.isascii() or not strain.isalnum():\n        decision = 'REJECT'\n        reason = 'invalid strain'\n    elif not (len(code) == 3 and code.startswith('P') and code.removeprefix('P').isascii() and code.removeprefix('P').isdigit()):\n        decision = 'REJECT'\n        reason = 'invalid plate'\n    elif condition not in ('control', 'heat', 'recovery'):\n        decision = 'REJECT'\n        reason = 'unknown condition'\n    elif not 0 <= focus_score <= 1:\n        decision = 'REJECT'\n        reason = 'focus outside range'\n    elif focus_score < minimum_focus:\n        decision = 'REJECT'\n        reason = 'focus below minimum'\n    else:\n        decision = 'ACCEPT'\n        reason = 'accepted'\nreport = f'{sample_id} | {decision} | {reason}'\nprint(report)",
+    "prove_solution": "parts = record_id.split(\"|\")\nif len(parts) != 3:\n    verdict = 'REJECT'\n    explanation = 'expected three fields'\nelse:\n    specimen, code, treatment = parts\n    if not specimen.isascii() or not specimen.isalnum():\n        verdict = 'REJECT'\n        explanation = 'invalid specimen'\n    elif not (len(code) == 3 and code.startswith('F') and code.removeprefix('F').isascii() and code.removeprefix('F').isdigit()):\n        verdict = 'REJECT'\n        explanation = 'invalid acquisition'\n    elif treatment not in ('control', 'heat', 'recovery'):\n        verdict = 'REJECT'\n        explanation = 'unknown treatment'\n    elif not 0 <= quality_score <= 1:\n        verdict = 'REJECT'\n        explanation = 'quality outside range'\n    elif quality_score < threshold:\n        verdict = 'REJECT'\n        explanation = 'quality below minimum'\n    else:\n        verdict = 'ACCEPT'\n        explanation = 'accepted'\nresult_line = f'{record_id} -> {verdict} ({explanation})'\nprint(result_line)",
+    "apply_checks": [
+      {
+        "inputs": {
+          "sample_id": "N2_P03_heat",
+          "focus_score": 0.8,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'ACCEPT'",
+          "reason == 'accepted'",
+          "report == f'{sample_id} | {decision} | {reason}'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "mutA_P12_recovery",
+          "focus_score": 1,
+          "minimum_focus": 0.85
+        },
+        "assertions": [
+          "decision == 'ACCEPT'",
+          "reason == 'accepted'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "N2_P03_heat_extra",
+          "focus_score": 1,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'expected three fields'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "_P03_heat",
+          "focus_score": 1,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'invalid strain'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "N2_Px3_heat",
+          "focus_score": 1,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'invalid plate'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "N2_P３3_heat",
+          "focus_score": 1,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'invalid plate'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "N2_P03_Heat",
+          "focus_score": 1,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'unknown condition'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "N2_P03_heat",
+          "focus_score": 1.2,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'focus outside range'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "N2_P03_heat",
+          "focus_score": 0.79,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'focus below minimum'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "N2__control",
+          "focus_score": 0.2,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'invalid plate'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_id": "mut_X_P03_heat",
+          "focus_score": 1,
+          "minimum_focus": 0.8
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'expected three fields'"
+        ]
+      }
+    ],
+    "prove_checks": [
+      {
+        "inputs": {
+          "record_id": "N2|F03|heat",
+          "quality_score": 0.9,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'ACCEPT'",
+          "explanation == 'accepted'",
+          "result_line == f'{record_id} -> {verdict} ({explanation})'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "ced1|F04|control",
+          "quality_score": 0.7,
+          "threshold": 0.7
+        },
+        "assertions": [
+          "verdict == 'ACCEPT'",
+          "explanation == 'accepted'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "N2|F03|heat|extra",
+          "quality_score": 0.9,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'REJECT'",
+          "explanation == 'expected three fields'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "|F03|heat",
+          "quality_score": 0.9,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'REJECT'",
+          "explanation == 'invalid specimen'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "N2|P03|heat",
+          "quality_score": 0.9,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'REJECT'",
+          "explanation == 'invalid acquisition'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "N2|F３3|heat",
+          "quality_score": 0.9,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'REJECT'",
+          "explanation == 'invalid acquisition'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "N2|F03|unknown",
+          "quality_score": 0.9,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'REJECT'",
+          "explanation == 'unknown treatment'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "N2|F03|heat",
+          "quality_score": -0.1,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'REJECT'",
+          "explanation == 'quality outside range'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "N2|F03|heat",
+          "quality_score": 0.79,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'REJECT'",
+          "explanation == 'quality below minimum'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "N2_extra|F03|heat",
+          "quality_score": 0.9,
+          "threshold": 0.8
+        },
+        "assertions": [
+          "verdict == 'REJECT'",
+          "explanation == 'invalid specimen'"
+        ]
+      }
+    ]
+  },
+  "review": {
+    "id": "P02-REVIEW",
+    "prove_solution": "parts = acquisition_id.split(\"~\")\nif len(parts) != 3:\n    decision = 'REJECT'\n    reason = 'invalid shape'\nelse:\n    strain, code, condition = parts\n    if not strain.isascii() or not strain.isalnum():\n        decision = 'REJECT'\n        reason = 'invalid strain'\n    elif not (len(code) == 3 and code.startswith('S') and code.removeprefix('S').isascii() and code.removeprefix('S').isdigit()):\n        decision = 'REJECT'\n        reason = 'invalid site'\n    elif condition not in ('control', 'heat', 'recovery'):\n        decision = 'REJECT'\n        reason = 'unknown condition'\n    elif not 0 <= focus_metric <= 1:\n        decision = 'REJECT'\n        reason = 'metric outside range'\n    elif focus_metric < focus_minimum:\n        decision = 'REJECT'\n        reason = 'metric below minimum'\n    else:\n        decision = 'ACCEPT'\n        reason = 'accepted'\naudit = f'{acquisition_id} | {decision} | {reason}'\nprint(audit)",
+    "prove_checks": [
+      {
+        "inputs": {
+          "acquisition_id": "N2~S03~control",
+          "focus_metric": 0.8,
+          "focus_minimum": 0.8
+        },
+        "assertions": [
+          "decision == 'ACCEPT'",
+          "reason == 'accepted'",
+          "audit == f'{acquisition_id} | {decision} | {reason}'"
+        ]
+      },
+      {
+        "inputs": {
+          "acquisition_id": "N2~S03~heat~extra",
+          "focus_metric": 0.9,
+          "focus_minimum": 0.7
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'invalid shape'"
+        ]
+      },
+      {
+        "inputs": {
+          "acquisition_id": "N2~S03~recovery",
+          "focus_metric": 0.69,
+          "focus_minimum": 0.7
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'metric below minimum'"
+        ]
+      },
+      {
+        "inputs": {
+          "acquisition_id": "N2~Sx3~control",
+          "focus_metric": 1,
+          "focus_minimum": 0.7
+        },
+        "assertions": [
+          "decision == 'REJECT'",
+          "reason == 'invalid site'"
+        ]
+      }
+    ]
+  }
+}
