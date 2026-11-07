@@ -1,5 +1,5 @@
 {
-  "schema_version": "bps.author.v1",
+  "schema_version": "bps.author.v1.2",
   "chapter_id": "P01",
   "goals": [
     {
@@ -248,15 +248,15 @@
     },
     {
       "id": "P01-G06",
-      "apply_solution": "documentation_line = (len.__doc__ or '').strip().splitlines()[0]\nsample_length = len(sample_id)",
-      "prove_solution": "doc_head = (abs.__doc__ or '').strip().splitlines()[0]\nabsolute_change = abs(signed_change)",
+      "apply_solution": "documentation_line = len.__doc__\nsample_length = len(sample_id)",
+      "prove_solution": "doc_head = abs.__doc__\nabsolute_change = abs(signed_change)",
       "apply_checks": [
         {
           "inputs": {
             "sample_id": "N2_P03"
           },
           "assertions": [
-            "isinstance(documentation_line,str) and len(documentation_line)>5",
+            "documentation_line == len.__doc__",
             "sample_length == 6"
           ]
         },
@@ -265,8 +265,8 @@
             "sample_id": "mutant_12_A"
           },
           "assertions": [
-            "sample_length == 11",
-            "len(documentation_line)>5"
+            "documentation_line == len.__doc__",
+            "sample_length == 11"
           ]
         }
       ],
@@ -276,8 +276,8 @@
             "signed_change": -8.2
           },
           "assertions": [
-            "absolute_change == 8.2",
-            "len(doc_head)>5"
+            "doc_head == abs.__doc__",
+            "absolute_change == 8.2"
           ]
         },
         {
@@ -285,8 +285,8 @@
             "signed_change": 3
           },
           "assertions": [
-            "absolute_change == 3",
-            "len(doc_head)>5"
+            "doc_head == abs.__doc__",
+            "absolute_change == 3"
           ]
         }
       ]
@@ -347,5 +347,98 @@
         }
       ]
     }
-  ]
+  ],
+  "capstone": {
+    "id": "P01-CAPSTONE",
+    "apply_solution": "width_um = width_pixels / pixels_per_um\ntype_name = type(width_um).__name__\nsummary = f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'\nprint(summary)",
+    "prove_solution": "length_um = roi_length_px / calibration_px_per_um\nnumeric_type = type(length_um).__name__\nresult_line = f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'\nprint(result_line)",
+    "apply_checks": [
+      {
+        "inputs": {
+          "specimen_id": "N2_P03",
+          "field_count": 5,
+          "channel_name": "GFP",
+          "width_pixels": 48,
+          "pixels_per_um": 4
+        },
+        "assertions": [
+          "width_um == 12.0",
+          "type_name == 'float'",
+          "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+        ]
+      },
+      {
+        "inputs": {
+          "specimen_id": "ced1_P07",
+          "field_count": 0,
+          "channel_name": "mCherry",
+          "width_pixels": 0,
+          "pixels_per_um": 8
+        },
+        "assertions": [
+          "width_um == 0.0",
+          "type_name == 'float'",
+          "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+        ]
+      },
+      {
+        "inputs": {
+          "specimen_id": "WT_P12",
+          "field_count": 11,
+          "channel_name": "DAPI",
+          "width_pixels": 42,
+          "pixels_per_um": 3.5
+        },
+        "assertions": [
+          "width_um == 12.0",
+          "type_name == 'float'",
+          "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+        ]
+      }
+    ],
+    "prove_checks": [
+      {
+        "inputs": {
+          "sample_code": "mutX_R04",
+          "observed_fields": 6,
+          "channel": "GFP",
+          "roi_length_px": 35,
+          "calibration_px_per_um": 2
+        },
+        "assertions": [
+          "length_um == 17.5",
+          "numeric_type == 'float'",
+          "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_code": "WT_R12",
+          "observed_fields": 0,
+          "channel": "mCherry",
+          "roi_length_px": 0,
+          "calibration_px_per_um": 5
+        },
+        "assertions": [
+          "length_um == 0",
+          "numeric_type == 'float'",
+          "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_code": "ced1_R08",
+          "observed_fields": 12,
+          "channel": "DAPI",
+          "roi_length_px": 44,
+          "calibration_px_per_um": 4
+        },
+        "assertions": [
+          "length_um == 11",
+          "numeric_type == 'float'",
+          "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+        ]
+      }
+    ]
+  }
 }
