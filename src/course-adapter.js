@@ -33,6 +33,11 @@ const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
 const active=()=>!!chapter&&pythonSelected()&&codeSelected();
+// Task comments are not an attempt. Keep actual Python separate from the prompt.
+const hasExecutableCode=code=>String(code||"").split(/\r?\n/).some(line=>{
+ const value=line.trim();
+ return value.length>0&&!value.startsWith("#");
+});
 function save(){
  try{
   localStorage.setItem(KEYS[activeId],JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,briefIntroduced:state.briefIntroduced,hints:state.hints,progress:state.progress,reflections:state.reflections,capstoneFirstPassAt:state.capstoneFirstPassAt}));
@@ -170,8 +175,12 @@ function send(type,fields){
 async function run(){
  if(!active()||busy)return;
  const k=key(),code=bridge()?.readCode()??"";
- if(!code.trim()){output("Write Python first.",true);return;}
+ if(!hasExecutableCode(code)){
+  output("Write Python below the task comments, then press Run.");
+  status("Awaiting learner code");return;
+ }
  const result=await send("run",{code,inputs:task().preview_inputs||{}});
+ if(!active()||key()!==k)return;
  if(!result.ok){output(result.error,true);status("Python unavailable");return;}
  const r=result.result;
  output([r.stdout,r.stderr,r.traceback].filter(Boolean).join("\n"),!!r.traceback);
@@ -182,8 +191,12 @@ async function check(){
  if(!active()||state.phase==="learn"||busy)return;
  const cases=task().public_checks||[],k=key(),code=bridge()?.readCode()??"";
  if(!cases.length){output("This activity has no automatic coding check. Continue to Prove.",false);return;}
- if(!code.trim()){output("Write your own solution first.",true);return;}
+ if(!hasExecutableCode(code)){
+  output("Write your Python solution below the task comments before checking.");
+  status("Awaiting learner code");return;
+ }
  const result=await send("check",{code,cases});
+ if(!active()||key()!==k)return;
  if(!result.ok){output(result.error,true);status("Python unavailable");return;}
  const r=result.results||[];
  const bad=r.findIndex(x=>x.traceback||x.checks.some(y=>!y.passed));
@@ -192,7 +205,7 @@ async function check(){
   const diagnostic=(item.traceback||f?.error||"");
   const errorType=diagnostic.match(/\b(NameError|ZeroDivisionError|ValueError|TypeError|SyntaxError|IndentationError)\b/)?.[0];
   const advice=goal()?.feedback?.[errorType] || (bad>0?goal()?.feedback?.hardcoded:null)
-    || (errorType?"Inspect the failing line and variables in the traceback.":"Check that your result uses the supplied inputs and expected units.");
+    || task()?.practice_feedback?.check || (errorType?"Inspect the failing line and variables in the traceback.":"Check that your result uses the supplied inputs and expected units.");
   const reason=item.traceback||f?.error||"Practice condition failed: "+f?.expression;
   output("Input: "+JSON.stringify(cases[bad].inputs)+"\n"+reason+"\n\nDiagnostic: "+advice,true);
   if(key()===k)progress("needs_review");
@@ -204,8 +217,11 @@ async function check(){
     const delayed=state.capstoneFirstPassAt && Date.now()-state.capstoneFirstPassAt >= 24*3600*1000;
     classification=delayed?"delayed_practice_passed":"review_practice_passed";
   }
-  output("Passed "+r.length+" changed-input checks with real Python.\nPublic practice checks are not independent or retained mastery."+
-    (r[0]?.stdout?"\n"+r[0].stdout:"")+
+  const feedback=task()?.practice_feedback;
+  const explanation=feedback?"\n\nWhy it worked: "+feedback.why+"\nThink next: "+feedback.probe:"";
+  output("Passed "+r.length+" changed-input checks with real Python."+
+    (r[0]?.stdout?"\n"+r[0].stdout:"")+explanation+
+    "\n\nPublic practice checks are not independent or retained mastery."+
     (g?.id.endsWith("-REVIEW")?"\nResult: "+(classification==="delayed_practice_passed"?"delayed practice recorded":"early review practice recorded")+".":""));
   if(key()===k)progress(classification);
   el("p01-evidence").textContent="Last attempt: "+classification.replaceAll("_"," ");
@@ -242,6 +258,7 @@ function exportPython(){
  const vars=task().preview_inputs||{};
  const preamble=Object.entries(vars).map(([name,value])=>name+" = "+pyLiteral(value)).join("\n");
  const code=bridge()?.readCode()||"";
+ if(!hasExecutableCode(code)){output("Write your Python program before exporting.");return;}
  const source=["# BioPython Studio "+activeId+" · original learner code",
  "# Synthetic microscopy records and example calibration, not real image measurements.",
  "# The assignments below reproduce one supplied practice input.",preamble,"",code,""].join("\n");
