@@ -84,8 +84,8 @@
           ],
           "practice_feedback": {
             "why": "Formatting live specimen and count inputs produces a report that changes when the acquisition changes.",
-            "probe": "Predict precisely how many lines will appear in the console.",
-            "check": "Line 1 assigns a string sample identifier; line 2 assigns a numeric field count."
+            "probe": "If fields is zero, should the report still contain the specimen ID and zero fields?",
+            "check": "Check that report uses both supplied variables and includes exactly the required punctuation."
           }
         },
         "prove": {
@@ -118,8 +118,8 @@
           ],
           "practice_feedback": {
             "why": "The unfamiliar names still describe the same observed quantities; the result is computed rather than copied.",
-            "probe": "Change `fields` to `9`, run again, and locate the changed part of stdout.",
-            "check": "Line 3 reads both values and sends one combined line to stdout."
+            "probe": "Why would a pasted first-example output fail when sample changes to another experiment?",
+            "check": "Use sample and observed, not the earlier specimen and fields variables; preserve the exact delimiter."
           }
         }
       },
@@ -212,8 +212,8 @@
           ],
           "practice_feedback": {
             "why": "A specimen ID, number of fields and channel name remain separate metadata even when combined into one readable label.",
-            "probe": "Change the field count without changing the quoted report text, then rerun.",
-            "check": "The quoted specimen ID is stored as text; field_count is a number."
+            "probe": "What part of the description must change if the imaged channel changes from GFP to DAPI?",
+            "check": "Build the label using specimen_id, field_count and channel_name in the required order."
           }
         },
         "prove": {
@@ -249,8 +249,8 @@
           ],
           "practice_feedback": {
             "why": "Condition, replicate and count are assembled from current values; changing one input changes the relevant part.",
-            "probe": "Change the condition to another specimen and check that only its identifier changes.",
-            "check": "The f-string reads their current values to build a new string."
+            "probe": "What would the result say for replicate number zero, and is that a valid record under a separate naming policy?",
+            "check": "Use condition, replicate and count as independent inputs, including the specified labels."
           }
         }
       },
@@ -350,8 +350,8 @@
           ],
           "practice_feedback": {
             "why": "Dividing a pixel length by pixels per micrometre cancels the pixel unit and gives a physical length.",
-            "probe": "Before running, calculate 48 / 4 on paper, including units.",
-            "check": "`width_pixels` is a measured size in pixels; `pixels_per_um` is a scale in pixels/µm."
+            "probe": "If pixels_per_um doubles while pixel width remains constant, what happens to physical length?",
+            "check": "Divide the supplied pixel measure by a positive pixel-per-micrometre scale."
           }
         },
         "prove": {
@@ -389,8 +389,8 @@
           ],
           "practice_feedback": {
             "why": "The displacement must be calibrated before it is divided by elapsed minutes to compute a physical speed.",
-            "probe": "Change the calibration to 8 pixels/µm. Predict and verify the new width.",
-            "check": "Dividing the two gives a value with units µm."
+            "probe": "What additional information would you need before inferring a true cellular velocity from a time-lapse?",
+            "check": "Calibrate displacement before dividing by elapsed minutes; verify the final speed unit."
           }
         }
       },
@@ -479,8 +479,8 @@
           ],
           "practice_feedback": {
             "why": "The text measurement is converted to a numeric object before its Python type is inspected.",
-            "probe": "Predict int, float and bool for the three original variables.",
-            "check": "Print the types of three separately named variables, one per statement."
+            "probe": "How is the original string '12.5' different from the float value 12.5 in later calculations?",
+            "check": "Convert the measurement string before deriving its type name from the resulting Python value."
           }
         },
         "prove": {
@@ -516,8 +516,8 @@
           ],
           "practice_feedback": {
             "why": "The collected labels reflect the actual objects and retain the supplied order, including Boolean as a distinct type.",
-            "probe": "Put quotation marks around field_count; rerun the type inspection.",
-            "check": "Try quotation marks around field_count and watch its type change from int to str."
+            "probe": "Why does bool have a distinct type even though Python allows True in some arithmetic?",
+            "check": "Use the original count_value, fraction_value and qc_flag objects in their given order."
           }
         }
       },
@@ -608,8 +608,8 @@
           ],
           "practice_feedback": {
             "why": "The repair uses the actual supplied plate variable instead of an undefined lookalike name.",
-            "probe": "Run the faulty example before editing it and copy the exception name.",
-            "check": "Read the final traceback line for `NameError` and the misspelled variable."
+            "probe": "What difference is there between repairing a NameError and replacing the variable with a fixed label?",
+            "check": "Compare the variable name in the traceback to the supplied plate_id exactly."
           }
         },
         "prove": {
@@ -642,8 +642,8 @@
           ],
           "practice_feedback": {
             "why": "The calculation reads pixels rather than a misspelled name, so changing pixel counts changes the result.",
-            "probe": "Fix the one-character spelling mistake rather than replacing the output.",
-            "check": "Find the definition and the later use; compare `sample_id` with `sampel_id`."
+            "probe": "Would a syntactically correct but stale calibration still produce a scientifically wrong result?",
+            "check": "Use the supplied pixels variable and the positive pixels_per_um calibration."
           }
         }
       },
@@ -732,8 +732,8 @@
           ],
           "practice_feedback": {
             "why": "Documentation and identifier length are read from live Python functions rather than pasted constants.",
-            "probe": "Use len to count an ID you choose, then change that ID.",
-            "check": "Run `print(len('N2_P03'))`: it reports six characters."
+            "probe": "Does character count reveal the physical specimen size? Why or why not?",
+            "check": "Read len.__doc__ directly and compute sample_length from the current sample_id."
           }
         },
         "prove": {
@@ -765,8 +765,8 @@
           ],
           "practice_feedback": {
             "why": "The real abs function handles signed input and exposes documentation instead of requiring a memorized result.",
-            "probe": "Inspect len.__doc__ and find the statement describing its input.",
-            "check": "Print `len.__doc__` and identify the purpose of the function. You need not parse the documentation with unfamiliar string methods."
+            "probe": "What directional information is lost when you report an absolute magnitude?",
+            "check": "Inspect abs.__doc__ and apply abs to the actual signed_change value."
           }
         }
       },
@@ -866,8 +866,8 @@
           ],
           "practice_feedback": {
             "why": "The total is recalculated from current count and multiplier rather than relying on a stale notebook value.",
-            "probe": "Predict whether the original script prints 8 or 18.",
-            "check": "At line 1, field_count is 4. At line 2, doubled becomes 8."
+            "probe": "Why can a previously calculated notebook variable become stale after an earlier cell changes?",
+            "check": "Recompute the result from the latest current_count and multiplier in this execution."
           }
         },
         "prove": {
@@ -903,8 +903,8 @@
           ],
           "practice_feedback": {
             "why": "The adjusted quantity depends on the new baseline, adjustment and positive scale in one clean run.",
-            "probe": "Move the calculation line to the end, rerun and explain the changed number.",
-            "check": "Line 3 sets field_count to 9 but does not recalculate doubled."
+            "probe": "Which parameters would need independent metadata checks before trusting this adjustment?",
+            "check": "Use parentheses so baseline and adjustment are combined before division by scale."
           }
         }
       },
@@ -1064,8 +1064,8 @@
         ],
         "practice_feedback": {
           "why": "Current specimen metadata and a supplied positive calibration produce an independently recomputed, unit-labelled report.",
-          "probe": "Change a specimen ID and channel name, rerun and confirm both update.",
-          "check": "Read every record field and write down its units."
+          "probe": "Why are an imaged field count and an independent biological replicate count different?",
+          "check": "Calculate width_um, determine its numeric type and assemble the exact changing specimen report."
         }
       },
       "prove": {
@@ -1125,8 +1125,8 @@
         ],
         "practice_feedback": {
           "why": "Reconstructing the physical calculation with unfamiliar variable names demonstrates transfer beyond one copied template.",
-          "probe": "Double pixels_per_um, rerun and verify that width_um halves.",
-          "check": "Compute width_um by dividing width_pixels by pixels_per_um."
+          "probe": "What would make a physically correct formula scientifically invalid for a real image?",
+          "check": "Map the unfamiliar record names onto metadata and unit conversion without copying the Apply code."
         }
       }
     },
@@ -1205,8 +1205,8 @@
         "preview_inputs": {},
         "practice_feedback": {
           "why": "Planning a clean report from unfamiliar metadata requires distinguishing identifiers, observed counts and calibration.",
-          "probe": "Try once from memory before opening any previous section.",
-          "check": "Inspect the new variable names and classify their meanings without looking at P01's previous code."
+          "probe": "Which conceptual step can you recall independently after a day, without opening your previous answer?",
+          "check": "Write a plan that identifies text fields, numerical fields and the calibration needed for conversion."
         }
       },
       "prove": {
@@ -1266,8 +1266,8 @@
         ],
         "practice_feedback": {
           "why": "A fresh reconstruction after an interval uses the new specimen and calibration rather than a remembered answer.",
-          "probe": "After a check, investigate one changed input and explain the result.",
-          "check": "Write the unit-correct formula before running anything."
+          "probe": "What could go wrong if the calibration value belonged to a different image acquisition?",
+          "check": "Reconstruct the formula and exact output line using record_id, field_total, stain, span_px and px_per_um."
         }
       }
     },
