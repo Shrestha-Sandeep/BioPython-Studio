@@ -3,7 +3,7 @@
 (() => {
 const el=id=>document.getElementById(id);
 const KEY="biopython.p01.v1";
-const state={goal:0,phase:"learn",drafts:{},hints:{},progress:{}};
+const state={goal:0,phase:"learn",drafts:{},hints:{},progress:{},reflections:{},capstoneFirstPassAt:null};
 let chapter=null,worker=null,pending=null,busy=false,seq=0;
 try {
  const old=JSON.parse(localStorage.getItem(KEY)||"null");
@@ -11,6 +11,8 @@ try {
   if(old.drafts&&typeof old.drafts==="object")state.drafts=old.drafts;
   if(old.hints&&typeof old.hints==="object")state.hints=old.hints;
   if(old.progress&&typeof old.progress==="object")state.progress=old.progress;
+  if(old.reflections&&typeof old.reflections==="object")state.reflections=old.reflections;
+  if(Number.isFinite(old.capstoneFirstPassAt)&&old.capstoneFirstPassAt>0)state.capstoneFirstPassAt=old.capstoneFirstPassAt;
   if(Number.isInteger(old.goal))state.goal=old.goal;
   if(["learn","apply","prove"].includes(old.phase))state.phase=old.phase;
  }
@@ -18,12 +20,13 @@ try {
 const pythonSelected=()=>document.querySelector('[data-stage="Python"]')?.getAttribute("aria-current")==="page";
 const codeSelected=()=>document.querySelector('[data-mode="python"]')?.getAttribute("aria-pressed")==="true";
 const bridge=()=>window.BioPythonStudioBridge;
-const goal=()=>chapter?.goals[state.goal];
+const goals=()=>chapter?[...chapter.goals,chapter.capstone,chapter.review].filter(Boolean):[];
+const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
 const active=()=>!!chapter&&pythonSelected()&&codeSelected();
 function save(){
- try{localStorage.setItem(KEY,JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,hints:state.hints,progress:state.progress}));el("save-status").textContent="Saved locally";}
+ try{localStorage.setItem(KEY,JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,hints:state.hints,progress:state.progress,reflections:state.reflections,capstoneFirstPassAt:state.capstoneFirstPassAt}));el("save-status").textContent="Saved locally";}
  catch{el("save-status").textContent="Saving blocked";}
 }
 window.BioPythonP01={
@@ -65,7 +68,7 @@ function showHints(){
 function render(){
  if(!active())return;
  const g=goal(),t=task();
- el("lesson-summary").textContent="P01 · "+g.title+" · "+(state.goal+1)+"/"+chapter.goals.length;
+ el("lesson-summary").textContent="P01 · "+g.title+" · "+(state.goal+1)+"/"+goals().length;
  el("phase-title").textContent=t.title;
  el("phase-description").textContent=t.description;
  el("phase-caption").textContent=state.phase.toUpperCase();
@@ -73,11 +76,24 @@ function render(){
  el("p01-predict").hidden=state.phase!=="learn";
  el("p01-context").textContent=g.why+" Scientific boundary: "+g.scientific_boundary;
  el("p01-goal-select").value=String(state.goal);
- el("p01-check").hidden=state.phase==="learn";
+ el("p01-check").hidden=state.phase==="learn"||!(t.public_checks?.length);
  el("p01-check").disabled=busy;
  el("run-button").disabled=busy;
  el("run-button").title="Run actual Python (requires internet for first Pyodide load)";
  showHints();
+ const extra=el("p01-detail-root");
+ window.BioPythonP01Teaching?.renderInto(extra,{
+   goal:g,phase:state.phase,
+   reflection:state.reflections[g.id]||"",
+   firstCapstonePass:state.capstoneFirstPassAt,
+   onReflection:value=>{state.reflections[g.id]=value;save();}
+ });
+ el("p01-export").hidden=!["P01-CAPSTONE","P01-REVIEW"].includes(g.id)||state.phase==="learn";
+ const evidence=state.progress[g.id+":prove"];
+ el("p01-evidence").textContent=evidence?
+   (evidence.status==="delayed_practice_passed"?"Delayed practice completed (not certified)":
+   evidence.status==="practice_passed"?"Prove practice checks passed":"Last attempt: "+evidence.status):
+   "One goal at a time · no automatic mastery";
  const value=Object.prototype.hasOwnProperty.call(state.drafts,key())?state.drafts[key()]:t.starter_code;
  bridge()?.writeCode?.(value);
  el("crumb").textContent="Python foundations · P01";
@@ -86,7 +102,7 @@ function render(){
  save();
 }
 function chooseGoal(n){
- if(!chapter||n<0||n>=chapter.goals.length)return;
+ if(!chapter||n<0||n>=goals().length)return;
  remember();state.goal=n;state.phase="learn";bridge()?.selectPhase?.("learn");render();
 }
 function choosePhase(name){
@@ -139,6 +155,7 @@ async function run(){
 async function check(){
  if(!active()||state.phase==="learn"||busy)return;
  const cases=task().public_checks||[],k=key(),code=bridge()?.readCode()??"";
+ if(!cases.length){output("This activity has no automatic coding check. Continue to Prove.",false);return;}
  if(!code.trim()){output("Write your own solution first.",true);return;}
  const result=await send("check",{code,cases});
  if(!result.ok){output(result.error,true);status("Python unavailable");return;}
@@ -146,20 +163,69 @@ async function check(){
  const bad=r.findIndex(x=>x.traceback||x.checks.some(y=>!y.passed));
  if(bad>=0){
   const item=r[bad],f=item.checks.find(x=>!x.passed);
-  output("Input: "+JSON.stringify(cases[bad].inputs)+"\n"+(item.traceback||f?.error||"Practice condition failed: "+f?.expression),true);
+  const diagnostic=(item.traceback||f?.error||"");
+  const errorType=diagnostic.match(/\b(NameError|ZeroDivisionError|ValueError|TypeError|SyntaxError|IndentationError)\b/)?.[0];
+  const advice=goal()?.feedback?.[errorType] || (bad>0?goal()?.feedback?.hardcoded:null)
+    || (errorType?"Inspect the failing line and variables in the traceback.":"Check that your result uses the supplied inputs and expected units.");
+  const reason=item.traceback||f?.error||"Practice condition failed: "+f?.expression;
+  output("Input: "+JSON.stringify(cases[bad].inputs)+"\n"+reason+"\n\nDiagnostic: "+advice,true);
   if(key()===k)progress("needs_review");
  }else{
-  output("Passed "+r.length+" changed-input checks with real Python.\nPublic practice checks are not evidence of delayed mastery."+(r[0]?.stdout?"\n"+r[0].stdout:""));
-  if(key()===k)progress(state.hints[k]?"guided":"practice_passed");
+  let classification=state.hints[k]?"guided":"practice_passed";
+  const g=goal();
+  if(g?.id==="P01-CAPSTONE"&&!state.capstoneFirstPassAt)state.capstoneFirstPassAt=Date.now();
+  if(g?.id==="P01-REVIEW"){
+    const delayed=state.capstoneFirstPassAt && Date.now()-state.capstoneFirstPassAt >= 24*3600*1000;
+    classification=delayed?"delayed_practice_passed":"review_practice_passed";
+  }
+  output("Passed "+r.length+" changed-input checks with real Python.\nPublic practice checks are not independent or retained mastery."+
+    (r[0]?.stdout?"\n"+r[0].stdout:"")+
+    (g?.id==="P01-REVIEW"?"\nResult: "+(classification==="delayed_practice_passed"?"delayed practice recorded":"early review practice recorded")+".":""));
+  if(key()===k)progress(classification);
+  el("p01-evidence").textContent="Last attempt: "+classification.replaceAll("_"," ");
  }
  status("Python 3 · practice checks");
+}
+function syncActivity(){
+ const visible=active();
+ const navigation=el("p01-navigation");
+ if(navigation)navigation.hidden=!visible;
+ el("run-button").disabled=!visible||busy;
+ const checkButton=el("p01-check");
+ if(checkButton)checkButton.disabled=!visible||busy;
+ if(!visible)el("run-button").title="P01 Python execution is available in the Python Code workspace.";
+}
+function pyLiteral(value){
+ if(value===null)return "None";
+ if(value===true)return "True";
+ if(value===false)return "False";
+ if(typeof value==="number"||typeof value==="string")return JSON.stringify(value);
+ throw new Error("Unsupported standalone input type");
+}
+function exportPython(){
+ if(!active()||!["P01-CAPSTONE","P01-REVIEW"].includes(goal()?.id))return;
+ const vars=task().preview_inputs||{};
+ const preamble=Object.entries(vars).map(([name,value])=>name+" = "+pyLiteral(value)).join("\n");
+ const code=bridge()?.readCode()||"";
+ const source=["# BioPython Studio P01 · original learner code",
+ "# Synthetic microscopy records and example calibration, not real image measurements.",
+ "# The assignments below reproduce one supplied practice input.",preamble,"",code,""].join("\n");
+ const blob=new Blob([source],{type:"text/x-python;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement("a");
+ link.href=url;link.download="specimen_report.py";
+ document.body.append(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
  const label=document.createElement("label");label.htmlFor="p01-goal-select";label.textContent="P01 · Mini-goal";label.className="p01-label";
  const select=document.createElement("select");select.id="p01-goal-select";select.setAttribute("aria-label","P01 mini-goal");
- chapter.goals.forEach((g,i)=>{const o=document.createElement("option");o.value=String(i);o.textContent=(i+1)+". "+g.title;select.append(o);});
- select.addEventListener("change",()=>chooseGoal(Number(select.value)));nav.append(label,select);
+ goals().forEach((g,i)=>{const o=document.createElement("option");o.value=String(i);o.textContent=(i+1)+". "+g.title;select.append(o);});
+ select.addEventListener("change",()=>chooseGoal(Number(select.value)));
+ const evidence=document.createElement("p");evidence.id="p01-evidence";evidence.className="p01-quiet";
+ const navigation=document.createElement("div");navigation.id="p01-navigation";navigation.append(label,select,evidence);
+ nav.append(navigation);
  const pane=el("phase-panel"),prediction=document.createElement("p");prediction.id="p01-predict";prediction.className="p01-context";
  const hint=document.createElement("button");hint.type="button";hint.id="p01-hint";hint.className="subtle-button";hint.textContent="Hint";
  const hintText=document.createElement("p");hintText.id="p01-hint-text";hintText.className="p01-context";
@@ -167,9 +233,14 @@ function mount(){
  const details=document.createElement("details");const summary=document.createElement("summary");summary.textContent="Scientific context";
  const caution=document.createElement("p");caution.id="p01-context";details.append(summary,caution);
  const link=document.createElement("a");link.href="./content/chapters/P01_COMPLETE.md";link.target="_blank";link.rel="noopener";link.textContent="Full P01 chapter (Markdown)";
- pane.append(prediction,hint,hintText,details,link);
+ const teaching=document.createElement("div");teaching.id="p01-detail-root";
+ pane.append(prediction,teaching,hint,hintText,details,link);
  const checker=document.createElement("button");checker.type="button";checker.id="p01-check";checker.className="subtle-button";checker.textContent="Check";
- el("run-button").before(checker);checker.addEventListener("click",check);el("run-button").addEventListener("click",run);
+ const exportButton=document.createElement("button");
+ exportButton.id="p01-export";exportButton.className="subtle-button";exportButton.type="button";
+ exportButton.textContent="Export .py";exportButton.hidden=true;
+ exportButton.addEventListener("click",exportPython);
+ el("run-button").before(checker,exportButton);checker.addEventListener("click",check);el("run-button").addEventListener("click",run);
  el("result-output").addEventListener("click",()=>{if(lastOutput)restoreOutput();});
  el("clear-code").addEventListener("click",()=>{if(active()){state.drafts[key()]=bridge()?.readCode()??"";save();}});
  document.querySelectorAll("[data-phase]").forEach(b=>{
@@ -177,10 +248,10 @@ function mount(){
   b.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight"].includes(e.key))queueMicrotask(()=>choosePhase(document.querySelector('[data-phase][aria-selected="true"]')?.dataset.phase||"learn"));});
  });
  document.querySelectorAll("[data-stage]").forEach(b=>b.addEventListener("click",()=>{
-  if(active()){render();bridge()?.expandLesson?.(true);}
+  syncActivity();if(active()){render();bridge()?.expandLesson?.(true);}
  }));
  document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
-  if(active())render();
+  syncActivity();if(active())render();
  }));
  document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();run();}});
  window.addEventListener("beforeunload",remember);
@@ -191,9 +262,10 @@ async function start(){
   if(!r.ok)throw new Error("HTTP "+r.status);
   chapter=await r.json();
   if(chapter.schema_version!=="bps.chapter.v1"||chapter.chapter_id!=="P01"||chapter.goals?.length!==7)throw new Error("Invalid P01 contract.");
-  state.goal=Math.max(0,Math.min(state.goal,chapter.goals.length-1));
+  if(!chapter.capstone||!chapter.review)throw new Error("P01 capstone or return activity missing.");
+  state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
   mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(true);
-  render();status("Python ready to load on first Run");
+  render();syncActivity();status("Python ready to load on first Run");
  }catch(e){el("lesson-summary").textContent="P01 failed to load";el("phase-description").textContent=String(e);status("Content unavailable; old UI drafts preserved");}
 }
 start();
