@@ -1,7 +1,7 @@
 {
   "schema_version": "bps.chapter.v1",
   "chapter_id": "P02",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "status": "CONTENT_CANDIDATE_AWAITING_USER_TRIAL",
   "title": "Create trustworthy sample labels",
   "competencies": [
@@ -56,13 +56,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation, predict the program output, run the real Python example, and change one meaningful input.",
-          "starter_code": "strain = 'N2'\nplate = 'p03 '\ncondition = ' Heat '\nlabel = f'{strain}_{plate.strip().upper()}_{condition.strip().lower()}'\nprint(label)",
+          "starter_code": "# P02-G01 | LEARN | Build informative sample labels\n# TASK: Predict the normalized label; change a specimen component.\n\nstrain = 'N2'\nplate = 'p03 '\ncondition = ' Heat '\nlabel = f'{strain}_{plate.strip().upper()}_{condition.strip().lower()}'\nprint(label)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build a stable strain–plate–condition label",
           "description": "Using strain, plate_code and condition, assign label to `strain_P##_condition`. Strip whitespace on all fields, uppercase the plate code and lowercase the condition. Preserve the strain's interior case.",
-          "starter_code": "# Available: strain, plate_code, condition\n# Assign label from the supplied inputs.\n",
+          "starter_code": "# P02-G01 | APPLY | Build informative sample labels\n# TASK: Build label as strain_P##_condition; trim fields, normalize plate and\n#   condition.\n# RULE: Preserve the strain's internal case.\n# INPUTS: strain, plate_code, condition\n\n",
           "preview_inputs": {
             "strain": "N2",
             "plate_code": " p03 ",
@@ -104,7 +104,7 @@
         "prove": {
           "title": "Transfer to an acquisition description",
           "description": "Use unfamiliar variables specimen, acquisition and treatment to create normalized_id in the distinct format `specimen/acquisition/treatment`. Strip exterior whitespace, uppercase acquisition, lowercase treatment, preserve specimen case.",
-          "starter_code": "# Available: specimen, acquisition, treatment\n# Assign normalized_id.\n",
+          "starter_code": "# P02-G01 | PROVE | Build informative sample labels\n# TASK: Build normalized_id as specimen/acquisition/treatment; preserve\n#   specimen case.\n# RULE: Trim whitespace; normalize acquisition/treatment only.\n# INPUTS: specimen, acquisition, treatment\n\n",
           "preview_inputs": {
             "specimen": "mutA",
             "acquisition": "f07",
@@ -199,13 +199,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation, predict the program output, run the real Python example, and change one meaningful input.",
-          "starter_code": "sample_id = 'N2_P03_heat'\nparts = sample_id.split('_')\nprint(parts)\nprint(len(parts))",
+          "starter_code": "# P02-G02 | LEARN | Parse an identifier without guessing\n# TASK: Predict split parts and count; try an empty identifier segment.\n\nsample_id = 'N2_P03_heat'\nparts = sample_id.split('_')\nprint(parts)\nprint(len(parts))\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Inspect and classify raw identifier structure",
           "description": "Given raw_id, create tokens = raw_id.split('_'), token_count = len(tokens), and structure_ok indicating exactly three nonempty segments. This checks only shape, not the allowed plate and condition values.",
-          "starter_code": "# Available: raw_id\n# Produce tokens, token_count, structure_ok.\n",
+          "starter_code": "# P02-G02 | APPLY | Parse an identifier without guessing\n# TASK: Create tokens, token_count and structure_ok for exactly 3 nonempty\n#   parts.\n# RULE: Shape only, not biological identity.\n# INPUTS: raw_id\n\n",
           "preview_inputs": {
             "raw_id": "N2_P03_heat"
           },
@@ -252,7 +252,7 @@
         "prove": {
           "title": "Transfer to an unfamiliar delimiter",
           "description": "Given filename using `|` as delimiter, set components = filename.split('|') and valid_shape to True only for exactly three nonempty components. Do not assume that the parts are valid biological data.",
-          "starter_code": "# Available: filename\n# Produce components and valid_shape.\n",
+          "starter_code": "# P02-G02 | PROVE | Parse an identifier without guessing\n# TASK: Split filename on '|'; set components and valid_shape for 3 nonempty\n#   parts.\n# RULE: Do not guess biological validity.\n# INPUTS: filename\n\n",
           "preview_inputs": {
             "filename": "N2|F07|control"
           },
@@ -348,13 +348,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation, predict the program output, run the real Python example, and change one meaningful input.",
-          "starter_code": "focus_score = 0.80\nminimum_focus = 0.80\nprint(focus_score >= minimum_focus)\nprint(focus_score > minimum_focus)\nprint(0 <= focus_score <= 1)",
+          "starter_code": "# P02-G03 | LEARN | Compare quantitative QC values safely\n# TASK: Predict inclusive versus strict cutoff; try a boundary score.\n\nfocus_score = 0.80\nminimum_focus = 0.80\nprint(focus_score >= minimum_focus)\nprint(focus_score > minimum_focus)\nprint(0 <= focus_score <= 1)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Combine validity and inclusive focus threshold",
           "description": "Given focus_score and minimum_focus (both numeric), create in_range for 0 ≤ score ≤ 1, passes_threshold for an in-range score at or above the minimum, and on_boundary for exact equality with the minimum.",
-          "starter_code": "# Available: focus_score, minimum_focus\n# Assign in_range, passes_threshold, on_boundary.\n",
+          "starter_code": "# P02-G03 | APPLY | Compare quantitative QC values safely\n# TASK: Create in_range, passes_threshold and on_boundary; threshold includes\n#   equality.\n# RULE: Accept equality at the cutoff.\n# INPUTS: focus_score, minimum_focus\n\n",
           "preview_inputs": {
             "focus_score": 0.8,
             "minimum_focus": 0.8
@@ -408,7 +408,7 @@
         "prove": {
           "title": "Transfer to a bounded scientific ratio",
           "description": "From measured_ratio, minimum_ratio and maximum_ratio, create within_limits True only for inclusive limits. Create at_any_edge True only when the measurement equals either bound. These limits are declared before seeing any condition labels.",
-          "starter_code": "# Available: measured_ratio, minimum_ratio, maximum_ratio\n# Assign within_limits and at_any_edge.\n",
+          "starter_code": "# P02-G03 | PROVE | Compare quantitative QC values safely\n# TASK: Create within_limits and at_any_edge for inclusive numeric bounds.\n# RULE: Both edges are included.\n# INPUTS: measured_ratio, minimum_ratio, maximum_ratio\n\n",
           "preview_inputs": {
             "measured_ratio": 2,
             "minimum_ratio": 2,
@@ -517,13 +517,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation, predict the program output, run the real Python example, and change one meaningful input.",
-          "starter_code": "sample_id = 'N2_P03_control'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nif len(parts) != 3:\n    decision = 'REJECT'\n    reason = 'wrong number of fields'\nelif focus_score < minimum_focus:\n    decision = 'REJECT'\n    reason = 'focus below minimum'\nelse:\n    decision = 'ACCEPT'\n    reason = 'label shape and focus acceptable'\nprint(decision, reason)",
+          "starter_code": "# P02-G04 | LEARN | Explain QC decisions with conditions\n# TASK: Predict the decision and reason; try a failing ID or score.\n\nsample_id = 'N2_P03_control'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nif len(parts) != 3:\n    decision = 'REJECT'\n    reason = 'wrong number of fields'\nelif focus_score < minimum_focus:\n    decision = 'REJECT'\n    reason = 'focus below minimum'\nelse:\n    decision = 'ACCEPT'\n    reason = 'label shape and focus acceptable'\nprint(decision, reason)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Explain structure and focus failure",
           "description": "Given sample_id, focus_score and minimum_focus, set decision and reason in this priority: incorrect number of fields → `REJECT`/`wrong number of fields`; any empty field → `REJECT`/`empty field`; focus below minimum → `REJECT`/`focus below minimum`; otherwise `ACCEPT`/`shape and focus pass`. The threshold includes equality.",
-          "starter_code": "# Available: sample_id, focus_score, minimum_focus\n# Create decision and reason with if/elif/else.\n",
+          "starter_code": "# P02-G04 | APPLY | Explain QC decisions with conditions\n# TASK: Create decision and reason; check field count, empties and focus in\n#   order.\n# RULE: First failure wins; equality passes.\n# INPUTS: sample_id, focus_score, minimum_focus\n\n",
           "preview_inputs": {
             "sample_id": "N2_P03_heat",
             "focus_score": 0.8,
@@ -579,7 +579,7 @@
         "prove": {
           "title": "Transfer the logic to another experiment's naming policy",
           "description": "Now record_id uses `|` (e.g. `N2|F07|control`) and the metric is signal_ratio. In this order: bad or empty record segments → `REJECT`/`invalid identifier`; ratio below minimum_ratio → `REJECT`/`signal below minimum`; otherwise `ACCEPT`/`structure and signal pass`. Store outcome and reason.",
-          "starter_code": "# Available: record_id, signal_ratio, minimum_ratio\n# Create outcome, reason; retain the raw record_id.\n",
+          "starter_code": "# P02-G04 | PROVE | Explain QC decisions with conditions\n# TASK: Create outcome and reason for pipe-separated ID and signal ratio.\n# RULE: Preserve the original ID and reason priority.\n# INPUTS: record_id, signal_ratio, minimum_ratio\n\n",
           "preview_inputs": {
             "record_id": "N2|F07|control",
             "signal_ratio": 2,
@@ -714,13 +714,13 @@
       "learn": {
         "title": "Plan validation and decision priority",
         "description": "Read the identifier grammar, inspect the worked Python fragment, then predict how a malformed label and a borderline focus score should be handled.",
-        "starter_code": "sample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nprint(parts)\nprint(focus_score >= minimum_focus)",
+        "starter_code": "# P02-CAPSTONE | LEARN | Specimen intake validator — complete chapter project\n# TASK: Predict the label parts and boundary result; inspect the specification.\n\nsample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nprint(parts)\nprint(focus_score >= minimum_focus)\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Validate changing specimens and give exact reasons",
         "description": "Given sample_id, focus_score and minimum_focus, produce decision, reason, report. Check in order: structure, ASCII alphanumeric strain, uppercase P plus two ASCII digits, condition in control/heat/recovery, focus range 0..1, focus below minimum, otherwise accept. Reasons must be exactly: `expected three fields`, `invalid strain`, `invalid plate`, `unknown condition`, `focus outside range`, `focus below minimum`, or `accepted`. Report = 'sample_id | decision | reason'; print it.",
-        "starter_code": "# Available: sample_id, focus_score, minimum_focus\n# Raw ID grammar: strain_P##_condition. Preserve sample_id.\n# Assign decision, reason, report; print(report).\n",
+        "starter_code": "# P02-CAPSTONE | APPLY | Specimen intake validator — complete chapter project\n# TASK: Validate strain_P##_condition and focus; set decision, reason, report;\n#   print it.\n# RULE: Use exact reason texts and priority from the lesson panel.\n# INPUTS: sample_id, focus_score, minimum_focus\n\n",
         "preview_inputs": {
           "sample_id": "N2_P03_heat",
           "focus_score": 0.8,
@@ -854,7 +854,7 @@
       "prove": {
         "title": "Independent transfer: new delimiter and acquisition rules",
         "description": "Given record_id in strict `specimen|F##|treatment` form, quality_score and threshold: validate exactly three nonempty components; ASCII alphanumeric specimen; uppercase F followed by two ASCII digits; treatment exactly `control`, `heat` or `recovery`; score 0..1; inclusive threshold. In priority order set verdict and explanation using the same reason labels except `expected three fields`, `invalid specimen`, `invalid acquisition`, `unknown treatment`, `quality outside range`, `quality below minimum`, or `accepted`. Print result_line = 'record_id -> verdict (explanation)'. Keep raw record_id unchanged.",
-        "starter_code": "# Available: record_id, quality_score, threshold\n# Grammar: specimen|F##|treatment. Do not copy the earlier delimiter or plate code.\n# Assign verdict, explanation, result_line; print(result_line).\n",
+        "starter_code": "# P02-CAPSTONE | PROVE | Specimen intake validator — complete chapter project\n# TASK: Validate specimen|F##|treatment and quality; set verdict, explanation,\n#   result_line.\n# RULE: Preserve raw ID; follow exact reason priority in panel.\n# INPUTS: record_id, quality_score, threshold\n\n",
         "preview_inputs": {
           "record_id": "N2|F03|heat",
           "quality_score": 0.9,
@@ -1027,19 +1027,19 @@
       "learn": {
         "title": "Recall the rules",
         "description": "Review the task without a solved program; write down validation priority.",
-        "starter_code": "# No worked answer. Recall split, conditions and threshold rules.\n",
+        "starter_code": "# P02-REVIEW | LEARN | Later recall — unfamiliar labeled acquisitions\n# TASK: Recall validation priority without a worked example.\n\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Plan before coding",
         "description": "State the grammar and decision order as comments before attempting independent Prove.",
-        "starter_code": "# Plan: shape, strain, site, condition, score range, threshold\n",
+        "starter_code": "# P02-REVIEW | APPLY | Later recall — unfamiliar labeled acquisitions\n# TASK: Write pseudocode for grammar checks and decision order.\n\n",
         "preview_inputs": {}
       },
       "prove": {
         "title": "Independent retrieval on new names",
         "description": "Given acquisition_id of the form `strain~S##~condition`, focus_metric, focus_minimum: set decision and reason in order: `invalid shape`, `invalid strain`, `invalid site`, `unknown condition`, `metric outside range`, `metric below minimum`, `accepted`. Use ACCEPT/REJECT. Print audit = 'acquisition_id | decision | reason'.",
-        "starter_code": "# Available: acquisition_id, focus_metric, focus_minimum\n# Write from memory, without copying P02 capstone.\n",
+        "starter_code": "# P02-REVIEW | PROVE | Later recall — unfamiliar labeled acquisitions\n# TASK: From memory, validate strain~S##~condition; print audit and keep raw\n#   ID.\n# RULE: Use exact rejection reasons from the lesson panel.\n# INPUTS: acquisition_id, focus_metric, focus_minimum\n\n",
         "preview_inputs": {
           "acquisition_id": "N2~S03~control",
           "focus_metric": 0.8,
