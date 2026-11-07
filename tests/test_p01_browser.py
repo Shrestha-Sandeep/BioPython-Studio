@@ -154,6 +154,26 @@ def main():
             assert not any(v.get("status") == "retained" for v in state_after["progress"].values())
 
             assert not errors, "Browser exceptions: %r" % errors
+
+            # Verify new textbook content and scientific reflection fit mobile layouts.
+            shots=ROOT / "artifacts" / "p01"
+            shots.mkdir(parents=True,exist_ok=True)
+            for width,height in [(360,780),(390,844),(768,920),(1440,900)]:
+                mobile=browser.new_page(viewport={"width":width,"height":height})
+                page_errors=[]
+                mobile.on("pageerror",lambda e: page_errors.append(str(e)))
+                mobile.goto(URL,wait_until="domcontentloaded")
+                mobile.locator("#p01-goal-select").wait_for(timeout=20000)
+                assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), ("Horizontal P01 overflow",width)
+                mobile.locator("#p01-goal-select").select_option("7")
+                mobile.locator("#tab-prove").click()
+                mobile.locator("#p01-reflection").fill("Units, calibration and biological independence require interpretation.")
+                assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), ("Capstone overflow",width)
+                assert mobile.locator("#p01-export").count()==1
+                assert not page_errors, ("Responsive P01 JavaScript errors",width,page_errors)
+                if width in (390,1440):
+                    mobile.screenshot(path=str(shots / ("p01-"+str(width)+".png")),full_page=True)
+                mobile.close()
             browser.close()
         print("PASS: real Pyodide stdout/traceback, changed-input check, draft preservation, reload")
     finally:
