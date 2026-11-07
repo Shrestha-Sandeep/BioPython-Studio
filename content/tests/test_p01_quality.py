@@ -1,35 +1,80 @@
-"""P01 authored content checks. Reference fixtures are trusted author data only."""
-import unittest, json, copy, io, contextlib
+"""P01 content contract: canonical coverage, authored explanations, real CPython tests."""
+import unittest
+import json
+import copy
+import io
+import contextlib
 from pathlib import Path
-R=Path(__file__).resolve().parents[2]
-def load(p):return json.loads((R/p).read_text(encoding='utf8'))
+
+R = Path(__file__).resolve().parents[2]
+def load(p):
+    return json.loads((R / p).read_text(encoding='utf-8'))
+
 class P01AuthorChecks(unittest.TestCase):
- @classmethod
- def setUpClass(cls):
-  cls.lesson=load("content/p01/lesson.json");cls.author=load("content/author/p01_reference.json")
-  cls.spine=load("curriculum/witz_spine.json")
- def test_coverage_and_structure(self):
-  l=self.lesson
-  self.assertEqual(len(l["goals"]),7)
-  self.assertEqual(set(l["competencies"]),set(next(m["competency_numbers"] for m in self.spine["missions"] if m["id"]=="P01")))
-  self.assertEqual(len(set(c for g in l["goals"] for c in g["competencies"])),7)
-  for g in l["goals"]:
-   self.assertTrue(g["worked_example"]["code"])
-   self.assertGreaterEqual(len(g["explain"]),3)
-   self.assertTrue(g["scientific_boundary"])
-   for phase in ("apply","prove"):
-    self.assertGreaterEqual(len(g["phases"][phase]["public_checks"]),2)
- def test_real_reference_python(self):
-  solutions={a["id"]:a for a in self.author["goals"]}
-  for g in self.lesson["goals"]:
-   for phase in ("apply","prove"):
-    ref=solutions[g["id"]]
-    program=compile(ref[phase+"_solution"],g["id"]+"/"+phase,"exec")
-    for case in ref[phase+"_checks"]:
-     with self.subTest(goal=g["id"],phase=phase,inputs=case["inputs"]):
-      ns=copy.deepcopy(case["inputs"])
-      with contextlib.redirect_stdout(io.StringIO()):
-       exec(program,ns)
-      for expression in case["assertions"]:
-       self.assertTrue(eval(expression,ns),expression)
-if __name__=="__main__":unittest.main()
+    @classmethod
+    def setUpClass(cls):
+        cls.lesson = load("content/p01/lesson.json")
+        cls.author = load("content/author/p01_reference.json")
+        cls.spine = load("curriculum/witz_spine.json")
+        cls.canonical = load("curriculum/v3_manifest.json")
+        cls.manuscript = (R / "content/chapters/P01_COMPLETE.md").read_text(encoding="utf-8")
+
+    def test_exact_frozen_coverage_and_in_app_explanations(self):
+        chapter = self.lesson
+        self.assertEqual(chapter["chapter_id"], "P01")
+        self.assertEqual(len(chapter["goals"]), 7)
+        goal_ids = [g["id"] for g in chapter["goals"]]
+        self.assertEqual(len(goal_ids), len(set(goal_ids)))
+        numbers = [n for g in chapter["goals"] for n in g["competencies"]]
+        self.assertEqual(len(numbers), len(set(numbers)))
+        self.assertEqual(set(numbers), set(next(
+            m["competency_numbers"] for m in self.spine["missions"] if m["id"] == "P01"
+        )))
+        self.assertTrue(set(numbers) <= {c["number"] for c in self.canonical["competencies"]})
+        self.assertEqual(chapter["capstone"]["competencies"], [])
+        self.assertEqual(chapter["capstone"]["id"], "P01-CAPSTONE")
+        for goal in [*chapter["goals"], chapter["capstone"]]:
+            with self.subTest(goal=goal["id"]):
+                self.assertGreaterEqual(len(goal["explain"]), 3)
+                self.assertGreaterEqual(sum(len(x) for x in goal["explain"]), 700)
+                self.assertTrue(goal["prediction_answer"])
+                self.assertTrue(goal["walkthrough"])
+                self.assertTrue(goal["investigate"])
+                self.assertTrue(goal["debug_task"])
+                self.assertTrue(goal["scientific_boundary"])
+                self.assertTrue(goal["misconception"])
+                self.assertTrue(goal["feedback"])
+                self.assertTrue(goal["worked_example"]["code"])
+                for phase in ("learn", "apply", "prove"):
+                    self.assertTrue(goal["phases"][phase]["starter_code"])
+                for phase in ("apply", "prove"):
+                    self.assertGreaterEqual(len(goal["phases"][phase]["public_checks"]), 2)
+                self.assertIn(goal["id"], self.manuscript)
+        self.assertGreater(len(self.manuscript.split()), 5000)
+        self.assertEqual(len(chapter["capstone"]["reflection_prompts"]), 4)
+        # Prevent accidental introduction of loops before they are taught in P03.
+        self.assertNotIn("for value in", self.lesson["goals"][3]["worked_example"]["code"])
+
+    def test_real_reference_programs_all_changed_cases(self):
+        reference = {x["id"]: x for x in self.author["goals"]}
+        reference["P01-CAPSTONE"] = self.author["capstone"]
+        for goal in [*self.lesson["goals"], self.lesson["capstone"]]:
+            item = reference[goal["id"]]
+            for phase in ("apply", "prove"):
+                program = compile(item[phase + "_solution"], goal["id"] + "/" + phase, "exec")
+                self.assertEqual(
+                    item[phase + "_checks"], goal["phases"][phase]["public_checks"],
+                    "Source fixtures diverged between author and learner package"
+                )
+                for case in item[phase + "_checks"]:
+                    with self.subTest(goal=goal["id"], phase=phase, inputs=case["inputs"]):
+                        namespace = copy.deepcopy(case["inputs"])
+                        with contextlib.redirect_stdout(io.StringIO()) as output:
+                            exec(program, namespace)
+                        for expression in case["assertions"]:
+                            self.assertTrue(eval(expression, namespace), expression)
+                        if goal["id"] == "P01-CAPSTONE":
+                            self.assertTrue(output.getvalue().strip(), "Capstone must print a report")
+
+if __name__ == "__main__":
+    unittest.main()
