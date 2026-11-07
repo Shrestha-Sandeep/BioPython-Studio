@@ -123,7 +123,12 @@
                 "last_id == 'F11'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "List positions determine first, last and slice results; an empty acquisition must remain explicitly missing.",
+            "probe": "Try a reordered list with the same IDs.",
+            "check": "Track list positions 0, 1 and 2 without changing their text labels."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -187,7 +192,12 @@
                 "interior == []"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Slice operations select trailing and interior positions safely without confusing file names with list indices.",
+            "probe": "Compare [:2], [-2:] and [2:2].",
+            "check": "Explain why index -1 selects the last item."
+          }
         }
       },
       "hints": {
@@ -296,7 +306,12 @@
                 "source_ids == ['F03','F03']"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "A separate copy permits audit changes without corrupting the original acquisition list.",
+            "probe": "Replace .copy() with direct assignment; observe the source mutation, then restore it.",
+            "check": "Predict whether direct assignment makes a copy."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -364,7 +379,12 @@
                 "removal_done is False"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "A copied candidate list can be changed once while source identities and order remain unchanged.",
+            "probe": "Try removing an absent ID and inspect ValueError.",
+            "check": "Run the two lists side by side after append."
+          }
         }
       },
       "hints": {
@@ -475,7 +495,12 @@
                 "pair_type == 'tuple'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Unpacking keeps a field identifier paired with its score; tuple values preserve a fixed two-item record.",
+            "probe": "Try reassigning record[0] and inspect TypeError.",
+            "check": "Read the two elements in order."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -527,7 +552,12 @@
                 "immutable_interval == (12,12)"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The coordinate pair records endpoints together, while subtraction calculates the directed pixel span.",
+            "probe": "Try unpacking a one-element tuple into two names and inspect ValueError.",
+            "check": "Unpack into field_id and score."
+          }
         }
       },
       "hints": {
@@ -668,7 +698,12 @@
                 "rejected_count == 1"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The loop counts observed high, low and missing measurements separately so None cannot masquerade as zero.",
+            "probe": "Try every score as None.",
+            "check": "Initialize all counters before entering the loop."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -741,7 +776,12 @@
                 "unknown_count == 0"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The filtered collection preserves original order and separates unknown measurements from numeric ones below threshold.",
+            "probe": "Set minimum=0 with an observed score of zero.",
+            "check": "Trace each reading in order and record the updated counters."
+          }
         }
       },
       "hints": {
@@ -856,7 +896,12 @@
                 "numbered_labels == ['Field 1: F30','Field 2: F01']"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Enumerate provides human-readable one-based ordinals while Python indexes remain zero-based.",
+            "probe": "Use default enumerate starting at zero.",
+            "check": "Compare the zero-based Python indexes and one-based display labels."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -924,7 +969,12 @@
                 "passing_ordinals == [2]"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The ordinal positions identify which records were missing or passed without inventing specimen identities.",
+            "probe": "Reorder IDs without changing their text.",
+            "check": "Follow enumerate through all three field IDs."
+          }
         }
       },
       "hints": {
@@ -1059,7 +1109,12 @@
                 "next_index == 2"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The while loop increments its index and respects both source length and declared row budget.",
+            "probe": "Set max_checks to zero.",
+            "check": "Initialize i and visited before entering the loop."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -1124,7 +1179,12 @@
                 "attempted == 0"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Every examined entry, including None, consumes a visit; attempted means scanned, not successfully measured.",
+            "probe": "Increase the budget above the source length.",
+            "check": "Check both the source-length and budget condition before indexing."
+          }
         }
       },
       "hints": {
@@ -1275,7 +1335,12 @@
                 "invalid_count == 0"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "STOP is a control marker, None is missing and numeric range validation precedes the inclusive cutoff.",
+            "probe": "Move STOP to the beginning.",
+            "check": "Distinguish None from an explicit STOP marker."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -1396,7 +1461,12 @@
                 "stopped is False"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "END stops the ordered field-record scan without classifying later entries or swapping ID and score.",
+            "probe": "Replace None by zero and classify the numeric observation.",
+            "check": "Count a missing reading before continue."
+          }
         }
       },
       "hints": {
@@ -1786,7 +1856,12 @@
               "invalid_ids == []"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "The bounded audit classifies each visited unique field and separately identifies missing, invalid and repeated records.",
+          "probe": "Try a missing None score and a numeric zero with a zero minimum, and explain their different categories.",
+          "check": "Write down the input pair order and label each field as ID, number, or missing."
+        }
       },
       "prove": {
         "title": "Independent transfer with reversed field records",
@@ -2056,7 +2131,12 @@
               "report_line == 'kept=2 | low=1 | absent=0 | bad=0'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "Reversed pair order tests whether the program still keeps each score attached to its own field tag.",
+          "probe": "Try the second occurrence of an accepted ID; keep the first classification and flag the repeat as invalid.",
+          "check": "Initialize accepted, rejected, missing, invalid and seen ID lists before iterating."
+        }
       }
     },
     "assessment": {
@@ -2064,7 +2144,14 @@
       "scientific_reflection": "REQUIRES_HUMAN_REVIEW",
       "export": "field_qc_report.py",
       "independent_transfer": "REVERSED_RECORD_SHAPE"
-    }
+    },
+    "build_steps": [
+      "PASS 1 — Scan at most max_rows source records and stop before classifying STOP. With max_rows=0 or immediate STOP all categories are empty.",
+      "PASS 2 — Record every first-seen non-STOP ID before scoring; a repeated ID is invalid even when its numerical score looks acceptable.",
+      "PASS 3 — Distinguish missing None, observed zero, out-of-range invalid scores and numerical values below the inclusive threshold.",
+      "PASS 4 — Preserve acquisition order and source records; build separate output lists and report only records actually visited.",
+      "PASS 5 — Prove uses [score,field_tag] pairs and END. Explain why blindly copying an [ID,score] loop would misclassify these records."
+    ]
   },
   "review": {
     "id": "P03-REVIEW",
@@ -2121,7 +2208,12 @@
         "title": "Plan the later-session audit",
         "description": "Write pseudocode comments for a bounded DONE-stopped field audit; actual changed-input checks are in Prove.",
         "starter_code": "# P03-REVIEW | APPLY | Later recall — reconstruct a truncated field audit\n# TASK: Write pseudocode for a bounded audit stopping at DONE.\n\n",
-        "preview_inputs": {}
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Planning category order and early-stop rules from memory is required before independently scanning records.",
+          "probe": "Try the task before opening a previous solution.",
+          "check": "Recall all outcome categories and the stop rule."
+        }
       },
       "prove": {
         "title": "Independent delayed audit",
@@ -2275,7 +2367,12 @@
               "ended is False"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "The DONE convention tests transfer while respecting duplicates, explicit missingness and records not visited.",
+          "probe": "Use a zero score and zero minimum.",
+          "check": "Initialize result lists without modifying input."
+        }
       }
     },
     "assessment": {
