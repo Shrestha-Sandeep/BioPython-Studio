@@ -440,5 +440,53 @@
         ]
       }
     ]
+  },
+  "review": {
+    "id": "P01-REVIEW",
+    "prove_solution": "physical_span_um = span_px / px_per_um\nreport_type = type(physical_span_um).__name__\nreport_line = f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'\nprint(report_line)",
+    "prove_checks": [
+      {
+        "inputs": {
+          "record_id": "WT_R23",
+          "field_total": 7,
+          "stain": "GFP",
+          "span_px": 51,
+          "px_per_um": 3
+        },
+        "assertions": [
+          "physical_span_um == 17",
+          "report_type == 'float'",
+          "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "ced1_R01",
+          "field_total": 2,
+          "stain": "DAPI",
+          "span_px": 13,
+          "px_per_um": 2
+        },
+        "assertions": [
+          "physical_span_um == 6.5",
+          "report_type == 'float'",
+          "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "mutZ_R11",
+          "field_total": 0,
+          "stain": "mCherry",
+          "span_px": 0,
+          "px_per_um": 7
+        },
+        "assertions": [
+          "physical_span_um == 0",
+          "report_type == 'float'",
+          "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+        ]
+      }
+    ]
   }
 }
