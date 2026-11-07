@@ -126,8 +126,8 @@
           ],
           "practice_feedback": {
             "why": "List positions determine first, last and slice results; an empty acquisition must remain explicitly missing.",
-            "probe": "Try a reordered list with the same IDs.",
-            "check": "Track list positions 0, 1 and 2 without changing their text labels."
+            "probe": "If field IDs are reordered, how does the first-item result change without renaming any files?",
+            "check": "Test empty lists before indexed access; preserve positional order and construct a new first_two list."
           }
         },
         "prove": {
@@ -195,8 +195,8 @@
           ],
           "practice_feedback": {
             "why": "Slice operations select trailing and interior positions safely without confusing file names with list indices.",
-            "probe": "Compare [:2], [-2:] and [2:2].",
-            "check": "Explain why index -1 selects the last item."
+            "probe": "Why is the number in ID F09 not a Python list index or a biological replicate number?",
+            "check": "Use trailing and interior slices for roi_ids; handle lists shorter than two."
           }
         }
       },
@@ -309,8 +309,8 @@
           ],
           "practice_feedback": {
             "why": "A separate copy permits audit changes without corrupting the original acquisition list.",
-            "probe": "Replace .copy() with direct assignment; observe the source mutation, then restore it.",
-            "check": "Predict whether direct assignment makes a copy."
+            "probe": "What research audit problem would occur if source_ids were modified directly?",
+            "check": "Make audit_ids a real copy and append new_id without changing the original source list."
           }
         },
         "prove": {
@@ -382,8 +382,8 @@
           ],
           "practice_feedback": {
             "why": "A copied candidate list can be changed once while source identities and order remain unchanged.",
-            "probe": "Try removing an absent ID and inspect ValueError.",
-            "check": "Run the two lists side by side after append."
+            "probe": "What should removal_done be if no matching ID is present, and why must the source remain unchanged?",
+            "check": "Copy raw_candidates, remove only one matching excluded_id and record whether removal occurred."
           }
         }
       },
@@ -498,8 +498,8 @@
           ],
           "practice_feedback": {
             "why": "Unpacking keeps a field identifier paired with its score; tuple values preserve a fixed two-item record.",
-            "probe": "Try reassigning record[0] and inspect TypeError.",
-            "check": "Read the two elements in order."
+            "probe": "What goes wrong if a score is detached from its original field ID?",
+            "check": "Unpack observed_pair in its declared field-ID-first order and create a real tuple."
           }
         },
         "prove": {
@@ -555,8 +555,8 @@
           ],
           "practice_feedback": {
             "why": "The coordinate pair records endpoints together, while subtraction calculates the directed pixel span.",
-            "probe": "Try unpacking a one-element tuple into two names and inspect ValueError.",
-            "check": "Unpack into field_id and score."
+            "probe": "Can a pixel span be interpreted as micrometres without a separate calibration?",
+            "check": "Unpack endpoints into begin_px and end_px, then compute the directed difference."
           }
         }
       },
@@ -701,8 +701,8 @@
           ],
           "practice_feedback": {
             "why": "The loop counts observed high, low and missing measurements separately so None cannot masquerade as zero.",
-            "probe": "Try every score as None.",
-            "check": "Initialize all counters before entering the loop."
+            "probe": "Why is an unmeasured focus score not equivalent to a measured numerical zero?",
+            "check": "Classify None as missing before numeric comparisons and count each score just once."
           }
         },
         "prove": {
@@ -779,8 +779,8 @@
           ],
           "practice_feedback": {
             "why": "The filtered collection preserves original order and separates unknown measurements from numeric ones below threshold.",
-            "probe": "Set minimum=0 with an observed score of zero.",
-            "check": "Trace each reading in order and record the updated counters."
+            "probe": "If measurements begins with None, which outputs should and should not include it?",
+            "check": "Keep passing measurements in source order and count low and unknown separately."
           }
         }
       },
@@ -899,8 +899,8 @@
           ],
           "practice_feedback": {
             "why": "Enumerate provides human-readable one-based ordinals while Python indexes remain zero-based.",
-            "probe": "Use default enumerate starting at zero.",
-            "check": "Compare the zero-based Python indexes and one-based display labels."
+            "probe": "What changes when records are reordered without changing their field identifiers?",
+            "check": "Use one-based labels for people and zero-based indexes for Python; both refer to list positions."
           }
         },
         "prove": {
@@ -972,8 +972,8 @@
           ],
           "practice_feedback": {
             "why": "The ordinal positions identify which records were missing or passed without inventing specimen identities.",
-            "probe": "Reorder IDs without changing their text.",
-            "check": "Follow enumerate through all three field IDs."
+            "probe": "Does an ordinal number identify the same microscope field after the list is reordered?",
+            "check": "Use one-based ordinal positions and treat None as missing rather than a low score."
           }
         }
       },
@@ -1112,8 +1112,8 @@
           ],
           "practice_feedback": {
             "why": "The while loop increments its index and respects both source length and declared row budget.",
-            "probe": "Set max_checks to zero.",
-            "check": "Initialize i and visited before entering the loop."
+            "probe": "What happens when max_checks is zero or larger than the number of source records?",
+            "check": "Advance the while-loop index every visit and enforce both the length and row budget."
           }
         },
         "prove": {
@@ -1182,8 +1182,8 @@
           ],
           "practice_feedback": {
             "why": "Every examined entry, including None, consumes a visit; attempted means scanned, not successfully measured.",
-            "probe": "Increase the budget above the source length.",
-            "check": "Check both the source-length and budget condition before indexing."
+            "probe": "Why is a missing measurement still a visited record in a bounded audit?",
+            "check": "Count each inspected position including None, and do not step beyond max_steps."
           }
         }
       },
@@ -1338,8 +1338,8 @@
           ],
           "practice_feedback": {
             "why": "STOP is a control marker, None is missing and numeric range validation precedes the inclusive cutoff.",
-            "probe": "Move STOP to the beginning.",
-            "check": "Distinguish None from an explicit STOP marker."
+            "probe": "What happens when STOP is the very first entry in the readings list?",
+            "check": "Stop at STOP before classifying; distinguish None, invalid range, low and passing scores."
           }
         },
         "prove": {
@@ -1464,8 +1464,8 @@
           ],
           "practice_feedback": {
             "why": "END stops the ordered field-record scan without classifying later entries or swapping ID and score.",
-            "probe": "Replace None by zero and classify the numeric observation.",
-            "check": "Count a missing reading before continue."
+            "probe": "Why would reversing the record pair produce a misleading scientific report?",
+            "check": "Unpack field_records in ID-score order and stop on the END identifier."
           }
         }
       },
@@ -1859,8 +1859,8 @@
         ],
         "practice_feedback": {
           "why": "The bounded audit classifies each visited unique field and separately identifies missing, invalid and repeated records.",
-          "probe": "Try a missing None score and a numeric zero with a zero minimum, and explain their different categories.",
-          "check": "Write down the input pair order and label each field as ID, number, or missing."
+          "probe": "Which source records are unvisited when max_rows is smaller than the source length?",
+          "check": "Audit only visited unique records; reject duplicate IDs and preserve the exact four-list report."
         }
       },
       "prove": {
@@ -2134,8 +2134,8 @@
         ],
         "practice_feedback": {
           "why": "Reversed pair order tests whether the program still keeps each score attached to its own field tag.",
-          "probe": "Try the second occurrence of an accepted ID; keep the first classification and flag the repeat as invalid.",
-          "check": "Initialize accepted, rejected, missing, invalid and seen ID lists before iterating."
+          "probe": "Why does counting multiple fields as independent biological replicates inflate apparent evidence?",
+          "check": "Handle score-tag order, duplicate tags, cutoff and END without mutating observations."
         }
       }
     },
@@ -2211,8 +2211,8 @@
         "preview_inputs": {},
         "practice_feedback": {
           "why": "Planning category order and early-stop rules from memory is required before independently scanning records.",
-          "probe": "Try the task before opening a previous solution.",
-          "check": "Recall all outcome categories and the stop rule."
+          "probe": "If DONE appears first, should any field be classified? Explain your answer.",
+          "check": "Plan the bounded scan, missingness, duplicates and DONE rule without looking at old code."
         }
       },
       "prove": {
@@ -2370,8 +2370,8 @@
         ],
         "practice_feedback": {
           "why": "The DONE convention tests transfer while respecting duplicates, explicit missingness and records not visited.",
-          "probe": "Use a zero score and zero minimum.",
-          "check": "Initialize result lists without modifying input."
+          "probe": "Can a predeclared QC threshold be changed after examining treatment-group differences?",
+          "check": "Use tag-score order, the max_visits limit and the exact output categories."
         }
       }
     },
