@@ -200,7 +200,7 @@ def main():
             # Python input previews must not leak JavaScript null instead of None.
             page.locator("#p01-goal-select").select_option("3")
             page.locator("#tab-apply").click()
-            inputs = page.locator("#p01-inputs").inner_text()
+            inputs = page.locator("#p01-inputs").text_content()
             assert "None" in inputs and "null" not in inputs, inputs
             page.locator("#p01-check").click()
             assert "Write your Python solution below the task comments" in page.locator("#output-placeholder").inner_text()
