@@ -32,5 +32,23 @@ class EditorBriefContract(unittest.TestCase):
                         checked += 1
         self.assertEqual(checked, 72)
 
+    def test_specific_feedback_and_stepwise_capstones(self):
+        phases = 0
+        for chapter_id, expected_steps in (("p01", 3), ("p02", 6), ("p03", 5)):
+            data = json.loads((ROOT / "content" / chapter_id / "lesson.json").read_text(encoding="utf-8"))
+            goal_list = [*data["goals"], data["capstone"], data["review"]]
+            steps = data["capstone"].get("build_steps", [])
+            self.assertEqual(len(steps), expected_steps)
+            self.assertTrue(all(len(step) > 70 for step in steps))
+            for goal in goal_list:
+                for phase in ("apply", "prove"):
+                    with self.subTest(chapter=chapter_id, goal=goal["id"], phase=phase):
+                        feedback = goal["phases"][phase]["practice_feedback"]
+                        self.assertTrue(all(len(feedback[key]) > 35 for key in ("why", "probe", "check")))
+                        self.assertNotEqual(feedback["why"], feedback["probe"])
+                        self.assertIn(goal["id"].split("-")[0], data["chapter_id"])
+                        phases += 1
+        self.assertEqual(phases, 48)
+
 if __name__ == "__main__":
     unittest.main()
