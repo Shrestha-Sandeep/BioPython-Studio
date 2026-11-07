@@ -37,3 +37,18 @@
 #p01-navigation[hidden]{display:none!important;}
 #p01-export[hidden]{display:none!important;}
 @media(max-width:720px){.p01-reading{max-height:40vh;padding-right:.25rem;}.p01-text{font-size:.9rem;}.p01-real-figure img{max-height:180px;}}
+
+/* Active P01 only: a bounded teaching reader preserves the IDE-first viewport. */
+.p01-active #phase-panel{
+  max-height:min(44vh,355px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+}
+.p01-active .p01-reading{max-height:none;overflow:visible;overscroll-behavior:auto;}
+.p01-active #p01-export,.p01-active #p01-check{white-space:nowrap;flex-shrink:0;}
+@media(max-width:720px){
+  .p01-active #phase-panel{max-height:min(39vh,315px);}
+  .p01-active .panel-actions #p01-export,
+  .p01-active .panel-actions #p01-check{font-size:.75rem;padding:.36rem .48rem;min-width:0;}
+}
