@@ -1,0 +1,1396 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "P05",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT",
+  "title": "Make a reusable analysis function",
+  "competencies": [
+    "025",
+    "026",
+    "027",
+    "028",
+    "029",
+    "030"
+  ],
+  "intro": "Replace repeated calculations with functions, parameters, local state, documentation, validation and standard-library imports. Build a reusable, reproducible field measurement script.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Functions.ipynb",
+    "asset": "assets/witz/fluorescence-examples.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "ATTRIBUTED_CONTEXT_ONLY",
+    "caution": "Synthetic numeric training records are not quantitative microscopy."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove; fade guidance and test new values.",
+  "goals": [
+    {
+      "id": "P05-G01",
+      "title": "Return values from a measurement function",
+      "competencies": [
+        "025"
+      ],
+      "why": "Learn to reuse one unit-correct conversion rather than copying a result using biological measurement records.",
+      "explain": [
+        "A useful scientific script must reuse one unit-correct conversion rather than copying a result. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
+        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
+        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+      ],
+      "worked_example": {
+        "code": "def pixel_width(pixels, scale):\n    return pixels / scale\nprint(pixel_width(48, 4))\nprint(pixel_width(24, 4))",
+        "predict": "How does the return value change when pixel width halves?"
+      },
+      "prediction_answer": "The returned physical width halves from 12.0 to 6.0; the same function handles both inputs.",
+      "walkthrough": [
+        "Identify all changing inputs and their physical units.",
+        "Predict the worked output before executing Python.",
+        "Change one input and investigate the output or error."
+      ],
+      "investigate": [
+        "Try a new sample ID, missing observation or zero count.",
+        "Check one boundary without hardcoding a previously printed result.",
+        "Explain why passing code checks is not proof of correct biological calibration."
+      ],
+      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
+      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and modify",
+          "description": "Predict output, run and modify the worked Python example.",
+          "starter_code": "# P05-G01 | LEARN | Return values from a measurement function\n# TASK: Predict output, run and modify the worked Python example.\n\ndef pixel_width(pixels, scale):\n    return pixels / scale\nprint(pixel_width(48, 4))\nprint(pixel_width(24, 4))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with new scientific inputs",
+          "description": "Define to_um(pixels, px_per_um), returning pixels/px_per_um. Set width_um using supplied positive calibration.",
+          "starter_code": "# P05-G01 | APPLY | Return values from a measurement function\n# TASK: Define to_um(pixels, px_per_um), returning pixels/px_per_um. Set width_um\n#   using supplied positive calibration.\n# INPUTS: pixels, px_per_um\n\n",
+          "preview_inputs": {
+            "pixels": 40,
+            "px_per_um": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixels": 40,
+                "px_per_um": 4
+              },
+              "assertions": [
+                "width_um == 10",
+                "to_um(10,2) == 5"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": 0,
+                "px_per_um": 5
+              },
+              "assertions": [
+                "width_um == 0",
+                "to_um(30,3) == 10"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": 35,
+                "px_per_um": 2.5
+              },
+              "assertions": [
+                "width_um == 14",
+                "to_um(16,4) == 4"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to reuse one unit-correct conversion rather than copying a result, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you reuse one unit-correct conversion rather than copying a result?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you reuse one unit-correct conversion rather than copying a result."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Write speed_um_per_min(displacement_px, calibration_px_per_um, interval_min); set speed using the supplied values.",
+          "starter_code": "# P05-G01 | PROVE | Return values from a measurement function\n# TASK: Write speed_um_per_min(displacement_px, calibration_px_per_um,\n#   interval_min); set speed using the supplied values.\n# INPUTS: displacement_px, calibration_px_per_um, interval_min\n\n",
+          "preview_inputs": {
+            "displacement_px": 24,
+            "calibration_px_per_um": 2,
+            "interval_min": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "displacement_px": 24,
+                "calibration_px_per_um": 2,
+                "interval_min": 3
+              },
+              "assertions": [
+                "speed == 4",
+                "speed_um_per_min(60,5,2) == 6"
+              ]
+            },
+            {
+              "inputs": {
+                "displacement_px": 0,
+                "calibration_px_per_um": 4,
+                "interval_min": 1
+              },
+              "assertions": [
+                "speed == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "displacement_px": 15,
+                "calibration_px_per_um": 3,
+                "interval_min": 5
+              },
+              "assertions": [
+                "speed == 1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to reuse one unit-correct conversion rather than copying a result, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you reuse one unit-correct conversion rather than copying a result?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you reuse one unit-correct conversion rather than copying a result."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start by defining named function parameters and an explicit returned value.",
+          "Handle the changed inputs and edge cases before building the final report."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check imported module and parameter names.",
+        "TypeError": "Guard missing inputs before arithmetic.",
+        "ValueError": "Reject invalid calibration and document the failure.",
+        "hardcoded": "Return the computed result for new inputs rather than copying one example."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P05-G02",
+      "title": "Use explicit parameters and defaults",
+      "competencies": [
+        "026"
+      ],
+      "why": "Learn to make acquisition choices visible in parameter lists using biological measurement records.",
+      "explain": [
+        "A useful scientific script must make acquisition choices visible in parameter lists. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
+        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
+        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+      ],
+      "worked_example": {
+        "code": "def describe(field_id, channel='GFP'):\n    return f'{field_id} | {channel}'\nprint(describe('F07'))\nprint(describe('F07', channel='DAPI'))",
+        "predict": "What is the output with and without the explicit channel?"
+      },
+      "prediction_answer": "F07 | GFP and F07 | DAPI. The explicit keyword overrides the documented default.",
+      "walkthrough": [
+        "Identify all changing inputs and their physical units.",
+        "Predict the worked output before executing Python.",
+        "Change one input and investigate the output or error."
+      ],
+      "investigate": [
+        "Try a new sample ID, missing observation or zero count.",
+        "Check one boundary without hardcoding a previously printed result.",
+        "Explain why passing code checks is not proof of correct biological calibration."
+      ],
+      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
+      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and modify",
+          "description": "Predict output, run and modify the worked Python example.",
+          "starter_code": "# P05-G02 | LEARN | Use explicit parameters and defaults\n# TASK: Predict output, run and modify the worked Python example.\n\ndef describe(field_id, channel='GFP'):\n    return f'{field_id} | {channel}'\nprint(describe('F07'))\nprint(describe('F07', channel='DAPI'))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with new scientific inputs",
+          "description": "Define describe_field(field_id, channel='GFP') returning 'ID | channel'; call it with supplied field_id and channel to create label.",
+          "starter_code": "# P05-G02 | APPLY | Use explicit parameters and defaults\n# TASK: Define describe_field(field_id, channel='GFP') returning 'ID | channel';\n#   call it with supplied field_id and channel to create label.\n# INPUTS: field_id, channel\n\n",
+          "preview_inputs": {
+            "field_id": "F07",
+            "channel": "DAPI"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_id": "F07",
+                "channel": "DAPI"
+              },
+              "assertions": [
+                "label == 'F07 | DAPI'",
+                "describe_field('X') == 'X | GFP'"
+              ]
+            },
+            {
+              "inputs": {
+                "field_id": "F1",
+                "channel": "mCherry"
+              },
+              "assertions": [
+                "label == 'F1 | mCherry'",
+                "describe_field('F2','RFP') == 'F2 | RFP'"
+              ]
+            },
+            {
+              "inputs": {
+                "field_id": "Z",
+                "channel": "GFP"
+              },
+              "assertions": [
+                "label == 'Z | GFP'",
+                "describe_field('Q') == 'Q | GFP'"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to make acquisition choices visible in parameter lists, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you make acquisition choices visible in parameter lists?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you make acquisition choices visible in parameter lists."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Define passes_focus(score, minimum=0.8): False for None or values outside 0..1; otherwise score>=minimum. Set accepted from focus_score, threshold.",
+          "starter_code": "# P05-G02 | PROVE | Use explicit parameters and defaults\n# TASK: Define passes_focus(score, minimum=0.8): False for None or values outside\n#   0..1; otherwise score>=minimum. Set accepted from focus_score, threshold.\n# INPUTS: focus_score, threshold\n\n",
+          "preview_inputs": {
+            "focus_score": 0.85,
+            "threshold": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "focus_score": 0.85,
+                "threshold": 0.8
+              },
+              "assertions": [
+                "accepted is True",
+                "passes_focus(None) is False",
+                "passes_focus(0.8) is True"
+              ]
+            },
+            {
+              "inputs": {
+                "focus_score": 0.6,
+                "threshold": 0.7
+              },
+              "assertions": [
+                "accepted is False",
+                "passes_focus(0.7,0.7) is True"
+              ]
+            },
+            {
+              "inputs": {
+                "focus_score": 1.2,
+                "threshold": 0.8
+              },
+              "assertions": [
+                "accepted is False",
+                "passes_focus(-1,0) is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to make acquisition choices visible in parameter lists, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you make acquisition choices visible in parameter lists?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you make acquisition choices visible in parameter lists."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start by defining named function parameters and an explicit returned value.",
+          "Handle the changed inputs and edge cases before building the final report."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check imported module and parameter names.",
+        "TypeError": "Guard missing inputs before arithmetic.",
+        "ValueError": "Reject invalid calibration and document the failure.",
+        "hardcoded": "Return the computed result for new inputs rather than copying one example."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P05-G03",
+      "title": "Separate local state from source data",
+      "competencies": [
+        "027"
+      ],
+      "why": "Learn to avoid stale global values and unexpected mutation using biological measurement records.",
+      "explain": [
+        "A useful scientific script must avoid stale global values and unexpected mutation. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
+        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
+        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+      ],
+      "worked_example": {
+        "code": "def keep(values, minimum):\n    chosen = []\n    for value in values:\n        if value is not None and value >= minimum:\n            chosen.append(value)\n    return chosen\nprint(keep([0.9, None, 0.3], 0.8))",
+        "predict": "Does a second call add results from the first?"
+      },
+      "prediction_answer": "No. A fresh chosen list is initialized on each call, so the function does not leak state.",
+      "walkthrough": [
+        "Identify all changing inputs and their physical units.",
+        "Predict the worked output before executing Python.",
+        "Change one input and investigate the output or error."
+      ],
+      "investigate": [
+        "Try a new sample ID, missing observation or zero count.",
+        "Check one boundary without hardcoding a previously printed result.",
+        "Explain why passing code checks is not proof of correct biological calibration."
+      ],
+      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
+      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and modify",
+          "description": "Predict output, run and modify the worked Python example.",
+          "starter_code": "# P05-G03 | LEARN | Separate local state from source data\n# TASK: Predict output, run and modify the worked Python example.\n\ndef keep(values, minimum):\n    chosen = []\n    for value in values:\n        if value is not None and value >= minimum:\n            chosen.append(value)\n    return chosen\nprint(keep([0.9, None, 0.3], 0.8))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with new scientific inputs",
+          "description": "Define keep_scores(scores, minimum): return new list of non-None scores in 0..1 at/above minimum, leaving scores unchanged. Set selected.",
+          "starter_code": "# P05-G03 | APPLY | Separate local state from source data\n# TASK: Define keep_scores(scores, minimum): return new list of non-None scores in\n#   0..1 at/above minimum, leaving scores unchanged. Set selected.\n# INPUTS: scores, minimum\n\n",
+          "preview_inputs": {
+            "scores": [
+              0.9,
+              null,
+              0.6,
+              1.2
+            ],
+            "minimum": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "scores": [
+                  0.9,
+                  null,
+                  0.6,
+                  1.2
+                ],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "selected == [0.9]",
+                "scores == [0.9,None,0.6,1.2]",
+                "keep_scores([0.8,0.7],0.8) == [0.8]"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [
+                  0,
+                  1
+                ],
+                "minimum": 0
+              },
+              "assertions": [
+                "selected == [0,1]"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [
+                  null,
+                  0.5,
+                  0.5
+                ],
+                "minimum": 0.5
+              },
+              "assertions": [
+                "selected == [0.5,0.5]",
+                "scores[0] is None"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to avoid stale global values and unexpected mutation, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you avoid stale global values and unexpected mutation?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you avoid stale global values and unexpected mutation."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Define scaled_counts(counts, factor) returning a new list of every count multiplied by factor; set scaled without mutating counts.",
+          "starter_code": "# P05-G03 | PROVE | Separate local state from source data\n# TASK: Define scaled_counts(counts, factor) returning a new list of every count\n#   multiplied by factor; set scaled without mutating counts.\n# INPUTS: counts, factor\n\n",
+          "preview_inputs": {
+            "counts": [
+              2,
+              3,
+              0
+            ],
+            "factor": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "counts": [
+                  2,
+                  3,
+                  0
+                ],
+                "factor": 2
+              },
+              "assertions": [
+                "scaled == [4,6,0]",
+                "counts == [2,3,0]",
+                "scaled_counts([1,2],3)==[3,6]"
+              ]
+            },
+            {
+              "inputs": {
+                "counts": [],
+                "factor": 5
+              },
+              "assertions": [
+                "scaled == []"
+              ]
+            },
+            {
+              "inputs": {
+                "counts": [
+                  1,
+                  4
+                ],
+                "factor": 0
+              },
+              "assertions": [
+                "scaled == [0,0]",
+                "counts == [1,4]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to avoid stale global values and unexpected mutation, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you avoid stale global values and unexpected mutation?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you avoid stale global values and unexpected mutation."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start by defining named function parameters and an explicit returned value.",
+          "Handle the changed inputs and edge cases before building the final report."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check imported module and parameter names.",
+        "TypeError": "Guard missing inputs before arithmetic.",
+        "ValueError": "Reject invalid calibration and document the failure.",
+        "hardcoded": "Return the computed result for new inputs rather than copying one example."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P05-G04",
+      "title": "Document types and scientific meaning",
+      "competencies": [
+        "028"
+      ],
+      "why": "Learn to state input types, return values and missing-data policy using biological measurement records.",
+      "explain": [
+        "A useful scientific script must state input types, return values and missing-data policy. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
+        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
+        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+      ],
+      "worked_example": {
+        "code": "def specimen_label(sample_id: str, fields: int) -> str:\n    \"\"\"Return a specimen identifier and field count.\"\"\"\n    return f'{sample_id}: {fields} fields'\nprint(specimen_label('WT', 3))\nprint(specimen_label.__annotations__)",
+        "predict": "Do type hints enforce physical calibration?"
+      },
+      "prediction_answer": "No. Annotations document expected Python types; calibration validity must be checked independently.",
+      "walkthrough": [
+        "Identify all changing inputs and their physical units.",
+        "Predict the worked output before executing Python.",
+        "Change one input and investigate the output or error."
+      ],
+      "investigate": [
+        "Try a new sample ID, missing observation or zero count.",
+        "Check one boundary without hardcoding a previously printed result.",
+        "Explain why passing code checks is not proof of correct biological calibration."
+      ],
+      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
+      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and modify",
+          "description": "Predict output, run and modify the worked Python example.",
+          "starter_code": "# P05-G04 | LEARN | Document types and scientific meaning\n# TASK: Predict output, run and modify the worked Python example.\n\ndef specimen_label(sample_id: str, fields: int) -> str:\n    \"\"\"Return a specimen identifier and field count.\"\"\"\n    return f'{sample_id}: {fields} fields'\nprint(specimen_label('WT', 3))\nprint(specimen_label.__annotations__)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with new scientific inputs",
+          "description": "Define specimen_label(sample_id: str, fields: int) -> str with docstring containing 'fields'. Return 'ID: N fields'; set summary.",
+          "starter_code": "# P05-G04 | APPLY | Document types and scientific meaning\n# TASK: Define specimen_label(sample_id: str, fields: int) -> str with docstring\n#   containing 'fields'. Return 'ID: N fields'; set summary.\n# INPUTS: sample_id, fields\n\n",
+          "preview_inputs": {
+            "sample_id": "WT",
+            "fields": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample_id": "WT",
+                "fields": 4
+              },
+              "assertions": [
+                "summary == 'WT: 4 fields'",
+                "specimen_label.__annotations__['sample_id'] == str",
+                "'fields' in specimen_label.__doc__.lower()"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_id": "ced1",
+                "fields": 0
+              },
+              "assertions": [
+                "summary == 'ced1: 0 fields'",
+                "specimen_label.__annotations__['return'] == str"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_id": "B9",
+                "fields": 12
+              },
+              "assertions": [
+                "summary == 'B9: 12 fields'",
+                "len(specimen_label.__doc__.strip())>10"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to state input types, return values and missing-data policy, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you state input types, return values and missing-data policy?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you state input types, return values and missing-data policy."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Define mean_or_none(values: list) -> float | None with docstring containing 'mean'; return arithmetic mean or None for empty. Set result.",
+          "starter_code": "# P05-G04 | PROVE | Document types and scientific meaning\n# TASK: Define mean_or_none(values: list) -> float | None with docstring\n#   containing 'mean'; return arithmetic mean or None for empty. Set result.\n# INPUTS: values\n\n",
+          "preview_inputs": {
+            "values": [
+              2,
+              4,
+              6
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "values": [
+                  2,
+                  4,
+                  6
+                ]
+              },
+              "assertions": [
+                "result == 4",
+                "mean_or_none([]) is None",
+                "'mean' in mean_or_none.__doc__.lower()"
+              ]
+            },
+            {
+              "inputs": {
+                "values": []
+              },
+              "assertions": [
+                "result is None",
+                "mean_or_none([2,4]) == 3"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  1,
+                  2
+                ]
+              },
+              "assertions": [
+                "result == 1.5",
+                "mean_or_none.__annotations__['values'] == list"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to state input types, return values and missing-data policy, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you state input types, return values and missing-data policy?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you state input types, return values and missing-data policy."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start by defining named function parameters and an explicit returned value.",
+          "Handle the changed inputs and edge cases before building the final report."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check imported module and parameter names.",
+        "TypeError": "Guard missing inputs before arithmetic.",
+        "ValueError": "Reject invalid calibration and document the failure.",
+        "hardcoded": "Return the computed result for new inputs rather than copying one example."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P05-G05",
+      "title": "Raise and handle invalid inputs",
+      "competencies": [
+        "029"
+      ],
+      "why": "Learn to reject invalid calibrations without fabricating zero using biological measurement records.",
+      "explain": [
+        "A useful scientific script must reject invalid calibrations without fabricating zero. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
+        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
+        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+      ],
+      "worked_example": {
+        "code": "def convert(pixels, scale):\n    if scale <= 0:\n        raise ValueError('invalid scale')\n    return pixels / scale\ntry:\n    print(convert(20, 0))\nexcept ValueError as error:\n    print(type(error).__name__)",
+        "predict": "Why does this print ValueError rather than a plausible width?"
+      },
+      "prediction_answer": "A nonpositive calibration does not support a physical-width measurement; the error is explicit.",
+      "walkthrough": [
+        "Identify all changing inputs and their physical units.",
+        "Predict the worked output before executing Python.",
+        "Change one input and investigate the output or error."
+      ],
+      "investigate": [
+        "Try a new sample ID, missing observation or zero count.",
+        "Check one boundary without hardcoding a previously printed result.",
+        "Explain why passing code checks is not proof of correct biological calibration."
+      ],
+      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
+      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and modify",
+          "description": "Predict output, run and modify the worked Python example.",
+          "starter_code": "# P05-G05 | LEARN | Raise and handle invalid inputs\n# TASK: Predict output, run and modify the worked Python example.\n\ndef convert(pixels, scale):\n    if scale <= 0:\n        raise ValueError('invalid scale')\n    return pixels / scale\ntry:\n    print(convert(20, 0))\nexcept ValueError as error:\n    print(type(error).__name__)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with new scientific inputs",
+          "description": "Define convert_width(pixels,scale) raising ValueError if scale<=0; otherwise divide. Define safe_width with try/except ValueError returning {'ok':True,'value':width} or {'ok':False,'value':None}. Set result.",
+          "starter_code": "# P05-G05 | APPLY | Raise and handle invalid inputs\n# TASK: Define convert_width(pixels,scale) raising ValueError if scale<=0;\n#   otherwise divide. Define safe_width with try/except ValueError returning\n#   {'ok':True,'value':width} or {'ok':False,'value':None}. Set result.\n# INPUTS: pixels, scale\n\n",
+          "preview_inputs": {
+            "pixels": 40,
+            "scale": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixels": 40,
+                "scale": 4
+              },
+              "assertions": [
+                "result == {'ok':True,'value':10}",
+                "safe_width(10,0) == {'ok':False,'value':None}"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": 0,
+                "scale": 2
+              },
+              "assertions": [
+                "result == {'ok':True,'value':0}",
+                "safe_width(20,-1)['ok'] is False"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": 35,
+                "scale": 0
+              },
+              "assertions": [
+                "result == {'ok':False,'value':None}",
+                "convert_width(25,5) == 5"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to reject invalid calibrations without fabricating zero, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you reject invalid calibrations without fabricating zero?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you reject invalid calibrations without fabricating zero."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Define read_quality(score) raising ValueError for None or outside 0..1; define quality_report(score) catching ValueError and returning 'VALID' or 'INVALID'. Set status.",
+          "starter_code": "# P05-G05 | PROVE | Raise and handle invalid inputs\n# TASK: Define read_quality(score) raising ValueError for None or outside 0..1;\n#   define quality_report(score) catching ValueError and returning 'VALID' or\n#   'INVALID'. Set status.\n# INPUTS: focus_score\n\n",
+          "preview_inputs": {
+            "focus_score": 0.7
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "focus_score": 0.7
+              },
+              "assertions": [
+                "status == 'VALID'",
+                "quality_report(None) == 'INVALID'"
+              ]
+            },
+            {
+              "inputs": {
+                "focus_score": 1.2
+              },
+              "assertions": [
+                "status == 'INVALID'",
+                "quality_report(0) == 'VALID'"
+              ]
+            },
+            {
+              "inputs": {
+                "focus_score": -0.1
+              },
+              "assertions": [
+                "status == 'INVALID'",
+                "quality_report(1) == 'VALID'"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to reject invalid calibrations without fabricating zero, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you reject invalid calibrations without fabricating zero?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you reject invalid calibrations without fabricating zero."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start by defining named function parameters and an explicit returned value.",
+          "Handle the changed inputs and edge cases before building the final report."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check imported module and parameter names.",
+        "TypeError": "Guard missing inputs before arithmetic.",
+        "ValueError": "Reject invalid calibration and document the failure.",
+        "hardcoded": "Return the computed result for new inputs rather than copying one example."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P05-G06",
+      "title": "Import standard-library analysis tools",
+      "competencies": [
+        "030"
+      ],
+      "why": "Learn to use explicit imports instead of copied constants using biological measurement records.",
+      "explain": [
+        "A useful scientific script must use explicit imports instead of copied constants. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
+        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
+        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+      ],
+      "worked_example": {
+        "code": "import math\nimport statistics\nprint(round(math.pi, 3))\nprint(statistics.mean([2,4,6]))",
+        "predict": "Where do pi and arithmetic mean originate?"
+      },
+      "prediction_answer": "math supplies pi and statistics supplies mean; imports make their source explicit.",
+      "walkthrough": [
+        "Identify all changing inputs and their physical units.",
+        "Predict the worked output before executing Python.",
+        "Change one input and investigate the output or error."
+      ],
+      "investigate": [
+        "Try a new sample ID, missing observation or zero count.",
+        "Check one boundary without hardcoding a previously printed result.",
+        "Explain why passing code checks is not proof of correct biological calibration."
+      ],
+      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
+      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and modify",
+          "description": "Predict output, run and modify the worked Python example.",
+          "starter_code": "# P05-G06 | LEARN | Import standard-library analysis tools\n# TASK: Predict output, run and modify the worked Python example.\n\nimport math\nimport statistics\nprint(round(math.pi, 3))\nprint(statistics.mean([2,4,6]))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with new scientific inputs",
+          "description": "Import math; define circle_area_um2(radius_um) using math.pi * radius_um**2. Return None for radius<0; set area_um2.",
+          "starter_code": "# P05-G06 | APPLY | Import standard-library analysis tools\n# TASK: Import math; define circle_area_um2(radius_um) using math.pi *\n#   radius_um**2. Return None for radius<0; set area_um2.\n# INPUTS: radius_um\n\n",
+          "preview_inputs": {
+            "radius_um": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "radius_um": 2
+              },
+              "assertions": [
+                "abs(area_um2-4*math.pi)<1e-10",
+                "circle_area_um2(-1) is None"
+              ]
+            },
+            {
+              "inputs": {
+                "radius_um": 0
+              },
+              "assertions": [
+                "area_um2 == 0",
+                "abs(circle_area_um2(1)-math.pi)<1e-10"
+              ]
+            },
+            {
+              "inputs": {
+                "radius_um": 3.5
+              },
+              "assertions": [
+                "abs(area_um2-12.25*math.pi)<1e-10"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to use explicit imports instead of copied constants, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you use explicit imports instead of copied constants?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you use explicit imports instead of copied constants."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Import statistics; define mean_focus(scores) ignoring None, returning None if no valid entries. Set mean_score.",
+          "starter_code": "# P05-G06 | PROVE | Import standard-library analysis tools\n# TASK: Import statistics; define mean_focus(scores) ignoring None, returning None\n#   if no valid entries. Set mean_score.\n# INPUTS: scores\n\n",
+          "preview_inputs": {
+            "scores": [
+              0.8,
+              null,
+              0.6
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "scores": [
+                  0.8,
+                  null,
+                  0.6
+                ]
+              },
+              "assertions": [
+                "abs(mean_score-0.7)<1e-10",
+                "mean_focus([None]) is None"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [
+                  null,
+                  null
+                ]
+              },
+              "assertions": [
+                "mean_score is None",
+                "mean_focus([]) is None"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [
+                  0,
+                  1
+                ]
+              },
+              "assertions": [
+                "mean_score == 0.5",
+                "mean_focus([0]) == 0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This tests the ability to use explicit imports instead of copied constants, independently of any one set of measurements.",
+            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you use explicit imports instead of copied constants?",
+            "check": "Preserve source data; use named parameters and the specified returned variables when you use explicit imports instead of copied constants."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start by defining named function parameters and an explicit returned value.",
+          "Handle the changed inputs and edge cases before building the final report."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check imported module and parameter names.",
+        "TypeError": "Guard missing inputs before arithmetic.",
+        "ValueError": "Reject invalid calibration and document the failure.",
+        "hardcoded": "Return the computed result for new inputs rather than copying one example."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "P05-CAPSTONE",
+    "title": "Build a tested, reusable field-measurement module",
+    "competencies": [],
+    "why": "Learn to combine documented unit conversion with traceable field-level QC using biological measurement records.",
+    "explain": [
+      "A useful scientific script must combine documented unit conversion with traceable field-level QC. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
+      "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
+      "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+    ],
+    "worked_example": {
+      "code": "def width_um(pixels, scale):\n    if pixels is None or scale <= 0:\n        return None\n    return pixels / scale\nprint(width_um(40,4))\nprint(width_um(None,4))",
+      "predict": "Why must an unknown width return None rather than zero?"
+    },
+    "prediction_answer": "A missing observation is not a recorded zero-width region.",
+    "walkthrough": [
+      "Identify all changing inputs and their physical units.",
+      "Predict the worked output before executing Python.",
+      "Change one input and investigate the output or error."
+    ],
+    "investigate": [
+      "Try a new sample ID, missing observation or zero count.",
+      "Check one boundary without hardcoding a previously printed result.",
+      "Explain why passing code checks is not proof of correct biological calibration."
+    ],
+    "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
+    "misconception": "A function that executes once is already a validated scientific measurement method.",
+    "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and modify",
+        "description": "Predict output, run and modify the worked Python example.",
+        "starter_code": "# P05-CAPSTONE | LEARN | Build a tested, reusable field-measurement module\n# TASK: Predict output, run and modify the worked Python example.\n\ndef width_um(pixels, scale):\n    if pixels is None or scale <= 0:\n        return None\n    return pixels / scale\nprint(width_um(40,4))\nprint(width_um(None,4))\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with new scientific inputs",
+        "description": "Define evaluate_fields(records, minimum_um) returning {'kept':[IDs], 'low':[IDs], 'invalid':[IDs]} for [ID,pixels,scale]. Invalid when pixels None or scale<=0; otherwise width=pixels/scale and width>=minimum passes. Set audit; print summary 'kept=N; low=N; invalid=N'. Preserve records.",
+        "starter_code": "# P05-CAPSTONE | APPLY | Build a tested, reusable field-measurement module\n# TASK: Define evaluate_fields(records, minimum_um) returning {'kept':[IDs],\n#   'low':[IDs], 'invalid':[IDs]} for [ID,pixels,scale]. Invalid when pixels None\n#   or scale<=0; otherwise width=pixels/scale and width>=minimum passes. Set\n#   audit; print summary 'kept=N; low=N; invalid=N'. Preserve records.\n# INPUTS: records, minimum_um\n\n",
+        "preview_inputs": {
+          "records": [
+            [
+              "F1",
+              40,
+              4
+            ],
+            [
+              "F2",
+              null,
+              4
+            ],
+            [
+              "F3",
+              10,
+              4
+            ]
+          ],
+          "minimum_um": 5
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F1",
+                  40,
+                  4
+                ],
+                [
+                  "F2",
+                  null,
+                  4
+                ],
+                [
+                  "F3",
+                  10,
+                  4
+                ]
+              ],
+              "minimum_um": 5
+            },
+            "assertions": [
+              "audit == {'kept':['F1'],'low':['F3'],'invalid':['F2']}"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "A",
+                  0,
+                  2
+                ],
+                [
+                  "B",
+                  8,
+                  0
+                ]
+              ],
+              "minimum_um": 0
+            },
+            "assertions": [
+              "audit == {'kept':['A'],'low':[],'invalid':['B']}"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "X",
+                  20,
+                  4
+                ],
+                [
+                  "Y",
+                  24,
+                  4
+                ]
+              ],
+              "minimum_um": 5
+            },
+            "assertions": [
+              "audit == {'kept':['X','Y'],'low':[],'invalid':[]}"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [],
+              "minimum_um": 5
+            },
+            "assertions": [
+              "audit == {'kept':[],'low':[],'invalid':[]}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This tests the ability to combine documented unit conversion with traceable field-level QC, independently of any one set of measurements.",
+          "probe": "How could changed inputs or absent calibration invalidate the conclusion when you combine documented unit conversion with traceable field-level QC?",
+          "check": "Preserve source data; use named parameters and the specified returned variables when you combine documented unit conversion with traceable field-level QC."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Define audit_widths(readings,ceiling_um) for [pixels,tag,scale] returning {'within':[IDs],'above':[IDs],'invalid':[IDs]} with inclusive ceiling and invalid missing pixels/nonpositive scales. Set result; print 'within=N | above=N | invalid=N'.",
+        "starter_code": "# P05-CAPSTONE | PROVE | Build a tested, reusable field-measurement module\n# TASK: Define audit_widths(readings,ceiling_um) for [pixels,tag,scale] returning\n#   {'within':[IDs],'above':[IDs],'invalid':[IDs]} with inclusive ceiling and\n#   invalid missing pixels/nonpositive scales. Set result; print 'within=N |\n#   above=N | invalid=N'.\n# INPUTS: readings, ceiling_um\n\n",
+        "preview_inputs": {
+          "readings": [
+            [
+              10,
+              "F1",
+              2
+            ],
+            [
+              null,
+              "F2",
+              3
+            ],
+            [
+              15,
+              "F3",
+              2
+            ]
+          ],
+          "ceiling_um": 5
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "readings": [
+                [
+                  10,
+                  "F1",
+                  2
+                ],
+                [
+                  null,
+                  "F2",
+                  3
+                ],
+                [
+                  15,
+                  "F3",
+                  2
+                ]
+              ],
+              "ceiling_um": 5
+            },
+            "assertions": [
+              "result == {'within':['F1'],'above':['F3'],'invalid':['F2']}"
+            ]
+          },
+          {
+            "inputs": {
+              "readings": [
+                [
+                  0,
+                  "Z",
+                  4
+                ],
+                [
+                  20,
+                  "Y",
+                  0
+                ]
+              ],
+              "ceiling_um": 0
+            },
+            "assertions": [
+              "result == {'within':['Z'],'above':[],'invalid':['Y']}"
+            ]
+          },
+          {
+            "inputs": {
+              "readings": [
+                [
+                  30,
+                  "A",
+                  3
+                ],
+                [
+                  20,
+                  "B",
+                  2
+                ]
+              ],
+              "ceiling_um": 10
+            },
+            "assertions": [
+              "result == {'within':['A','B'],'above':[],'invalid':[]}"
+            ]
+          },
+          {
+            "inputs": {
+              "readings": [],
+              "ceiling_um": 8
+            },
+            "assertions": [
+              "result == {'within':[],'above':[],'invalid':[]}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This tests the ability to combine documented unit conversion with traceable field-level QC, independently of any one set of measurements.",
+          "probe": "How could changed inputs or absent calibration invalidate the conclusion when you combine documented unit conversion with traceable field-level QC?",
+          "check": "Preserve source data; use named parameters and the specified returned variables when you combine documented unit conversion with traceable field-level QC."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start by defining named function parameters and an explicit returned value.",
+        "Handle the changed inputs and edge cases before building the final report."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "NameError": "Check imported module and parameter names.",
+      "TypeError": "Guard missing inputs before arithmetic.",
+      "ValueError": "Reject invalid calibration and document the failure.",
+      "hardcoded": "Return the computed result for new inputs rather than copying one example."
+    },
+    "reflection_prompts": [
+      "Which function can be reused on a different specimen?",
+      "What scientific assumptions are not verified by the code?",
+      "How does your code avoid global state and invalid calibration?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration",
+      "apply": "Public practice",
+      "prove": "Transfer, not certified mastery"
+    },
+    "build_steps": [
+      "Define reusable record conversion with explicit input parameters.",
+      "Keep accepted, low and invalid measurements separately.",
+      "Return structured output; print a summary only at the top level.",
+      "Rebuild Prove using changed record ordering and a new ceiling policy."
+    ],
+    "assessment": {
+      "code": "PUBLIC_CHANGED_INPUTS",
+      "reflection": "REQUIRES_SCIENTIFIC_REASONING",
+      "independent": "NOT_AUTOMATICALLY_CERTIFIED"
+    }
+  },
+  "review": {
+    "id": "P05-REVIEW",
+    "title": "Reconstruct an unfamiliar measurement function",
+    "competencies": [],
+    "why": "Learn to recall a clean function and explicit calibration/missingness behavior using biological measurement records.",
+    "explain": [
+      "A useful scientific script must recall a clean function and explicit calibration/missingness behavior. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
+      "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
+      "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the printed value and explain the input change."
+    },
+    "prediction_answer": "Use input values and the specified missing-data policy to predict the result.",
+    "walkthrough": [
+      "Identify all changing inputs and their physical units.",
+      "Predict the worked output before executing Python.",
+      "Change one input and investigate the output or error."
+    ],
+    "investigate": [
+      "Try a new sample ID, missing observation or zero count.",
+      "Check one boundary without hardcoding a previously printed result.",
+      "Explain why passing code checks is not proof of correct biological calibration."
+    ],
+    "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
+    "misconception": "A function that executes once is already a validated scientific measurement method.",
+    "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and modify",
+        "description": "Recall the method from memory.",
+        "starter_code": "# P05-REVIEW | LEARN | Reconstruct an unfamiliar measurement function\n# TASK: Recall the method from memory.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with new scientific inputs",
+        "description": "Write a short pseudocode plan for a fresh measurement function and its invalid-calibration policy.",
+        "starter_code": "# P05-REVIEW | APPLY | Reconstruct an unfamiliar measurement function\n# TASK: Write a short pseudocode plan for a fresh measurement function and its\n#   invalid-calibration policy.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "This tests the ability to recall a clean function and explicit calibration/missingness behavior, independently of any one set of measurements.",
+          "probe": "How could changed inputs or absent calibration invalidate the conclusion when you recall a clean function and explicit calibration/missingness behavior?",
+          "check": "Preserve source data; use named parameters and the specified returned variables when you recall a clean function and explicit calibration/missingness behavior."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Define summarize_measurements(values,scale) returning {'n':N,'mean_um':M}, with a mean of non-None values divided by positive scale. Empty or invalid scale returns {'n':0,'mean_um':None}. Set summary and print 'n=N | mean=M'.",
+        "starter_code": "# P05-REVIEW | PROVE | Reconstruct an unfamiliar measurement function\n# TASK: Define summarize_measurements(values,scale) returning {'n':N,'mean_um':M},\n#   with a mean of non-None values divided by positive scale. Empty or invalid\n#   scale returns {'n':0,'mean_um':None}. Set summary and print 'n=N | mean=M'.\n# INPUTS: values, scale\n\n",
+        "preview_inputs": {
+          "values": [
+            4,
+            null,
+            8
+          ],
+          "scale": 2
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "values": [
+                4,
+                null,
+                8
+              ],
+              "scale": 2
+            },
+            "assertions": [
+              "summary == {'n':2,'mean_um':3.0}"
+            ]
+          },
+          {
+            "inputs": {
+              "values": [
+                0,
+                2
+              ],
+              "scale": 2
+            },
+            "assertions": [
+              "summary == {'n':2,'mean_um':0.5}"
+            ]
+          },
+          {
+            "inputs": {
+              "values": [
+                7,
+                null
+              ],
+              "scale": 0
+            },
+            "assertions": [
+              "summary == {'n':0,'mean_um':None}"
+            ]
+          },
+          {
+            "inputs": {
+              "values": [
+                null,
+                null
+              ],
+              "scale": 4
+            },
+            "assertions": [
+              "summary == {'n':0,'mean_um':None}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This tests the ability to recall a clean function and explicit calibration/missingness behavior, independently of any one set of measurements.",
+          "probe": "How could changed inputs or absent calibration invalidate the conclusion when you recall a clean function and explicit calibration/missingness behavior?",
+          "check": "Preserve source data; use named parameters and the specified returned variables when you recall a clean function and explicit calibration/missingness behavior."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "NameError": "Check imported module and parameter names.",
+      "TypeError": "Guard missing inputs before arithmetic.",
+      "ValueError": "Reject invalid calibration and document the failure.",
+      "hardcoded": "Return the computed result for new inputs rather than copying one example."
+    },
+    "reflection_prompts": [
+      "Which function can be reused on a different specimen?",
+      "What scientific assumptions are not verified by the code?",
+      "How does your code avoid global state and invalid calibration?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration",
+      "apply": "Public practice",
+      "prove": "Transfer, not certified mastery"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "field_measurement_functions.py",
+    "brief": "Export documented reusable field-measurement functions and their transparent QC classifications.",
+    "status": "READY_FOR_LEARNER_TRIAL"
+  }
+}
