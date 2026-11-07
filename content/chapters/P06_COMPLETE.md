@@ -88,7 +88,7 @@ Write observations [ID,channel] to a temporary UTF-8 file, one 'ID,channel' per 
 
 `python -m venv .venv` is a terminal command that creates an isolated environment when executed on your computer. Printing the text inside Pyodide has no such effect.
 
-On Linux/macOS the activation command generally uses `source .venv/bin/activate`. On Windows PowerShell the executable path uses `.venv\Scripts\Activate.ps1`. Activation is optional if you directly invoke the environment's interpreter.
+On Linux/macOS the activation command generally uses `source .venv/bin/activate`. On Windows PowerShell the executable path uses `.\.venv\Scripts\Activate.ps1`. Activation is optional if you directly invoke the environment's interpreter.
 
 The verification evidence is the local interpreter path and version plus a successfully executed script in a fresh process. Browser checks must never claim you created or activated a local `.venv`.
 
@@ -135,12 +135,12 @@ Build commands containing '<python_cmd> -m venv .venv', 'source .venv/bin/activa
 
 ### Prove independently
 
-For target_os 'windows' or 'posix', return activate_command '.venv\Scripts\Activate.ps1' for PowerShell or 'source .venv/bin/activate' for POSIX. Set verification='NOT_RUN_LOCALLY'.
+For target_os 'windows' or 'posix', return activate_command '.\.venv\Scripts\Activate.ps1' for PowerShell or 'source .venv/bin/activate' for POSIX. Set verification='NOT_RUN_LOCALLY'.
 
 ```python
 # P06-G02 | PROVE | Plan a local virtual environment
 # TASK: For target_os 'windows' or 'posix', return activate_command
-#   '.venv\Scripts\Activate.ps1' for PowerShell or 'source .venv/bin/activate' for
+#   '.\.venv\Scripts\Activate.ps1' for PowerShell or 'source .venv/bin/activate' for
 #   POSIX. Set verification='NOT_RUN_LOCALLY'.
 # INPUTS: target_os
 ```
