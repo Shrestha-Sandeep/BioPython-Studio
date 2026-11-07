@@ -1,4 +1,4 @@
-/* P01–P02 teaching in frozen UI; original prose, no unsafe innerHTML. */
+/* P01–P03 teaching in frozen UI; original prose, no unsafe innerHTML. */
 "use strict";
 (() => {
   const el=(tag,cls="",textValue=null)=>{
@@ -65,11 +65,11 @@
   function fluorescence(root,goal){
     const figure=el("figure","p01-real-figure");
     const img=el("img");
-    img.src=goal.id.startsWith("P02")?"./assets/witz/fluorescence-examples.png":"./assets/witz/fluorescence-single.png";
+    img.src=(goal.id.startsWith("P02")||goal.id.startsWith("P03"))?"./assets/witz/fluorescence-examples.png":"./assets/witz/fluorescence-single.png";
     img.loading="lazy";
     img.alt="Published fluorescence microscopy teaching figure of cellular structures; visual context only, not calibrated raw data.";
     const caption=el("figcaption","p01-quiet","Guillaume Witz, Image Processing for Beginners, Demo.ipynb, output cell "+
- (goal.id.startsWith("P02")?"3":"12")+
+ ((goal.id.startsWith("P02")||goal.id.startsWith("P03"))?"3":"12")+
  ". Based on Human Protein Atlas fluorescence imagery (CC BY-SA 3.0 per source credits). This rendered PNG is not raw intensity data and the course sample IDs are synthetic.");
     const source=el("a","","Source and licensing");source.href="./assets/witz/CREDITS.md";
     source.target="_blank";source.rel="noopener noreferrer";
@@ -105,7 +105,7 @@
     root.replaceChildren();
     const g=options.goal;if(!g)return;
     intro(root,g,options.phase);
-    if(options.phase==="learn"&&["P01-G01","P01-CAPSTONE","P02-G01","P02-CAPSTONE"].includes(g.id))fluorescence(root,g);
+    if(options.phase==="learn"&&["P01-G01","P01-CAPSTONE","P02-G01","P02-CAPSTONE","P03-G01","P03-CAPSTONE"].includes(g.id))fluorescence(root,g);
     if(options.phase==="prove"){returnStatus(root,options);reflection(root,g,options);}
   }
   window.BioPythonStudioTeaching=Object.freeze({renderInto});
