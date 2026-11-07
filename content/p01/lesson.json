@@ -15,9 +15,11 @@
   ],
   "intro": "Your first real scientific Python deliverable is a reproducible specimen report. A microscopy record contains an identity, imaging-field count, named channel and—only where provided—a pixel calibration. Build the report from changing records rather than copying a fixed answer. The surrounding Cell Atlas context is authentic; the numerical training records are synthetic.",
   "scientific_context": {
-    "source": "https://www.proteinatlas.org/humanproteome/cell",
-    "use": "LINK_ONLY_UNTIL_ASSET_AUDIT",
-    "caution": "HPA images are motivating context here; synthetic values are not calibrated fluorescence."
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Demo.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "AUTHENTIC_WITZ_RENDERED_HPA_FIGURE_FOR_CONTEXT_ONLY",
+    "caution": "The bundled PNG is a notebook rendering of source fluorescence imagery, not a raw analysis TIFF or calibrated intensity measurement. Underlying source terms are recorded in CREDITS.md."
   },
   "authoring_policy": {
     "lesson_flow": "Learn → Apply → Prove",
