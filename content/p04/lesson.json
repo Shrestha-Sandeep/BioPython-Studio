@@ -1,0 +1,1905 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "P04",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT",
+  "title": "Organize experimental metadata",
+  "competencies": [
+    "019",
+    "020",
+    "021",
+    "022",
+    "023",
+    "024"
+  ],
+  "intro": "Create trustworthy Python metadata records for microscopy: dictionaries, nested data, deduplication, concise filters, record iteration and paired arrays. Preserve source order and missingness; do not treat fields as independent replicates.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Structures.ipynb",
+    "asset": "assets/witz/fluorescence-examples.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "ATTRIBUTED_CONTEXT_ONLY",
+    "caution": "Synthetic metadata are not source-verified biological observations."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove; one task in the editor, detailed content optional.",
+  "goals": [
+    {
+      "id": "P04-G01",
+      "title": "Map specimen IDs to metadata",
+      "competencies": [
+        "019"
+      ],
+      "why": "A sample ID must resolve to the right experimental metadata rather than being inferred from file names.",
+      "explain": [
+        "A dictionary maps a stable specimen key to explicit metadata. Each entry can hold a channel, a field count, and other values without relying on list position.",
+        "Use `record[key]` only when the key must exist. Use `.get(key)` when absence has a defined meaning; missing metadata is not a measured zero.",
+        "A dictionary lookup is a computational operation, not proof that the metadata reflects the actual sample. Preserve source IDs and log provenance."
+      ],
+      "worked_example": {
+        "code": "records = {'WT_R1': {'channel': 'GFP', 'fields': 4}}\nprint(records['WT_R1']['channel'])\nprint(records['WT_R1']['fields'])",
+        "predict": "What is printed, and what does the outer key identify?"
+      },
+      "prediction_answer": "GFP and 4. WT_R1 is the stable specimen key, not the fourth image field.",
+      "walkthrough": [
+        "Identify the source record and the meaning of each variable.",
+        "Predict the result on the current input before running the example.",
+        "Change a sample ID, missing value or boundary case and explain the result."
+      ],
+      "investigate": [
+        "Try one empty or incomplete record without inventing a measurement.",
+        "Check that output responds to a changed specimen identity.",
+        "Explain why the result does not establish biological replication."
+      ],
+      "debug_task": "Using a hardcoded specimen key silently returns the wrong channel for another acquisition.",
+      "misconception": "A syntactically valid record automatically represents verified scientific data.",
+      "scientific_boundary": "IDs, field counts and QC metadata are synthetic training records. Valid syntax is not verified specimen identity; field counts are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the concept, predict output, run real Python and test an edge case.",
+          "starter_code": "# P04-G01 | LEARN | Map specimen IDs to metadata\n# TASK: Predict the demonstration; change an input and rerun.\n\nrecords = {'WT_R1': {'channel': 'GFP', 'fields': 4}}\nprint(records['WT_R1']['channel'])\nprint(records['WT_R1']['fields'])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to new records",
+          "description": "Create metadata keyed by specimen_id. Store channel and fields; set field_count by looking up the new record.",
+          "starter_code": "# P04-G01 | APPLY | Map specimen IDs to metadata\n# TASK: Build metadata and field_count from the supplied specimen fields.\n# INPUTS: specimen_id, channel, fields\n\n",
+          "preview_inputs": {
+            "specimen_id": "WT_R1",
+            "channel": "GFP",
+            "fields": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "specimen_id": "WT_R1",
+                "channel": "GFP",
+                "fields": 4
+              },
+              "assertions": [
+                "metadata == {'WT_R1': {'channel':'GFP','fields':4}}",
+                "field_count == 4"
+              ]
+            },
+            {
+              "inputs": {
+                "specimen_id": "mut_R9",
+                "channel": "mCherry",
+                "fields": 0
+              },
+              "assertions": [
+                "metadata['mut_R9']['channel'] == 'mCherry'",
+                "field_count == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "specimen_id": "ced1",
+                "channel": "DAPI",
+                "fields": 12
+              },
+              "assertions": [
+                "list(metadata) == ['ced1']",
+                "field_count == 12"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests a sample id must resolve to the right experimental metadata rather than being inferred from file names. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in map specimen ids to metadata? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for map specimen ids to metadata; do not hardcode the preview record."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Build sample_record keyed by sample and recover replicate_id. Preserve the exact original sample key.",
+          "starter_code": "# P04-G01 | PROVE | Map specimen IDs to metadata\n# TASK: Create sample_record with stain and replicate; extract replicate_id.\n# INPUTS: sample, stain, replicate\n\n",
+          "preview_inputs": {
+            "sample": "N2_B3",
+            "stain": "DAPI",
+            "replicate": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": "N2_B3",
+                "stain": "DAPI",
+                "replicate": 3
+              },
+              "assertions": [
+                "sample_record == {sample:{'stain':stain,'replicate':replicate}}",
+                "replicate_id == 3"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": "mut_X",
+                "stain": "GFP",
+                "replicate": 1
+              },
+              "assertions": [
+                "sample_record[sample]['stain'] == 'GFP'",
+                "replicate_id == 1"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": "X-07",
+                "stain": "mCherry",
+                "replicate": 0
+              },
+              "assertions": [
+                "list(sample_record) == ['X-07']",
+                "replicate_id == 0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests a sample id must resolve to the right experimental metadata rather than being inferred from file names. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in map specimen ids to metadata? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for map specimen ids to metadata; do not hardcode the preview record."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with an empty dictionary or a dictionary literal keyed by specimen_id.",
+          "Nested metadata has separate keys for channel and field count."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "A record or nested field may be missing; use an explicit absence policy.",
+        "TypeError": "Check missingness and input types before making comparisons.",
+        "NameError": "Check exact output variable names and initialization.",
+        "hardcoded": "The result must change with supplied record IDs and metadata."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Changed-input transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P04-G02",
+      "title": "Read nested metadata without inventing values",
+      "competencies": [
+        "020"
+      ],
+      "why": "Biological records often have nested and partially missing measurement fields.",
+      "explain": [
+        "Nested dictionaries reflect structured observations: a specimen can have an `analysis` record containing a `focus` field. Each missing level needs an explicit policy.",
+        "A missing key is not the same as a numeric zero. Use `.get` with a default empty mapping and distinguish `None` from numeric values.",
+        "Do not mutate source metadata just to make a lookup work. A downstream data-quality report should retain missingness."
+      ],
+      "worked_example": {
+        "code": "sample = {'analysis': {'focus': 0.81}}\nprint(sample.get('analysis', {}).get('focus'))\nprint({'analysis': {}}.get('analysis', {}).get('focus'))",
+        "predict": "Why does the second lookup return None instead of zero?"
+      },
+      "prediction_answer": "The nested focus key is absent. None means not recorded; zero would be a recorded numerical score.",
+      "walkthrough": [
+        "Identify the source record and the meaning of each variable.",
+        "Predict the result on the current input before running the example.",
+        "Change a sample ID, missing value or boundary case and explain the result."
+      ],
+      "investigate": [
+        "Try one empty or incomplete record without inventing a measurement.",
+        "Check that output responds to a changed specimen identity.",
+        "Explain why the result does not establish biological replication."
+      ],
+      "debug_task": "A missing nested record raises KeyError; a default numeric zero would corrupt data provenance.",
+      "misconception": "A syntactically valid record automatically represents verified scientific data.",
+      "scientific_boundary": "IDs, field counts and QC metadata are synthetic training records. Valid syntax is not verified specimen identity; field counts are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the concept, predict output, run real Python and test an edge case.",
+          "starter_code": "# P04-G02 | LEARN | Read nested metadata without inventing values\n# TASK: Predict the demonstration; change an input and rerun.\n\nsample = {'analysis': {'focus': 0.81}}\nprint(sample.get('analysis', {}).get('focus'))\nprint({'analysis': {}}.get('analysis', {}).get('focus'))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to new records",
+          "description": "Get mean_focus from records[sample_id]['analysis']['focus'] when available; otherwise None. Set has_focus to True only when a value exists.",
+          "starter_code": "# P04-G02 | APPLY | Read nested metadata without inventing values\n# TASK: Safely read mean_focus and has_focus from nested metadata.\n# INPUTS: records, sample_id\n\n",
+          "preview_inputs": {
+            "records": {
+              "A": {
+                "analysis": {
+                  "focus": 0.81
+                }
+              },
+              "B": {
+                "analysis": {}
+              }
+            },
+            "sample_id": "A"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": {
+                  "A": {
+                    "analysis": {
+                      "focus": 0.81
+                    }
+                  },
+                  "B": {
+                    "analysis": {}
+                  }
+                },
+                "sample_id": "A"
+              },
+              "assertions": [
+                "mean_focus == 0.81",
+                "has_focus is True"
+              ]
+            },
+            {
+              "inputs": {
+                "records": {
+                  "A": {
+                    "analysis": {
+                      "focus": 0
+                    }
+                  },
+                  "B": {}
+                },
+                "sample_id": "A"
+              },
+              "assertions": [
+                "mean_focus == 0",
+                "has_focus is True"
+              ]
+            },
+            {
+              "inputs": {
+                "records": {
+                  "A": {
+                    "analysis": {}
+                  }
+                },
+                "sample_id": "A"
+              },
+              "assertions": [
+                "mean_focus is None",
+                "has_focus is False"
+              ]
+            },
+            {
+              "inputs": {
+                "records": {
+                  "A": {
+                    "analysis": {
+                      "focus": 0.7
+                    }
+                  }
+                },
+                "sample_id": "MISSING"
+              },
+              "assertions": [
+                "mean_focus is None",
+                "has_focus is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests biological records often have nested and partially missing measurement fields. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in read nested metadata without inventing values? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for read nested metadata without inventing values; do not hardcode the preview record."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Read temperature from batch_data[batch_id]['environment'] when present; preserve missingness as None and set recorded.",
+          "starter_code": "# P04-G02 | PROVE | Read nested metadata without inventing values\n# TASK: Retrieve temperature and recorded without KeyError.\n# INPUTS: batch_data, batch_id\n\n",
+          "preview_inputs": {
+            "batch_data": {
+              "run01": {
+                "environment": {
+                  "temperature": 21.5
+                }
+              }
+            },
+            "batch_id": "run01"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "batch_data": {
+                  "run01": {
+                    "environment": {
+                      "temperature": 21.5
+                    }
+                  }
+                },
+                "batch_id": "run01"
+              },
+              "assertions": [
+                "temperature == 21.5",
+                "recorded is True"
+              ]
+            },
+            {
+              "inputs": {
+                "batch_data": {
+                  "run01": {
+                    "environment": {
+                      "temperature": 0
+                    }
+                  }
+                },
+                "batch_id": "run01"
+              },
+              "assertions": [
+                "temperature == 0",
+                "recorded is True"
+              ]
+            },
+            {
+              "inputs": {
+                "batch_data": {
+                  "run01": {
+                    "environment": {}
+                  }
+                },
+                "batch_id": "run01"
+              },
+              "assertions": [
+                "temperature is None",
+                "recorded is False"
+              ]
+            },
+            {
+              "inputs": {
+                "batch_data": {
+                  "run01": {}
+                },
+                "batch_id": "unknown"
+              },
+              "assertions": [
+                "temperature is None",
+                "recorded is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests biological records often have nested and partially missing measurement fields. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in read nested metadata without inventing values? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for read nested metadata without inventing values; do not hardcode the preview record."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use `.get(sample_id, {})` to avoid failure for absent specimens.",
+          "Chain `.get('analysis', {})` and `.get('focus')`; test `is not None`."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "A record or nested field may be missing; use an explicit absence policy.",
+        "TypeError": "Check missingness and input types before making comparisons.",
+        "NameError": "Check exact output variable names and initialization.",
+        "hardcoded": "The result must change with supplied record IDs and metadata."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Changed-input transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P04-G03",
+      "title": "Audit duplicates with a set",
+      "competencies": [
+        "021"
+      ],
+      "why": "Repeated specimen IDs can inflate reported acquisition totals and corrupt joins.",
+      "explain": [
+        "A set provides fast membership tests. Use it to track previously observed sample IDs while preserving acquisition order in separate lists.",
+        "A repeated ID should be flagged once under the lesson policy, not silently removed from the source sequence. Distinct duplication events can be audited separately if needed.",
+        "Sets have no guaranteed acquisition order. Produce ordered outputs using the original list iteration, not by converting an output set to a list."
+      ],
+      "worked_example": {
+        "code": "ids = ['F02','F09','F02','F11']\nseen = set()\nfor field_id in ids:\n    if field_id in seen:\n        print('repeat', field_id)\n    seen.add(field_id)",
+        "predict": "Which ID is reported twice in the source, and when is it detected?"
+      },
+      "prediction_answer": "F02 is detected on its second occurrence, after F02 was added to the seen set.",
+      "walkthrough": [
+        "Identify the source record and the meaning of each variable.",
+        "Predict the result on the current input before running the example.",
+        "Change a sample ID, missing value or boundary case and explain the result."
+      ],
+      "investigate": [
+        "Try one empty or incomplete record without inventing a measurement.",
+        "Check that output responds to a changed specimen identity.",
+        "Explain why the result does not establish biological replication."
+      ],
+      "debug_task": "Converting the source list to a set hides record ordering and removes the evidence that duplication occurred.",
+      "misconception": "A syntactically valid record automatically represents verified scientific data.",
+      "scientific_boundary": "IDs, field counts and QC metadata are synthetic training records. Valid syntax is not verified specimen identity; field counts are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the concept, predict output, run real Python and test an edge case.",
+          "starter_code": "# P04-G03 | LEARN | Audit duplicates with a set\n# TASK: Predict the demonstration; change an input and rerun.\n\nids = ['F02','F09','F02','F11']\nseen = set()\nfor field_id in ids:\n    if field_id in seen:\n        print('repeat', field_id)\n    seen.add(field_id)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to new records",
+          "description": "From ids create unique_ids in first-seen order, duplicate_ids with each repeated ID listed once, and unique_count.",
+          "starter_code": "# P04-G03 | APPLY | Audit duplicates with a set\n# TASK: Preserve first-seen order; record duplicated IDs once.\n# INPUTS: ids\n\n",
+          "preview_inputs": {
+            "ids": [
+              "F02",
+              "F09",
+              "F02",
+              "F11"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "ids": [
+                  "F02",
+                  "F09",
+                  "F02",
+                  "F11"
+                ]
+              },
+              "assertions": [
+                "unique_ids == ['F02','F09','F11']",
+                "duplicate_ids == ['F02']",
+                "unique_count == 3"
+              ]
+            },
+            {
+              "inputs": {
+                "ids": [
+                  "A",
+                  "A",
+                  "A",
+                  "B",
+                  "B"
+                ]
+              },
+              "assertions": [
+                "unique_ids == ['A','B']",
+                "duplicate_ids == ['A','B']",
+                "unique_count == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "ids": []
+              },
+              "assertions": [
+                "unique_ids == []",
+                "duplicate_ids == []",
+                "unique_count == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "ids": [
+                  "X",
+                  "Y",
+                  "Z"
+                ]
+              },
+              "assertions": [
+                "unique_ids == ids",
+                "duplicate_ids == []"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests repeated specimen ids can inflate reported acquisition totals and corrupt joins. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in audit duplicates with a set? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for audit duplicates with a set; do not hardcode the preview record."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Build kept as first-seen distinct sample_ids that are not in excluded_ids. Build excluded_seen for unique source IDs present in excluded_ids, preserving source order.",
+          "starter_code": "# P04-G03 | PROVE | Audit duplicates with a set\n# TASK: Build kept and excluded_seen using set membership.\n# INPUTS: sample_ids, excluded_ids\n\n",
+          "preview_inputs": {
+            "sample_ids": [
+              "A",
+              "B",
+              "A",
+              "C"
+            ],
+            "excluded_ids": [
+              "B"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample_ids": [
+                  "A",
+                  "B",
+                  "A",
+                  "C"
+                ],
+                "excluded_ids": [
+                  "B"
+                ]
+              },
+              "assertions": [
+                "kept == ['A','C']",
+                "excluded_seen == ['B']"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_ids": [
+                  "X",
+                  "X",
+                  "X"
+                ],
+                "excluded_ids": []
+              },
+              "assertions": [
+                "kept == ['X']",
+                "excluded_seen == []"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_ids": [
+                  "A",
+                  "B",
+                  "A",
+                  "B"
+                ],
+                "excluded_ids": [
+                  "A",
+                  "B"
+                ]
+              },
+              "assertions": [
+                "kept == []",
+                "excluded_seen == ['A','B']"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_ids": [],
+                "excluded_ids": [
+                  "A"
+                ]
+              },
+              "assertions": [
+                "kept == []",
+                "excluded_seen == []"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests repeated specimen ids can inflate reported acquisition totals and corrupt joins. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in audit duplicates with a set? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for audit duplicates with a set; do not hardcode the preview record."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Initialize seen=set(), unique_ids=[], duplicate_ids=[].",
+          "Record first occurrence before classification; deduplicate duplicate_ids separately."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "A record or nested field may be missing; use an explicit absence policy.",
+        "TypeError": "Check missingness and input types before making comparisons.",
+        "NameError": "Check exact output variable names and initialization.",
+        "hardcoded": "The result must change with supplied record IDs and metadata."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Changed-input transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P04-G04",
+      "title": "Express selection as a comprehension",
+      "competencies": [
+        "022"
+      ],
+      "why": "Readable compact filters can preserve candidate IDs without throwing away missing-data context.",
+      "explain": [
+        "A list comprehension creates a new list while iterating over existing values. Use it when the decision is simple and explicitly documented.",
+        "Do not compare `None` to numeric thresholds. For scores, test whether a score exists and falls within the permitted range before applying a threshold.",
+        "Complex validation priority is easier to audit with ordinary loops; avoid forcing a many-branch workflow into a single expression."
+      ],
+      "worked_example": {
+        "code": "pairs = [('F1', 0.9), ('F2', None), ('F3', 0.4)]\npassed = [field_id for field_id, score in pairs if score is not None and score >= 0.8]\nprint(passed)",
+        "predict": "Why is F2 not evaluated against the threshold?"
+      },
+      "prediction_answer": "The `and` short-circuits after `score is not None` is False, so None is never numerically compared.",
+      "walkthrough": [
+        "Identify the source record and the meaning of each variable.",
+        "Predict the result on the current input before running the example.",
+        "Change a sample ID, missing value or boundary case and explain the result."
+      ],
+      "investigate": [
+        "Try one empty or incomplete record without inventing a measurement.",
+        "Check that output responds to a changed specimen identity.",
+        "Explain why the result does not establish biological replication."
+      ],
+      "debug_task": "A comprehension with `score >= minimum` before the missing-value guard raises TypeError.",
+      "misconception": "A syntactically valid record automatically represents verified scientific data.",
+      "scientific_boundary": "IDs, field counts and QC metadata are synthetic training records. Valid syntax is not verified specimen identity; field counts are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the concept, predict output, run real Python and test an edge case.",
+          "starter_code": "# P04-G04 | LEARN | Express selection as a comprehension\n# TASK: Predict the demonstration; change an input and rerun.\n\npairs = [('F1', 0.9), ('F2', None), ('F3', 0.4)]\npassed = [field_id for field_id, score in pairs if score is not None and score >= 0.8]\nprint(passed)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to new records",
+          "description": "Produce passing_ids from [ID, score] pairs when the score is not None, between 0 and 1 inclusive, and >= minimum. Preserve source order.",
+          "starter_code": "# P04-G04 | APPLY | Express selection as a comprehension\n# TASK: Build passing_ids with a comprehension; skip None and invalid scores.\n# INPUTS: field_pairs, minimum\n\n",
+          "preview_inputs": {
+            "field_pairs": [
+              [
+                "F1",
+                0.9
+              ],
+              [
+                "F2",
+                null
+              ],
+              [
+                "F3",
+                0.4
+              ]
+            ],
+            "minimum": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_pairs": [
+                  [
+                    "F1",
+                    0.9
+                  ],
+                  [
+                    "F2",
+                    null
+                  ],
+                  [
+                    "F3",
+                    0.4
+                  ]
+                ],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "passing_ids == ['F1']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_pairs": [
+                  [
+                    "A",
+                    0
+                  ],
+                  [
+                    "B",
+                    1
+                  ],
+                  [
+                    "C",
+                    1.2
+                  ]
+                ],
+                "minimum": 0
+              },
+              "assertions": [
+                "passing_ids == ['A','B']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_pairs": [
+                  [
+                    "A",
+                    0.7
+                  ],
+                  [
+                    "B",
+                    0.7
+                  ]
+                ],
+                "minimum": 0.7
+              },
+              "assertions": [
+                "passing_ids == ['A','B']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_pairs": [],
+                "minimum": 0.6
+              },
+              "assertions": [
+                "passing_ids == []"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests readable compact filters can preserve candidate ids without throwing away missing-data context. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in express selection as a comprehension? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for express selection as a comprehension; do not hardcode the preview record."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Select names from [name, count] pairs when count is recorded, nonnegative and >= min_count; preserve order.",
+          "starter_code": "# P04-G04 | PROVE | Express selection as a comprehension\n# TASK: Build selected_names using a single readable comprehension.\n# INPUTS: observations, min_count\n\n",
+          "preview_inputs": {
+            "observations": [
+              [
+                "alpha",
+                3
+              ],
+              [
+                "beta",
+                null
+              ],
+              [
+                "gamma",
+                1
+              ]
+            ],
+            "min_count": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "observations": [
+                  [
+                    "alpha",
+                    3
+                  ],
+                  [
+                    "beta",
+                    null
+                  ],
+                  [
+                    "gamma",
+                    1
+                  ]
+                ],
+                "min_count": 2
+              },
+              "assertions": [
+                "selected_names == ['alpha']"
+              ]
+            },
+            {
+              "inputs": {
+                "observations": [
+                  [
+                    "a",
+                    0
+                  ],
+                  [
+                    "b",
+                    -1
+                  ],
+                  [
+                    "c",
+                    1
+                  ]
+                ],
+                "min_count": 0
+              },
+              "assertions": [
+                "selected_names == ['a','c']"
+              ]
+            },
+            {
+              "inputs": {
+                "observations": [
+                  [
+                    "x",
+                    2
+                  ],
+                  [
+                    "y",
+                    2
+                  ]
+                ],
+                "min_count": 2
+              },
+              "assertions": [
+                "selected_names == ['x','y']"
+              ]
+            },
+            {
+              "inputs": {
+                "observations": [],
+                "min_count": 3
+              },
+              "assertions": [
+                "selected_names == []"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests readable compact filters can preserve candidate ids without throwing away missing-data context. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in express selection as a comprehension? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for express selection as a comprehension; do not hardcode the preview record."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with `[field_id for field_id, score in field_pairs ...]`.",
+          "Check `score is not None` before comparing a numeric range and minimum."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "A record or nested field may be missing; use an explicit absence policy.",
+        "TypeError": "Check missingness and input types before making comparisons.",
+        "NameError": "Check exact output variable names and initialization.",
+        "hardcoded": "The result must change with supplied record IDs and metadata."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Changed-input transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P04-G05",
+      "title": "Summarize dictionary records",
+      "competencies": [
+        "023"
+      ],
+      "why": "An experiment report must summarize samples using their attached metadata, not a separate accidental order.",
+      "explain": [
+        "Iterating with `.items()` yields specimen IDs together with their corresponding metadata. This avoids indexing parallel lists with unrelated positions.",
+        "Scientific selection needs explicit conditions. Excluding a specimen because a channel is missing is a data-quality decision, not evidence that the specimen was biologically negative.",
+        "Accumulate totals from the actual numeric field counts only after confirming the field was recorded and valid."
+      ],
+      "worked_example": {
+        "code": "records = {'A': {'fields': 3, 'valid': True}, 'B': {'fields': 0, 'valid': False}}\nfor sid, meta in records.items():\n    print(sid, meta['fields'], meta['valid'])",
+        "predict": "Which record has zero fields, and does that automatically make it accepted?"
+      },
+      "prediction_answer": "B has zero fields but is flagged invalid. A numeric zero and the QC flag have distinct meanings.",
+      "walkthrough": [
+        "Identify the source record and the meaning of each variable.",
+        "Predict the result on the current input before running the example.",
+        "Change a sample ID, missing value or boundary case and explain the result."
+      ],
+      "investigate": [
+        "Try one empty or incomplete record without inventing a measurement.",
+        "Check that output responds to a changed specimen identity.",
+        "Explain why the result does not establish biological replication."
+      ],
+      "debug_task": "Summing all field counts, including rejected samples, changes the denominator and makes the QC report misleading.",
+      "misconception": "A syntactically valid record automatically represents verified scientific data.",
+      "scientific_boundary": "IDs, field counts and QC metadata are synthetic training records. Valid syntax is not verified specimen identity; field counts are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the concept, predict output, run real Python and test an edge case.",
+          "starter_code": "# P04-G05 | LEARN | Summarize dictionary records\n# TASK: Predict the demonstration; change an input and rerun.\n\nrecords = {'A': {'fields': 3, 'valid': True}, 'B': {'fields': 0, 'valid': False}}\nfor sid, meta in records.items():\n    print(sid, meta['fields'], meta['valid'])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to new records",
+          "description": "Create accepted IDs where valid is True and fields is an integer >0, plus field_total across accepted specimens.",
+          "starter_code": "# P04-G05 | APPLY | Summarize dictionary records\n# TASK: Accumulate accepted IDs and field_total from metadata.\n# INPUTS: records\n\n",
+          "preview_inputs": {
+            "records": {
+              "A": {
+                "valid": true,
+                "fields": 3
+              },
+              "B": {
+                "valid": false,
+                "fields": 5
+              },
+              "C": {
+                "valid": true,
+                "fields": 2
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": {
+                  "A": {
+                    "valid": true,
+                    "fields": 3
+                  },
+                  "B": {
+                    "valid": false,
+                    "fields": 5
+                  },
+                  "C": {
+                    "valid": true,
+                    "fields": 2
+                  }
+                }
+              },
+              "assertions": [
+                "accepted == ['A','C']",
+                "field_total == 5"
+              ]
+            },
+            {
+              "inputs": {
+                "records": {
+                  "X": {
+                    "valid": true,
+                    "fields": 0
+                  },
+                  "Y": {
+                    "valid": true,
+                    "fields": 1
+                  }
+                }
+              },
+              "assertions": [
+                "accepted == ['Y']",
+                "field_total == 1"
+              ]
+            },
+            {
+              "inputs": {
+                "records": {
+                  "A": {
+                    "valid": false,
+                    "fields": 3
+                  }
+                }
+              },
+              "assertions": [
+                "accepted == []",
+                "field_total == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "records": {}
+              },
+              "assertions": [
+                "accepted == []",
+                "field_total == 0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests an experiment report must summarize samples using their attached metadata, not a separate accidental order. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in summarize dictionary records? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for summarize dictionary records; do not hardcode the preview record."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Collect selected_ids for entries with marker equal to target_marker and qc is True; set selected_count. Do not reorder or relabel source keys.",
+          "starter_code": "# P04-G05 | PROVE | Summarize dictionary records\n# TASK: Select records by marker and QC, and count them.\n# INPUTS: channels, target_marker\n\n",
+          "preview_inputs": {
+            "channels": {
+              "F1": {
+                "marker": "GFP",
+                "qc": true
+              },
+              "F2": {
+                "marker": "RFP",
+                "qc": true
+              },
+              "F3": {
+                "marker": "GFP",
+                "qc": false
+              }
+            },
+            "target_marker": "GFP"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "channels": {
+                  "F1": {
+                    "marker": "GFP",
+                    "qc": true
+                  },
+                  "F2": {
+                    "marker": "RFP",
+                    "qc": true
+                  },
+                  "F3": {
+                    "marker": "GFP",
+                    "qc": false
+                  }
+                },
+                "target_marker": "GFP"
+              },
+              "assertions": [
+                "selected_ids == ['F1']",
+                "selected_count == 1"
+              ]
+            },
+            {
+              "inputs": {
+                "channels": {
+                  "A": {
+                    "marker": "DAPI",
+                    "qc": true
+                  },
+                  "B": {
+                    "marker": "DAPI",
+                    "qc": true
+                  }
+                },
+                "target_marker": "DAPI"
+              },
+              "assertions": [
+                "selected_ids == ['A','B']",
+                "selected_count == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "channels": {
+                  "A": {
+                    "marker": "GFP",
+                    "qc": false
+                  }
+                },
+                "target_marker": "GFP"
+              },
+              "assertions": [
+                "selected_ids == []",
+                "selected_count == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "channels": {},
+                "target_marker": "GFP"
+              },
+              "assertions": [
+                "selected_ids == []",
+                "selected_count == 0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests an experiment report must summarize samples using their attached metadata, not a separate accidental order. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in summarize dictionary records? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for summarize dictionary records; do not hardcode the preview record."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Loop using `for sample_id, meta in records.items()`.",
+          "Check both the validation flag and a positive field count before adding to total."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "A record or nested field may be missing; use an explicit absence policy.",
+        "TypeError": "Check missingness and input types before making comparisons.",
+        "NameError": "Check exact output variable names and initialization.",
+        "hardcoded": "The result must change with supplied record IDs and metadata."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Changed-input transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "P04-G06",
+      "title": "Pair matching observations with zip",
+      "competencies": [
+        "024"
+      ],
+      "why": "Field IDs and measurements must remain paired without silently discarding unmatched entries.",
+      "explain": [
+        "`zip(ids, scores)` pairs items by position. This is appropriate only when the lists are known to describe the same acquisition order.",
+        "Ordinary zip silently truncates to the shorter list. Verify equal lengths first and reject a mismatch before constructing a report.",
+        "A paired record preserves identity; a mean computed after silently losing a field is not a trustworthy measurement summary."
+      ],
+      "worked_example": {
+        "code": "ids = ['F1','F2']\nscores = [0.9, None]\nprint(list(zip(ids, scores)))\nprint(len(ids) == len(scores))",
+        "predict": "Which score is associated with F2, and how can unmatched arrays be detected?"
+      },
+      "prediction_answer": "F2 has None, an explicitly missing observation. Compare input lengths before combining the lists.",
+      "walkthrough": [
+        "Identify the source record and the meaning of each variable.",
+        "Predict the result on the current input before running the example.",
+        "Change a sample ID, missing value or boundary case and explain the result."
+      ],
+      "investigate": [
+        "Try one empty or incomplete record without inventing a measurement.",
+        "Check that output responds to a changed specimen identity.",
+        "Explain why the result does not establish biological replication."
+      ],
+      "debug_task": "zip truncation can silently drop a field, so a correct-looking result may hide an unpaired measurement.",
+      "misconception": "A syntactically valid record automatically represents verified scientific data.",
+      "scientific_boundary": "IDs, field counts and QC metadata are synthetic training records. Valid syntax is not verified specimen identity; field counts are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the concept, predict output, run real Python and test an edge case.",
+          "starter_code": "# P04-G06 | LEARN | Pair matching observations with zip\n# TASK: Predict the demonstration; change an input and rerun.\n\nids = ['F1','F2']\nscores = [0.9, None]\nprint(list(zip(ids, scores)))\nprint(len(ids) == len(scores))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to new records",
+          "description": "If ids and scores lengths differ, set length_ok=False and paired=[] and missing_ids=[]; else pair with zip and collect IDs with None values.",
+          "starter_code": "# P04-G06 | APPLY | Pair matching observations with zip\n# TASK: Pair equal-length lists; reject length mismatches without truncation.\n# INPUTS: ids, scores\n\n",
+          "preview_inputs": {
+            "ids": [
+              "F1",
+              "F2"
+            ],
+            "scores": [
+              0.9,
+              null
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "ids": [
+                  "F1",
+                  "F2"
+                ],
+                "scores": [
+                  0.9,
+                  null
+                ]
+              },
+              "assertions": [
+                "length_ok is True",
+                "paired == [('F1',0.9),('F2',None)]",
+                "missing_ids == ['F2']"
+              ]
+            },
+            {
+              "inputs": {
+                "ids": [
+                  "A"
+                ],
+                "scores": [
+                  0
+                ]
+              },
+              "assertions": [
+                "length_ok is True",
+                "paired == [('A',0)]",
+                "missing_ids == []"
+              ]
+            },
+            {
+              "inputs": {
+                "ids": [
+                  "A",
+                  "B"
+                ],
+                "scores": [
+                  0.9
+                ]
+              },
+              "assertions": [
+                "length_ok is False",
+                "paired == []",
+                "missing_ids == []"
+              ]
+            },
+            {
+              "inputs": {
+                "ids": [],
+                "scores": []
+              },
+              "assertions": [
+                "length_ok is True",
+                "paired == []",
+                "missing_ids == []"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests field ids and measurements must remain paired without silently discarding unmatched entries. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in pair matching observations with zip? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for pair matching observations with zip; do not hardcode the preview record."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For equal-length field_names and counts, build summary mapping names to counts and count_total; for mismatch set aligned=False, summary={} and count_total=0. Names are unique.",
+          "starter_code": "# P04-G06 | PROVE | Pair matching observations with zip\n# TASK: Reject misaligned series, otherwise build summary and count_total.\n# INPUTS: field_names, counts\n\n",
+          "preview_inputs": {
+            "field_names": [
+              "A",
+              "B"
+            ],
+            "counts": [
+              2,
+              3
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_names": [
+                  "A",
+                  "B"
+                ],
+                "counts": [
+                  2,
+                  3
+                ]
+              },
+              "assertions": [
+                "aligned is True",
+                "summary == {'A':2,'B':3}",
+                "count_total == 5"
+              ]
+            },
+            {
+              "inputs": {
+                "field_names": [
+                  "F1"
+                ],
+                "counts": [
+                  0
+                ]
+              },
+              "assertions": [
+                "aligned is True",
+                "summary == {'F1':0}",
+                "count_total == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "field_names": [
+                  "X",
+                  "Y"
+                ],
+                "counts": [
+                  5
+                ]
+              },
+              "assertions": [
+                "aligned is False",
+                "summary == {}",
+                "count_total == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "field_names": [],
+                "counts": []
+              },
+              "assertions": [
+                "aligned is True",
+                "summary == {}",
+                "count_total == 0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This activity tests field ids and measurements must remain paired without silently discarding unmatched entries. Correct results must follow changed inputs and retain record provenance.",
+            "probe": "What would change if a new specimen were missing or repeated in pair matching observations with zip? Explain the scientific consequence.",
+            "check": "Inspect input names, edge cases and output rules for pair matching observations with zip; do not hardcode the preview record."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check both list lengths before zip; choose an explicit mismatch policy.",
+          "Use list(zip(ids,scores)) and a loop to record None observations."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "A record or nested field may be missing; use an explicit absence policy.",
+        "TypeError": "Check missingness and input types before making comparisons.",
+        "NameError": "Check exact output variable names and initialization.",
+        "hardcoded": "The result must change with supplied record IDs and metadata."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Changed-input transfer, not certified mastery"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "P04-CAPSTONE",
+    "title": "Build an auditable microscopy metadata registry",
+    "competencies": [],
+    "why": "Sample records must remain traceable even when acquisition IDs repeat or metadata are incomplete.",
+    "explain": [
+      "An acquisition registry maps stable IDs to their first recorded metadata and explicitly audits repeated IDs. Rejecting silently duplicated keys would hide a real audit problem.",
+      "Missing channels or field counts are incomplete metadata, not zero-intensity measurements. Preserve both the original ordered records and the first record for each ID.",
+      "This is a metadata integrity report, not imaging-quality validation; a valid record does not establish correct biological identity or instrument calibration."
+    ],
+    "worked_example": {
+      "code": "records = [{'id':'A','channel':'GFP','fields':3}, {'id':'A','channel':'DAPI','fields':2}, {'id':'B','channel':'','fields':None}]\nseen = set()\nfor rec in records:\n    sid = rec['id']\n    print(sid, 'duplicate' if sid in seen else 'first')\n    seen.add(sid)",
+      "predict": "Why must the second A remain visible as duplicate rather than silently replace the first record?"
+    },
+    "prediction_answer": "The two A entries conflict. Overwriting one would destroy evidence of an acquisition or recording discrepancy.",
+    "walkthrough": [
+      "Identify the source record and the meaning of each variable.",
+      "Predict the result on the current input before running the example.",
+      "Change a sample ID, missing value or boundary case and explain the result."
+    ],
+    "investigate": [
+      "Try one empty or incomplete record without inventing a measurement.",
+      "Check that output responds to a changed specimen identity.",
+      "Explain why the result does not establish biological replication."
+    ],
+    "debug_task": "Diagnose a missing ID or duplicated record without hardcoding a fixed result.",
+    "misconception": "A syntactically valid record automatically represents verified scientific data.",
+    "scientific_boundary": "IDs, field counts and QC metadata are synthetic training records. Valid syntax is not verified specimen identity; field counts are not biological replicates.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Read the concept, predict output, run real Python and test an edge case.",
+        "starter_code": "# P04-CAPSTONE | LEARN | Build an auditable microscopy metadata registry\n# TASK: Predict the demonstration; change an input and rerun.\n\nrecords = [{'id':'A','channel':'GFP','fields':3}, {'id':'A','channel':'DAPI','fields':2}, {'id':'B','channel':'','fields':None}]\nseen = set()\nfor rec in records:\n    sid = rec['id']\n    print(sid, 'duplicate' if sid in seen else 'first')\n    seen.add(sid)\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to new records",
+        "description": "From ordered records (id/channel/fields) create by_id preserving each ID's first record; duplicate_ids once per repeated ID; incomplete_ids for first-seen IDs missing a channel or fields (None); report exactly 'stored=N; duplicates=D; incomplete=I'. Print report. Never mutate records.",
+        "starter_code": "# P04-CAPSTONE | APPLY | Build an auditable microscopy metadata registry\n# TASK: Audit first-seen metadata, duplicates, and missing fields; print\n#   report.\n# INPUTS: records\n\n",
+        "preview_inputs": {
+          "records": [
+            {
+              "id": "A",
+              "channel": "GFP",
+              "fields": 3
+            },
+            {
+              "id": "A",
+              "channel": "DAPI",
+              "fields": 2
+            },
+            {
+              "id": "B",
+              "channel": "",
+              "fields": null
+            }
+          ]
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "records": [
+                {
+                  "id": "A",
+                  "channel": "GFP",
+                  "fields": 3
+                },
+                {
+                  "id": "A",
+                  "channel": "DAPI",
+                  "fields": 2
+                },
+                {
+                  "id": "B",
+                  "channel": "",
+                  "fields": null
+                }
+              ]
+            },
+            "assertions": [
+              "list(by_id) == ['A','B']",
+              "by_id['A']['channel'] == 'GFP'",
+              "duplicate_ids == ['A']",
+              "incomplete_ids == ['B']",
+              "report == 'stored=2; duplicates=1; incomplete=1'"
+            ]
+          },
+          {
+            "inputs": {
+              "records": []
+            },
+            "assertions": [
+              "by_id == {}",
+              "duplicate_ids == []",
+              "incomplete_ids == []",
+              "report == 'stored=0; duplicates=0; incomplete=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                {
+                  "id": "X",
+                  "channel": "GFP",
+                  "fields": 0
+                },
+                {
+                  "id": "Y",
+                  "channel": "DAPI",
+                  "fields": 1
+                }
+              ]
+            },
+            "assertions": [
+              "duplicate_ids == []",
+              "incomplete_ids == []",
+              "report == 'stored=2; duplicates=0; incomplete=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                {
+                  "id": "R",
+                  "channel": "",
+                  "fields": 0
+                },
+                {
+                  "id": "R",
+                  "channel": "GFP",
+                  "fields": 7
+                },
+                {
+                  "id": "R",
+                  "channel": "GFP",
+                  "fields": 5
+                }
+              ]
+            },
+            "assertions": [
+              "by_id['R']['channel'] == ''",
+              "duplicate_ids == ['R']",
+              "incomplete_ids == ['R']",
+              "report == 'stored=1; duplicates=1; incomplete=1'"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This activity tests sample records must remain traceable even when acquisition ids repeat or metadata are incomplete. Correct results must follow changed inputs and retain record provenance.",
+          "probe": "What would change if a new specimen were missing or repeated in build an auditable microscopy metadata registry? Explain the scientific consequence.",
+          "check": "Inspect input names, edge cases and output rules for build an auditable microscopy metadata registry; do not hardcode the preview record."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Given samples as [id,metadata] pairs and required_marker, create selected mapping of first-seen complete IDs whose marker matches, duplicate_keys once each, missing_keys for first-seen IDs with None/empty marker or batch or count. Report 'selected=N | duplicates=D | missing=M'. Preserve samples.",
+        "starter_code": "# P04-CAPSTONE | PROVE | Build an auditable microscopy metadata registry\n# TASK: Audit unfamiliar [ID,metadata] pairs and retain selected complete\n#   records.\n# INPUTS: samples, required_marker\n\n",
+        "preview_inputs": {
+          "samples": [
+            [
+              "R1",
+              {
+                "marker": "GFP",
+                "batch": "B1",
+                "count": 2
+              }
+            ],
+            [
+              "R1",
+              {
+                "marker": "GFP",
+                "batch": "B1",
+                "count": 4
+              }
+            ],
+            [
+              "R2",
+              {
+                "marker": "",
+                "batch": "B1",
+                "count": null
+              }
+            ]
+          ],
+          "required_marker": "GFP"
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "samples": [
+                [
+                  "R1",
+                  {
+                    "marker": "GFP",
+                    "batch": "B1",
+                    "count": 2
+                  }
+                ],
+                [
+                  "R1",
+                  {
+                    "marker": "GFP",
+                    "batch": "B1",
+                    "count": 4
+                  }
+                ],
+                [
+                  "R2",
+                  {
+                    "marker": "",
+                    "batch": "B1",
+                    "count": null
+                  }
+                ]
+              ],
+              "required_marker": "GFP"
+            },
+            "assertions": [
+              "list(selected) == ['R1']",
+              "selected['R1']['count'] == 2",
+              "duplicate_keys == ['R1']",
+              "missing_keys == ['R2']",
+              "report_line == 'selected=1 | duplicates=1 | missing=1'"
+            ]
+          },
+          {
+            "inputs": {
+              "samples": [],
+              "required_marker": "DAPI"
+            },
+            "assertions": [
+              "selected == {}",
+              "duplicate_keys == []",
+              "missing_keys == []",
+              "report_line == 'selected=0 | duplicates=0 | missing=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "samples": [
+                [
+                  "S",
+                  {
+                    "marker": "mCherry",
+                    "batch": "B",
+                    "count": 0
+                  }
+                ],
+                [
+                  "T",
+                  {
+                    "marker": "GFP",
+                    "batch": "B",
+                    "count": 4
+                  }
+                ]
+              ],
+              "required_marker": "GFP"
+            },
+            "assertions": [
+              "list(selected) == ['T']",
+              "duplicate_keys == []",
+              "missing_keys == []",
+              "report_line == 'selected=1 | duplicates=0 | missing=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "samples": [
+                [
+                  "S",
+                  {
+                    "marker": "GFP",
+                    "batch": "",
+                    "count": 3
+                  }
+                ],
+                [
+                  "T",
+                  {
+                    "marker": "GFP",
+                    "batch": "C",
+                    "count": null
+                  }
+                ]
+              ],
+              "required_marker": "GFP"
+            },
+            "assertions": [
+              "selected == {}",
+              "missing_keys == ['S','T']",
+              "report_line == 'selected=0 | duplicates=0 | missing=2'"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This activity tests sample records must remain traceable even when acquisition ids repeat or metadata are incomplete. Correct results must follow changed inputs and retain record provenance.",
+          "probe": "What would change if a new specimen were missing or repeated in build an auditable microscopy metadata registry? Explain the scientific consequence.",
+          "check": "Inspect input names, edge cases and output rules for build an auditable microscopy metadata registry; do not hardcode the preview record."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start from supplied inputs; preserve their IDs.",
+        "Try one changed value before running checks."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "KeyError": "A record or nested field may be missing; use an explicit absence policy.",
+      "TypeError": "Check missingness and input types before making comparisons.",
+      "NameError": "Check exact output variable names and initialization.",
+      "hardcoded": "The result must change with supplied record IDs and metadata."
+    },
+    "reflection_prompts": [
+      "Which record is the independent biological unit, if any?",
+      "How are missing and duplicate metadata handled?",
+      "Which code change would be required for an unfamiliar input?",
+      "What evidence would validate the original source metadata?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Changed-input transfer, not certified mastery"
+    },
+    "build_steps": [
+      "Inspect raw IDs and their first recorded metadata before constructing a registry.",
+      "Detect repeated keys explicitly; do not overwrite or erase source records.",
+      "Classify missing fields separately from numerical zero and valid metadata.",
+      "Construct an auditable summary; test empty, repeated and incomplete inputs.",
+      "Complete Prove on unfamiliar pair-shaped records and explain rejected rows."
+    ],
+    "assessment": {
+      "code": "CHANGED_INPUT_PUBLIC_CHECKS",
+      "reflection": "SCIENTIFIC_EXPLANATION_REQUIRED",
+      "export": "METADATA_REGISTRY_PY",
+      "independent": "NO_AUTOMATIC_MASTERY"
+    }
+  },
+  "review": {
+    "id": "P04-REVIEW",
+    "title": "Reconstruct a metadata join after a delay",
+    "competencies": [],
+    "why": "Independent transfer requires discovering missing and repeated IDs without reusing the registry code.",
+    "explain": [
+      "New data may provide a list of [sample_key,channel] pairs rather than dictionaries. You must reconstruct the stable-record policy from first principles.",
+      "Accept only first occurrences of allowed channels. Repeated keys and missing channels are different failures; preserve acquisition order.",
+      "This delayed task records a transparent practice result, not automatic biological truth or long-term mastery."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict which records will appear and why."
+    },
+    "prediction_answer": "Record identities and missing data must be considered before accepting a measurement.",
+    "walkthrough": [
+      "Identify the source record and the meaning of each variable.",
+      "Predict the result on the current input before running the example.",
+      "Change a sample ID, missing value or boundary case and explain the result."
+    ],
+    "investigate": [
+      "Try one empty or incomplete record without inventing a measurement.",
+      "Check that output responds to a changed specimen identity.",
+      "Explain why the result does not establish biological replication."
+    ],
+    "debug_task": "Diagnose a missing ID or duplicated record without hardcoding a fixed result.",
+    "misconception": "A syntactically valid record automatically represents verified scientific data.",
+    "scientific_boundary": "IDs, field counts and QC metadata are synthetic training records. Valid syntax is not verified specimen identity; field counts are not biological replicates.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "No solved example: reconstruct the rules from memory.",
+        "starter_code": "# P04-REVIEW | LEARN | Reconstruct a metadata join after a delay\n# TASK: Recall the rules without using your earlier code.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to new records",
+        "description": "Write pseudocode comments: how will you identify duplicated sample keys, missing channel names, and allowed channels without altering input?",
+        "starter_code": "# P04-REVIEW | APPLY | Reconstruct a metadata join after a delay\n# TASK: Write a plan for classifying new metadata records.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "This activity tests independent transfer requires discovering missing and repeated ids without reusing the registry code. Correct results must follow changed inputs and retain record provenance.",
+          "probe": "What would change if a new specimen were missing or repeated in reconstruct a metadata join after a delay? Explain the scientific consequence.",
+          "check": "Inspect input names, edge cases and output rules for reconstruct a metadata join after a delay; do not hardcode the preview record."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "From acquisitions [sample_key,channel] and allowed_channels, build kept as first-seen allowed keys, repeated as unique duplicates, unknown as first-seen IDs with blank or disallowed channels. Print line exactly 'kept=N; repeated=R; unknown=U'.",
+        "starter_code": "# P04-REVIEW | PROVE | Reconstruct a metadata join after a delay\n# TASK: Rebuild a metadata audit on unfamiliar [ID,channel] observations.\n# INPUTS: acquisitions, allowed_channels\n\n",
+        "preview_inputs": {
+          "acquisitions": [
+            [
+              "A",
+              "GFP"
+            ],
+            [
+              "B",
+              "DAPI"
+            ],
+            [
+              "A",
+              "mCherry"
+            ],
+            [
+              "C",
+              ""
+            ]
+          ],
+          "allowed_channels": [
+            "GFP",
+            "DAPI"
+          ]
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "acquisitions": [
+                [
+                  "A",
+                  "GFP"
+                ],
+                [
+                  "B",
+                  "DAPI"
+                ],
+                [
+                  "A",
+                  "mCherry"
+                ],
+                [
+                  "C",
+                  ""
+                ]
+              ],
+              "allowed_channels": [
+                "GFP",
+                "DAPI"
+              ]
+            },
+            "assertions": [
+              "kept == ['A','B']",
+              "repeated == ['A']",
+              "unknown == ['C']",
+              "line == 'kept=2; repeated=1; unknown=1'"
+            ]
+          },
+          {
+            "inputs": {
+              "acquisitions": [],
+              "allowed_channels": [
+                "GFP"
+              ]
+            },
+            "assertions": [
+              "kept == []",
+              "repeated == []",
+              "unknown == []",
+              "line == 'kept=0; repeated=0; unknown=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "acquisitions": [
+                [
+                  "X",
+                  "RFP"
+                ],
+                [
+                  "Y",
+                  "GFP"
+                ],
+                [
+                  "Z",
+                  "RFP"
+                ]
+              ],
+              "allowed_channels": [
+                "GFP"
+              ]
+            },
+            "assertions": [
+              "kept == ['Y']",
+              "unknown == ['X','Z']",
+              "line == 'kept=1; repeated=0; unknown=2'"
+            ]
+          },
+          {
+            "inputs": {
+              "acquisitions": [
+                [
+                  "R",
+                  ""
+                ],
+                [
+                  "R",
+                  "GFP"
+                ],
+                [
+                  "R",
+                  "GFP"
+                ]
+              ],
+              "allowed_channels": [
+                "GFP"
+              ]
+            },
+            "assertions": [
+              "kept == []",
+              "repeated == ['R']",
+              "unknown == ['R']",
+              "line == 'kept=0; repeated=1; unknown=1'"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This activity tests independent transfer requires discovering missing and repeated ids without reusing the registry code. Correct results must follow changed inputs and retain record provenance.",
+          "probe": "What would change if a new specimen were missing or repeated in reconstruct a metadata join after a delay? Explain the scientific consequence.",
+          "check": "Inspect input names, edge cases and output rules for reconstruct a metadata join after a delay; do not hardcode the preview record."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "KeyError": "A record or nested field may be missing; use an explicit absence policy.",
+      "TypeError": "Check missingness and input types before making comparisons.",
+      "NameError": "Check exact output variable names and initialization.",
+      "hardcoded": "The result must change with supplied record IDs and metadata."
+    },
+    "reflection_prompts": [
+      "Which record is the independent biological unit, if any?",
+      "How are missing and duplicate metadata handled?",
+      "Which code change would be required for an unfamiliar input?",
+      "What evidence would validate the original source metadata?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Changed-input transfer, not certified mastery"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "microscopy_metadata_registry.py",
+    "brief": "Build an auditable registry that preserves source records, identifies duplicates and missing metadata, and exports a self-contained Python report.",
+    "status": "LEARNER_PILOT_REQUIRES_HUMAN_TRIAL"
+  }
+}

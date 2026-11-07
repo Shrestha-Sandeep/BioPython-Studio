@@ -1,34 +1,68 @@
-# BioPython Studio — UI-first IDE
+# BioPython Studio — scientific Python learning workspace
 
-**Development branch:** \`feature/ui-first-ide-workspace\`
+BioPython Studio is a personal, minimally cluttered browser IDE for learning transferable scientific Python through biological research problems. Its primary applied pathway is microscopy; sequencing/NGS and machine learning are optional later pathways.
 
-This is an isolated **interface-only** design for a single learner, based on the Witz-first clean rebuild. It does not modify the deployed production app or the current curriculum and source inventory.
+## Repository and implementation status
 
-## Preview locally
+- **Curriculum authority:** the frozen v3 design in [docs/CURRICULUM_V3_FROZEN.md](https://github.com/Shrestha-Sandeep/BioPython-Studio/blob/docs/frozen-v3-curriculum/docs/CURRICULUM_V3_FROZEN.md) defines 156 distinct competencies and safe prerequisite ordering. The [Witz-first mission map](curriculum/witz_spine.json) defines 26 connected missions. These are **not 156 shipped interactive lessons**.
+- **Current development integration:** P01–P06 (six missions; 36 distinct canonical competencies), each with Learn, Apply, Prove, a capstone and a delayed-review activity. P01–P03 remain protected by their original regression suites.
+- **Production:** this is an isolated draft branch; `main` is unchanged. The frozen UI structure remains intact.
+- **Quality status:** automated browser and content tests do not establish retained learner skill, independent scientific truth, or an empirically measured 9.5+/10 learning score.
 
-\`\`\`sh
+## Current chapter sequence
+
+| Chapter | Mission | Central deliverable |
+|---|---|---|
+| P01 | First scientific Python script | Specimen report and unit conversion |
+| P02 | Trustworthy sample labels | Strict identifier and QC validator |
+| P03 | Filter microscope fields | Source-preserving field-QC audit |
+| P04 | Organize experimental metadata | Deduplicated, traceable metadata registry |
+| P05 | Make a reusable analysis function | Documented, tested field-measurement functions |
+| P06 | Save and reproduce a real script | JSON audit export plus **manual** local Python/venv/Git verification |
+
+Each exercise places its immediate task as concise `#` comments inside the editable Python editor. Detailed concepts, predictions, optional walkthroughs, staged hints, changed-input feedback and scientific limitations remain in the lesson panel.
+
+## Runtime and interface
+
+- **Actual Python:** version-pinned Pyodide in a Web Worker, loaded on the first Python Run. Normal Python stdout, traceback and changed-input checks are displayed. No simulated outputs or hidden secure grading.
+- **Editor:** locally vendored CodeMirror with editable code, Python highlighting, keyboard navigation and separate saved drafts for each chapter/goal/phase.
+- **Interface:** frozen clean IDE layout with compact lesson controls, a results console, optional image viewer, focus mode and responsive layouts.
+- **Persistence:** existing `biopython.p01.v1`, `biopython.p02.v1`, and `biopython.p03.v1` are retained. New `biopython.p04.v1`, `biopython.p05.v1`, and `biopython.p06.v1` store new drafts separately. Do not infer independent mastery from old completion data.
+- **Export:** completed capstone and review scripts can be downloaded as standalone `.py` files with one supplied example input.
+- **Source images:** attributed Witz/Human Protein Atlas teaching images are contextual. They are not calibrated TIFF stacks and do not authorize quantitative fluorescence claims.
+
+Run locally from the repository root:
+
+```sh
 python -m http.server 8000
-\`\`\`
+```
 
-Open http://localhost:8000. The app is static and uses no backend. The enhanced Python editor loads locally vendored CodeMirror 5.65.21 (MIT; see `vendor/codemirror5/LICENSE`). It requires **no external CDN**, and a native textarea fallback remains available if scripts are blocked.
+Then open `http://localhost:8000` and select Python foundations. Internet access is required to download the Pyodide runtime on first Run.
 
-## Interface in this branch
+## P06 local-machine limit
 
-- **Code editor:** CodeMirror Python highlighting, indentation, line numbers, matching brackets and cursor position, plus separate draft persistence per workspace. Basic fallback is still editable.
-- **IDE layout:** one visible Python → Microscopy → NGS → ML path, collapsed-by-default Learn / Apply / Prove placeholder, dark/light themes, keyboard-accessible reference panel and focus mode.
-- **Resizable workspace:** draggable editor/image divider on desktop and an editor/console-height control; accessible keyboard separators. Responsive vertical stacking on tablets and phones.
-- **Image viewer:** open local browser-supported PNG/JPEG/WebP/GIF images; zoom, pan, drag/drop, browser RGB channel display and pixel-coordinate/value preview. Compare an original to a second user-selected image using side-by-side, overlay, or wipe. Overlay and wipe are permitted only when the two files have identical pixel dimensions; **no alignment or registration is performed**. Nothing is sent to a server. Z/T and multi-channel TIFF controls intentionally remain disabled.
-- **Results:** separate Output, Measurements and Histogram panes, all honest empty states.
-- **QA:** Node contracts and Playwright browser checks across 360, 390, 768, 1280 and 1440 pixel widths, including independent external-network detection, comparison modes, dimension mismatch and keyboard navigation. CI saves representative mobile/desktop screenshots as downloadable workflow artifacts.
+Browser Python can create genuine temporary files in its own virtual filesystem, encode JSON and execute assertions. **It cannot create your computer's .venv, run local Git, verify an on-disk repository, or certify a local notebook kernel.**
 
-## Explicit non-features
+Use [P06 local verification guide](docs/P06_LOCAL_HANDOFF.md) to export the script and run it in a real local environment, verify interpreter and tests, and record an actual commit hash. P06's browser checks record practice only; competencies 032 and 036 require local evidence.
 
-No lesson content, exercise solutions, dataset processing, true Python/Pyodide execution, lesson assessments, grading, scientific segmentation, raw pixel calibration, TIFF/OME-TIFF decoding, computed image overlays, Z-stacks or time-series navigation are implemented here. **Run is disabled**. RGB values from a browser-loaded composite must not be interpreted as calibrated fluorescence intensities.
+## QA commands
 
-The existing Witz course files and other research remain in the repository, not loaded into the visible interface. Existing learner-progress storage is untouched. This prototype stores only drafts, theme and layout preferences in \`biopython.ui-first.v1\`. Image files are temporary session data and are not persisted.
+```sh
+node --test tests/preview.test.mjs tests/witz_sources.test.mjs
+python tests/test_p01_import.py
+python tests/test_p02_import.py
+python tests/test_p03_import.py
+python tests/test_editor_briefs.py
+python tests/test_p04_p06_import.py
+python tests/test_p04_p06_reference.py
+```
 
-Do not merge into \`main\` until the interface is accepted and execution/progress compatibility is designed and tested.
+Browser tests additionally require Playwright and Chromium; see `.github/workflows/p04-p06-integration.yml`. They run the original frozen-shell regression and P01–P06 chapter flows, changed-input checks in genuine Pyodide, exported script execution in CPython, draft preservation and mobile/tablet/desktop layout tests.
 
-## UI review gate
+## Learning sources and scientific safeguards
 
-This branch is suitable for an **interface design review**, but does not constitute a completed learning application. Review the screenshots and the preview on desktop and on a real mobile device before accepting the layout. Once accepted, freeze the UI structure while implementing lesson content, Pyodide execution and scientifically valid microscopy data handling behind the same interface.
+Witz [Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner) is the primary source spine. Supporting references include the [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/), [Python for Biologists](https://www.pythonforbiologists.org/), [Introduction to Bioimage Analysis](https://bioimagebook.github.io/) and [Bio-image Analysis Notebooks](https://haesleinhuepf.github.io/BioImageAnalysisNotebooks/).
+
+Synthetic specimen IDs, cutoffs, calibrations and field scores are for programming education only. Image fields are not independent biological replicates; connected regions are not validated cell/exopher detections. Calibrated quantitative image analysis belongs to later I01–I13 missions.
+
+**Release policy:** Keep this branch in draft until the exact-commit QA suite, a real-device learner pilot and a deployment preview are confirmed. Do not merge or update production automatically.

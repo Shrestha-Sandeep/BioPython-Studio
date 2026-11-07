@@ -1,8 +1,9 @@
-/* Reusable P01–P03 bridge; preserves frozen shell and per-chapter progress. */
+/* Reusable P01–P06 bridge; preserves frozen shell and per-chapter progress. */
 "use strict";
 (() => {
 const el=id=>document.getElementById(id);
-const KEYS={P01:"biopython.p01.v1",P02:"biopython.p02.v1",P03:"biopython.p03.v1"};
+const IDS=["P01","P02","P03","P04","P05","P06"];
+const KEYS=Object.fromEntries(IDS.map(id=>[id,"biopython."+id.toLowerCase()+".v1"]));
 const SELECT_KEY="biopython.course-selected.v1";
 const chapters={},states={};
 const fresh=()=>({goal:0,phase:"learn",drafts:{},briefIntroduced:{},hints:{},progress:{},reflections:{},capstoneFirstPassAt:null});
@@ -33,6 +34,8 @@ const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
 const active=()=>!!chapter&&pythonSelected()&&codeSelected();
+const newerChapter=()=>["P04","P05","P06"].includes(activeId);
+function preferEditorWhenCoding(){if(newerChapter())bridge()?.expandLesson?.(state.phase==="learn");}
 // Task comments are not an attempt. Keep actual Python separate from the prompt.
 const hasExecutableCode=code=>String(code||"").split(/\r?\n/).some(line=>{
  const value=line.trim();
@@ -134,11 +137,11 @@ function render(){
 }
 function chooseGoal(n){
  if(!chapter||n<0||n>=goals().length)return;
- remember();state.goal=n;state.phase="learn";bridge()?.selectPhase?.("learn");render();
+ remember();state.goal=n;state.phase="learn";bridge()?.selectPhase?.("learn");preferEditorWhenCoding();render();
 }
 function choosePhase(name){
  if(!chapter||!["learn","apply","prove"].includes(name))return;
- remember();state.phase=name;render();
+ remember();state.phase=name;preferEditorWhenCoding();render();
 }
 function instance(){
  if(worker)return worker;
@@ -286,13 +289,14 @@ function switchChapter(next){
  state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
  refreshGoalOptions();
  bridge()?.selectPhase?.(state.phase);
+ bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
  render();save();
 }
 function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
  const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Chapter";chapterLabel.className="p01-label";
  const chapterSelect=document.createElement("select");chapterSelect.id="bps-chapter-select";chapterSelect.setAttribute("aria-label","Choose Python chapter");
- for(const id of ["P01","P02","P03"]){
+ for(const id of IDS){
    const o=document.createElement("option");o.value=id;o.textContent=id+" · "+chapters[id].title;
    chapterSelect.append(o);
  }
@@ -326,7 +330,7 @@ function mount(){
   b.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight"].includes(e.key))queueMicrotask(()=>choosePhase(document.querySelector('[data-phase][aria-selected="true"]')?.dataset.phase||"learn"));});
  });
  document.querySelectorAll("[data-stage]").forEach(b=>b.addEventListener("click",()=>{
-  syncActivity();if(active()){render();bridge()?.expandLesson?.(true);}
+  syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
  }));
  document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
   syncActivity();if(active())render();
@@ -336,18 +340,18 @@ function mount(){
 }
 async function start(){
  try{
-  for(const id of ["P01","P02","P03"]){
+  for(const id of IDS){
    const r=await fetch("./content/"+id.toLowerCase()+"/lesson.json");
    if(!r.ok)throw Error(id+" content HTTP "+r.status);
    const data=await r.json();
-   if(data.schema_version!=="bps.chapter.v1"||data.chapter_id!==id||data.goals?.length!==(id==="P02"?4:7)||!data.capstone||!data.review)
+   if(data.schema_version!=="bps.chapter.v1"||data.chapter_id!==id||data.goals?.length!==({P01:7,P02:4,P03:7,P04:6,P05:6,P06:6}[id])||!data.capstone||!data.review)
      throw Error(id+" chapter import contract failed");
    chapters[id]=data;states[id]=loadState(id);
   }
   if(!chapters[activeId])activeId="P01";
   chapter=chapters[activeId];state=states[activeId];
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
-  mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(true);
+  mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
   render();syncActivity();
   el("output-placeholder").textContent="Run your code to see real Python output or traceback.";
   status("Python ready to load on first Run");

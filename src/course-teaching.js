@@ -116,6 +116,14 @@
     const g=options.goal;if(!g)return;
     intro(root,g,options.phase);
     if(options.phase==="learn"&&["P01-G01","P01-CAPSTONE","P02-G01","P02-CAPSTONE","P03-G01","P03-CAPSTONE"].includes(g.id))fluorescence(root,g);
+    if(g.id.startsWith("P06")){
+      const link=el("a","","Local Python and Git verification guide");
+      link.href="./docs/P06_LOCAL_HANDOFF.md";link.target="_blank";link.rel="noopener noreferrer";
+      root.append(details("Verify P06 on your own computer",[
+        paragraph("Python and tests run here. A local virtual environment and Git commit require actual terminal execution and recorded evidence."),
+        link
+      ]));
+    }
     if(options.phase==="prove"){returnStatus(root,options);reflection(root,g,options);}
   }
   window.BioPythonStudioTeaching=Object.freeze({renderInto});
