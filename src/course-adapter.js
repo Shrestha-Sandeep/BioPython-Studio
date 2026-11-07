@@ -1,17 +1,18 @@
-/* Reusable P01/P02 course bridge; preserves frozen shell and P01 storage contract. */
+/* Reusable P01–P03 bridge; preserves frozen shell and per-chapter progress. */
 "use strict";
 (() => {
 const el=id=>document.getElementById(id);
-const KEYS={P01:"biopython.p01.v1",P02:"biopython.p02.v1"};
+const KEYS={P01:"biopython.p01.v1",P02:"biopython.p02.v1",P03:"biopython.p03.v1"};
 const SELECT_KEY="biopython.course-selected.v1";
 const chapters={},states={};
-const fresh=()=>({goal:0,phase:"learn",drafts:{},hints:{},progress:{},reflections:{},capstoneFirstPassAt:null});
+const fresh=()=>({goal:0,phase:"learn",drafts:{},briefIntroduced:{},hints:{},progress:{},reflections:{},capstoneFirstPassAt:null});
 function loadState(id){
  const next=fresh();
  try{
   const old=JSON.parse(localStorage.getItem(KEYS[id])||"null");
   if(old&&typeof old==="object"){
    if(old.drafts&&typeof old.drafts==="object")next.drafts=old.drafts;
+    if(old.briefIntroduced&&typeof old.briefIntroduced==="object")next.briefIntroduced=old.briefIntroduced;
    if(old.hints&&typeof old.hints==="object")next.hints=old.hints;
    if(old.progress&&typeof old.progress==="object")next.progress=old.progress;
    if(old.reflections&&typeof old.reflections==="object")next.reflections=old.reflections;
@@ -32,9 +33,14 @@ const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
 const active=()=>!!chapter&&pythonSelected()&&codeSelected();
+// Task comments are not an attempt. Keep actual Python separate from the prompt.
+const hasExecutableCode=code=>String(code||"").split(/\r?\n/).some(line=>{
+ const value=line.trim();
+ return value.length>0&&!value.startsWith("#");
+});
 function save(){
  try{
-  localStorage.setItem(KEYS[activeId],JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,hints:state.hints,progress:state.progress,reflections:state.reflections,capstoneFirstPassAt:state.capstoneFirstPassAt}));
+  localStorage.setItem(KEYS[activeId],JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,briefIntroduced:state.briefIntroduced,hints:state.hints,progress:state.progress,reflections:state.reflections,capstoneFirstPassAt:state.capstoneFirstPassAt}));
   localStorage.setItem(SELECT_KEY,activeId);
   el("save-status").textContent="Saved locally";
  }catch{el("save-status").textContent="Saving blocked";}
@@ -108,8 +114,19 @@ function render(){
    (evidence.status==="delayed_practice_passed"?"Delayed practice completed (not certified)":
    evidence.status==="practice_passed"?"Prove practice checks passed":"Last attempt: "+evidence.status):
    "One goal at a time · no automatic mastery";
- const value=Object.prototype.hasOwnProperty.call(state.drafts,key())?state.drafts[key()]:t.starter_code;
- bridge()?.writeCode?.(value);
+ const hasDraft=Object.prototype.hasOwnProperty.call(state.drafts,key());
+  let value=hasDraft?state.drafts[key()]:t.starter_code;
+  if(hasDraft&&!state.briefIntroduced[key()]){
+    // One-time, non-destructive migration for code saved before editor briefs.
+    state.briefIntroduced[key()]=true;
+    const marker="# "+g.id+" | "+state.phase.toUpperCase()+" |";
+    if(typeof value==="string"&&!value.startsWith(marker)){
+      const brief=t.starter_code.split("\n\n")[0];
+      value=brief+"\n\n"+value;
+      state.drafts[key()]=value;
+    }
+  }
+  bridge()?.writeCode?.(value);
  el("crumb").textContent="Python foundations · "+activeId;
  el("page-title").textContent="Python workspace";
  el("page-subtitle").textContent=g.why;
@@ -158,8 +175,12 @@ function send(type,fields){
 async function run(){
  if(!active()||busy)return;
  const k=key(),code=bridge()?.readCode()??"";
- if(!code.trim()){output("Write Python first.",true);return;}
+ if(!hasExecutableCode(code)){
+  output("Write Python below the task comments, then press Run.");
+  status("Awaiting learner code");return;
+ }
  const result=await send("run",{code,inputs:task().preview_inputs||{}});
+ if(!active()||key()!==k)return;
  if(!result.ok){output(result.error,true);status("Python unavailable");return;}
  const r=result.result;
  output([r.stdout,r.stderr,r.traceback].filter(Boolean).join("\n"),!!r.traceback);
@@ -170,8 +191,12 @@ async function check(){
  if(!active()||state.phase==="learn"||busy)return;
  const cases=task().public_checks||[],k=key(),code=bridge()?.readCode()??"";
  if(!cases.length){output("This activity has no automatic coding check. Continue to Prove.",false);return;}
- if(!code.trim()){output("Write your own solution first.",true);return;}
+ if(!hasExecutableCode(code)){
+  output("Write your Python solution below the task comments before checking.");
+  status("Awaiting learner code");return;
+ }
  const result=await send("check",{code,cases});
+ if(!active()||key()!==k)return;
  if(!result.ok){output(result.error,true);status("Python unavailable");return;}
  const r=result.results||[];
  const bad=r.findIndex(x=>x.traceback||x.checks.some(y=>!y.passed));
@@ -180,9 +205,10 @@ async function check(){
   const diagnostic=(item.traceback||f?.error||"");
   const errorType=diagnostic.match(/\b(NameError|ZeroDivisionError|ValueError|TypeError|SyntaxError|IndentationError)\b/)?.[0];
   const advice=goal()?.feedback?.[errorType] || (bad>0?goal()?.feedback?.hardcoded:null)
-    || (errorType?"Inspect the failing line and variables in the traceback.":"Check that your result uses the supplied inputs and expected units.");
+    || task()?.practice_feedback?.check || (errorType?"Inspect the failing line and variables in the traceback.":"Check that your result uses the supplied inputs and expected units.");
   const reason=item.traceback||f?.error||"Practice condition failed: "+f?.expression;
-  output("Input: "+JSON.stringify(cases[bad].inputs)+"\n"+reason+"\n\nDiagnostic: "+advice,true);
+  const inputLines=Object.entries(cases[bad].inputs||{}).map(([name,value])=>name+" = "+pyLiteral(value)).join("\n");
+  output("Test input (Python):\n"+inputLines+"\n"+reason+"\n\nDiagnostic: "+advice,true);
   if(key()===k)progress("needs_review");
  }else{
   let classification=state.hints[k]?"guided":"practice_passed";
@@ -192,8 +218,11 @@ async function check(){
     const delayed=state.capstoneFirstPassAt && Date.now()-state.capstoneFirstPassAt >= 24*3600*1000;
     classification=delayed?"delayed_practice_passed":"review_practice_passed";
   }
-  output("Passed "+r.length+" changed-input checks with real Python.\nPublic practice checks are not independent or retained mastery."+
-    (r[0]?.stdout?"\n"+r[0].stdout:"")+
+  const feedback=task()?.practice_feedback;
+  const explanation=feedback?"\n\nWhy it worked: "+feedback.why+"\nThink next: "+feedback.probe:"";
+  output("Passed "+r.length+" changed-input checks with real Python."+
+    (r[0]?.stdout?"\n"+r[0].stdout:"")+explanation+
+    "\n\nPublic practice checks are not independent or retained mastery."+
     (g?.id.endsWith("-REVIEW")?"\nResult: "+(classification==="delayed_practice_passed"?"delayed practice recorded":"early review practice recorded")+".":""));
   if(key()===k)progress(classification);
   el("p01-evidence").textContent="Last attempt: "+classification.replaceAll("_"," ");
@@ -214,7 +243,15 @@ function pyLiteral(value){
  if(value===null)return "None";
  if(value===true)return "True";
  if(value===false)return "False";
- if(typeof value==="number"||typeof value==="string")return JSON.stringify(value);
+ if(typeof value==="string")return JSON.stringify(value);
+ if(typeof value==="number"){
+  if(!Number.isFinite(value))throw new Error("Cannot export a non-finite numeric training input.");
+  return String(value);
+ }
+ if(Array.isArray(value))return "["+value.map(pyLiteral).join(", ")+"]";
+ if(typeof value==="object"){
+  return "{"+Object.entries(value).map(([key,item])=>JSON.stringify(key)+": "+pyLiteral(item)).join(", ")+"}";
+ }
  throw new Error("Unsupported standalone input type");
 }
 function exportPython(){
@@ -222,6 +259,7 @@ function exportPython(){
  const vars=task().preview_inputs||{};
  const preamble=Object.entries(vars).map(([name,value])=>name+" = "+pyLiteral(value)).join("\n");
  const code=bridge()?.readCode()||"";
+ if(!hasExecutableCode(code)){output("Write your Python program before exporting.");return;}
  const source=["# BioPython Studio "+activeId+" · original learner code",
  "# Synthetic microscopy records and example calibration, not real image measurements.",
  "# The assignments below reproduce one supplied practice input.",preamble,"",code,""].join("\n");
@@ -254,7 +292,7 @@ function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
  const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Chapter";chapterLabel.className="p01-label";
  const chapterSelect=document.createElement("select");chapterSelect.id="bps-chapter-select";chapterSelect.setAttribute("aria-label","Choose Python chapter");
- for(const id of ["P01","P02"]){
+ for(const id of ["P01","P02","P03"]){
    const o=document.createElement("option");o.value=id;o.textContent=id+" · "+chapters[id].title;
    chapterSelect.append(o);
  }
@@ -298,11 +336,11 @@ function mount(){
 }
 async function start(){
  try{
-  for(const id of ["P01","P02"]){
+  for(const id of ["P01","P02","P03"]){
    const r=await fetch("./content/"+id.toLowerCase()+"/lesson.json");
    if(!r.ok)throw Error(id+" content HTTP "+r.status);
    const data=await r.json();
-   if(data.schema_version!=="bps.chapter.v1"||data.chapter_id!==id||data.goals?.length!==(id==="P01"?7:4)||!data.capstone||!data.review)
+   if(data.schema_version!=="bps.chapter.v1"||data.chapter_id!==id||data.goals?.length!==(id==="P02"?4:7)||!data.capstone||!data.review)
      throw Error(id+" chapter import contract failed");
    chapters[id]=data;states[id]=loadState(id);
   }

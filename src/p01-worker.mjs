@@ -1,4 +1,4 @@
-/* BioPython Studio P01 — genuine Python execution in a dedicated Worker.
+/* BioPython Studio — genuine Python execution in a dedicated Worker.
  * Pyodide is version-pinned. Browser network is needed on first load.
  * A Web Worker avoids UI blocking but is NOT a hardened security sandbox.
  * Reference solutions and private grading are deliberately absent.
@@ -16,7 +16,7 @@ async function ready() {
 }
 const PYTHON_RUNNER = String.raw`import json, io, contextlib, traceback
 _bps_env = {"__name__": "__main__"}
-_bps_env.update(dict(__bps_inputs))
+_bps_env.update(json.loads(__bps_inputs_json))
 _bps_out = io.StringIO()
 _bps_err = io.StringIO()
 _bps_error = ""
@@ -27,7 +27,7 @@ try:
 except BaseException:
     _bps_error = traceback.format_exc()
 if not _bps_error:
-    for _bps_assertion in list(__bps_assertions):
+    for _bps_assertion in json.loads(__bps_assertions_json):
         try:
             _bps_pass = bool(eval(compile(_bps_assertion, "<practice check>", "eval"), _bps_env))
             _bps_results.append({"expression": _bps_assertion, "passed": _bps_pass, "error": ""})
@@ -36,19 +36,18 @@ if not _bps_error:
 json.dumps({"stdout": _bps_out.getvalue(), "stderr": _bps_err.getvalue(), "traceback": _bps_error, "checks": _bps_results})
 `;
 function runCode(pyodide, code, inputs = {}, assertions = []) {
-  const inputProxy = pyodide.toPy(inputs);
-  const assertionProxy = pyodide.toPy(assertions);
+  // Convert nested JSON through Python's parser instead of shallow JS->Py proxies.
+  // This guarantees a field pair [id, null] becomes [id, None], not a JS null proxy.
+  // All chapter data are JSON-compatible; expressions remain evaluation fixtures.
+  pyodide.globals.set("__bps_source", code);
+  pyodide.globals.set("__bps_inputs_json", JSON.stringify(inputs));
+  pyodide.globals.set("__bps_assertions_json", JSON.stringify(assertions));
   try {
-    pyodide.globals.set("__bps_source", code);
-    pyodide.globals.set("__bps_inputs", inputProxy);
-    pyodide.globals.set("__bps_assertions", assertionProxy);
     return JSON.parse(pyodide.runPython(PYTHON_RUNNER));
   } finally {
     pyodide.globals.delete("__bps_source");
-    pyodide.globals.delete("__bps_inputs");
-    pyodide.globals.delete("__bps_assertions");
-    inputProxy.destroy();
-    assertionProxy.destroy();
+    pyodide.globals.delete("__bps_inputs_json");
+    pyodide.globals.delete("__bps_assertions_json");
   }
 }
 self.onmessage = async event => {

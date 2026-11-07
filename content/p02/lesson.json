@@ -56,13 +56,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation, predict the program output, run the real Python example, and change one meaningful input.",
-          "starter_code": "strain = 'N2'\nplate = 'p03 '\ncondition = ' Heat '\nlabel = f'{strain}_{plate.strip().upper()}_{condition.strip().lower()}'\nprint(label)",
+          "starter_code": "# P02-G01 | LEARN | Build informative sample labels\n# TASK: Predict the normalized label; change a specimen component.\n\nstrain = 'N2'\nplate = 'p03 '\ncondition = ' Heat '\nlabel = f'{strain}_{plate.strip().upper()}_{condition.strip().lower()}'\nprint(label)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build a stable strain–plate–condition label",
           "description": "Using strain, plate_code and condition, assign label to `strain_P##_condition`. Strip whitespace on all fields, uppercase the plate code and lowercase the condition. Preserve the strain's interior case.",
-          "starter_code": "# Available: strain, plate_code, condition\n# Assign label from the supplied inputs.\n",
+          "starter_code": "# P02-G01 | APPLY | Build informative sample labels\n# TASK: Build label as strain_P##_condition; trim fields, normalize plate and\n#   condition.\n# RULE: Preserve the strain's internal case.\n# INPUTS: strain, plate_code, condition\n\n",
           "preview_inputs": {
             "strain": "N2",
             "plate_code": " p03 ",
@@ -99,12 +99,17 @@
                 "label == 'mutA_P04_recovery'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The declared label grammar preserves strain spelling while standardizing only the plate and condition fields.",
+            "probe": "How could silently normalizing the strain name damage the link to recorded source metadata?",
+            "check": "Trim only permitted exterior whitespace and normalize plate and condition without changing strain case."
+          }
         },
         "prove": {
           "title": "Transfer to an acquisition description",
           "description": "Use unfamiliar variables specimen, acquisition and treatment to create normalized_id in the distinct format `specimen/acquisition/treatment`. Strip exterior whitespace, uppercase acquisition, lowercase treatment, preserve specimen case.",
-          "starter_code": "# Available: specimen, acquisition, treatment\n# Assign normalized_id.\n",
+          "starter_code": "# P02-G01 | PROVE | Build informative sample labels\n# TASK: Build normalized_id as specimen/acquisition/treatment; preserve\n#   specimen case.\n# RULE: Trim whitespace; normalize acquisition/treatment only.\n# INPUTS: specimen, acquisition, treatment\n\n",
           "preview_inputs": {
             "specimen": "mutA",
             "acquisition": "f07",
@@ -141,7 +146,12 @@
                 "normalized_id == 'WT_7/F19/recovery'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "A different delimiter and source names test the naming policy rather than the exact previously seen expression.",
+            "probe": "What kind of sample-identity error could remain even when the string has correct syntax?",
+            "check": "Use slash separators and normalize acquisition/treatment, preserving specimen spelling."
+          }
         }
       },
       "feedback": {
@@ -199,13 +209,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation, predict the program output, run the real Python example, and change one meaningful input.",
-          "starter_code": "sample_id = 'N2_P03_heat'\nparts = sample_id.split('_')\nprint(parts)\nprint(len(parts))",
+          "starter_code": "# P02-G02 | LEARN | Parse an identifier without guessing\n# TASK: Predict split parts and count; try an empty identifier segment.\n\nsample_id = 'N2_P03_heat'\nparts = sample_id.split('_')\nprint(parts)\nprint(len(parts))\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Inspect and classify raw identifier structure",
           "description": "Given raw_id, create tokens = raw_id.split('_'), token_count = len(tokens), and structure_ok indicating exactly three nonempty segments. This checks only shape, not the allowed plate and condition values.",
-          "starter_code": "# Available: raw_id\n# Produce tokens, token_count, structure_ok.\n",
+          "starter_code": "# P02-G02 | APPLY | Parse an identifier without guessing\n# TASK: Create tokens, token_count and structure_ok for exactly 3 nonempty\n#   parts.\n# RULE: Shape only, not biological identity.\n# INPUTS: raw_id\n\n",
           "preview_inputs": {
             "raw_id": "N2_P03_heat"
           },
@@ -247,12 +257,17 @@
                 "structure_ok is False"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The parser tests precisely three nonempty components while making no claim about the actual specimen identity.",
+            "probe": "Could a label have three nonempty parts but still contain an unknown treatment?",
+            "check": "Check precisely three nonempty underscore-separated segments; do not validate biological meaning yet."
+          }
         },
         "prove": {
           "title": "Transfer to an unfamiliar delimiter",
           "description": "Given filename using `|` as delimiter, set components = filename.split('|') and valid_shape to True only for exactly three nonempty components. Do not assume that the parts are valid biological data.",
-          "starter_code": "# Available: filename\n# Produce components and valid_shape.\n",
+          "starter_code": "# P02-G02 | PROVE | Parse an identifier without guessing\n# TASK: Split filename on '|'; set components and valid_shape for 3 nonempty\n#   parts.\n# RULE: Do not guess biological validity.\n# INPUTS: filename\n\n",
           "preview_inputs": {
             "filename": "N2|F07|control"
           },
@@ -290,7 +305,12 @@
                 "valid_shape is False"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Switching to the pipe delimiter still requires three nonempty components and must reject ambiguous field counts.",
+            "probe": "Why would silently discarding an extra component be unsafe in an audit trail?",
+            "check": "Use the pipe separator and ensure every component is nonempty before reporting valid_shape."
+          }
         }
       },
       "feedback": {
@@ -348,13 +368,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation, predict the program output, run the real Python example, and change one meaningful input.",
-          "starter_code": "focus_score = 0.80\nminimum_focus = 0.80\nprint(focus_score >= minimum_focus)\nprint(focus_score > minimum_focus)\nprint(0 <= focus_score <= 1)",
+          "starter_code": "# P02-G03 | LEARN | Compare quantitative QC values safely\n# TASK: Predict inclusive versus strict cutoff; try a boundary score.\n\nfocus_score = 0.80\nminimum_focus = 0.80\nprint(focus_score >= minimum_focus)\nprint(focus_score > minimum_focus)\nprint(0 <= focus_score <= 1)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Combine validity and inclusive focus threshold",
           "description": "Given focus_score and minimum_focus (both numeric), create in_range for 0 ≤ score ≤ 1, passes_threshold for an in-range score at or above the minimum, and on_boundary for exact equality with the minimum.",
-          "starter_code": "# Available: focus_score, minimum_focus\n# Assign in_range, passes_threshold, on_boundary.\n",
+          "starter_code": "# P02-G03 | APPLY | Compare quantitative QC values safely\n# TASK: Create in_range, passes_threshold and on_boundary; threshold includes\n#   equality.\n# RULE: Accept equality at the cutoff.\n# INPUTS: focus_score, minimum_focus\n\n",
           "preview_inputs": {
             "focus_score": 0.8,
             "minimum_focus": 0.8
@@ -403,12 +423,17 @@
                 "on_boundary is True"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "A valid score must be within the illustrative 0–1 interval and meet an inclusive minimum to pass.",
+            "probe": "How must a score of 1.2 be classified under a declared 0..1 teaching scale?",
+            "check": "Separate 0..1 range validity from inclusive minimum and exact boundary equality."
+          }
         },
         "prove": {
           "title": "Transfer to a bounded scientific ratio",
           "description": "From measured_ratio, minimum_ratio and maximum_ratio, create within_limits True only for inclusive limits. Create at_any_edge True only when the measurement equals either bound. These limits are declared before seeing any condition labels.",
-          "starter_code": "# Available: measured_ratio, minimum_ratio, maximum_ratio\n# Assign within_limits and at_any_edge.\n",
+          "starter_code": "# P02-G03 | PROVE | Compare quantitative QC values safely\n# TASK: Create within_limits and at_any_edge for inclusive numeric bounds.\n# RULE: Both edges are included.\n# INPUTS: measured_ratio, minimum_ratio, maximum_ratio\n\n",
           "preview_inputs": {
             "measured_ratio": 2,
             "minimum_ratio": 2,
@@ -459,7 +484,12 @@
                 "at_any_edge is False"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Inclusive lower and upper limits both count as valid boundaries; exact equality is not an error.",
+            "probe": "How would strict inequalities change the classification of records exactly on a boundary?",
+            "check": "Use inclusive minimum and maximum and detect equality at either limit."
+          }
         }
       },
       "feedback": {
@@ -517,13 +547,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation, predict the program output, run the real Python example, and change one meaningful input.",
-          "starter_code": "sample_id = 'N2_P03_control'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nif len(parts) != 3:\n    decision = 'REJECT'\n    reason = 'wrong number of fields'\nelif focus_score < minimum_focus:\n    decision = 'REJECT'\n    reason = 'focus below minimum'\nelse:\n    decision = 'ACCEPT'\n    reason = 'label shape and focus acceptable'\nprint(decision, reason)",
+          "starter_code": "# P02-G04 | LEARN | Explain QC decisions with conditions\n# TASK: Predict the decision and reason; try a failing ID or score.\n\nsample_id = 'N2_P03_control'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nif len(parts) != 3:\n    decision = 'REJECT'\n    reason = 'wrong number of fields'\nelif focus_score < minimum_focus:\n    decision = 'REJECT'\n    reason = 'focus below minimum'\nelse:\n    decision = 'ACCEPT'\n    reason = 'label shape and focus acceptable'\nprint(decision, reason)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Explain structure and focus failure",
           "description": "Given sample_id, focus_score and minimum_focus, set decision and reason in this priority: incorrect number of fields → `REJECT`/`wrong number of fields`; any empty field → `REJECT`/`empty field`; focus below minimum → `REJECT`/`focus below minimum`; otherwise `ACCEPT`/`shape and focus pass`. The threshold includes equality.",
-          "starter_code": "# Available: sample_id, focus_score, minimum_focus\n# Create decision and reason with if/elif/else.\n",
+          "starter_code": "# P02-G04 | APPLY | Explain QC decisions with conditions\n# TASK: Create decision and reason; check field count, empties and focus in\n#   order.\n# RULE: First failure wins; equality passes.\n# INPUTS: sample_id, focus_score, minimum_focus\n\n",
           "preview_inputs": {
             "sample_id": "N2_P03_heat",
             "focus_score": 0.8,
@@ -574,12 +604,17 @@
                 "reason == 'focus below minimum'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The first applicable identifier or focus failure produces the reported reason; structure precedes quality.",
+            "probe": "If shape and focus both fail, which rejection reason must appear and why?",
+            "check": "Evaluate segment count, empty components and then focus, returning the first applicable reason."
+          }
         },
         "prove": {
           "title": "Transfer the logic to another experiment's naming policy",
           "description": "Now record_id uses `|` (e.g. `N2|F07|control`) and the metric is signal_ratio. In this order: bad or empty record segments → `REJECT`/`invalid identifier`; ratio below minimum_ratio → `REJECT`/`signal below minimum`; otherwise `ACCEPT`/`structure and signal pass`. Store outcome and reason.",
-          "starter_code": "# Available: record_id, signal_ratio, minimum_ratio\n# Create outcome, reason; retain the raw record_id.\n",
+          "starter_code": "# P02-G04 | PROVE | Explain QC decisions with conditions\n# TASK: Create outcome and reason for pipe-separated ID and signal ratio.\n# RULE: Preserve the original ID and reason priority.\n# INPUTS: record_id, signal_ratio, minimum_ratio\n\n",
           "preview_inputs": {
             "record_id": "N2|F07|control",
             "signal_ratio": 2,
@@ -630,7 +665,12 @@
                 "reason == 'signal below minimum'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The new pipe-separated convention retains first-failure priority and never lets a good signal rescue an invalid ID.",
+            "probe": "Can a high signal ratio make an invalid identifier scientifically valid?",
+            "check": "Test pipe-separated structure before signal_ratio and preserve the raw record ID."
+          }
         }
       },
       "feedback": {
@@ -673,21 +713,23 @@
       "**Limitations:** A clean label and focus score do not establish genuine specimen identity, raw image quality, biological validity or instrument calibration. In research you must verify metadata provenance and preregister relevant exclusion rules."
     ],
     "worked_example": {
-      "code": "sample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nprint(parts)\nprint(focus_score >= minimum_focus)\nprint('Build the full ordered decision in Apply.')",
-      "predict": "Why is a score of 0.80 at the 0.80 minimum acceptable, and why should a malformed ID be checked first?"
+      "code": "sample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nshape_ok = len(parts) == 3\nprint('shape_ok:', shape_ok)\nif shape_ok:\n    plate = parts[1]\n    digits = plate[1:]\n    plate_ok = (plate.startswith('P') and len(plate) == 3\n                and digits.isascii() and digits.isdigit())\n    print('plate_ok:', plate_ok)\nprint('focus_in_range:', 0 <= focus_score <= 1)\nprint('focus_at_or_above_minimum:', focus_score >= minimum_focus)",
+      "predict": "Which checks print True for N2_P03_heat at 0.80? Which statements still run after changing the identifier to N2 (only one component)?"
     },
-    "prediction_answer": "The inclusive criterion uses >=. An invalid ID prevents confident assignment to experimental groups and must take precedence over a numerical QC decision.",
+    "prediction_answer": "All four printed Boolean checks are True for N2_P03_heat at 0.80. With sample_id='N2', shape_ok is False, so plate indexing is skipped safely; focus checks remain independent. This is a technique demonstration, not a completed validation decision.",
     "walkthrough": [
       "Write down the declared ID grammar and the priority order before programming.",
       "Probe `P03`, `Px3`, `P3` and `P３3` with `.startswith`, `.removeprefix`, `.isascii` and `.isdigit` to understand each syntactic requirement.",
       "Parse and test structure before indexing tokens.",
       "Choose the first matching rejection reason; do not fabricate a missing value.",
-      "Verify below, equal to and above the threshold and try malformed labels with high focus."
+      "Verify below, equal to and above the threshold and try malformed labels with high focus.",
+      "Change sample_id to 'N2' and verify the shape test prevents indexing a nonexistent plate. Change P03 to P３3 and explain the ASCII-only rejection."
     ],
     "investigate": [
       "Contrast `N2_P03_heat` with `N2_P03_heat_2`: the latter has four fields.",
       "Try `N2_Px3_heat`, `_P03_heat`, `N2_P03_Heat`, and a low-focus valid record.",
-      "Try exact equality at the threshold and an out-of-range 1.2 score. Explain why one is acceptable and the other invalid."
+      "Try exact equality at the threshold and an out-of-range 1.2 score. Explain why one is acceptable and the other invalid.",
+      "Change sample_id to 'N2_P３3_heat' (fullwidth digit) and verify that plate_ok is False without inventing a normalized identifier."
     ],
     "misconception": "A successful Python run or a high focus score proves that the sample record is scientifically valid.",
     "debug_task": "A copied script accepts `N2_Px3_heat` because its only QC criterion is the number of underscores. Identify the missing semantic check and the risk of assigning a plate incorrectly.",
@@ -713,14 +755,14 @@
     "phases": {
       "learn": {
         "title": "Plan validation and decision priority",
-        "description": "Read the identifier grammar, inspect the worked Python fragment, then predict how a malformed label and a borderline focus score should be handled.",
-        "starter_code": "sample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nprint(parts)\nprint(focus_score >= minimum_focus)",
+        "description": "Trace four small validation probes before building the final validator: label shape, safe plate access, ASCII plate grammar, and an inclusive focus boundary. Change the ID and rerun.",
+        "starter_code": "# P02-CAPSTONE | LEARN | Specimen intake validator — complete chapter project\n# TASK: Predict shape, plate validity, and focus boundary independently.\n\nsample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nshape_ok = len(parts) == 3\nprint('shape_ok:', shape_ok)\nif shape_ok:\n    plate = parts[1]\n    digits = plate[1:]\n    plate_ok = (plate.startswith('P') and len(plate) == 3\n                and digits.isascii() and digits.isdigit())\n    print('plate_ok:', plate_ok)\nprint('focus_in_range:', 0 <= focus_score <= 1)\nprint('focus_at_or_above_minimum:', focus_score >= minimum_focus)\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Validate changing specimens and give exact reasons",
         "description": "Given sample_id, focus_score and minimum_focus, produce decision, reason, report. Check in order: structure, ASCII alphanumeric strain, uppercase P plus two ASCII digits, condition in control/heat/recovery, focus range 0..1, focus below minimum, otherwise accept. Reasons must be exactly: `expected three fields`, `invalid strain`, `invalid plate`, `unknown condition`, `focus outside range`, `focus below minimum`, or `accepted`. Report = 'sample_id | decision | reason'; print it.",
-        "starter_code": "# Available: sample_id, focus_score, minimum_focus\n# Raw ID grammar: strain_P##_condition. Preserve sample_id.\n# Assign decision, reason, report; print(report).\n",
+        "starter_code": "# P02-CAPSTONE | APPLY | Specimen intake validator — complete chapter project\n# TASK: Validate strain_P##_condition and focus; set decision, reason, report;\n#   print it.\n# RULE: Use exact reason texts and priority from the lesson panel.\n# INPUTS: sample_id, focus_score, minimum_focus\n\n",
         "preview_inputs": {
           "sample_id": "N2_P03_heat",
           "focus_score": 0.8,
@@ -849,12 +891,17 @@
               "reason == 'expected three fields'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "The validator checks each declared syntax and QC rule in order, preserving the raw ID for audit.",
+          "probe": "Can two different faults occur in one record, and how do you prove the first-failure priority?",
+          "check": "Use all six staged validation passes and apply the specified reason order to raw sample_id."
+        }
       },
       "prove": {
         "title": "Independent transfer: new delimiter and acquisition rules",
         "description": "Given record_id in strict `specimen|F##|treatment` form, quality_score and threshold: validate exactly three nonempty components; ASCII alphanumeric specimen; uppercase F followed by two ASCII digits; treatment exactly `control`, `heat` or `recovery`; score 0..1; inclusive threshold. In priority order set verdict and explanation using the same reason labels except `expected three fields`, `invalid specimen`, `invalid acquisition`, `unknown treatment`, `quality outside range`, `quality below minimum`, or `accepted`. Print result_line = 'record_id -> verdict (explanation)'. Keep raw record_id unchanged.",
-        "starter_code": "# Available: record_id, quality_score, threshold\n# Grammar: specimen|F##|treatment. Do not copy the earlier delimiter or plate code.\n# Assign verdict, explanation, result_line; print(result_line).\n",
+        "starter_code": "# P02-CAPSTONE | PROVE | Specimen intake validator — complete chapter project\n# TASK: Validate specimen|F##|treatment and quality; set verdict, explanation,\n#   result_line.\n# RULE: Preserve raw ID; follow exact reason priority in panel.\n# INPUTS: record_id, quality_score, threshold\n\n",
         "preview_inputs": {
           "record_id": "N2|F03|heat",
           "quality_score": 0.9,
@@ -972,14 +1019,27 @@
               "explanation == 'invalid specimen'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "Transfer replaces plate IDs with acquisition IDs, yet still requires an explicit reason for every rejected record.",
+          "probe": "Why must acquisition metadata be verified externally even after a record passes syntactic checks?",
+          "check": "Rebuild the validator for specimen|F##|treatment, never reusing the old plate grammar."
+        }
       }
     },
     "assessment": {
       "independent": "PUBLIC_CHECKS_NOT_SECURE_MASTER_CERTIFICATION",
       "export": "SAMPLE_LABEL_VALIDATOR_PY",
       "human_review": "REFLECTION_REQUIRED_BUT_NOT_AUTOGRADED"
-    }
+    },
+    "build_steps": [
+      "PASS 1 — Split and count first. Test N2_P03_heat versus N2_P03_heat_more. An extra segment must be rejected as 'expected three fields' before indexing.",
+      "PASS 2 — Verify a nonempty ASCII-alphanumeric strain. Try _P03_heat and mut-A_P03_heat; both must report 'invalid strain'.",
+      "PASS 3 — Require uppercase P plus two ASCII digits. Compare P03 with p03, P3, Px3 and a Unicode digit lookalike; invalid codes must report 'invalid plate'.",
+      "PASS 4 — Match control, heat or recovery exactly, without silently normalizing the raw ID. N2_P03_Heat must report 'unknown condition'.",
+      "PASS 5 — Validate numerical scores against synthetic 0..1 before the inclusive minimum. At a minimum of 0.8, 1.2 is invalid, 0.79 is low and 0.8 passes.",
+      "PASS 6 — Return only the first failure in the declared order and construct the exact report. Run all Apply cases before independently handling the new pipe-separated grammar in Prove."
+    ]
   },
   "review": {
     "id": "P02-REVIEW",
@@ -1027,19 +1087,24 @@
       "learn": {
         "title": "Recall the rules",
         "description": "Review the task without a solved program; write down validation priority.",
-        "starter_code": "# No worked answer. Recall split, conditions and threshold rules.\n",
+        "starter_code": "# P02-REVIEW | LEARN | Later recall — unfamiliar labeled acquisitions\n# TASK: Recall validation priority without a worked example.\n\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Plan before coding",
         "description": "State the grammar and decision order as comments before attempting independent Prove.",
-        "starter_code": "# Plan: shape, strain, site, condition, score range, threshold\n",
-        "preview_inputs": {}
+        "starter_code": "# P02-REVIEW | APPLY | Later recall — unfamiliar labeled acquisitions\n# TASK: Write pseudocode for grammar checks and decision order.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Writing a validation order from memory prevents missing components from being indexed before shape checks.",
+          "probe": "Can you state the validation hierarchy without referring to the previous capstone code?",
+          "check": "Recall shape, strain, site, condition, numerical range and threshold in that order."
+        }
       },
       "prove": {
         "title": "Independent retrieval on new names",
         "description": "Given acquisition_id of the form `strain~S##~condition`, focus_metric, focus_minimum: set decision and reason in order: `invalid shape`, `invalid strain`, `invalid site`, `unknown condition`, `metric outside range`, `metric below minimum`, `accepted`. Use ACCEPT/REJECT. Print audit = 'acquisition_id | decision | reason'.",
-        "starter_code": "# Available: acquisition_id, focus_metric, focus_minimum\n# Write from memory, without copying P02 capstone.\n",
+        "starter_code": "# P02-REVIEW | PROVE | Later recall — unfamiliar labeled acquisitions\n# TASK: From memory, validate strain~S##~condition; print audit and keep raw\n#   ID.\n# RULE: Use exact rejection reasons from the lesson panel.\n# INPUTS: acquisition_id, focus_metric, focus_minimum\n\n",
         "preview_inputs": {
           "acquisition_id": "N2~S03~control",
           "focus_metric": 0.8,
@@ -1091,7 +1156,12 @@
               "reason == 'invalid site'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "The tilde-separated acquisition convention tests reconstruction of the rules without copying plate-specific code.",
+          "probe": "How would a plausible but unrecorded acquisition label still undermine experimental traceability?",
+          "check": "Use the new tilde-delimited site grammar and keep acquisition_id exactly as given."
+        }
       }
     },
     "assessment": {

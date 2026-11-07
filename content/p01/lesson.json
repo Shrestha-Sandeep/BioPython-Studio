@@ -51,13 +51,13 @@
         "learn": {
           "title": "Understand and investigate",
           "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
-          "starter_code": "sample_id = 'N2_P03'\nfields = 6\nprint(sample_id, fields)",
+          "starter_code": "# P01-G01 | LEARN | Run a scientific Python script\n# TASK: Predict printed output; change the specimen and field count.\n\nsample_id = 'N2_P03'\nfields = 6\nprint(sample_id, fields)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build on changing data",
           "description": "Given specimen and fields, assign report in the format 'ID: N fields' and print it.",
-          "starter_code": "# Available inputs: specimen, fields\n",
+          "starter_code": "# P01-G01 | APPLY | Run a scientific Python script\n# TASK: Create report as 'ID: N fields' and print it.\n# INPUTS: specimen, fields\n\n",
           "preview_inputs": {
             "specimen": "N2_P03",
             "fields": 6
@@ -81,12 +81,17 @@
                 "report == 'mutA_P13: 0 fields'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Formatting live specimen and count inputs produces a report that changes when the acquisition changes.",
+            "probe": "If fields is zero, should the report still contain the specimen ID and zero fields?",
+            "check": "Check that report uses both supplied variables and includes exactly the required punctuation."
+          }
         },
         "prove": {
           "title": "Independent transfer",
           "description": "Using unrelated variable names (sample, observed), assign outcome to 'ID | N observations' without pasting a previous output.",
-          "starter_code": "# Available inputs: sample, observed\n",
+          "starter_code": "# P01-G01 | PROVE | Run a scientific Python script\n# TASK: Create outcome as 'ID | N observations' from new inputs.\n# INPUTS: sample, observed\n\n",
           "preview_inputs": {
             "sample": "WT_P07",
             "observed": 4
@@ -110,7 +115,12 @@
                 "outcome == 'mutC_P17 | 11 observations'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The unfamiliar names still describe the same observed quantities; the result is computed rather than copied.",
+            "probe": "Why would a pasted first-example output fail when sample changes to another experiment?",
+            "check": "Use sample and observed, not the earlier specimen and fields variables; preserve the exact delimiter."
+          }
         }
       },
       "hints": {
@@ -166,13 +176,13 @@
         "learn": {
           "title": "Understand and investigate",
           "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
-          "starter_code": "specimen_id = 'N2_P03'\nfield_count = 4\nprint(f'{specimen_id}: {field_count} recorded fields')",
+          "starter_code": "# P01-G02 | LEARN | Name experimental data with variables\n# TASK: Predict the report; change the specimen ID and field count.\n\nspecimen_id = 'N2_P03'\nfield_count = 4\nprint(f'{specimen_id}: {field_count} recorded fields')\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build on changing data",
           "description": "Construct description from specimen_id, field_count and channel_name: 'ID: N fields, channel X'.",
-          "starter_code": "# Available: specimen_id, field_count, channel_name\n",
+          "starter_code": "# P01-G02 | APPLY | Name experimental data with variables\n# TASK: Build description: 'ID: N fields, channel X'.\n# INPUTS: specimen_id, field_count, channel_name\n\n",
           "preview_inputs": {
             "specimen_id": "N2_P03",
             "field_count": 5,
@@ -199,12 +209,17 @@
                 "description == 'ced1_P07: 0 fields, channel DAPI'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "A specimen ID, number of fields and channel name remain separate metadata even when combined into one readable label.",
+            "probe": "What part of the description must change if the imaged channel changes from GFP to DAPI?",
+            "check": "Build the label using specimen_id, field_count and channel_name in the required order."
+          }
         },
         "prove": {
           "title": "Independent transfer",
           "description": "Build summary from condition, replicate and count using the format 'condition | replicate R | fields=N'. Use the changing count, not a fixed worded report.",
-          "starter_code": "# Available: condition, replicate, count\n",
+          "starter_code": "# P01-G02 | PROVE | Name experimental data with variables\n# TASK: Build summary: 'condition | replicate R | fields=N'.\n# INPUTS: condition, replicate, count\n\n",
           "preview_inputs": {
             "condition": "control",
             "replicate": 2,
@@ -231,7 +246,12 @@
                 "summary == 'heat | replicate 11 | fields=1'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Condition, replicate and count are assembled from current values; changing one input changes the relevant part.",
+            "probe": "What would the result say for replicate number zero, and is that a valid record under a separate naming policy?",
+            "check": "Use condition, replicate and count as independent inputs, including the specified labels."
+          }
         }
       },
       "hints": {
@@ -288,13 +308,13 @@
         "learn": {
           "title": "Understand and investigate",
           "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
-          "starter_code": "width_pixels = 48\npixels_per_um = 4.0\nwidth_um = width_pixels / pixels_per_um\nprint(width_um)",
+          "starter_code": "# P01-G03 | LEARN | Calculate quantities and units\n# TASK: Predict the converted length; try another pixel scale.\n\nwidth_pixels = 48\npixels_per_um = 4.0\nwidth_um = width_pixels / pixels_per_um\nprint(width_um)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build on changing data",
           "description": "Compute segment_um from segment_pixels / scale_px_per_um.",
-          "starter_code": "# Available: segment_pixels, scale_px_per_um (> 0)\n",
+          "starter_code": "# P01-G03 | APPLY | Calculate quantities and units\n# TASK: Calculate segment_um from the supplied pixel length and scale.\n# RULE: Scale is positive.\n# INPUTS: segment_pixels, scale_px_per_um\n\n",
           "preview_inputs": {
             "segment_pixels": 75,
             "scale_px_per_um": 2.5
@@ -327,12 +347,17 @@
                 "segment_um == 0"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Dividing a pixel length by pixels per micrometre cancels the pixel unit and gives a physical length.",
+            "probe": "If pixels_per_um doubles while pixel width remains constant, what happens to physical length?",
+            "check": "Divide the supplied pixel measure by a positive pixel-per-micrometre scale."
+          }
         },
         "prove": {
           "title": "Independent transfer",
           "description": "Calculate displacement_um and speed_um_per_min from displacement_pixels, calibration_px_per_um and interval_minutes.",
-          "starter_code": "# Available: displacement_pixels, calibration_px_per_um, interval_minutes (> 0)\n",
+          "starter_code": "# P01-G03 | PROVE | Calculate quantities and units\n# TASK: Calculate displacement_um and speed_um_per_min with correct units.\n# RULE: Use calibration and time interval.\n# INPUTS: displacement_pixels, calibration_px_per_um, interval_minutes\n\n",
           "preview_inputs": {
             "displacement_pixels": 36,
             "calibration_px_per_um": 3,
@@ -361,7 +386,12 @@
                 "speed_um_per_min == 1.25"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The displacement must be calibrated before it is divided by elapsed minutes to compute a physical speed.",
+            "probe": "What additional information would you need before inferring a true cellular velocity from a time-lapse?",
+            "check": "Calibrate displacement before dividing by elapsed minutes; verify the final speed unit."
+          }
         }
       },
       "hints": {
@@ -417,13 +447,13 @@
         "learn": {
           "title": "Understand and investigate",
           "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
-          "starter_code": "field_count = 6\nwidth_um = 12.5\nqc_pass = True\nprint(type(field_count).__name__)\nprint(type(width_um).__name__)\nprint(type(qc_pass).__name__)",
+          "starter_code": "# P01-G04 | LEARN | Inspect integers, floats and Booleans\n# TASK: Predict each printed type name; change one input type.\n\nfield_count = 6\nwidth_um = 12.5\nqc_pass = True\nprint(type(field_count).__name__)\nprint(type(width_um).__name__)\nprint(type(qc_pass).__name__)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build on changing data",
           "description": "Convert measurement_text to float measurement_um; put its Python type name in type_name.",
-          "starter_code": "# Available: measurement_text\n",
+          "starter_code": "# P01-G04 | APPLY | Inspect integers, floats and Booleans\n# TASK: Convert measurement_text to float; record measurement_um and type_name.\n# INPUTS: measurement_text\n\n",
           "preview_inputs": {
             "measurement_text": "12.5"
           },
@@ -446,12 +476,17 @@
                 "type_name == 'float'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The text measurement is converted to a numeric object before its Python type is inspected.",
+            "probe": "How is the original string '12.5' different from the float value 12.5 in later calculations?",
+            "check": "Convert the measurement string before deriving its type name from the resulting Python value."
+          }
         },
         "prove": {
           "title": "Independent transfer",
           "description": "From count_value, fraction_value and qc_flag, store their type names in type_labels in the same order.",
-          "starter_code": "# Available: count_value, fraction_value, qc_flag\n",
+          "starter_code": "# P01-G04 | PROVE | Inspect integers, floats and Booleans\n# TASK: Store the three input type names in type_labels, in order.\n# INPUTS: count_value, fraction_value, qc_flag\n\n",
           "preview_inputs": {
             "count_value": 3,
             "fraction_value": 0.5,
@@ -478,7 +513,12 @@
                 "type_labels == ['int','float','bool']"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The collected labels reflect the actual objects and retain the supplied order, including Boolean as a distinct type.",
+            "probe": "Why does bool have a distinct type even though Python allows True in some arithmetic?",
+            "check": "Use the original count_value, fraction_value and qc_flag objects in their given order."
+          }
         }
       },
       "hints": {
@@ -535,13 +575,13 @@
         "learn": {
           "title": "Understand and investigate",
           "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
-          "starter_code": "sample_id = 'N2_P03'\nprint(sampel_id)  # deliberately wrong spelling",
+          "starter_code": "# P01-G05 | LEARN | Read tracebacks and repair mistakes\n# TASK: Run the deliberate typo; inspect the traceback and repair it.\n\nsample_id = 'N2_P03'\nprint(sampel_id)  # deliberately wrong spelling\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build on changing data",
           "description": "Repair the example so result describes plate_id and field_count; the broken name was plateid.",
-          "starter_code": "# Available: plate_id, field_count\n# Broken: result = f'{plateid}: {field_count} fields'\n",
+          "starter_code": "# P01-G05 | APPLY | Read tracebacks and repair mistakes\n# TASK: Fix the misspelled name; create result for the plate and field count.\n# RULE: Correct a NameError instead of hardcoding.\n# INPUTS: plate_id, field_count\n\n",
           "preview_inputs": {
             "plate_id": "plate03",
             "field_count": 4
@@ -565,12 +605,17 @@
                 "result == 'plate19: 0 fields'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The repair uses the actual supplied plate variable instead of an undefined lookalike name.",
+            "probe": "What difference is there between repairing a NameError and replacing the variable with a fixed label?",
+            "check": "Compare the variable name in the traceback to the supplied plate_id exactly."
+          }
         },
         "prove": {
           "title": "Independent transfer",
           "description": "The broken program uses pixel rather than pixels; compute distance_um from pixels / pixels_per_um.",
-          "starter_code": "# Available: pixels, pixels_per_um\n# Broken: distance_um = pixel / pixels_per_um\n",
+          "starter_code": "# P01-G05 | PROVE | Read tracebacks and repair mistakes\n# TASK: Fix the wrong pixel variable; calculate distance_um.\n# RULE: Use the supplied variable names.\n# INPUTS: pixels, pixels_per_um\n\n",
           "preview_inputs": {
             "pixels": 40,
             "pixels_per_um": 5
@@ -594,7 +639,12 @@
                 "distance_um == 9"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The calculation reads pixels rather than a misspelled name, so changing pixel counts changes the result.",
+            "probe": "Would a syntactically correct but stale calibration still produce a scientifically wrong result?",
+            "check": "Use the supplied pixels variable and the positive pixels_per_um calibration."
+          }
         }
       },
       "hints": {
@@ -650,13 +700,13 @@
         "learn": {
           "title": "Understand and investigate",
           "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
-          "starter_code": "print(len('N2_P03'))\nprint(len.__doc__)",
+          "starter_code": "# P01-G06 | LEARN | Read help and function documentation\n# TASK: Predict the output of len and its documentation; run and inspect.\n\nprint(len('N2_P03'))\nprint(len.__doc__)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build on changing data",
           "description": "Set documentation_line to the actual len.__doc__ string, and sample_length to len(sample_id). Do not paste documentation text.",
-          "starter_code": "# Available: sample_id\n",
+          "starter_code": "# P01-G06 | APPLY | Read help and function documentation\n# TASK: Read len documentation; create documentation_line and sample_length.\n# INPUTS: sample_id\n\n",
           "preview_inputs": {
             "sample_id": "N2_P03"
           },
@@ -679,12 +729,17 @@
                 "sample_length == 11"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Documentation and identifier length are read from live Python functions rather than pasted constants.",
+            "probe": "Does character count reveal the physical specimen size? Why or why not?",
+            "check": "Read len.__doc__ directly and compute sample_length from the current sample_id."
+          }
         },
         "prove": {
           "title": "Independent transfer",
           "description": "Store abs.__doc__ in doc_head and compute absolute_change from signed_change. Show how documentation helps you choose the correct built-in.",
-          "starter_code": "# Available: signed_change\n",
+          "starter_code": "# P01-G06 | PROVE | Read help and function documentation\n# TASK: Read abs documentation; create doc_head and absolute_change.\n# INPUTS: signed_change\n\n",
           "preview_inputs": {
             "signed_change": -8.2
           },
@@ -707,7 +762,12 @@
                 "absolute_change == 3"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The real abs function handles signed input and exposes documentation instead of requiring a memorized result.",
+            "probe": "What directional information is lost when you report an absolute magnitude?",
+            "check": "Inspect abs.__doc__ and apply abs to the actual signed_change value."
+          }
         }
       },
       "hints": {
@@ -764,13 +824,13 @@
         "learn": {
           "title": "Understand and investigate",
           "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
-          "starter_code": "field_count = 4\ndoubled = field_count * 2\nfield_count = 9\nprint(doubled)  # still 8",
+          "starter_code": "# P01-G07 | LEARN | Understand notebook state and clean runs\n# TASK: Predict the printed value after reassignment; rerun cleanly.\n\nfield_count = 4\ndoubled = field_count * 2\nfield_count = 9\nprint(doubled)  # still 8\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Build on changing data",
           "description": "Compute current_total freshly from current_count and multiplier without trusting an earlier result.",
-          "starter_code": "# Available: current_count, multiplier\n",
+          "starter_code": "# P01-G07 | APPLY | Understand notebook state and clean runs\n# TASK: Compute current_total from the present count and multiplier.\n# INPUTS: current_count, multiplier\n\n",
           "preview_inputs": {
             "current_count": 9,
             "multiplier": 2
@@ -803,12 +863,17 @@
                 "current_total == 0"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The total is recalculated from current count and multiplier rather than relying on a stale notebook value.",
+            "probe": "Why can a previously calculated notebook variable become stale after an earlier cell changes?",
+            "check": "Recompute the result from the latest current_count and multiplier in this execution."
+          }
         },
         "prove": {
           "title": "Independent transfer",
           "description": "On a clean run, compute adjusted_value = (baseline + adjustment) / scale.",
-          "starter_code": "# Available: baseline, adjustment, scale (> 0)\n",
+          "starter_code": "# P01-G07 | PROVE | Understand notebook state and clean runs\n# TASK: Compute adjusted_value from baseline, adjustment and scale.\n# INPUTS: baseline, adjustment, scale\n\n",
           "preview_inputs": {
             "baseline": 24,
             "adjustment": 6,
@@ -835,7 +900,12 @@
                 "adjusted_value == 3"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The adjusted quantity depends on the new baseline, adjustment and positive scale in one clean run.",
+            "probe": "Which parameters would need independent metadata checks before trusting this adjustment?",
+            "check": "Use parentheses so baseline and adjustment are combined before division by scale."
+          }
         }
       },
       "hints": {
@@ -934,13 +1004,13 @@
       "learn": {
         "title": "Plan the reusable specimen report",
         "description": "Read the scientific specification, predict the example, then run and change the sample, channel and calibration. Confirm that the formula is dimensionally sensible.",
-        "starter_code": "specimen_id = 'N2_P03'\nfield_count = 5\nchannel_name = 'GFP'\nwidth_pixels = 48\npixels_per_um = 4.0\nwidth_um = width_pixels / pixels_per_um\nsummary = f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'\nprint(summary)",
+        "starter_code": "# P01-CAPSTONE | LEARN | Independent specimen report — chapter project\n# TASK: Predict the report; change channel, specimen and calibration.\n\nspecimen_id = 'N2_P03'\nfield_count = 5\nchannel_name = 'GFP'\nwidth_pixels = 48\npixels_per_um = 4.0\nwidth_um = width_pixels / pixels_per_um\nsummary = f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'\nprint(summary)\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Build the complete specimen report",
         "description": "Given specimen_id, field_count, channel_name, width_pixels and pixels_per_um, compute width_um and type_name, then construct summary exactly as 'ID | N fields | W um | channel X'. Print the summary. Inputs change between cases.",
-        "starter_code": "# Available: specimen_id, field_count, channel_name, width_pixels, pixels_per_um (> 0)\n# Create width_um, type_name, summary; print(summary).\n",
+        "starter_code": "# P01-CAPSTONE | APPLY | Independent specimen report — chapter project\n# TASK: Build width_um, type_name and summary; print the exact report.\n# RULE: Use changing inputs and the exact panel-specified report format.\n# INPUTS: specimen_id, field_count, channel_name, width_pixels, pixels_per_um\n\n",
         "preview_inputs": {
           "specimen_id": "N2_P03",
           "field_count": 5,
@@ -991,12 +1061,17 @@
               "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "Current specimen metadata and a supplied positive calibration produce an independently recomputed, unit-labelled report.",
+          "probe": "Why are an imaged field count and an independent biological replicate count different?",
+          "check": "Calculate width_um, determine its numeric type and assemble the exact changing specimen report."
+        }
       },
       "prove": {
         "title": "Independent transfer: unfamiliar experimental record",
         "description": "Write from a blank editor. With new input names sample_code, observed_fields, channel, roi_length_px and calibration_px_per_um, calculate length_um and numeric_type. Make result_line exactly 'ID: W um (N fields; X)' using the current input values. Print result_line.",
-        "starter_code": "# Available: sample_code, observed_fields, channel, roi_length_px, calibration_px_per_um\n# Create length_um, numeric_type, result_line; print(result_line).\n",
+        "starter_code": "# P01-CAPSTONE | PROVE | Independent specimen report — chapter project\n# TASK: From new input names, build length_um, numeric_type and result_line;\n#   print it.\n# RULE: No copied solution; follow the exact output format.\n# INPUTS: sample_code, observed_fields, channel, roi_length_px,\n#   calibration_px_per_um\n\n",
         "preview_inputs": {
           "sample_code": "mutX_R04",
           "observed_fields": 6,
@@ -1047,7 +1122,12 @@
               "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "Reconstructing the physical calculation with unfamiliar variable names demonstrates transfer beyond one copied template.",
+          "probe": "What would make a physically correct formula scientifically invalid for a real image?",
+          "check": "Map the unfamiliar record names onto metadata and unit conversion without copying the Apply code."
+        }
       }
     },
     "assessment": {
@@ -1056,7 +1136,12 @@
       "export": "SPECIMEN_REPORT_PY",
       "independent": "NEVER_AUTO_CERTIFY_BY_PUBLIC_CHECKS",
       "retained": "OPTIONAL_DELAYED_REWRITE_ON_NEW_INPUTS"
-    }
+    },
+    "build_steps": [
+      "PASS 1 — Generate a specimen ID and channel report from supplied inputs; changing either input must change the printed report without manual text edits.",
+      "PASS 2 — Convert pixel width with a supplied positive pixel-per-micrometre calibration. Predict what happens when calibration doubles and check your units.",
+      "PASS 3 — Add the result type and exact summary format; check zero width and a different specimen. Distinguish a correct calculation from verified microscope calibration."
+    ]
   },
   "retention": {
     "prompt": "On a later day, without viewing your previous code, write a fresh report for an unseen specimen and explain why the scale is valid. Your prior attempt remains saved and the interval is recorded; a browser-visible test cannot guarantee independent mastery.",
@@ -1110,19 +1195,24 @@
       "learn": {
         "title": "Recall the model, without opening old code",
         "description": "Think through the scientific problem and write down the input/output relationship. This phase intentionally has no solved code.",
-        "starter_code": "# Prepare to write a fresh specimen analysis after a delay.\n# Do not reuse the earlier solution.\n",
+        "starter_code": "# P01-REVIEW | LEARN | Return later — new specimen, no worked solution\n# TASK: Recall the specimen-report method without an earlier solution.\n\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Plan a fresh script",
         "description": "Draft pseudocode as comments: classify each supplied input and identify how to convert a pixel measure to micrometres. The actual independent check is under Prove.",
-        "starter_code": "# Available in Prove: record_id, field_total, stain, span_px, px_per_um\n# 1. Identify text, number and calibration inputs.\n# 2. Describe output and unit conversion as comments.\n",
-        "preview_inputs": {}
+        "starter_code": "# P01-REVIEW | APPLY | Return later — new specimen, no worked solution\n# TASK: Write pseudocode for input types, pixel conversion and report output.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Planning a clean report from unfamiliar metadata requires distinguishing identifiers, observed counts and calibration.",
+          "probe": "Which conceptual step can you recall independently after a day, without opening your previous answer?",
+          "check": "Write a plan that identifies text fields, numerical fields and the calibration needed for conversion."
+        }
       },
       "prove": {
         "title": "Independent delayed reconstruction",
         "description": "Write a fresh Python program. Given record_id, field_total, stain, span_px and px_per_um, compute physical_span_um, report_type and report_line exactly 'ID / N fields / X um / stain'. Print report_line. Avoid looking at the prior chapter solution.",
-        "starter_code": "# Available: record_id, field_total, stain, span_px, px_per_um (> 0)\n# Compute physical_span_um, report_type, report_line; print it.\n",
+        "starter_code": "# P01-REVIEW | PROVE | Return later — new specimen, no worked solution\n# TASK: From memory, compute physical_span_um, report_type and report_line;\n#   print it.\n# RULE: Independent recall; do not paste the capstone answer.\n# INPUTS: record_id, field_total, stain, span_px, px_per_um\n\n",
         "preview_inputs": {
           "record_id": "WT_R23",
           "field_total": 7,
@@ -1173,7 +1263,12 @@
               "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "A fresh reconstruction after an interval uses the new specimen and calibration rather than a remembered answer.",
+          "probe": "What could go wrong if the calibration value belonged to a different image acquisition?",
+          "check": "Reconstruct the formula and exact output line using record_id, field_total, stain, span_px and px_per_um."
+        }
       }
     },
     "assessment": {
