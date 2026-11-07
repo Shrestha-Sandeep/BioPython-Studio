@@ -43,6 +43,7 @@ jobs:
           python tests/test_p02_import.py
           python tests/test_p03_import.py
           python tests/test_editor_briefs.py
+          python tests/test_capstone_technique_probes.py
       - name: Install Playwright and Chromium
         run: |
           python -m pip install playwright==1.56.0
