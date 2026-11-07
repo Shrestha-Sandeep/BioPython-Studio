@@ -17,7 +17,7 @@ This first chapter is deliberately modest: **build one readable, reproducible re
 
 ### Biological authenticity and honest boundaries
 
-The [Human Protein Atlas Cell Atlas](https://www.proteinatlas.org/humanproteome/cell) provides genuine fluorescence microscopy examples to keep the scientific context visible. The sample IDs and numerical measurements **used in the exercises are fictional training data**. A displayed RGB fluorescence composite is not automatically a raw calibrated image. Even correct pixel arithmetic is not a scientific conclusion without reliable source metadata, appropriate segmentation controls and valid experimental design.
+The [Human Protein Atlas Cell Atlas](https://www.proteinatlas.org/humanproteome/cell) provides genuine fluorescence microscopy examples to keep the scientific context visible. The IDE includes a previously bundled, credited PNG rendered from Witz's [Demo.ipynb](https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Demo.ipynb) (output cell 12); see [asset provenance and licensing](../../assets/witz/CREDITS.md). This figure is **not** the raw TIFF and cannot be used as calibrated numeric data. The sample IDs and numerical measurements **used in the exercises are fictional training data**. A displayed RGB fluorescence composite is not automatically a raw calibrated image. Even correct pixel arithmetic is not a scientific conclusion without reliable source metadata, appropriate segmentation controls and valid experimental design.
 
 ### How to use the interactive chapter
 
@@ -733,7 +733,7 @@ Next, P02 will turn labels and measurements into **validated** sample IDs and co
 - [Witz — Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner), especially [Python essentials](https://github.com/guiwitz/PyImageCourse_beginner/blob/master/01-Python_essentials.ipynb) and [e01-Python basics](https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e01-Python_basics.ipynb). The named exercise cells inform the concept sequence; this chapter's explanatory text and activities are originally authored.
 - [Official Python tutorial](https://docs.python.org/3/tutorial/): source for language semantics, expressions, errors, strings and built-ins.
 - [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/): supporting perspective on Jupyter execution state and scientific workflows. Do not reproduce its prose.
-- [Human Protein Atlas Cell Atlas](https://www.proteinatlas.org/humanproteome/cell): genuine fluorescence context, **link-only** here. Third-party image rights and calibration require independent auditing.
+- [Human Protein Atlas Cell Atlas](https://www.proteinatlas.org/humanproteome/cell): genuine fluorescence context; the credited Witz-rendered PNG already bundled in the UI is shown for scientific orientation only. Raw-image use, additional reuse and calibration require independent auditing.
 
 All records and pixel calibration figures in P01 are synthetic. The core exercises run with standard Python built-ins; they do not require NumPy, image libraries or external datasets.
 
