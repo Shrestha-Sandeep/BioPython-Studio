@@ -214,7 +214,15 @@ function pyLiteral(value){
  if(value===null)return "None";
  if(value===true)return "True";
  if(value===false)return "False";
- if(typeof value==="number"||typeof value==="string")return JSON.stringify(value);
+ if(typeof value==="string")return JSON.stringify(value);
+ if(typeof value==="number"){
+  if(!Number.isFinite(value))throw new Error("Cannot export a non-finite numeric training input.");
+  return String(value);
+ }
+ if(Array.isArray(value))return "["+value.map(pyLiteral).join(", ")+"]";
+ if(typeof value==="object"){
+  return "{"+Object.entries(value).map(([key,item])=>JSON.stringify(key)+": "+pyLiteral(item)).join(", ")+"}";
+ }
  throw new Error("Unsupported standalone input type");
 }
 function exportPython(){
