@@ -55,6 +55,9 @@ def main():
             SHOTS.mkdir(parents=True, exist_ok=True)
             for width, height in [(360,780), (390,844), (768,1000), (1280,850), (1440,900)]:
                 page = browser.new_page(viewport={"width": width, "height": height})
+                # Frozen-shell regression mode: intentionally do not load the new P01 adapter.
+                # Dedicated test_p01_browser.py separately tests real Pyodide and live lessons.
+                page.route("**/src/p01-adapter.js", lambda route: route.abort())
                 errors = []
                 outgoing = []
                 page.on("pageerror", lambda error: errors.append(str(error)))
