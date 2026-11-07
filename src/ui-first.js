@@ -59,6 +59,10 @@
   }
   function saveEditor() {
     if (restoring) return;
+    if (window.BioPythonP01?.ownsEditor?.()) {
+      window.BioPythonP01.onEditorChange?.(getCode());
+      return;
+    }
     memory.drafts[draftKey()] = getCode();
     save();
   }
@@ -546,6 +550,12 @@
     imageObserver.observe($("source-image-frame"));
     imageObserver.observe($("comparison-image-frame"));
   }
+  window.BioPythonStudioBridge = Object.freeze({
+    readCode: getCode,
+    writeCode: setCode,
+    selectPhase: choosePhase,
+    expandLesson: show => openLesson(Boolean(show))
+  });
   $("run-button").disabled = true;
   $("compare-toggle").disabled = true;
 })();
