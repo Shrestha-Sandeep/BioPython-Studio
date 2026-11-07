@@ -31,3 +31,11 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Real Python browser flow
         run: python tests/test_p01_browser.py
+      - name: Preserve P01 responsive screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: p01-full-chapter-qa
+          path: artifacts/p01/*.png
+          if-no-files-found: ignore
+          retention-days: 14
