@@ -388,6 +388,21 @@ print(focus_score >= minimum_focus)
 print('Build the full ordered decision in Apply.')
 ```
 
+### Minimal validation toolkit — run these before writing the capstone
+
+```python
+plate = 'P03'
+print(plate.startswith('P'))           # True
+print(len(plate))                       # 3
+print(plate.removeprefix('P'))          # '03'
+print(plate.removeprefix('P').isascii()) # True
+print(plate.removeprefix('P').isdigit()) # True
+```
+
+The purpose of each operation differs. A plate might start with P yet contain letters, have the right length yet use lowercase p, or contain non-ASCII numeric characters. For the strict P## rule, combine prefix, length, ASCII and digit checks. Test `Px3`, `P3`, `p03`, and `P３3`. Do not assume `.isdigit()` alone enforces ASCII digits.
+
+After splitting a specimen ID into components, a reference to `parts[2]` is safe only after you have confirmed there are exactly three components. Check the structure first, then perform semantic and numerical validation in the declared order.
+
 ### Apply: implement the strict grammar and reason priority
 
 Given sample_id, focus_score and minimum_focus, produce decision, reason, report. Check in order: structure, ASCII alphanumeric strain, uppercase P plus two ASCII digits, condition in control/heat/recovery, focus range 0..1, focus below minimum, otherwise accept. Reasons must be exactly: `expected three fields`, `invalid strain`, `invalid plate`, `unknown condition`, `focus outside range`, `focus below minimum`, or `accepted`. Report = 'sample_id | decision | reason'; print it.
