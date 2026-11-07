@@ -1,0 +1,13 @@
+/* P01 pilot — small contextual additions; preserve frozen layout and typography. */
+.p01-label{display:block;font-size:.76rem;color:var(--muted, #a4b4c1);margin:.5rem 0 .3rem;}
+#p01-goal-select{box-sizing:border-box;width:100%;max-width:100%;background:var(--panel,#14202d);color:inherit;border:1px solid var(--border,#334452);border-radius:6px;padding:.52rem .4rem;font:inherit;font-size:.8rem;}
+#p01-goal-select option{background:#182534;color:#f0f5f7;}
+.p01-context{font-size:.86rem;line-height:1.5;margin:.5rem 0;color:inherit;}
+#p01-hint{margin:.4rem .5rem .4rem 0;}
+#p01-hint[hidden],#p01-check[hidden],#p01-hint-text[hidden],#p01-predict[hidden]{display:none!important;}
+#phase-panel details{margin-top:.65rem;font-size:.8rem;}
+#phase-panel details summary{cursor:pointer;color:inherit;}
+#phase-panel a{display:inline-block;margin-top:.5rem;color:inherit;text-decoration:underline;text-underline-offset:3px;font-size:.8rem;}
+.p01-console-result{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:.83rem;line-height:1.55;margin:.25rem 0;max-height:22rem;overflow:auto;}
+.p01-console-result[data-error="true"]{color:#f2a3a3;}
+@media (max-width: 640px){#p01-goal-select{font-size:1rem;}.p01-console-result{font-size:.8rem;}}
