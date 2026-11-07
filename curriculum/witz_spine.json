@@ -1,0 +1,952 @@
+{
+  "schema_version": "1.0.0",
+  "status": "SOURCE_FIRST_LEARNING_PRESENTATION; exercise adoption is verified per activity, not implied by this map",
+  "based_on": "BioPython Studio 156-semantic-competency v3; no new competencies or IDs",
+  "date": "2026-11-06",
+  "stages": [
+    "Python",
+    "Microscopy",
+    "NGS",
+    "ML"
+  ],
+  "path_policy": "One continuous path, all 156 competencies unlocked. Python 36 foundational skills; Witz-led microscopy 91 skills; NGS 17; ML 12. Prerequisites recommend order but never restrict access.",
+  "sources": {
+    "w01": {
+      "label": "Witz 01 — Python essentials",
+      "path": "01-Python_essentials.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/01-Python_essentials.ipynb"
+    },
+    "we01": {
+      "label": "Witz e01 — Python exercises",
+      "path": "e01-Python_basics.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e01-Python_basics.ipynb"
+    },
+    "w02": {
+      "label": "Witz 02 — Images as arrays",
+      "path": "02-Images_as_arrays.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/02-Images_as_arrays.ipynb"
+    },
+    "we02": {
+      "label": "Witz e02 — NumPy exercises",
+      "path": "e02-Numpy_basics.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e02-Numpy_basics.ipynb"
+    },
+    "w03": {
+      "label": "Witz 03 — More on images",
+      "path": "03-More_on_images.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/03-More_on_images.ipynb"
+    },
+    "we03": {
+      "label": "Witz e03 — Image visualization/cropping exercises",
+      "path": "e03-More_on_Images.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e03-More_on_Images.ipynb"
+    },
+    "w04": {
+      "label": "Witz 04 — Thresholding",
+      "path": "04-Thresholding.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/04-Thresholding.ipynb"
+    },
+    "we04": {
+      "label": "Witz e04 — Thresholding exercises",
+      "path": "e04-Thresholding.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e04-Thresholding.ipynb"
+    },
+    "w05": {
+      "label": "Witz 05 — Filtering",
+      "path": "05-Filtering.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/05-Filtering.ipynb"
+    },
+    "we05": {
+      "label": "Witz e05 — Filtering exercises",
+      "path": "e05-Filtering.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e05-Filtering.ipynb"
+    },
+    "w06": {
+      "label": "Witz 06 — Region properties",
+      "path": "06-Regions.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/06-Regions.ipynb"
+    },
+    "we06": {
+      "label": "Witz e06 — Region properties exercises",
+      "path": "e06-Regions.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e06-Regions.ipynb"
+    },
+    "w07": {
+      "label": "Witz 07 — Creating a pipeline",
+      "path": "07-Pipeline.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb"
+    },
+    "w08": {
+      "label": "Witz 08 — Loops and conditions",
+      "path": "08-Logical_flow.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/08-Logical_flow.ipynb"
+    },
+    "we08": {
+      "label": "Witz e08 — Loops/conditions exercises",
+      "path": "e08-Loops_conditions.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/e08-Loops_conditions.ipynb"
+    },
+    "w09": {
+      "label": "Witz 09 — Advanced",
+      "path": "09-Advanced.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/09-Advanced.ipynb"
+    },
+    "wdemo": {
+      "label": "Witz Demo — Nuclear-envelope localization",
+      "path": "Demo.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Demo.ipynb"
+    },
+    "wf": {
+      "label": "Witz appendix — Functions",
+      "path": "Appendix_Functions.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Functions.ipynb"
+    },
+    "ws": {
+      "label": "Witz appendix — Structures",
+      "path": "Appendix_Structures.ipynb",
+      "license": "BSD-3-Clause",
+      "url": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Structures.ipynb"
+    }
+  },
+  "source_policy": "Witz notebooks and the 7 associated exercise sets are primary for beginner image analysis. Source references identify source cells, not claims of completed direct exercise adoption. Secondary references fill debugging, statistics, calibrated microscopy, NGS, ML, scientific software practice. Licensed material requires attribution; real HPA images require asset-specific attribution and provenance. No invented calibrated measurements.",
+  "missions": [
+    {
+      "id": "P01",
+      "stage": "Python",
+      "title": "Run your first scientific program",
+      "goal": "Print a biological measurement and inspect Python values.",
+      "deliverable": "Write a short, readable script that prints a sample ID and measured value.",
+      "independent_transfer": "Recreate the output for a different sample without hardcoding the original.",
+      "competency_numbers": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "005",
+        "006",
+        "007"
+      ],
+      "references": [
+        {
+          "source": "we01",
+          "cells": "1-4",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w01",
+          "cells": "1-25",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "P02",
+      "stage": "Python",
+      "title": "Create trustworthy sample labels",
+      "goal": "Build and validate labels from specimen metadata.",
+      "deliverable": "Generate specimen labels using strings, comparisons and conditions.",
+      "independent_transfer": "Reject an invalid sample ID in unfamiliar data.",
+      "competency_numbers": [
+        "008",
+        "009",
+        "010",
+        "011"
+      ],
+      "references": [
+        {
+          "source": "we01",
+          "cells": "5-6",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w01",
+          "cells": "34-42",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "P03",
+      "stage": "Python",
+      "title": "Filter recorded microscope fields",
+      "goal": "Use list indexing, loops and conditions to select valid measurements.",
+      "deliverable": "Build a field-quality filter that counts accepted records.",
+      "independent_transfer": "Handle a changed threshold and missing records.",
+      "competency_numbers": [
+        "012",
+        "013",
+        "014",
+        "015",
+        "016",
+        "017",
+        "018"
+      ],
+      "references": [
+        {
+          "source": "we08",
+          "cells": "1-6",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w08",
+          "cells": "2-24",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "P04",
+      "stage": "Python",
+      "title": "Organize experimental metadata",
+      "goal": "Represent samples and channels as structured Python records.",
+      "deliverable": "Produce a metadata lookup with stable specimen identifiers.",
+      "independent_transfer": "Diagnose a duplicate or missing specimen record.",
+      "competency_numbers": [
+        "019",
+        "020",
+        "021",
+        "022",
+        "023",
+        "024"
+      ],
+      "references": [
+        {
+          "source": "ws",
+          "cells": "0-35",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "P05",
+      "stage": "Python",
+      "title": "Make a reusable analysis function",
+      "goal": "Define and test a function instead of copying calculations.",
+      "deliverable": "Write a parameterized function for microscopy measurements.",
+      "independent_transfer": "Use the function with unfamiliar input and explain its errors.",
+      "competency_numbers": [
+        "025",
+        "026",
+        "027",
+        "028",
+        "029",
+        "030"
+      ],
+      "references": [
+        {
+          "source": "wf",
+          "cells": "0-35",
+          "mode": "source_course_reference"
+        },
+        {
+          "source": "w01",
+          "cells": "25-34",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "P06",
+      "stage": "Python",
+      "title": "Save and reproduce a real script",
+      "goal": "Move from browser exercises to files, tests, notebooks and Git.",
+      "deliverable": "Run a saved script and its tests from a fresh environment.",
+      "independent_transfer": "Reproduce an analysis from a clean folder without provided code.",
+      "competency_numbers": [
+        "031",
+        "032",
+        "033",
+        "034",
+        "035",
+        "036"
+      ],
+      "references": [],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I01",
+      "stage": "Microscopy",
+      "title": "Open a real microscopy image",
+      "goal": "Inspect genuine image provenance, dimensions and pixel coordinates.",
+      "deliverable": "Load an attributed image and report dimensions, axes and dtype.",
+      "independent_transfer": "Explain what the pixel values cannot tell you about absolute signal.",
+      "competency_numbers": [
+        "037",
+        "038",
+        "039",
+        "071",
+        "072",
+        "073",
+        "074",
+        "075"
+      ],
+      "references": [
+        {
+          "source": "we02",
+          "cells": "1-3",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w02",
+          "cells": "0-19",
+          "mode": "source_course_reference"
+        },
+        {
+          "source": "we03",
+          "cells": "2-4",
+          "mode": "existing_source_exercise_candidate"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I02",
+      "stage": "Microscopy",
+      "title": "Crop and inspect image planes",
+      "goal": "Select a meaningful region and identify stack axes without guessing.",
+      "deliverable": "Extract a reproducible region from a multichannel image.",
+      "independent_transfer": "Adapt the crop to another image size without breaking coordinates.",
+      "competency_numbers": [
+        "040",
+        "041",
+        "077",
+        "079",
+        "080",
+        "081"
+      ],
+      "references": [
+        {
+          "source": "we03",
+          "cells": "8-9",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w03",
+          "cells": "10-25",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I03",
+      "stage": "Microscopy",
+      "title": "Calculate useful pixel measurements",
+      "goal": "Use NumPy operations, masks and ROI statistics.",
+      "deliverable": "Create a mask and measure image regions with vectorized operations.",
+      "independent_transfer": "Explain failure on a new dtype or threshold.",
+      "competency_numbers": [
+        "042",
+        "043",
+        "044",
+        "045",
+        "046",
+        "047",
+        "048",
+        "049",
+        "050",
+        "078"
+      ],
+      "references": [
+        {
+          "source": "we02",
+          "cells": "4-9",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w02",
+          "cells": "40-94",
+          "mode": "source_course_reference"
+        },
+        {
+          "source": "we03",
+          "cells": "10-12",
+          "mode": "existing_source_exercise_candidate"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I04",
+      "stage": "Microscopy",
+      "title": "Display an interpretable microscopy image",
+      "goal": "Visualize image channels and histograms without silently changing data.",
+      "deliverable": "Create a correctly labeled channel view and pixel histogram.",
+      "independent_transfer": "Investigate how display limits change appearance but not stored data.",
+      "competency_numbers": [
+        "063",
+        "064",
+        "065",
+        "067",
+        "076",
+        "082"
+      ],
+      "references": [
+        {
+          "source": "we03",
+          "cells": "5-6",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w03",
+          "cells": "1-49",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I05",
+      "stage": "Microscopy",
+      "title": "Separate image foreground from background",
+      "goal": "Use a histogram and thresholding method, then test sensitivity.",
+      "deliverable": "Segment candidate foreground pixels with a justified threshold.",
+      "independent_transfer": "Compare two thresholds on an unfamiliar image and explain differences.",
+      "competency_numbers": [
+        "083",
+        "084",
+        "085",
+        "086",
+        "087",
+        "088"
+      ],
+      "references": [
+        {
+          "source": "we04",
+          "cells": "3-7",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w04",
+          "cells": "0-100",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I06",
+      "stage": "Microscopy",
+      "title": "Clean a mask and label candidate nuclei",
+      "goal": "Use filters, morphology and connected components.",
+      "deliverable": "Generate an overlay and count candidate nuclei-like regions.",
+      "independent_transfer": "Identify false positives and touching objects with independent examples.",
+      "competency_numbers": [
+        "089",
+        "090",
+        "091",
+        "092",
+        "093",
+        "094",
+        "095"
+      ],
+      "references": [
+        {
+          "source": "we05",
+          "cells": "2-5",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "we06",
+          "cells": "2-4",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w05",
+          "cells": "0-100",
+          "mode": "source_course_reference"
+        },
+        {
+          "source": "w06",
+          "cells": "0-20",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I07",
+      "stage": "Microscopy",
+      "title": "Clean a scientific measurements table",
+      "goal": "Create, validate and clean a table of image-derived observations.",
+      "deliverable": "Read microscopy measurement rows and audit IDs and missingness.",
+      "independent_transfer": "Repair an unfamiliar table without silently deleting replicates.",
+      "competency_numbers": [
+        "051",
+        "052",
+        "053",
+        "054",
+        "055",
+        "056",
+        "057"
+      ],
+      "references": [
+        {
+          "source": "w06",
+          "cells": "33-48",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I08",
+      "stage": "Microscopy",
+      "title": "Merge measurements and make a report",
+      "goal": "Join metadata to measured features, plot and export results.",
+      "deliverable": "Produce a traceable table and publication-readable figure.",
+      "independent_transfer": "Find and fix a join that duplicates specimen rows.",
+      "competency_numbers": [
+        "058",
+        "059",
+        "060",
+        "061",
+        "062",
+        "066",
+        "069",
+        "070"
+      ],
+      "references": [
+        {
+          "source": "w06",
+          "cells": "33-55",
+          "mode": "source_course_reference"
+        },
+        {
+          "source": "w07",
+          "cells": "15-23",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I09",
+      "stage": "Microscopy",
+      "title": "Measure nuclear features and protein signal",
+      "goal": "Use labeled regions and other channels to measure fluorescence.",
+      "deliverable": "Measure labeled nuclear candidate areas and mean channel intensity.",
+      "independent_transfer": "Explain how wrong channel choice or masks bias localization scores.",
+      "competency_numbers": [
+        "096",
+        "097",
+        "098",
+        "099",
+        "100",
+        "101"
+      ],
+      "references": [
+        {
+          "source": "we06",
+          "cells": "4-8",
+          "mode": "existing_source_exercise_candidate"
+        },
+        {
+          "source": "w06",
+          "cells": "11-55",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I10",
+      "stage": "Microscopy",
+      "title": "Validate tracking and segmentation",
+      "goal": "Measure motion and evaluate candidate detections against annotation.",
+      "deliverable": "Assess segmentation precision and tracking ambiguity.",
+      "independent_transfer": "Detect a systematic error in unfamiliar ground-truth labels.",
+      "competency_numbers": [
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107"
+      ],
+      "references": [
+        {
+          "source": "w09",
+          "cells": "0-20",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I11",
+      "stage": "Microscopy",
+      "title": "Respect biological replicates and batches",
+      "goal": "Separate imaging fields from experimental units and batch effects.",
+      "deliverable": "Create specimen-level summaries with traceable quality-control decisions.",
+      "independent_transfer": "Expose pseudoreplication in an apparently convincing figure.",
+      "competency_numbers": [
+        "108",
+        "109",
+        "110",
+        "111",
+        "112",
+        "113",
+        "114"
+      ],
+      "references": [
+        {
+          "source": "w07",
+          "cells": "15-23",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I12",
+      "stage": "Microscopy",
+      "title": "Report uncertainty without misleading plots",
+      "goal": "Calculate replication-aware uncertainty and effect sizes.",
+      "deliverable": "Produce a figure and statistical summary using biological replicates.",
+      "independent_transfer": "Defend one uncertainty choice on an unfamiliar dataset.",
+      "competency_numbers": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "068"
+      ],
+      "references": [
+        {
+          "source": "w07",
+          "cells": "20-24",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "I13",
+      "stage": "Microscopy",
+      "title": "Build the complete image-analysis pipeline",
+      "goal": "Reproduce Witz's nuclear versus nuclear-edge localization workflow.",
+      "deliverable": "Run a reusable multi-image pipeline with provenance, region tables and overlays.",
+      "independent_transfer": "Apply it to unseen images and document unresolved biological limitations.",
+      "competency_numbers": [
+        "150",
+        "151",
+        "152",
+        "153",
+        "154"
+      ],
+      "references": [
+        {
+          "source": "w07",
+          "cells": "3-23",
+          "mode": "source_course_reference"
+        },
+        {
+          "source": "wdemo",
+          "cells": "0-50",
+          "mode": "source_course_reference"
+        }
+      ],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "N01",
+      "stage": "NGS",
+      "title": "Validate a new DNA sequence",
+      "goal": "Inspect ambiguous bases and build sequence transformations.",
+      "deliverable": "Validate bases, calculate GC fraction and reverse-complement DNA.",
+      "independent_transfer": "Handle a sequence with ambiguous bases or empty input.",
+      "competency_numbers": [
+        "123",
+        "124",
+        "125",
+        "126"
+      ],
+      "references": [],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "N02",
+      "stage": "NGS",
+      "title": "Read real FASTA and FASTQ records",
+      "goal": "Use Biopython to import common sequence records.",
+      "deliverable": "Build a record-by-record sequence reader.",
+      "independent_transfer": "Explain what fails with malformed or mixed-quality records.",
+      "competency_numbers": [
+        "127",
+        "128",
+        "129",
+        "130"
+      ],
+      "references": [],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "N03",
+      "stage": "NGS",
+      "title": "Inspect read quality and k-mers",
+      "goal": "Implement a transparent QC and short-motif summary.",
+      "deliverable": "Produce a sequence QC report with documented thresholds.",
+      "independent_transfer": "Check a new read distribution without hardcoded quality cutoffs.",
+      "competency_numbers": [
+        "131",
+        "132",
+        "133",
+        "134"
+      ],
+      "references": [],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "N04",
+      "stage": "NGS",
+      "title": "Summarize coverage and count features",
+      "goal": "Connect mapping, coverage and normalized count tables.",
+      "deliverable": "Produce an auditable small sequencing QC report.",
+      "independent_transfer": "Explain why CPM cannot replace a full differential-expression model.",
+      "competency_numbers": [
+        "135",
+        "136",
+        "137",
+        "138",
+        "155"
+      ],
+      "references": [],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "L01",
+      "stage": "ML",
+      "title": "Frame a biologically safe prediction",
+      "goal": "Define labels and a specimen-level training/test split.",
+      "deliverable": "Create a dataset split with no shared biological replicates.",
+      "independent_transfer": "Identify leakage in a new experimental design.",
+      "competency_numbers": [
+        "139",
+        "140",
+        "141",
+        "142"
+      ],
+      "references": [],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "L02",
+      "stage": "ML",
+      "title": "Train interpretable baseline models",
+      "goal": "Build simple regression/classification pipelines and a dummy baseline.",
+      "deliverable": "Fit and compare transparent baseline models.",
+      "independent_transfer": "Investigate failure from improper preprocessing or class imbalance.",
+      "competency_numbers": [
+        "143",
+        "144",
+        "145",
+        "146"
+      ],
+      "references": [],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    },
+    {
+      "id": "L03",
+      "stage": "ML",
+      "title": "Evaluate truly unseen biological data",
+      "goal": "Use grouped cross-validation and honest model evaluation.",
+      "deliverable": "Evaluate an independent test dataset and document calibration/errors.",
+      "independent_transfer": "Explain why a highly accurate, leaky model cannot be trusted.",
+      "competency_numbers": [
+        "147",
+        "148",
+        "149",
+        "156"
+      ],
+      "references": [],
+      "teaching_sequence": "Learn the skill in the original context → Apply it to the mission → Prove it on unseen inputs"
+    }
+  ],
+  "ordered_competency_numbers": [
+    "001",
+    "002",
+    "003",
+    "004",
+    "005",
+    "006",
+    "007",
+    "008",
+    "009",
+    "010",
+    "011",
+    "014",
+    "016",
+    "012",
+    "013",
+    "015",
+    "017",
+    "018",
+    "019",
+    "020",
+    "021",
+    "022",
+    "023",
+    "024",
+    "025",
+    "026",
+    "027",
+    "028",
+    "029",
+    "030",
+    "031",
+    "032",
+    "033",
+    "034",
+    "035",
+    "036",
+    "037",
+    "038",
+    "039",
+    "071",
+    "072",
+    "073",
+    "074",
+    "075",
+    "040",
+    "041",
+    "077",
+    "079",
+    "080",
+    "081",
+    "042",
+    "043",
+    "044",
+    "045",
+    "046",
+    "047",
+    "048",
+    "049",
+    "050",
+    "078",
+    "063",
+    "064",
+    "065",
+    "067",
+    "076",
+    "082",
+    "083",
+    "084",
+    "085",
+    "086",
+    "087",
+    "088",
+    "089",
+    "090",
+    "091",
+    "092",
+    "093",
+    "094",
+    "095",
+    "051",
+    "052",
+    "053",
+    "054",
+    "055",
+    "056",
+    "057",
+    "058",
+    "059",
+    "060",
+    "061",
+    "062",
+    "066",
+    "069",
+    "070",
+    "096",
+    "097",
+    "098",
+    "099",
+    "100",
+    "101",
+    "102",
+    "103",
+    "104",
+    "105",
+    "106",
+    "107",
+    "108",
+    "109",
+    "110",
+    "111",
+    "112",
+    "113",
+    "114",
+    "115",
+    "116",
+    "117",
+    "118",
+    "119",
+    "120",
+    "068",
+    "121",
+    "122",
+    "150",
+    "151",
+    "152",
+    "153",
+    "154",
+    "123",
+    "124",
+    "125",
+    "126",
+    "127",
+    "128",
+    "129",
+    "130",
+    "131",
+    "132",
+    "133",
+    "134",
+    "135",
+    "136",
+    "137",
+    "138",
+    "155",
+    "139",
+    "140",
+    "141",
+    "142",
+    "143",
+    "144",
+    "145",
+    "146",
+    "147",
+    "148",
+    "149",
+    "156"
+  ],
+  "implementation_scope": "Navigation and source-first curriculum map integrated; this does not mean all 156 exercises or images are already implemented or tested in a browser."
+}
