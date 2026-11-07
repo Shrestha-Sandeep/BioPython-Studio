@@ -130,7 +130,7 @@ def main():
             # without pretending that this automated check proves retained learning.
             # Init scripts modify the stored fixture *after* beforeunload saves and
             # *before* adapter initialization, correctly simulating a later visit.
-            page.add_init_script("""() => {
+            page.add_init_script("""{
               const x=JSON.parse(localStorage.getItem('biopython.p01.v1')||'null');
               if(x){x.capstoneFirstPassAt=Date.now()-25*3600*1000;
                 localStorage.setItem('biopython.p01.v1',JSON.stringify(x));}
