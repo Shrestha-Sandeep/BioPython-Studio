@@ -203,7 +203,7 @@
         },
         "prove": {
           "title": "Independent transfer",
-          "description": "Build summary from condition and replicate and count using 'condition | replicate R | N images'.",
+          "description": "Build summary from condition, replicate and count using the format 'condition | replicate R | fields=N'. Use the changing count, not a fixed worded report.",
           "starter_code": "# Available: condition, replicate, count\n",
           "preview_inputs": {
             "condition": "control",
@@ -218,7 +218,7 @@
                 "count": 6
               },
               "assertions": [
-                "summary == 'control | replicate 2 | 6 images'"
+                "summary == 'control | replicate 2 | fields=6'"
               ]
             },
             {
@@ -228,7 +228,7 @@
                 "count": 1
               },
               "assertions": [
-                "summary == 'heat | replicate 11 | 1 images'"
+                "summary == 'heat | replicate 11 | fields=1'"
               ]
             }
           ]
