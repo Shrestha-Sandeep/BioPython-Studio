@@ -1,0 +1,64 @@
+name: P03 three-chapter integration
+on:
+  push:
+    branches: ['integration/p03-ui-first']
+  pull_request:
+    paths:
+      - 'src/course-*'
+      - 'src/p01-worker.mjs'
+      - 'src/p01-pilot.css'
+      - 'index.html'
+      - 'content/p03/**'
+      - 'content/chapters/P03_COMPLETE.md'
+      - 'tests/test_p03*'
+      - 'tests/test_p02*'
+      - 'tests/test_p01*'
+      - '.github/workflows/p03-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  p03:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.13'
+      - name: Validate JavaScript syntax
+        run: |
+          node --check src/ui-first.js
+          node --check src/course-adapter.js
+          node --check src/course-teaching.js
+          node --check src/p01-worker.mjs
+      - name: Original frozen UI unit tests
+        run: node --test tests/preview.test.mjs tests/witz_sources.test.mjs
+      - name: P01, P02, P03 learner import contracts
+        run: |
+          python tests/test_p01_import.py
+          python tests/test_p02_import.py
+          python tests/test_p03_import.py
+      - name: Install Playwright and Chromium
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Frozen UI shell browser regression
+        run: python tests/browser_smoke.py
+      - name: P01 real Python and preservation regression
+        run: python tests/test_p01_browser.py
+      - name: P02 real Python and chapter switching regression
+        run: python tests/test_p02_browser.py
+      - name: P03 all 85 real Python cases and chapter integration
+        run: python tests/test_p03_browser.py
+      - name: Retain P03 desktop and mobile screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: p03-full-chapter-qa
+          path: artifacts/p03/*.png
+          if-no-files-found: ignore
+          retention-days: 14
