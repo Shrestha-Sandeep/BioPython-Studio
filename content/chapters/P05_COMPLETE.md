@@ -4,7 +4,7 @@
 
 Replace repeated calculations with functions, parameters, local state, documentation, validation and standard-library imports. Build a reusable, reproducible field measurement script.
 
-**Source and provenance:** https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Functions.ipynb. Additional explanations follow Python for Biologists, the Python Data Science Handbook and Python standard-library documentation. Scientific data in lessons are fictional; image references must retain attribution in `assets/witz/CREDITS.md`.
+**Source and provenance:** https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Appendix_Functions.ipynb. Additional explanations follow Python for Biologists, Python Data Science Handbook, and Python standard-library documentation. The lesson data are fictional; source images retain their own attribution.
 
 **Science boundary:** Synthetic numeric training records are not quantitative microscopy.
 
@@ -12,15 +12,17 @@ Replace repeated calculations with functions, parameters, local state, documenta
 
 **Why:** Learn to reuse one unit-correct conversion rather than copying a result using biological measurement records.
 
-A useful scientific script must reuse one unit-correct conversion rather than copying a result. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.
+A function runs only when called. Parameters are fresh input names, and `return` hands the numeric result to code that calls it. Merely printing a width would show a result once but leave subsequent calculations with `None`.
 
-A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.
+For widths, divide pixels by pixels-per-micrometre: (pixels)/(pixels/µm) gives µm. Changing calibration must change the answer, and a copied constant must fail the changed-input tests.
 
-Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity.
+Call the same function with two distinct specimens. Return the converted number, print outside the function, and distinguish valid numeric conversion from the separate question of whether scale calibration is trustworthy.
 
-**Predict:** How does the return value change when pixel width halves?
+Two calls use the same function definition but different parameters. Predict the results, change one input, and explain why the value changes.
 
-**Runnable teaching example (not the solution):**
+**Predict:** What widths are returned for 48 pixels and 24 pixels at 4 pixels/µm?
+
+**Runnable teaching example (not a solution):**
 
 ```python
 def pixel_width(pixels, scale):
@@ -29,19 +31,20 @@ print(pixel_width(48, 4))
 print(pixel_width(24, 4))
 ```
 
-**Prediction explanation:** The returned physical width halves from 12.0 to 6.0; the same function handles both inputs.
+**Prediction explanation:** 12.0 µm and 6.0 µm. The function returns values; the caller prints them.
 
 **Walkthrough:**
 
-1. Identify all changing inputs and their physical units.
-2. Predict the worked output before executing Python.
-3. Change one input and investigate the output or error.
+1. Read the stated input and output contract for return values from a measurement function.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a new sample ID, missing observation or zero count.
-- Check one boundary without hardcoding a previously printed result.
-- Explain why passing code checks is not proof of correct biological calibration.
+- Change one parameter in return values from a measurement function and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -54,7 +57,7 @@ Define to_um(pixels, px_per_um), returning pixels/px_per_um. Set width_um using 
 # INPUTS: pixels, px_per_um
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -67,27 +70,29 @@ Write speed_um_per_min(displacement_px, calibration_px_per_um, interval_min); se
 # INPUTS: displacement_px, calibration_px_per_um, interval_min
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
+**Debug task:** Identify a real failure mode in return values from a measurement function: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** A function that executes once is already a validated scientific measurement method.
+**Common mistake:** One successful function call or printed number establishes reusable and scientifically correct analysis.
 
-**Scientific limit:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
+**Scientific boundary:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
 
 ## P05-G02 — Use explicit parameters and defaults
 
 **Why:** Learn to make acquisition choices visible in parameter lists using biological measurement records.
 
-A useful scientific script must make acquisition choices visible in parameter lists. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.
+A default parameter is a documented fallback used only when the caller omits that argument. `channel='GFP'` does not prevent a later call from specifying `channel='DAPI'`.
 
-A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.
+Required parameters precede optional ones. Keyword arguments clarify which scientific option is being changed, but Python does not know whether a particular channel or threshold is scientifically justified.
 
-Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity.
+For QC, an inclusive threshold means exactly-equal scores pass. `None` is not zero. Values outside 0–1 are invalid under this illustrative training rule, not exceptionally low or high quality.
 
-**Predict:** What is the output with and without the explicit channel?
+The channel default is only used when the caller does not supply one; predict the two labels before running.
 
-**Runnable teaching example (not the solution):**
+**Predict:** What changes between describe('F07') and describe('F07',channel='DAPI')?
+
+**Runnable teaching example (not a solution):**
 
 ```python
 def describe(field_id, channel='GFP'):
@@ -96,19 +101,20 @@ print(describe('F07'))
 print(describe('F07', channel='DAPI'))
 ```
 
-**Prediction explanation:** F07 | GFP and F07 | DAPI. The explicit keyword overrides the documented default.
+**Prediction explanation:** Only the channel segment changes: F07 | GFP becomes F07 | DAPI. The ID is unchanged.
 
 **Walkthrough:**
 
-1. Identify all changing inputs and their physical units.
-2. Predict the worked output before executing Python.
-3. Change one input and investigate the output or error.
+1. Read the stated input and output contract for use explicit parameters and defaults.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a new sample ID, missing observation or zero count.
-- Check one boundary without hardcoding a previously printed result.
-- Explain why passing code checks is not proof of correct biological calibration.
+- Change one parameter in use explicit parameters and defaults and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -121,7 +127,7 @@ Define describe_field(field_id, channel='GFP') returning 'ID | channel'; call it
 # INPUTS: field_id, channel
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -134,27 +140,29 @@ Define passes_focus(score, minimum=0.8): False for None or values outside 0..1; 
 # INPUTS: focus_score, threshold
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
+**Debug task:** Identify a real failure mode in use explicit parameters and defaults: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** A function that executes once is already a validated scientific measurement method.
+**Common mistake:** One successful function call or printed number establishes reusable and scientifically correct analysis.
 
-**Scientific limit:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
+**Scientific boundary:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
 
 ## P05-G03 — Separate local state from source data
 
 **Why:** Learn to avoid stale global values and unexpected mutation using biological measurement records.
 
-A useful scientific script must avoid stale global values and unexpected mutation. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.
+A function-local list is created anew for every call. If the list is stored outside the function and appended repeatedly, a second specimen can inherit stale results from a previous specimen.
 
-A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.
+Returning a new list also protects the source: selecting passing scores should not delete missing observations from the original acquisition. This matters for traceability and later data-quality investigations.
 
-Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity.
+A function can be correct on one call yet wrong after multiple calls. Compare results for two thresholds; verify that the original input object remains unchanged and output lists are independent.
 
-**Predict:** Does a second call add results from the first?
+An accumulator created inside the function cannot accidentally collect the previous call's observations.
 
-**Runnable teaching example (not the solution):**
+**Predict:** Why does calling keep twice not append new results to an old list?
+
+**Runnable teaching example (not a solution):**
 
 ```python
 def keep(values, minimum):
@@ -166,19 +174,20 @@ def keep(values, minimum):
 print(keep([0.9, None, 0.3], 0.8))
 ```
 
-**Prediction explanation:** No. A fresh chosen list is initialized on each call, so the function does not leak state.
+**Prediction explanation:** A fresh local list is allocated on each call. The input is never modified.
 
 **Walkthrough:**
 
-1. Identify all changing inputs and their physical units.
-2. Predict the worked output before executing Python.
-3. Change one input and investigate the output or error.
+1. Read the stated input and output contract for separate local state from source data.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a new sample ID, missing observation or zero count.
-- Check one boundary without hardcoding a previously printed result.
-- Explain why passing code checks is not proof of correct biological calibration.
+- Change one parameter in separate local state from source data and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -191,7 +200,7 @@ Define keep_scores(scores, minimum): return new list of non-None scores in 0..1 
 # INPUTS: scores, minimum
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -204,27 +213,29 @@ Define scaled_counts(counts, factor) returning a new list of every count multipl
 # INPUTS: counts, factor
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
+**Debug task:** Identify a real failure mode in separate local state from source data: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** A function that executes once is already a validated scientific measurement method.
+**Common mistake:** One successful function call or printed number establishes reusable and scientifically correct analysis.
 
-**Scientific limit:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
+**Scientific boundary:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
 
 ## P05-G04 — Document types and scientific meaning
 
 **Why:** Learn to state input types, return values and missing-data policy using biological measurement records.
 
-A useful scientific script must state input types, return values and missing-data policy. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.
+A docstring is the first string literal in a function body, accessible through `function.__doc__`. It should describe purpose, input meaning, output units, and empty or invalid input behavior.
 
-A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.
+Annotations such as `fields: int` and `-> str` describe expected types, but Python does not automatically validate those types. Scientific calibration and biological identity still require explicit checks.
 
-Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity.
+A useful measurement function can tell another scientist what it returns for empty data and whether the result is pixels, micrometres, or a dimensionless score. Avoid ambiguous return labels.
 
-**Predict:** Do type hints enforce physical calibration?
+Distinguish documentation of a function from the actual numeric or text value it returns.
 
-**Runnable teaching example (not the solution):**
+**Predict:** Which information appears in specimen_label.__annotations__, and which in the result?
+
+**Runnable teaching example (not a solution):**
 
 ```python
 def specimen_label(sample_id: str, fields: int) -> str:
@@ -234,19 +245,20 @@ print(specimen_label('WT', 3))
 print(specimen_label.__annotations__)
 ```
 
-**Prediction explanation:** No. Annotations document expected Python types; calibration validity must be checked independently.
+**Prediction explanation:** Annotations identify the expected types; the returned string contains the sample label and count.
 
 **Walkthrough:**
 
-1. Identify all changing inputs and their physical units.
-2. Predict the worked output before executing Python.
-3. Change one input and investigate the output or error.
+1. Read the stated input and output contract for document types and scientific meaning.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a new sample ID, missing observation or zero count.
-- Check one boundary without hardcoding a previously printed result.
-- Explain why passing code checks is not proof of correct biological calibration.
+- Change one parameter in document types and scientific meaning and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -259,7 +271,7 @@ Define specimen_label(sample_id: str, fields: int) -> str with docstring contain
 # INPUTS: sample_id, fields
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -272,27 +284,29 @@ Define mean_or_none(values: list) -> float | None with docstring containing 'mea
 # INPUTS: values
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
+**Debug task:** Identify a real failure mode in document types and scientific meaning: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** A function that executes once is already a validated scientific measurement method.
+**Common mistake:** One successful function call or printed number establishes reusable and scientifically correct analysis.
 
-**Scientific limit:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
+**Scientific boundary:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
 
 ## P05-G05 — Raise and handle invalid inputs
 
 **Why:** Learn to reject invalid calibrations without fabricating zero using biological measurement records.
 
-A useful scientific script must reject invalid calibrations without fabricating zero. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.
+Raise `ValueError` when a calibration is zero or negative. Returning zero would conflate an invalid conversion with a real zero-width observation, giving a plausible but incorrect report.
 
-A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.
+Use a narrow `try/except ValueError` wrapper when a routine must classify expected invalid input. Do not catch `BaseException` or swallow unexpected bugs; those errors should still be visible.
 
-Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity.
+Separate calculation from policy: one function raises a useful error, another records failure as `{'ok':False,'value':None}`. This makes source records auditable without fabricating a measurement.
 
-**Predict:** Why does this print ValueError rather than a plausible width?
+A nonpositive calibration must produce a visible error, not a width in µm.
 
-**Runnable teaching example (not the solution):**
+**Predict:** What error class is printed when scale is zero, and why?
+
+**Runnable teaching example (not a solution):**
 
 ```python
 def convert(pixels, scale):
@@ -305,19 +319,20 @@ except ValueError as error:
     print(type(error).__name__)
 ```
 
-**Prediction explanation:** A nonpositive calibration does not support a physical-width measurement; the error is explicit.
+**Prediction explanation:** ValueError. The scale violates the conversion contract; no trustworthy physical width can be returned.
 
 **Walkthrough:**
 
-1. Identify all changing inputs and their physical units.
-2. Predict the worked output before executing Python.
-3. Change one input and investigate the output or error.
+1. Read the stated input and output contract for raise and handle invalid inputs.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a new sample ID, missing observation or zero count.
-- Check one boundary without hardcoding a previously printed result.
-- Explain why passing code checks is not proof of correct biological calibration.
+- Change one parameter in raise and handle invalid inputs and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -331,7 +346,7 @@ Define convert_width(pixels,scale) raising ValueError if scale<=0; otherwise div
 # INPUTS: pixels, scale
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -345,27 +360,29 @@ Define read_quality(score) raising ValueError for None or outside 0..1; define q
 # INPUTS: focus_score
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
+**Debug task:** Identify a real failure mode in raise and handle invalid inputs: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** A function that executes once is already a validated scientific measurement method.
+**Common mistake:** One successful function call or printed number establishes reusable and scientifically correct analysis.
 
-**Scientific limit:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
+**Scientific boundary:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
 
 ## P05-G06 — Import standard-library analysis tools
 
 **Why:** Learn to use explicit imports instead of copied constants using biological measurement records.
 
-A useful scientific script must use explicit imports instead of copied constants. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.
+Importing `math` gives access to a defined π constant. Copying a rough decimal into every function is fragile, and forgetting the import produces an error when the code runs.
 
-A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.
+Importing `statistics` gives a standard arithmetic mean; it does not tell you which experimental unit to average. An average of microscope fields is not automatically an estimate across independent biological replicates.
 
-Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity.
+The imported module and function must be available in the standalone script too. Explicit imports make dependencies reproducible when leaving the browser and later packaging a local workflow.
 
-**Predict:** Where do pi and arithmetic mean originate?
+Named modules make constants and descriptive statistics available to Python code.
 
-**Runnable teaching example (not the solution):**
+**Predict:** Which imported module supplies pi, and which supplies the arithmetic mean?
+
+**Runnable teaching example (not a solution):**
 
 ```python
 import math
@@ -374,19 +391,20 @@ print(round(math.pi, 3))
 print(statistics.mean([2,4,6]))
 ```
 
-**Prediction explanation:** math supplies pi and statistics supplies mean; imports make their source explicit.
+**Prediction explanation:** math supplies pi; statistics supplies mean. Both must be imported in a fresh script.
 
 **Walkthrough:**
 
-1. Identify all changing inputs and their physical units.
-2. Predict the worked output before executing Python.
-3. Change one input and investigate the output or error.
+1. Read the stated input and output contract for import standard-library analysis tools.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a new sample ID, missing observation or zero count.
-- Check one boundary without hardcoding a previously printed result.
-- Explain why passing code checks is not proof of correct biological calibration.
+- Change one parameter in import standard-library analysis tools and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -399,7 +417,7 @@ Import math; define circle_area_um2(radius_um) using math.pi * radius_um**2. Ret
 # INPUTS: radius_um
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -412,13 +430,13 @@ Import statistics; define mean_focus(scores) ignoring None, returning None if no
 # INPUTS: scores
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
+**Debug task:** Identify a real failure mode in import standard-library analysis tools: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** A function that executes once is already a validated scientific measurement method.
+**Common mistake:** One successful function call or printed number establishes reusable and scientifically correct analysis.
 
-**Scientific limit:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
+**Scientific boundary:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
 
 ## P05-CAPSTONE — Build a tested, reusable field-measurement module
 
@@ -432,7 +450,7 @@ Do not mistake synthetic calibration values for verified microscope metadata. A 
 
 **Predict:** Why must an unknown width return None rather than zero?
 
-**Runnable teaching example (not the solution):**
+**Runnable teaching example (not a solution):**
 
 ```python
 def width_um(pixels, scale):
@@ -470,7 +488,7 @@ Define evaluate_fields(records, minimum_um) returning {'kept':[IDs], 'low':[IDs]
 # INPUTS: records, minimum_um
 ```
 
-**Practice:** 4 changed-input public cases; no private mastery grading.
+**Practice:** 4 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -485,13 +503,13 @@ Define audit_widths(readings,ceiling_um) for [pixels,tag,scale] returning {'with
 # INPUTS: readings, ceiling_um
 ```
 
-**Practice:** 4 changed-input public cases; no private mastery grading.
+**Practice:** 4 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
+**Debug task:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
 
-**Misconception:** A function that executes once is already a validated scientific measurement method.
+**Common mistake:** A function that executes once is already a validated scientific measurement method.
 
-**Scientific limit:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
+**Scientific boundary:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
 
 **Capstone build passes:**
 
@@ -542,7 +560,7 @@ Write a short pseudocode plan for a fresh measurement function and its invalid-c
 #   invalid-calibration policy.
 ```
 
-**Practice:** 0 changed-input public cases; no private mastery grading.
+**Practice:** 0 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -556,13 +574,13 @@ Define summarize_measurements(values,scale) returning {'n':N,'mean_um':M}, with 
 # INPUTS: values, scale
 ```
 
-**Practice:** 4 changed-input public cases; no private mastery grading.
+**Practice:** 4 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
+**Debug task:** A function silently reuses an earlier sample's output. Identify a parameter or state bug.
 
-**Misconception:** A function that executes once is already a validated scientific measurement method.
+**Common mistake:** A function that executes once is already a validated scientific measurement method.
 
-**Scientific limit:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
+**Scientific boundary:** All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.
 
 **Scientific reflection:**
 
@@ -570,8 +588,8 @@ Define summarize_measurements(values,scale) returning {'n':N,'mean_um':M}, with 
 - What scientific assumptions are not verified by the code?
 - How does your code avoid global state and invalid calibration?
 
-## Export and independent use
+## Export and reproduce
 
 Export documented reusable field-measurement functions and their transparent QC classifications.
 
-Export as `field_measurement_functions.py` after completing the Prove capstone. A successful public check does not establish retained mastery or calibrated biological validity.
+Export `field_measurement_functions.py` after completing Prove. Browser passing checks alone cannot establish retention, independent problem-solving or calibrated scientific validity.
