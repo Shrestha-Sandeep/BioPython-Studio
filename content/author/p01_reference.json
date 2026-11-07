@@ -1,0 +1,351 @@
+{
+  "schema_version": "bps.author.v1",
+  "chapter_id": "P01",
+  "goals": [
+    {
+      "id": "P01-G01",
+      "apply_solution": "report = f'{specimen}: {fields} fields'\nprint(report)",
+      "prove_solution": "outcome = f'{sample} | {observed} observations'\nprint(outcome)",
+      "apply_checks": [
+        {
+          "inputs": {
+            "specimen": "N2_P03",
+            "fields": 6
+          },
+          "assertions": [
+            "report == 'N2_P03: 6 fields'"
+          ]
+        },
+        {
+          "inputs": {
+            "specimen": "mutA_P13",
+            "fields": 0
+          },
+          "assertions": [
+            "report == 'mutA_P13: 0 fields'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "sample": "WT_P07",
+            "observed": 4
+          },
+          "assertions": [
+            "outcome == 'WT_P07 | 4 observations'"
+          ]
+        },
+        {
+          "inputs": {
+            "sample": "mutC_P17",
+            "observed": 11
+          },
+          "assertions": [
+            "outcome == 'mutC_P17 | 11 observations'"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G02",
+      "apply_solution": "description = f'{specimen_id}: {field_count} fields, channel {channel_name}'",
+      "prove_solution": "summary = f'{condition} | replicate {replicate} | {count} images'",
+      "apply_checks": [
+        {
+          "inputs": {
+            "specimen_id": "N2_P03",
+            "field_count": 5,
+            "channel_name": "GFP"
+          },
+          "assertions": [
+            "description == 'N2_P03: 5 fields, channel GFP'"
+          ]
+        },
+        {
+          "inputs": {
+            "specimen_id": "ced1_P07",
+            "field_count": 0,
+            "channel_name": "DAPI"
+          },
+          "assertions": [
+            "description == 'ced1_P07: 0 fields, channel DAPI'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "condition": "control",
+            "replicate": 2,
+            "count": 6
+          },
+          "assertions": [
+            "summary == 'control | replicate 2 | 6 images'"
+          ]
+        },
+        {
+          "inputs": {
+            "condition": "heat",
+            "replicate": 11,
+            "count": 1
+          },
+          "assertions": [
+            "summary == 'heat | replicate 11 | 1 images'"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G03",
+      "apply_solution": "segment_um = segment_pixels / scale_px_per_um",
+      "prove_solution": "displacement_um = displacement_pixels / calibration_px_per_um\nspeed_um_per_min = displacement_um / interval_minutes",
+      "apply_checks": [
+        {
+          "inputs": {
+            "segment_pixels": 75,
+            "scale_px_per_um": 2.5
+          },
+          "assertions": [
+            "abs(segment_um - 30) < 1e-12"
+          ]
+        },
+        {
+          "inputs": {
+            "segment_pixels": 120,
+            "scale_px_per_um": 6
+          },
+          "assertions": [
+            "segment_um == 20"
+          ]
+        },
+        {
+          "inputs": {
+            "segment_pixels": 0,
+            "scale_px_per_um": 8
+          },
+          "assertions": [
+            "segment_um == 0"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "displacement_pixels": 36,
+            "calibration_px_per_um": 3,
+            "interval_minutes": 2
+          },
+          "assertions": [
+            "displacement_um == 12",
+            "speed_um_per_min == 6"
+          ]
+        },
+        {
+          "inputs": {
+            "displacement_pixels": 25,
+            "calibration_px_per_um": 5,
+            "interval_minutes": 4
+          },
+          "assertions": [
+            "displacement_um == 5",
+            "speed_um_per_min == 1.25"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G04",
+      "apply_solution": "measurement_um = float(measurement_text)\ntype_name = type(measurement_um).__name__",
+      "prove_solution": "type_labels = [type(count_value).__name__, type(fraction_value).__name__, type(qc_flag).__name__]",
+      "apply_checks": [
+        {
+          "inputs": {
+            "measurement_text": "12.5"
+          },
+          "assertions": [
+            "measurement_um == 12.5",
+            "type_name == 'float'"
+          ]
+        },
+        {
+          "inputs": {
+            "measurement_text": "3e-2"
+          },
+          "assertions": [
+            "abs(measurement_um-0.03)<1e-12",
+            "type_name == 'float'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "count_value": 3,
+            "fraction_value": 0.5,
+            "qc_flag": true
+          },
+          "assertions": [
+            "type_labels == ['int','float','bool']"
+          ]
+        },
+        {
+          "inputs": {
+            "count_value": 0,
+            "fraction_value": 2.5,
+            "qc_flag": false
+          },
+          "assertions": [
+            "type_labels == ['int','float','bool']"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G05",
+      "apply_solution": "result = f'{plate_id}: {field_count} fields'",
+      "prove_solution": "distance_um = pixels / pixels_per_um",
+      "apply_checks": [
+        {
+          "inputs": {
+            "plate_id": "plate03",
+            "field_count": 4
+          },
+          "assertions": [
+            "result == 'plate03: 4 fields'"
+          ]
+        },
+        {
+          "inputs": {
+            "plate_id": "plate19",
+            "field_count": 0
+          },
+          "assertions": [
+            "result == 'plate19: 0 fields'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "pixels": 40,
+            "pixels_per_um": 5
+          },
+          "assertions": [
+            "distance_um == 8"
+          ]
+        },
+        {
+          "inputs": {
+            "pixels": 81,
+            "pixels_per_um": 9
+          },
+          "assertions": [
+            "distance_um == 9"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G06",
+      "apply_solution": "documentation_line = (len.__doc__ or '').strip().splitlines()[0]\nsample_length = len(sample_id)",
+      "prove_solution": "doc_head = (abs.__doc__ or '').strip().splitlines()[0]\nabsolute_change = abs(signed_change)",
+      "apply_checks": [
+        {
+          "inputs": {
+            "sample_id": "N2_P03"
+          },
+          "assertions": [
+            "isinstance(documentation_line,str) and len(documentation_line)>5",
+            "sample_length == 6"
+          ]
+        },
+        {
+          "inputs": {
+            "sample_id": "mutant_12_A"
+          },
+          "assertions": [
+            "sample_length == 11",
+            "len(documentation_line)>5"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "signed_change": -8.2
+          },
+          "assertions": [
+            "absolute_change == 8.2",
+            "len(doc_head)>5"
+          ]
+        },
+        {
+          "inputs": {
+            "signed_change": 3
+          },
+          "assertions": [
+            "absolute_change == 3",
+            "len(doc_head)>5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G07",
+      "apply_solution": "current_total = current_count * multiplier",
+      "prove_solution": "adjusted_value = (baseline + adjustment) / scale",
+      "apply_checks": [
+        {
+          "inputs": {
+            "current_count": 9,
+            "multiplier": 2
+          },
+          "assertions": [
+            "current_total == 18"
+          ]
+        },
+        {
+          "inputs": {
+            "current_count": 4,
+            "multiplier": 3
+          },
+          "assertions": [
+            "current_total == 12"
+          ]
+        },
+        {
+          "inputs": {
+            "current_count": 0,
+            "multiplier": 7
+          },
+          "assertions": [
+            "current_total == 0"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "baseline": 24,
+            "adjustment": 6,
+            "scale": 3
+          },
+          "assertions": [
+            "adjusted_value == 10"
+          ]
+        },
+        {
+          "inputs": {
+            "baseline": 8,
+            "adjustment": -2,
+            "scale": 2
+          },
+          "assertions": [
+            "adjusted_value == 3"
+          ]
+        }
+      ]
+    }
+  ]
+}
