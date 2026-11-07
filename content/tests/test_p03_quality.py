@@ -60,7 +60,7 @@ class P03Quality(unittest.TestCase):
                     self.assertGreaterEqual(len(g["phases"][phase]["public_checks"]), 3)
         self.assertGreaterEqual(len(ch["capstone"]["phases"]["apply"]["public_checks"]), 10)
         self.assertGreaterEqual(len(ch["capstone"]["phases"]["prove"]["public_checks"]), 10)
-        self.assertIn("not independent biological replicates", self.manuscript)
+        self.assertIn("not numbers of independent biological replicates", self.manuscript)
 
     def test_reference_python_and_changed_inputs(self):
         reference = {g["id"]: g for g in self.author["goals"]}
