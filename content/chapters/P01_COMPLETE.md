@@ -608,7 +608,7 @@ In a sentence or two, explain **why** the result changed when an input changed a
 
 ---
 
-## 8. Integrated P01 capstone — `specimen_report.py`
+## 8. Integrated P01 capstone (P01-CAPSTONE) — `specimen_report.py`
 
 **Research-style task:** Build a reproducible specimen record using all P01 skills rather than solving isolated syntax problems.
 
