@@ -166,12 +166,24 @@ def main():
             page.locator("#bps-chapter-select").wait_for(timeout=20000)
             assert page.locator("#bps-chapter-select").locator("option").count() == 3
             assert page.locator("#bps-chapter-select").input_value() == "P01"
+            assert page.evaluate("document.querySelector('.CodeMirror').CodeMirror.getValue().startsWith('# P01-G01 | LEARN |')")
 
             # Preserve historical work from both earlier chapter keys.
             set_code(page, "# P01 draft retained across P03\nprint('sample01')")
             page.locator("#bps-chapter-select").select_option("P02")
+            assert page.evaluate("document.querySelector('.CodeMirror').CodeMirror.getValue().startsWith('# P02-G01 | LEARN |')")
             set_code(page, "# P02 draft retained across P03\nprint('sample02')")
+            # Old saved drafts gain a single concise header without losing learner code.
+            page.locator("#bps-chapter-select").select_option("P01")
+            migrated=page.evaluate("document.querySelector('.CodeMirror').CodeMirror.getValue()")
+            assert migrated.startswith("# P01-G01 | LEARN |") and migrated.count("# P01-G01 | LEARN |")==1
+            assert "# P01 draft retained across P03" in migrated
+            page.locator("#bps-chapter-select").select_option("P02")
+            migrated=page.evaluate("document.querySelector('.CodeMirror').CodeMirror.getValue()")
+            assert migrated.startswith("# P02-G01 | LEARN |") and migrated.count("# P02-G01 | LEARN |")==1
+            assert "# P02 draft retained across P03" in migrated
             page.locator("#bps-chapter-select").select_option("P03")
+            assert page.evaluate("document.querySelector('.CodeMirror').CodeMirror.getValue().startsWith('# P03-G01 | LEARN |')")
             assert page.locator("#p01-goal-select").locator("option").count() == 9
             assert page.locator("#lesson-summary").inner_text().startswith("P03")
             assert page.locator("#bps-chapter-link").get_attribute("href") == "./content/chapters/P03_COMPLETE.md"
