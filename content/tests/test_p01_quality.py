@@ -32,8 +32,9 @@ class P01AuthorChecks(unittest.TestCase):
         )))
         self.assertTrue(set(numbers) <= {c["number"] for c in self.canonical["competencies"]})
         self.assertEqual(chapter["capstone"]["competencies"], [])
+        self.assertEqual(chapter["review"]["competencies"], [])
         self.assertEqual(chapter["capstone"]["id"], "P01-CAPSTONE")
-        for goal in [*chapter["goals"], chapter["capstone"]]:
+        for goal in [*chapter["goals"], chapter["capstone"], chapter["review"]]:
             with self.subTest(goal=goal["id"]):
                 self.assertGreaterEqual(len(goal["explain"]), 3)
                 self.assertGreaterEqual(sum(len(x) for x in goal["explain"]), 700)
@@ -48,6 +49,8 @@ class P01AuthorChecks(unittest.TestCase):
                 for phase in ("learn", "apply", "prove"):
                     self.assertTrue(goal["phases"][phase]["starter_code"])
                 for phase in ("apply", "prove"):
+                    if goal["id"] == "P01-REVIEW" and phase == "apply":
+                        continue
                     self.assertGreaterEqual(len(goal["phases"][phase]["public_checks"]), 2)
                 self.assertIn(goal["id"], self.manuscript)
         self.assertGreater(len(self.manuscript.split()), 5000)
@@ -58,9 +61,10 @@ class P01AuthorChecks(unittest.TestCase):
     def test_real_reference_programs_all_changed_cases(self):
         reference = {x["id"]: x for x in self.author["goals"]}
         reference["P01-CAPSTONE"] = self.author["capstone"]
-        for goal in [*self.lesson["goals"], self.lesson["capstone"]]:
+        reference["P01-REVIEW"] = self.author["review"]
+        for goal in [*self.lesson["goals"], self.lesson["capstone"], self.lesson["review"]]:
             item = reference[goal["id"]]
-            for phase in ("apply", "prove"):
+            for phase in (("prove",) if goal["id"] == "P01-REVIEW" else ("apply", "prove")):
                 program = compile(item[phase + "_solution"], goal["id"] + "/" + phase, "exec")
                 self.assertEqual(
                     item[phase + "_checks"], goal["phases"][phase]["public_checks"],
@@ -73,7 +77,7 @@ class P01AuthorChecks(unittest.TestCase):
                             exec(program, namespace)
                         for expression in case["assertions"]:
                             self.assertTrue(eval(expression, namespace), expression)
-                        if goal["id"] == "P01-CAPSTONE":
+                        if goal["id"] in ("P01-CAPSTONE", "P01-REVIEW"):
                             self.assertTrue(output.getvalue().strip(), "Capstone must print a report")
 
 if __name__ == "__main__":
