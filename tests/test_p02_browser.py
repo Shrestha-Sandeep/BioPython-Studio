@@ -104,6 +104,9 @@ def main():
             # G02 parsing: valid and malformed strings produce different Boolean flags
             page.locator("#p01-goal-select").select_option("1")
             page.locator("#tab-apply").click()
+            page.locator("#p01-check").click()
+            assert "Write your Python solution below the task comments" in page.locator("#output-placeholder").inner_text()
+            assert "P02-G02:apply" not in page.evaluate("JSON.parse(localStorage.getItem('biopython.p02.v1')).progress")
             set_code(page,"tokens = raw_id.split('_')\ntoken_count = len(tokens)\nstructure_ok = token_count == 3 and tokens[0] != '' and tokens[1] != '' and tokens[2] != ''")
             page.locator("#p01-check").click()
             wait_pass(page,4)
@@ -125,6 +128,8 @@ def main():
             # Both capstone activities execute ALL changed input cases in real Pyodide.
             page.locator("#p01-goal-select").select_option("4")
             page.locator("#tab-apply").click()
+            page.get_by_text("Build in short passes").click()
+            assert "PASS 6" in page.locator("#p01-detail-root").inner_text()
             set_code(page,CAP_APPLY)
             page.locator("#p01-check").click()
             wait_pass(page,11)
