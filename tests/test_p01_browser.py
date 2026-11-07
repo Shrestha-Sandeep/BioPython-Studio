@@ -128,15 +128,18 @@ def main():
 
             # Review is a distinct task; simulate elapsed time to verify classification
             # without pretending that this automated check proves retained learning.
-            page.evaluate("""() => {
-              const x=JSON.parse(localStorage.getItem('biopython.p01.v1'));
-              x.capstoneFirstPassAt=Date.now()-25*3600*1000;
-              localStorage.setItem('biopython.p01.v1',JSON.stringify(x));
+            # Init scripts modify the stored fixture *after* beforeunload saves and
+            # *before* adapter initialization, correctly simulating a later visit.
+            page.add_init_script("""() => {
+              const x=JSON.parse(localStorage.getItem('biopython.p01.v1')||'null');
+              if(x){x.capstoneFirstPassAt=Date.now()-25*3600*1000;
+                localStorage.setItem('biopython.p01.v1',JSON.stringify(x));}
             }""")
             page.reload(wait_until="domcontentloaded")
             page.locator("#p01-goal-select").wait_for(timeout=20000)
             page.locator("#p01-goal-select").select_option("8")
             page.locator("#tab-prove").click()
+            assert page.locator("#tab-prove").get_attribute("aria-selected") == "true"
             assert "delayed practice" in page.locator("#p01-detail-root").inner_text().lower()
             page.evaluate("""code => document.querySelector('.CodeMirror').CodeMirror.setValue(code)""",
                 "physical_span_um = span_px / px_per_um\n"
