@@ -16,11 +16,12 @@ try {
  }
 }catch{}
 const pythonSelected=()=>document.querySelector('[data-stage="Python"]')?.getAttribute("aria-current")==="page";
+const codeSelected=()=>document.querySelector('[data-mode="python"]')?.getAttribute("aria-pressed")==="true";
 const bridge=()=>window.BioPythonStudioBridge;
 const goal=()=>chapter?.goals[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
-const active=()=>!!chapter&&pythonSelected();
+const active=()=>!!chapter&&pythonSelected()&&codeSelected();
 function save(){
  try{localStorage.setItem(KEY,JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,hints:state.hints,progress:state.progress}));el("save-status").textContent="Saved locally";}
  catch{el("save-status").textContent="Saving blocked";}
@@ -177,6 +178,9 @@ function mount(){
  });
  document.querySelectorAll("[data-stage]").forEach(b=>b.addEventListener("click",()=>{
   if(active()){render();bridge()?.expandLesson?.(true);}
+ }));
+ document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
+  if(active())render();
  }));
  document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();run();}});
  window.addEventListener("beforeunload",remember);
