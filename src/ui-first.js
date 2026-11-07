@@ -86,7 +86,7 @@
   function startEditor() {
     if (window.CodeMirror && typeof window.CodeMirror.fromTextArea === "function") {
       cm = window.CodeMirror.fromTextArea($("code-editor"), {
-        mode: "python", lineNumbers: true, lineWrapping: false,
+        mode: "python", lineNumbers: true, lineWrapping: window.innerWidth <= 900,
         indentUnit: 4, tabSize: 4, indentWithTabs: false,
         matchBrackets: true, autoCloseBrackets: true, viewportMargin: 10,
         extraKeys: {
@@ -543,7 +543,7 @@
     if (imageURL) URL.revokeObjectURL(imageURL);
     if (comparisonURL) URL.revokeObjectURL(comparisonURL);
   });
-  window.addEventListener("resize", () => { if (cm) cm.refresh(); fitImageDisplays(); });
+  window.addEventListener("resize", () => { if (cm) { cm.setOption("lineWrapping", window.innerWidth <= 900); cm.refresh(); } fitImageDisplays(); });
   if (typeof ResizeObserver === "function") {
     const imageObserver = new ResizeObserver(fitImageDisplays);
     imageObserver.observe($("image-canvas"));
