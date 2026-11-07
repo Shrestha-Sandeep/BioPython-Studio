@@ -1,7 +1,7 @@
 {
   "schema_version": "bps.chapter.v1",
   "chapter_id": "P03",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "status": "CONTENT_CANDIDATE_AWAITING_USER_TRIAL",
   "title": "Filter recorded microscope fields",
   "competencies": [
