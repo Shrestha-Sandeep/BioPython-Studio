@@ -34,6 +34,8 @@ const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
 const active=()=>!!chapter&&pythonSelected()&&codeSelected();
+const newerChapter=()=>["P04","P05","P06"].includes(activeId);
+function preferEditorWhenCoding(){if(newerChapter())bridge()?.expandLesson?.(state.phase==="learn");}
 // Task comments are not an attempt. Keep actual Python separate from the prompt.
 const hasExecutableCode=code=>String(code||"").split(/\r?\n/).some(line=>{
  const value=line.trim();
@@ -135,11 +137,11 @@ function render(){
 }
 function chooseGoal(n){
  if(!chapter||n<0||n>=goals().length)return;
- remember();state.goal=n;state.phase="learn";bridge()?.selectPhase?.("learn");render();
+ remember();state.goal=n;state.phase="learn";bridge()?.selectPhase?.("learn");preferEditorWhenCoding();render();
 }
 function choosePhase(name){
  if(!chapter||!["learn","apply","prove"].includes(name))return;
- remember();state.phase=name;render();
+ remember();state.phase=name;preferEditorWhenCoding();render();
 }
 function instance(){
  if(worker)return worker;
@@ -287,6 +289,7 @@ function switchChapter(next){
  state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
  refreshGoalOptions();
  bridge()?.selectPhase?.(state.phase);
+ bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
  render();save();
 }
 function mount(){
@@ -327,7 +330,7 @@ function mount(){
   b.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight"].includes(e.key))queueMicrotask(()=>choosePhase(document.querySelector('[data-phase][aria-selected="true"]')?.dataset.phase||"learn"));});
  });
  document.querySelectorAll("[data-stage]").forEach(b=>b.addEventListener("click",()=>{
-  syncActivity();if(active()){render();bridge()?.expandLesson?.(true);}
+  syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
  }));
  document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
   syncActivity();if(active())render();
@@ -348,7 +351,7 @@ async function start(){
   if(!chapters[activeId])activeId="P01";
   chapter=chapters[activeId];state=states[activeId];
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
-  mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(true);
+  mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
   render();syncActivity();
   el("output-placeholder").textContent="Run your code to see real Python output or traceback.";
   status("Python ready to load on first Run");
