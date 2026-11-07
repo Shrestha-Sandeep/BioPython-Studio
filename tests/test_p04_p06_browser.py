@@ -106,7 +106,7 @@ def main():
             for width,height in ((390,844),(768,920),(1440,900)):
                 mobile=browser.new_page(viewport={"width":width,"height":height})
                 mobile.goto(URL,wait_until="domcontentloaded")
-                mobile.locator("#bps-chapter-select").wait_for(timeout=20000)
+                mobile.locator("#bps-chapter-select").wait_for(state="attached",timeout=20000)
                 if width<=720:mobile.locator("#nav-toggle").click()
                 mobile.locator("#bps-chapter-select").select_option("P06")
                 mobile.locator("#p01-goal-select").select_option("6")
