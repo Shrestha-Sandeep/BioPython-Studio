@@ -117,6 +117,10 @@ def main():
             assert "sample_code = " in exported
             assert "length_um = roi_length_px / calibration_px_per_um" in exported
             assert "Synthetic microscopy records" in exported
+            exported_run = subprocess.run([sys.executable, str(download.path())],
+                                          capture_output=True, text=True, timeout=10)
+            assert exported_run.returncode == 0, exported_run.stderr
+            assert "mutX_R04: 17.5 um" in exported_run.stdout, exported_run.stdout
 
             # Resume the capstone with the same phase, code and reflection.
             page.reload(wait_until="domcontentloaded")
@@ -174,6 +178,8 @@ def main():
                 mobile.locator("#tab-prove").click()
                 mobile.locator("#p01-reflection").fill("Units, calibration and biological independence require interpretation.")
                 assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), ("Capstone overflow",width)
+                editor_box=mobile.locator("#code-wrapper").bounding_box()
+                assert editor_box and editor_box["y"] < height, ("Code editor pushed below first screen",width,editor_box)
                 assert mobile.locator("#p01-export").count()==1
                 assert not page_errors, ("Responsive P01 JavaScript errors",width,page_errors)
                 if width in (390,1440):
