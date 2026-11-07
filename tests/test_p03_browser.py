@@ -130,16 +130,26 @@ def run_checks(page, goal_id, phase, script, count):
     page.locator("#tab-" + phase).click()
     set_code(page, script)
     page.locator("#p01-check").click()
-    page.wait_for_function(
-        """([id, phase, count]) => {
-          const data = JSON.parse(localStorage.getItem('biopython.p03.v1') || '{}');
-          const progress = data.progress && data.progress[id + ':' + phase];
-          const output = document.querySelector('#output-body')?.innerText || '';
-          return progress && ['practice_passed','guided','review_practice_passed','delayed_practice_passed'].includes(progress.status)
-            && output.includes('Passed ' + count + ' changed-input checks');
-        }""",
-        arg=[goal_id, phase, count], timeout=90000
-    )
+    try:
+        page.wait_for_function(
+            """([id, phase, count]) => {
+              const data = JSON.parse(localStorage.getItem('biopython.p03.v1') || '{}');
+              const progress = data.progress && data.progress[id + ':' + phase];
+              const output = document.querySelector('#output-body')?.innerText || '';
+              return progress && ['practice_passed','guided','review_practice_passed','delayed_practice_passed'].includes(progress.status)
+                && output.includes('Passed ' + count + ' changed-input checks');
+            }""",
+            arg=[goal_id, phase, count], timeout=25000
+        )
+    except Exception:
+        print("P03 ACTIVITY CHECK FAILED:", goal_id, phase, "cases", count, flush=True)
+        print("CONSOLE:", page.locator("#output-body").inner_text(), flush=True)
+        print("RUNTIME:", page.locator(".runtime-state").inner_text(), flush=True)
+        print("PHASE:", page.locator("#phase-caption").inner_text(), flush=True)
+        print("GOAL:", page.locator("#p01-goal-select").input_value(), flush=True)
+        print("PROGRESS:", page.evaluate("JSON.parse(localStorage.getItem('biopython.p03.v1'))"), flush=True)
+        raise
+    print("P03 CHECK PASSED:", goal_id, phase, count, flush=True)
 
 def main():
     server = subprocess.Popen(
