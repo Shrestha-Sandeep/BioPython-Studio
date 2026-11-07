@@ -5,13 +5,14 @@ const el=id=>document.getElementById(id);
 const KEYS={P01:"biopython.p01.v1",P02:"biopython.p02.v1",P03:"biopython.p03.v1"};
 const SELECT_KEY="biopython.course-selected.v1";
 const chapters={},states={};
-const fresh=()=>({goal:0,phase:"learn",drafts:{},hints:{},progress:{},reflections:{},capstoneFirstPassAt:null});
+const fresh=()=>({goal:0,phase:"learn",drafts:{},briefIntroduced:{},hints:{},progress:{},reflections:{},capstoneFirstPassAt:null});
 function loadState(id){
  const next=fresh();
  try{
   const old=JSON.parse(localStorage.getItem(KEYS[id])||"null");
   if(old&&typeof old==="object"){
    if(old.drafts&&typeof old.drafts==="object")next.drafts=old.drafts;
+    if(old.briefIntroduced&&typeof old.briefIntroduced==="object")next.briefIntroduced=old.briefIntroduced;
    if(old.hints&&typeof old.hints==="object")next.hints=old.hints;
    if(old.progress&&typeof old.progress==="object")next.progress=old.progress;
    if(old.reflections&&typeof old.reflections==="object")next.reflections=old.reflections;
@@ -34,7 +35,7 @@ const key=()=>String(goal()?.id)+":"+state.phase;
 const active=()=>!!chapter&&pythonSelected()&&codeSelected();
 function save(){
  try{
-  localStorage.setItem(KEYS[activeId],JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,hints:state.hints,progress:state.progress,reflections:state.reflections,capstoneFirstPassAt:state.capstoneFirstPassAt}));
+  localStorage.setItem(KEYS[activeId],JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,briefIntroduced:state.briefIntroduced,hints:state.hints,progress:state.progress,reflections:state.reflections,capstoneFirstPassAt:state.capstoneFirstPassAt}));
   localStorage.setItem(SELECT_KEY,activeId);
   el("save-status").textContent="Saved locally";
  }catch{el("save-status").textContent="Saving blocked";}
@@ -108,8 +109,19 @@ function render(){
    (evidence.status==="delayed_practice_passed"?"Delayed practice completed (not certified)":
    evidence.status==="practice_passed"?"Prove practice checks passed":"Last attempt: "+evidence.status):
    "One goal at a time · no automatic mastery";
- const value=Object.prototype.hasOwnProperty.call(state.drafts,key())?state.drafts[key()]:t.starter_code;
- bridge()?.writeCode?.(value);
+ const hasDraft=Object.prototype.hasOwnProperty.call(state.drafts,key());
+  let value=hasDraft?state.drafts[key()]:t.starter_code;
+  if(hasDraft&&!state.briefIntroduced[key()]){
+    // One-time, non-destructive migration for code saved before editor briefs.
+    state.briefIntroduced[key()]=true;
+    const marker="# "+g.id+" | "+state.phase.toUpperCase()+" |";
+    if(typeof value==="string"&&!value.startsWith(marker)){
+      const brief=t.starter_code.split("\n\n")[0];
+      value=brief+"\n\n"+value;
+      state.drafts[key()]=value;
+    }
+  }
+  bridge()?.writeCode?.(value);
  el("crumb").textContent="Python foundations · "+activeId;
  el("page-title").textContent="Python workspace";
  el("page-subtitle").textContent=g.why;
