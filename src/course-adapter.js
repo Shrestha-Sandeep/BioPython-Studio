@@ -207,7 +207,8 @@ async function check(){
   const advice=goal()?.feedback?.[errorType] || (bad>0?goal()?.feedback?.hardcoded:null)
     || task()?.practice_feedback?.check || (errorType?"Inspect the failing line and variables in the traceback.":"Check that your result uses the supplied inputs and expected units.");
   const reason=item.traceback||f?.error||"Practice condition failed: "+f?.expression;
-  output("Input: "+JSON.stringify(cases[bad].inputs)+"\n"+reason+"\n\nDiagnostic: "+advice,true);
+  const inputLines=Object.entries(cases[bad].inputs||{}).map(([name,value])=>name+" = "+pyLiteral(value)).join("\n");
+  output("Test input (Python):\n"+inputLines+"\n"+reason+"\n\nDiagnostic: "+advice,true);
   if(key()===k)progress("needs_review");
  }else{
   let classification=state.hints[k]?"guided":"practice_passed";
