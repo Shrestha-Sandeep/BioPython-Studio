@@ -188,6 +188,7 @@ async function check(){
 }
 function syncActivity(){
  const visible=active();
+ document.body.classList.toggle("p01-active",visible);
  const navigation=el("p01-navigation");
  if(navigation)navigation.hidden=!visible;
  el("run-button").disabled=!visible||busy;
@@ -238,7 +239,7 @@ function mount(){
  const checker=document.createElement("button");checker.type="button";checker.id="p01-check";checker.className="subtle-button";checker.textContent="Check";
  const exportButton=document.createElement("button");
  exportButton.id="p01-export";exportButton.className="subtle-button";exportButton.type="button";
- exportButton.textContent="Export .py";exportButton.hidden=true;
+ exportButton.textContent="Export";exportButton.title="Download standalone Python script (.py)";exportButton.setAttribute("aria-label","Export runnable Python script");exportButton.hidden=true;
  exportButton.addEventListener("click",exportPython);
  el("run-button").before(checker,exportButton);checker.addEventListener("click",check);el("run-button").addEventListener("click",run);
  el("result-output").addEventListener("click",()=>{if(lastOutput)restoreOutput();});
@@ -265,7 +266,8 @@ async function start(){
   if(!chapter.capstone||!chapter.review)throw new Error("P01 capstone or return activity missing.");
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
   mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(true);
-  render();syncActivity();status("Python ready to load on first Run");
+  render();syncActivity();el("output-placeholder").textContent="Run your code to see real Python output or a traceback.";
+  status("Python ready to load on first Run");
  }catch(e){el("lesson-summary").textContent="P01 failed to load";el("phase-description").textContent=String(e);status("Content unavailable; old UI drafts preserved");}
 }
 start();
