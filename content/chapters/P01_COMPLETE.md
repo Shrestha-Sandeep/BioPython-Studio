@@ -708,6 +708,18 @@ Finally, imagine a notebook that once calculated width using 4 pixels/µm, then 
 
 In a real pipeline you must identify all three kinds of failure.
 
+
+## Independent later-session task (P01-REVIEW)
+
+This task is intentionally separated from the main capstone. After completing P01, return on a later day and reconstruct the report without copying the previous solution. **At least 24 hours is recommended**, but the exercise can be attempted sooner and will be labelled immediate practice rather than delayed retrieval.
+
+**New input names:** `record_id`, `field_total`, `stain`, `span_px` and `px_per_um`. Produce `physical_span_um`, its Python type name in `report_type` and a string `report_line` using the requested pattern. The app uses three changed-input cases. A solved example is deliberately omitted.
+
+**Independent reflection:** How does doubling `px_per_um` change the physical span? What data provenance would make the numeric conversion scientifically trustworthy? How could an old Jupyter value persist when input calibration is edited? Record whether you consulted prior code or received help. The UI records when the first capstone check passed so the return interval can be described accurately.
+
+**Outcome label:** An interval of at least 24 hours plus successful checks supports a *delayed practice* label. It never automatically grants retained mastery, because the code, assertions and test cases are inspectable by the learner. A meaningful independent assessment requires human scrutiny or fresh tasks not provided with reference answers.
+
+
 ## Delayed retrieval and transition to P02
 
 On a later day, without viewing your previous code, write a fresh report for an unseen specimen and explain why the scale is valid. Your prior attempt remains saved and the interval is recorded; a browser-visible test cannot guarantee independent mastery.
