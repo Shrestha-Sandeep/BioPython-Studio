@@ -164,7 +164,7 @@ def main():
             page.on("pageerror", lambda exc: errors.append(str(exc)))
             page.goto(URL, wait_until="domcontentloaded")
             page.locator("#bps-chapter-select").wait_for(timeout=20000)
-            assert page.locator("#bps-chapter-select").locator("option").count() == 3
+            assert page.locator("#bps-chapter-select").locator("option").count() == 6
             assert page.locator("#bps-chapter-select").input_value() == "P01"
             assert page.evaluate("document.querySelector('.CodeMirror').CodeMirror.getValue().startsWith('# P01-G01 | LEARN |')")
 
