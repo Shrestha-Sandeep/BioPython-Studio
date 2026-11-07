@@ -1,0 +1,1425 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "P03",
+  "version": "1.0.0",
+  "status": "CONTENT_CANDIDATE_AWAITING_USER_TRIAL",
+  "title": "Filter recorded microscope fields",
+  "competencies": [
+    "012",
+    "013",
+    "014",
+    "015",
+    "016",
+    "017",
+    "018"
+  ],
+  "intro": "Keep microscope-field identities attached to quality scores while using lists, tuples, for/enumerate/while loops and explicit skip/stop rules. Build an auditable accepted/rejected/missing/invalid field-QC report.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner",
+    "asset": "assets/witz/fluorescence-examples.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "AUTHENTIC_WITZ_HPA_IMAGE_AS_CONTEXT_NOT_RAW_QUANTITATIVE_DATA",
+    "caution": "Field IDs, score scales, thresholds and records are synthetic; a field is not an independent biological replicate."
+  },
+  "goals": [
+    {
+      "id": "P03-G01",
+      "title": "Index and slice field lists",
+      "competencies": [
+        "016"
+      ],
+      "why": "File order and field identity are different. Safe indexing must account for empty acquisitions.",
+      "explain": [
+        "**A Python list preserves an explicit order.** Use brackets to store fields such as `['F09','F02','F11']`. The first item is index 0, regardless of the digits in its identifier. An identifier F09 does not mean the ninth position or the ninth biological replicate.",
+        "**Indexing and slicing behave differently.** `[0]` selects the first item; `[-1]` selects the last. A slice `[1:3]` returns items 1 and 2 because the right endpoint is excluded. `[:2]` returns up to two items, and `[-2:]` returns the last two, even when a list is short.",
+        "**Missing data must stay explicit.** Indexing an empty list raises IndexError. If no fields were recorded, do not pretend the first field exists: test `if field_ids` and return None where the task specifies it. Slicing an empty list safely returns another empty list.",
+        "**Scientific interpretation:** acquisition order, displayed file number and biological replicate are different concepts. A slice is a computational selection, not a documented quality-exclusion rule. Keep IDs alongside measurements so later audits can trace what was selected.",
+        "**Diagnostic habit:** deliberately trigger an IndexError with an out-of-range integer and read the traceback. The correct fix is an explicit size policy, not copying the prior record's ID."
+      ],
+      "worked_example": {
+        "code": "field_ids = ['F09', 'F02', 'F11']\nprint(field_ids[0])\nprint(field_ids[-1])\nprint(field_ids[1:3])",
+        "predict": "What are the first ID, last ID and returned two-item slice?"
+      },
+      "prediction_answer": "F09, F11 and ['F02', 'F11']. The list positions start at zero.",
+      "walkthrough": [
+        "Track list positions 0, 1 and 2 without changing their text labels.",
+        "Explain why index -1 selects the last item.",
+        "Write the positions included by [1:3] before running."
+      ],
+      "investigate": [
+        "Try a reordered list with the same IDs.",
+        "Compare [:2], [-2:] and [2:2].",
+        "Try indexing an empty list and inspect IndexError."
+      ],
+      "debug_task": "A researcher calls field_ids[1] the first acquired field. Diagnose the off-by-one mistake.",
+      "misconception": "The digits in the filename are Python indexes and imply biological replication.",
+      "scientific_boundary": "IDs and ordering are synthetic; no real microscope-field provenance is inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
+          "starter_code": "field_ids = ['F09', 'F02', 'F11']\nprint(field_ids[0])\nprint(field_ids[-1])\nprint(field_ids[1:3])",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "From field_ids, assign first_id and last_id (None if empty), plus a new first_two list. Never crash for an empty list.",
+          "starter_code": "# Inputs: field_ids\n",
+          "preview_inputs": {
+            "field_ids": [
+              "F09",
+              "F02",
+              "F11"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_ids": [
+                  "F09",
+                  "F02",
+                  "F11"
+                ]
+              },
+              "assertions": [
+                "first_id == 'F09'",
+                "last_id == 'F11'",
+                "first_two == ['F09','F02']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [
+                  "F20"
+                ]
+              },
+              "assertions": [
+                "first_id == 'F20'",
+                "last_id == 'F20'",
+                "first_two == ['F20']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": []
+              },
+              "assertions": [
+                "first_id is None",
+                "last_id is None",
+                "first_two == []"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [
+                  "F04",
+                  "F30",
+                  "F02",
+                  "F11"
+                ]
+              },
+              "assertions": [
+                "first_two == ['F04','F30']",
+                "last_id == 'F11'"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given roi_ids, create last_two (final up to two IDs), interior (all except first and last) and empty (Boolean).",
+          "starter_code": "# Inputs: roi_ids\n",
+          "preview_inputs": {
+            "roi_ids": [
+              "ROI7",
+              "ROI2",
+              "ROI9",
+              "ROI4"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "roi_ids": [
+                  "ROI7",
+                  "ROI2",
+                  "ROI9",
+                  "ROI4"
+                ]
+              },
+              "assertions": [
+                "last_two == ['ROI9','ROI4']",
+                "interior == ['ROI2','ROI9']",
+                "empty is False"
+              ]
+            },
+            {
+              "inputs": {
+                "roi_ids": [
+                  "ROI1"
+                ]
+              },
+              "assertions": [
+                "last_two == ['ROI1']",
+                "interior == []",
+                "empty is False"
+              ]
+            },
+            {
+              "inputs": {
+                "roi_ids": []
+              },
+              "assertions": [
+                "last_two == []",
+                "interior == []",
+                "empty is True"
+              ]
+            },
+            {
+              "inputs": {
+                "roi_ids": [
+                  "ROI5",
+                  "ROI6"
+                ]
+              },
+              "assertions": [
+                "last_two == ['ROI5','ROI6']",
+                "interior == []"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Index zero is first; use a conditional expression to handle an empty list.",
+          "Slices such as [:2] and [-2:] do not fail when the list is short."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "The list is empty or shorter than assumed. Check length before indexing; safe slices can return fewer items.",
+        "hardcoded": "Never infer list positions from digits in field IDs."
+      },
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice; hint use retained",
+        "prove": "Transfer exercise on changed input; not certified independent mastery"
+      }
+    },
+    {
+      "id": "P03-G02",
+      "title": "Copy and change lists safely",
+      "competencies": [
+        "017"
+      ],
+      "why": "A quality-control output must not rewrite raw recorded field identifiers.",
+      "explain": [
+        "**Lists are mutable objects.** If you write `reviewed = recorded`, both names point to the same list. Calling reviewed.append or reviewed.remove then changes what recorded displays. A raw acquisition record must not be silently mutated by its downstream analysis.",
+        "**A copy creates a separate output list.** Write `reviewed = recorded.copy()` or `recorded[:]` for a shallow copy. With a list of simple ID strings, this is enough. `reviewed.append('F11')` then changes only reviewed.",
+        "**Equality and identity differ.** Two lists can contain equal items (`==`) without being the same object (`is`). The practice checks ensure that the derived output is a separate list, even on an empty source.",
+        "**Removal requires a clear policy.** `remove(value)` deletes the first matching item; it raises ValueError if absent. Use `if value in reviewed` before removing uncertain entries. Removing only the first occurrence is deliberately different from silently deleting every duplicate.",
+        "**Never edit a collection while iterating through it.** That can skip subsequent elements. Build a new output and preserve the source for audit. The later capstone will build separate lists of accepted, low, missing and invalid fields."
+      ],
+      "worked_example": {
+        "code": "recorded = ['F09', 'F02']\nreviewed = recorded.copy()\nreviewed.append('F11')\nprint(recorded)\nprint(reviewed)\nprint(reviewed is recorded)",
+        "predict": "Does the recorded source gain F11? Are the lists the same object?"
+      },
+      "prediction_answer": "Recorded stays ['F09','F02']; reviewed adds F11; the final identity comparison prints False.",
+      "walkthrough": [
+        "Predict whether direct assignment makes a copy.",
+        "Run the two lists side by side after append.",
+        "Check the difference between equality of content and identity."
+      ],
+      "investigate": [
+        "Replace .copy() with direct assignment; observe the source mutation, then restore it.",
+        "Try removing an absent ID and inspect ValueError.",
+        "Add the same ID twice; reason about duplicates."
+      ],
+      "debug_task": "An audit routine edits the input list to hide a rejected field. Explain why a derived copy is required.",
+      "misconception": "Assigning a new variable always creates a separate list.",
+      "scientific_boundary": "Preserving synthetic raw IDs is a provenance principle, not evidence that acquisition was performed correctly.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
+          "starter_code": "recorded = ['F09', 'F02']\nreviewed = recorded.copy()\nreviewed.append('F11')\nprint(recorded)\nprint(reviewed)\nprint(reviewed is recorded)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Create audit_ids as an independent copy of source_ids, append new_id and leave source_ids unchanged.",
+          "starter_code": "# Inputs: source_ids, new_id\n",
+          "preview_inputs": {
+            "source_ids": [
+              "F09",
+              "F02"
+            ],
+            "new_id": "F11"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "source_ids": [
+                  "F09",
+                  "F02"
+                ],
+                "new_id": "F11"
+              },
+              "assertions": [
+                "audit_ids == ['F09','F02','F11']",
+                "audit_ids is not source_ids",
+                "source_ids == ['F09','F02']"
+              ]
+            },
+            {
+              "inputs": {
+                "source_ids": [],
+                "new_id": "F01"
+              },
+              "assertions": [
+                "audit_ids == ['F01']",
+                "audit_ids is not source_ids",
+                "source_ids == []"
+              ]
+            },
+            {
+              "inputs": {
+                "source_ids": [
+                  "F03",
+                  "F03"
+                ],
+                "new_id": "F04"
+              },
+              "assertions": [
+                "audit_ids == ['F03','F03','F04']",
+                "source_ids == ['F03','F03']"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given raw_candidates and excluded_id, make reviewed_candidates as a copy; remove only the first matching ID when present, and set removal_done accordingly. Preserve the source.",
+          "starter_code": "# Inputs: raw_candidates, excluded_id\n",
+          "preview_inputs": {
+            "raw_candidates": [
+              "ROI7",
+              "ROI1",
+              "ROI5"
+            ],
+            "excluded_id": "ROI1"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "raw_candidates": [
+                  "ROI7",
+                  "ROI1",
+                  "ROI5"
+                ],
+                "excluded_id": "ROI1"
+              },
+              "assertions": [
+                "reviewed_candidates == ['ROI7','ROI5']",
+                "removal_done is True",
+                "raw_candidates == ['ROI7','ROI1','ROI5']",
+                "reviewed_candidates is not raw_candidates"
+              ]
+            },
+            {
+              "inputs": {
+                "raw_candidates": [
+                  "ROI7",
+                  "ROI1"
+                ],
+                "excluded_id": "ROI9"
+              },
+              "assertions": [
+                "reviewed_candidates == ['ROI7','ROI1']",
+                "removal_done is False"
+              ]
+            },
+            {
+              "inputs": {
+                "raw_candidates": [
+                  "ROI1",
+                  "ROI1",
+                  "ROI5"
+                ],
+                "excluded_id": "ROI1"
+              },
+              "assertions": [
+                "reviewed_candidates == ['ROI1','ROI5']",
+                "removal_done is True"
+              ]
+            },
+            {
+              "inputs": {
+                "raw_candidates": [],
+                "excluded_id": "ROI9"
+              },
+              "assertions": [
+                "reviewed_candidates == []",
+                "removal_done is False"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with a .copy(), not a direct alias.",
+          "append adds to the derived list; remove requires checking membership when uncertain."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Removing a missing item causes ValueError. Check membership before removing.",
+        "hardcoded": "The source and reviewed lists must follow new input cases, including duplicates."
+      },
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice; hint use retained",
+        "prove": "Transfer exercise on changed input; not certified independent mastery"
+      }
+    },
+    {
+      "id": "P03-G03",
+      "title": "Unpack immutable tuple records",
+      "competencies": [
+        "018"
+      ],
+      "why": "A paired field ID and score should stay linked when passed between steps.",
+      "explain": [
+        "**A tuple is an ordered, fixed-size record.** For example, `('F09', 0.83)` holds a field ID and a synthetic focus score. A tuple cannot have a top-level item replaced using indexing. Immutability discourages accidental edits, although it cannot verify scientific authenticity.",
+        "**Unpacking assigns meaningful names.** `field_id, score = record` gives two separate names to the tuple's two values. Unpacking also works for a two-element list; browser JSON transmits arrays as lists, so the exercise explicitly creates a real tuple for the immutable result.",
+        "**Record shape matters.** Unpacking a one-element or three-element record into two names raises ValueError. The correct response is to detect malformed input shape rather than pair an ID with a score from an earlier field.",
+        "**Immutable is not validated.** A tuple cannot prove that its two entries belong to the same experimental observation. A tuple can also contain mutable nested elements, though this chapter uses only text and numeric values.",
+        "**Keep units and types clear.** An ID is text, a quality score is a measurement-like numeric example, and None denotes missing. Their positions and meanings must never be silently exchanged."
+      ],
+      "worked_example": {
+        "code": "record = ('F09', 0.83)\nfield_id, score = record\nprint(field_id)\nprint(score)\nprint(type(record).__name__)",
+        "predict": "Which values and type name appear?"
+      },
+      "prediction_answer": "F09, 0.83 and tuple.",
+      "walkthrough": [
+        "Read the two elements in order.",
+        "Unpack into field_id and score.",
+        "Confirm that the type is tuple rather than list."
+      ],
+      "investigate": [
+        "Try reassigning record[0] and inspect TypeError.",
+        "Try unpacking a one-element tuple into two names and inspect ValueError.",
+        "Swap the names in the unpacking statement and notice the scientific interpretation error."
+      ],
+      "debug_task": "An ID and focus score are unpacked in reverse order and the script compares a string to a numeric cutoff. Diagnose the swapped fields.",
+      "misconception": "A tuple automatically certifies that its contents represent a genuine recorded field.",
+      "scientific_boundary": "All values are synthetic; a container type cannot establish field identity or calibration.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
+          "starter_code": "record = ('F09', 0.83)\nfield_id, score = record\nprint(field_id)\nprint(score)\nprint(type(record).__name__)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Unpack observed_pair into field_id and score, create frozen_pair as a tuple and report pair_type.",
+          "starter_code": "# Inputs: observed_pair\n",
+          "preview_inputs": {
+            "observed_pair": [
+              "F09",
+              0.83
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "observed_pair": [
+                  "F09",
+                  0.83
+                ]
+              },
+              "assertions": [
+                "field_id == 'F09'",
+                "score == 0.83",
+                "frozen_pair == ('F09',0.83)",
+                "pair_type == 'tuple'"
+              ]
+            },
+            {
+              "inputs": {
+                "observed_pair": [
+                  "F02",
+                  null
+                ]
+              },
+              "assertions": [
+                "field_id == 'F02'",
+                "score is None",
+                "frozen_pair == ('F02',None)",
+                "pair_type == 'tuple'"
+              ]
+            },
+            {
+              "inputs": {
+                "observed_pair": [
+                  "F31",
+                  0
+                ]
+              },
+              "assertions": [
+                "score == 0",
+                "frozen_pair == ('F31',0)",
+                "pair_type == 'tuple'"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From endpoints (two pixel coordinates), unpack begin_px and end_px, construct immutable_interval as a tuple, and compute span_px=end_px-begin_px.",
+          "starter_code": "# Inputs: endpoints\n",
+          "preview_inputs": {
+            "endpoints": [
+              18,
+              46
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "endpoints": [
+                  18,
+                  46
+                ]
+              },
+              "assertions": [
+                "begin_px == 18",
+                "end_px == 46",
+                "immutable_interval == (18,46)",
+                "span_px == 28",
+                "type(immutable_interval) is tuple"
+              ]
+            },
+            {
+              "inputs": {
+                "endpoints": [
+                  0,
+                  9
+                ]
+              },
+              "assertions": [
+                "span_px == 9",
+                "immutable_interval == (0,9)"
+              ]
+            },
+            {
+              "inputs": {
+                "endpoints": [
+                  12,
+                  12
+                ]
+              },
+              "assertions": [
+                "span_px == 0",
+                "immutable_interval == (12,12)"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Write `field_id, score = observed_pair` to unpack exactly two entries.",
+          "Create `frozen_pair = (field_id, score)`; inspect `type(frozen_pair).__name__`."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Two-name unpacking requires exactly two source values.",
+        "TypeError": "Tuple items cannot be reassigned. Create a new tuple instead.",
+        "hardcoded": "Read the supplied paired record, including None or 0 values."
+      },
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice; hint use retained",
+        "prove": "Transfer exercise on changed input; not certified independent mastery"
+      }
+    },
+    {
+      "id": "P03-G04",
+      "title": "Iterate and summarize microscope-field lists",
+      "competencies": [
+        "012"
+      ],
+      "why": "Every acquired field must be accounted for, including missing measurements.",
+      "explain": [
+        "**A for loop visits every item in order.** `for score in scores:` executes its indented block once per entry. Indentation is part of Python syntax; code incorrectly positioned outside the loop may count only one field or produce an error.",
+        "**Initialize counters before a loop.** Set accepted_count, rejected_count and missing_count to zero. Increment the relevant counter within its branch. Starting a counter inside the loop resets it on every iteration and destroys the total.",
+        "**None means missing, not zero.** A measurement-like score of 0.0 is an observed numeric value. None represents no usable measurement; comparing None with a float raises TypeError. Check `if score is None` before numerical comparisons.",
+        "**Count exclusions explicitly.** Under this goal's restricted input contract (values between 0 and 1 or None), accepted + rejected + missing must equal len(scores). You should be able to explain the count after each loop iteration, not merely after running the whole program.",
+        "**Do not confuse fields with replicates.** Acquired imaging fields may come from the same specimen, animal or well. A count of accepted fields is not a sample size for inferential statistics, and missing scores should not be replaced by invented measurements.",
+        "**A changed-input test is a scientific control.** Try all missing, no records, a score equal to threshold and a score of zero with minimum zero. A fixed output that happens to work for [0.9,None,0.2] is not a reusable analysis."
+      ],
+      "worked_example": {
+        "code": "scores = [0.9, None, 0.2]\nminimum = 0.8\naccepted = 0\nrejected = 0\nmissing = 0\nfor score in scores:\n    if score is None:\n        missing += 1\n    elif score >= minimum:\n        accepted += 1\n    else:\n        rejected += 1\nprint(accepted, rejected, missing)",
+        "predict": "What three counts appear? Why not count None as zero?"
+      },
+      "prediction_answer": "1 accepted, 1 rejected, 1 missing. None means unknown, while 0 is a numeric score.",
+      "walkthrough": [
+        "Initialize all counters before entering the loop.",
+        "Trace each reading in order and record the updated counters.",
+        "Verify the three totals sum to the length of the input."
+      ],
+      "investigate": [
+        "Try every score as None.",
+        "Set minimum=0 with an observed score of zero.",
+        "Move counter initialization inside the loop and diagnose the wrong total; restore it."
+      ],
+      "debug_task": "A script removes None and reports the shorter list length as the number of acquired fields. Explain which data disappeared.",
+      "misconception": "None and zero are equivalent and can be silently dropped from a QC report.",
+      "scientific_boundary": "Focus-like values are fabricated, and imaging field counts are not biological replicate counts.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
+          "starter_code": "scores = [0.9, None, 0.2]\nminimum = 0.8\naccepted = 0\nrejected = 0\nmissing = 0\nfor score in scores:\n    if score is None:\n        missing += 1\n    elif score >= minimum:\n        accepted += 1\n    else:\n        rejected += 1\nprint(accepted, rejected, missing)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Given scores (0..1 or None) and minimum, compute accepted_count, rejected_count and missing_count using a for loop.",
+          "starter_code": "# Inputs: scores, minimum\n",
+          "preview_inputs": {
+            "scores": [
+              0.9,
+              null,
+              0.2
+            ],
+            "minimum": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "scores": [
+                  0.9,
+                  null,
+                  0.2
+                ],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "accepted_count == 1",
+                "rejected_count == 1",
+                "missing_count == 1"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [],
+                "minimum": 0.5
+              },
+              "assertions": [
+                "accepted_count == 0",
+                "rejected_count == 0",
+                "missing_count == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [
+                  null,
+                  null
+                ],
+                "minimum": 0.1
+              },
+              "assertions": [
+                "accepted_count == 0",
+                "missing_count == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [
+                  0,
+                  0.5,
+                  0.8
+                ],
+                "minimum": 0
+              },
+              "assertions": [
+                "accepted_count == 3",
+                "missing_count == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [
+                  0.79,
+                  0.8,
+                  1
+                ],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "accepted_count == 2",
+                "rejected_count == 1"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "With measurements and limit, create kept_values (all values >= limit in original order), low_count and unknown_count for None.",
+          "starter_code": "# Inputs: measurements, limit\n",
+          "preview_inputs": {
+            "measurements": [
+              null,
+              0.85,
+              0.2,
+              0.8
+            ],
+            "limit": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "measurements": [
+                  null,
+                  0.85,
+                  0.2,
+                  0.8
+                ],
+                "limit": 0.8
+              },
+              "assertions": [
+                "kept_values == [0.85,0.8]",
+                "low_count == 1",
+                "unknown_count == 1"
+              ]
+            },
+            {
+              "inputs": {
+                "measurements": [],
+                "limit": 0.5
+              },
+              "assertions": [
+                "kept_values == []",
+                "low_count == 0",
+                "unknown_count == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "measurements": [
+                  0,
+                  0.1,
+                  null
+                ],
+                "limit": 0
+              },
+              "assertions": [
+                "kept_values == [0,0.1]",
+                "low_count == 0",
+                "unknown_count == 1"
+              ]
+            },
+            {
+              "inputs": {
+                "measurements": [
+                  0.2,
+                  0.4,
+                  0.6
+                ],
+                "limit": 0.5
+              },
+              "assertions": [
+                "kept_values == [0.6]",
+                "low_count == 2",
+                "unknown_count == 0"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Initialize your three counters outside `for score in scores`.",
+          "Check `score is None` first, then an inclusive numerical threshold."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "TypeError": "Compare only numeric values; check None first and record missingness.",
+        "hardcoded": "Count every supplied record including empty and all-missing inputs."
+      },
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice; hint use retained",
+        "prove": "Transfer exercise on changed input; not certified independent mastery"
+      }
+    },
+    {
+      "id": "P03-G05",
+      "title": "Number fields with range and enumerate",
+      "competencies": [
+        "013"
+      ],
+      "why": "Displayed sequence numbers must not be confused with field IDs or Python indexes.",
+      "explain": [
+        "**range produces numeric positions.** `list(range(3))` returns [0,1,2]. For a list of N entries, `range(len(items))` gives legal nonnegative indexes but does not provide each item automatically.",
+        "**enumerate gives an index and a value together.** `for number, field_id in enumerate(field_ids, start=1):` uses human-friendly ordinal numbers starting at one. The ID text stays unchanged even when its ordinal changes.",
+        "**Index, ordinal and identity are distinct.** The first item in ['F09','F02'] is at Python index 0, displays as Field 1, but has the source ID F09. Sorting or renumbering identifiers would change the meaning of the acquisition audit.",
+        "**Use enumerate only when position is needed.** If all you need is the score, `for score in scores` is simpler. If you need to report which acquisition position was missing, enumerate keeps the location and value paired.",
+        "**A missing reading should not shift later ordinals.** If frame 2 has None, preserve that position as missing instead of dropping it and relabeling frame 3 as frame 2. That is important for tracing back to source images."
+      ],
+      "worked_example": {
+        "code": "field_ids = ['F09','F02','F11']\nfor number, field_id in enumerate(field_ids, start=1):\n    print(f'Field {number}: {field_id}')\nprint(list(range(len(field_ids))))",
+        "predict": "Which displayed number accompanies F09? What range list appears?"
+      },
+      "prediction_answer": "Field 1: F09 is first; range yields [0,1,2].",
+      "walkthrough": [
+        "Compare the zero-based Python indexes and one-based display labels.",
+        "Follow enumerate through all three field IDs.",
+        "Check an empty list without producing invented numbers."
+      ],
+      "investigate": [
+        "Use default enumerate starting at zero.",
+        "Reorder IDs without changing their text.",
+        "Compare `range(len(...))` with `enumerate(..., start=1)`."
+      ],
+      "debug_task": "An analyst calls the ninth acquired field the first observation because it is named F09. Correct the confusion.",
+      "misconception": "The field name's numerical suffix always matches its array position.",
+      "scientific_boundary": "Acquisition display ordinals do not encode biological replication or calibrated coordinates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
+          "starter_code": "field_ids = ['F09','F02','F11']\nfor number, field_id in enumerate(field_ids, start=1):\n    print(f'Field {number}: {field_id}')\nprint(list(range(len(field_ids))))",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Given field_ids, create numbered_labels like 'Field 1: F09' using enumerate(start=1) and zero_indexes containing the corresponding Python indexes.",
+          "starter_code": "# Inputs: field_ids\n",
+          "preview_inputs": {
+            "field_ids": [
+              "F09",
+              "F02",
+              "F11"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_ids": [
+                  "F09",
+                  "F02",
+                  "F11"
+                ]
+              },
+              "assertions": [
+                "numbered_labels == ['Field 1: F09','Field 2: F02','Field 3: F11']",
+                "zero_indexes == [0,1,2]"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [
+                  "F20"
+                ]
+              },
+              "assertions": [
+                "numbered_labels == ['Field 1: F20']",
+                "zero_indexes == [0]"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": []
+              },
+              "assertions": [
+                "numbered_labels == []",
+                "zero_indexes == []"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [
+                  "F30",
+                  "F01"
+                ]
+              },
+              "assertions": [
+                "numbered_labels == ['Field 1: F30','Field 2: F01']"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given frame_scores (0..1 or None) and threshold, build missing_ordinals for None and passing_ordinals for numeric scores >= threshold, both using one-based positions.",
+          "starter_code": "# Inputs: frame_scores, threshold\n",
+          "preview_inputs": {
+            "frame_scores": [
+              null,
+              0.8,
+              0.2,
+              0.9
+            ],
+            "threshold": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "frame_scores": [
+                  null,
+                  0.8,
+                  0.2,
+                  0.9
+                ],
+                "threshold": 0.8
+              },
+              "assertions": [
+                "missing_ordinals == [1]",
+                "passing_ordinals == [2,4]"
+              ]
+            },
+            {
+              "inputs": {
+                "frame_scores": [
+                  0.8,
+                  0.8
+                ],
+                "threshold": 0.8
+              },
+              "assertions": [
+                "missing_ordinals == []",
+                "passing_ordinals == [1,2]"
+              ]
+            },
+            {
+              "inputs": {
+                "frame_scores": [],
+                "threshold": 0.2
+              },
+              "assertions": [
+                "missing_ordinals == []",
+                "passing_ordinals == []"
+              ]
+            },
+            {
+              "inputs": {
+                "frame_scores": [
+                  null,
+                  0,
+                  null
+                ],
+                "threshold": 0
+              },
+              "assertions": [
+                "missing_ordinals == [1,3]",
+                "passing_ordinals == [2]"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with numbered_labels=[] and use `enumerate(field_ids,start=1)`.",
+          "Append an f-string for each field. `list(range(len(field_ids)))` gives zero-based positions."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "TypeError": "Handle missing None before comparing numeric scores.",
+        "hardcoded": "Numbering must reflect list order, not digits in filenames."
+      },
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice; hint use retained",
+        "prove": "Transfer exercise on changed input; not certified independent mastery"
+      }
+    },
+    {
+      "id": "P03-G06",
+      "title": "Bound a while loop to finite input",
+      "competencies": [
+        "014"
+      ],
+      "why": "An automated scan must stop at the data boundary and its declared inspection limit.",
+      "explain": [
+        "**while repeats while a Boolean expression stays true.** Unlike for, a while loop does not automatically advance through a collection. You need to initialize an index and increment it on every iteration.",
+        "**Use two bounds.** `i < len(record_ids) and i < max_checks` stops when either the source list ends or the inspection budget is reached. Do not index into a list before checking that the current position exists.",
+        "**Do not create infinite loops.** Forgetting i += 1 can repeat the same observation forever. The app's worker timeout is only a protective limit, not a substitute for a logically bounded program. Do not run a known-infinite loop merely to see the timeout.",
+        "**Scan count and biological sample count differ.** max_checks limits the number of input rows visited. A short scan cannot prove that unvisited acquisition fields passed QC, nor can it establish the number of biological replicates.",
+        "**Boundary controls:** an empty list or max_checks=0 should visit nothing. A budget larger than the list should stop at its end. Negative budgets are excluded by this training task's input contract and would need separate validation in production."
+      ],
+      "worked_example": {
+        "code": "record_ids = ['F09','F02','F11']\nmax_checks = 2\ni = 0\nvisited = []\nwhile i < len(record_ids) and i < max_checks:\n    visited.append(record_ids[i])\n    i += 1\nprint(visited)\nprint(i)",
+        "predict": "How many IDs are visited? Why does F11 remain unvisited?"
+      },
+      "prediction_answer": "Two IDs, ['F09','F02']; the declared budget ends the loop at i=2.",
+      "walkthrough": [
+        "Initialize i and visited before entering the loop.",
+        "Check both the source-length and budget condition before indexing.",
+        "Increment i on every iteration, then explain which condition ended the loop."
+      ],
+      "investigate": [
+        "Set max_checks to zero.",
+        "Increase the budget above the source length.",
+        "Remove the index increment on paper and explain the infinite-loop risk; restore it before execution."
+      ],
+      "debug_task": "A program checks only max_checks and indexes beyond the source length. Repair the missing boundary.",
+      "misconception": "A while loop automatically detects the end of a list or increments its index.",
+      "scientific_boundary": "Partial inspection cannot justify conclusions about unvisited fields.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
+          "starter_code": "record_ids = ['F09','F02','F11']\nmax_checks = 2\ni = 0\nvisited = []\nwhile i < len(record_ids) and i < max_checks:\n    visited.append(record_ids[i])\n    i += 1\nprint(visited)\nprint(i)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Given record_ids and nonnegative max_checks, create visited in source order with a bounded while loop and next_index equal to the number visited.",
+          "starter_code": "# Inputs: record_ids, max_checks\n",
+          "preview_inputs": {
+            "record_ids": [
+              "F09",
+              "F02",
+              "F11"
+            ],
+            "max_checks": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "record_ids": [
+                  "F09",
+                  "F02",
+                  "F11"
+                ],
+                "max_checks": 2
+              },
+              "assertions": [
+                "visited == ['F09','F02']",
+                "next_index == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "record_ids": [
+                  "F09",
+                  "F02"
+                ],
+                "max_checks": 10
+              },
+              "assertions": [
+                "visited == ['F09','F02']",
+                "next_index == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "record_ids": [
+                  "F09"
+                ],
+                "max_checks": 0
+              },
+              "assertions": [
+                "visited == []",
+                "next_index == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "record_ids": [],
+                "max_checks": 5
+              },
+              "assertions": [
+                "visited == []",
+                "next_index == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "record_ids": [
+                  "F20",
+                  "F10",
+                  "F30"
+                ],
+                "max_checks": 2
+              },
+              "assertions": [
+                "visited == ['F20','F10']",
+                "next_index == 2"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given measurements and max_steps, use a bounded while loop to build inspected (including None values) and attempted count. Do not skip missing records.",
+          "starter_code": "# Inputs: measurements, max_steps\n",
+          "preview_inputs": {
+            "measurements": [
+              null,
+              0.9,
+              0.2
+            ],
+            "max_steps": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "measurements": [
+                  null,
+                  0.9,
+                  0.2
+                ],
+                "max_steps": 2
+              },
+              "assertions": [
+                "inspected == [None,0.9]",
+                "attempted == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "measurements": [
+                  0,
+                  0.2
+                ],
+                "max_steps": 10
+              },
+              "assertions": [
+                "inspected == [0,0.2]",
+                "attempted == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "measurements": [],
+                "max_steps": 7
+              },
+              "assertions": [
+                "inspected == []",
+                "attempted == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "measurements": [
+                  1,
+                  0.5
+                ],
+                "max_steps": 0
+              },
+              "assertions": [
+                "inspected == []",
+                "attempted == 0"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start i=0 and visited=[]; loop while both i<len(record_ids) and i<max_checks.",
+          "Append record_ids[i], then increment i += 1 inside the loop. Set next_index=i."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "The source list can be shorter than max_checks; test both bounds before indexing.",
+        "hardcoded": "The inspected prefix must follow the current source length and budget."
+      },
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice; hint use retained",
+        "prove": "Transfer exercise on changed input; not certified independent mastery"
+      }
+    },
+    {
+      "id": "P03-G07",
+      "title": "Skip and stop with explicit audit reasons",
+      "competencies": [
+        "015"
+      ],
+      "why": "A skipped missing score and a session-stop marker must not vanish into an apparently clean field count.",
+      "explain": [
+        "**continue skips only the current iteration.** Use it when you have already classified an observation, such as recording its ID as missing. The loop then moves to the next record. If you continue without recording the missing field, the report silently loses a known acquisition.",
+        "**break ends the entire loop.** An explicit STOP sentinel means later rows are outside the visited session. Break before classifying the sentinel; do not call later rows accepted or rejected. A sentinel is not a missing numerical value.",
+        "**None and zero remain distinct.** `None` indicates missing data, whereas 0.0 can be a valid observed focus score on this illustrative 0..1 scale. Classify None before numerical comparison to avoid TypeError.",
+        "**Scores outside a declared range are invalid, not merely low.** A score 1.4 should not be accepted as excellent focus when the declared scale ends at 1.0. Preserve an invalid category and explain the predeclared range policy.",
+        "**For labeled records**, unpack `[field_id, score]` pairs so a missing value remains attached to the correct field. Keep separate accepted/low/missing/invalid ID lists. Changing where STOP occurs should change the number of inspected records.",
+        "**Scientific caution:** selective stopping after observing favorable outcomes can bias a dataset. This chapter's sentinel is a synthetic session boundary, not a justification for post-hoc exclusion."
+      ],
+      "worked_example": {
+        "code": "readings = [0.9, None, 0.2, 'STOP', 1.0]\naccepted = []\nmissing_count = 0\nfor score in readings:\n    if score == 'STOP':\n        break\n    if score is None:\n        missing_count += 1\n        continue\n    if score >= 0.8:\n        accepted.append(score)\nprint(accepted, missing_count)",
+        "predict": "Does the final 1.0 count as accepted?"
+      },
+      "prediction_answer": "No. STOP halts before the final value; the result is [0.9] and one missing score.",
+      "walkthrough": [
+        "Distinguish None from an explicit STOP marker.",
+        "Count a missing reading before continue.",
+        "Break on STOP and explain why later data were not examined."
+      ],
+      "investigate": [
+        "Move STOP to the beginning.",
+        "Replace None by zero and classify the numeric observation.",
+        "Remove the missing counter increment on paper and explain the hidden exclusion."
+      ],
+      "debug_task": "A loop continues on None without recording the field as missing, then reports a smaller acquisition size. Diagnose the lost data.",
+      "misconception": "continue stops the entire loop and break skips just the current item.",
+      "scientific_boundary": "Stopped or skipped records must not be interpreted as biological outcomes.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
+          "starter_code": "readings = [0.9, None, 0.2, 'STOP', 1.0]\naccepted = []\nmissing_count = 0\nfor score in readings:\n    if score == 'STOP':\n        break\n    if score is None:\n        missing_count += 1\n        continue\n    if score >= 0.8:\n        accepted.append(score)\nprint(accepted, missing_count)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Given readings containing scores, None and optional 'STOP', create accepted_values, low_values, missing_count, invalid_count and stopped. Stop on sentinel, count None, treat out-of-range scores as invalid.",
+          "starter_code": "# Inputs: readings, minimum\n",
+          "preview_inputs": {
+            "readings": [
+              0.9,
+              null,
+              0.2,
+              "STOP",
+              1
+            ],
+            "minimum": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "readings": [
+                  0.9,
+                  null,
+                  0.2,
+                  "STOP",
+                  1
+                ],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "accepted_values == [0.9]",
+                "low_values == [0.2]",
+                "missing_count == 1",
+                "invalid_count == 0",
+                "stopped is True"
+              ]
+            },
+            {
+              "inputs": {
+                "readings": [
+                  0,
+                  0.8,
+                  1.2,
+                  null
+                ],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "accepted_values == [0.8]",
+                "low_values == [0]",
+                "missing_count == 1",
+                "invalid_count == 1"
+              ]
+            },
+            {
+              "inputs": {
+                "readings": [
+                  "STOP",
+                  0.9
+                ],
+                "minimum": 0.5
+              },
+              "assertions": [
+                "accepted_values == []",
+                "stopped is True",
+                "missing_count == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "readings": [],
+                "minimum": 0.5
+              },
+              "assertions": [
+                "accepted_values == []",
+                "low_values == []",
+                "stopped is False"
+              ]
+            },
+            {
+              "inputs": {
+                "readings": [
+                  null,
+                  0,
+                  1
+                ],
+                "minimum": 0
+              },
+              "assertions": [
+                "accepted_values == [0,1]",
+                "missing_count == 1",
+                "invalid_count == 0"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given field_records pairs [id,score] and limit, create passed_ids, low_ids, missing_ids, invalid_ids and stopped; stop at ID 'END', classify None as missing and outside-0..1 values as invalid.",
+          "starter_code": "# Inputs: field_records, limit\n",
+          "preview_inputs": {
+            "field_records": [
+              [
+                "F09",
+                0.9
+              ],
+              [
+                "F02",
+                null
+              ],
+              [
+                "F11",
+                0.3
+              ],
+              [
+                "END",
+                null
+              ],
+              [
+                "F20",
+                1
+              ]
+            ],
+            "limit": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_records": [
+                  [
+                    "F09",
+                    0.9
+                  ],
+                  [
+                    "F02",
+                    null
+                  ],
+                  [
+                    "F11",
+                    0.3
+                  ],
+                  [
+                    "END",
+                    null
+                  ],
+                  [
+                    "F20",
+                    1
+                  ]
+                ],
+                "limit": 0.8
+              },
+              "assertions": [
+                "passed_ids == ['F09']",
+                "low_ids == ['F11']",
+                "missing_ids == ['F02']",
+                "invalid_ids == []",
+                "stopped is True"
+              ]
+            },
+            {
+              "inputs": {
+                "field_records": [
+                  [
+                    "F03",
+                    0
+                  ],
+                  [
+                    "F04",
+                    1.5
+                  ],
+                  [
+                    "F05",
+                    1
+                  ]
+                ],
+                "limit": 0
+              },
+              "assertions": [
+                "passed_ids == ['F03','F05']",
+                "invalid_ids == ['F04']",
+                "low_ids == []"
+              ]
+            },
+            {
+              "inputs": {
+                "field_records": [
+                  [
+                    "END",
+                    null
+                  ],
+                  [
+                    "F03",
+                    0.8
+                  ]
+                ],
+                "limit": 0.8
+              },
+              "assertions": [
+                "passed_ids == []",
+                "stopped is True",
+                "missing_ids == []"
+              ]
+            },
+            {
+              "inputs": {
+                "field_records": [],
+                "limit": 0.8
+              },
+              "assertions": [
+                "passed_ids == []",
+                "missing_ids == []",
+                "stopped is False"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "On sentinel, mark stopped and break; on None, count missing and continue.",
+          "Classify numeric scores within 0..1 using the inclusive minimum, then preserve output order."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "TypeError": "None must be checked before a numeric comparison.",
+        "hardcoded": "Output must depend on the sentinel position and each actual input reading."
+      },
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice; hint use retained",
+        "prove": "Transfer exercise on changed input; not certified independent mastery"
+      }
+    }
+  ],
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove on real Python; no hidden grading or fabricated mastery.",
+  "retention": {
+    "minimum_hours_after_capstone": 24,
+    "policy": "Delayed public practice is recorded but never automatically certified."
+  }
+}
