@@ -1,8 +1,8 @@
-/* Reusable P01/P02 course bridge; preserves frozen shell and P01 storage contract. */
+/* Reusable P01–P03 bridge; preserves frozen shell and per-chapter progress. */
 "use strict";
 (() => {
 const el=id=>document.getElementById(id);
-const KEYS={P01:"biopython.p01.v1",P02:"biopython.p02.v1"};
+const KEYS={P01:"biopython.p01.v1",P02:"biopython.p02.v1",P03:"biopython.p03.v1"};
 const SELECT_KEY="biopython.course-selected.v1";
 const chapters={},states={};
 const fresh=()=>({goal:0,phase:"learn",drafts:{},hints:{},progress:{},reflections:{},capstoneFirstPassAt:null});
@@ -254,7 +254,7 @@ function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
  const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Chapter";chapterLabel.className="p01-label";
  const chapterSelect=document.createElement("select");chapterSelect.id="bps-chapter-select";chapterSelect.setAttribute("aria-label","Choose Python chapter");
- for(const id of ["P01","P02"]){
+ for(const id of ["P01","P02","P03"]){
    const o=document.createElement("option");o.value=id;o.textContent=id+" · "+chapters[id].title;
    chapterSelect.append(o);
  }
@@ -302,7 +302,7 @@ async function start(){
    const r=await fetch("./content/"+id.toLowerCase()+"/lesson.json");
    if(!r.ok)throw Error(id+" content HTTP "+r.status);
    const data=await r.json();
-   if(data.schema_version!=="bps.chapter.v1"||data.chapter_id!==id||data.goals?.length!==(id==="P01"?7:4)||!data.capstone||!data.review)
+   if(data.schema_version!=="bps.chapter.v1"||data.chapter_id!==id||data.goals?.length!==(id==="P02"?4:7)||!data.capstone||!data.review)
      throw Error(id+" chapter import contract failed");
    chapters[id]=data;states[id]=loadState(id);
   }
