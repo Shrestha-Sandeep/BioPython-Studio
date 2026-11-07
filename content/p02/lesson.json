@@ -713,21 +713,23 @@
       "**Limitations:** A clean label and focus score do not establish genuine specimen identity, raw image quality, biological validity or instrument calibration. In research you must verify metadata provenance and preregister relevant exclusion rules."
     ],
     "worked_example": {
-      "code": "sample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nprint(parts)\nprint(focus_score >= minimum_focus)\nprint('Build the full ordered decision in Apply.')",
-      "predict": "Why is a score of 0.80 at the 0.80 minimum acceptable, and why should a malformed ID be checked first?"
+      "code": "sample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nshape_ok = len(parts) == 3\nprint('shape_ok:', shape_ok)\nif shape_ok:\n    plate = parts[1]\n    digits = plate[1:]\n    plate_ok = (plate.startswith('P') and len(plate) == 3\n                and digits.isascii() and digits.isdigit())\n    print('plate_ok:', plate_ok)\nprint('focus_in_range:', 0 <= focus_score <= 1)\nprint('focus_at_or_above_minimum:', focus_score >= minimum_focus)",
+      "predict": "Which checks print True for N2_P03_heat at 0.80? Which statements still run after changing the identifier to N2 (only one component)?"
     },
-    "prediction_answer": "The inclusive criterion uses >=. An invalid ID prevents confident assignment to experimental groups and must take precedence over a numerical QC decision.",
+    "prediction_answer": "All four printed Boolean checks are True for N2_P03_heat at 0.80. With sample_id='N2', shape_ok is False, so plate indexing is skipped safely; focus checks remain independent. This is a technique demonstration, not a completed validation decision.",
     "walkthrough": [
       "Write down the declared ID grammar and the priority order before programming.",
       "Probe `P03`, `Px3`, `P3` and `P３3` with `.startswith`, `.removeprefix`, `.isascii` and `.isdigit` to understand each syntactic requirement.",
       "Parse and test structure before indexing tokens.",
       "Choose the first matching rejection reason; do not fabricate a missing value.",
-      "Verify below, equal to and above the threshold and try malformed labels with high focus."
+      "Verify below, equal to and above the threshold and try malformed labels with high focus.",
+      "Change sample_id to 'N2' and verify the shape test prevents indexing a nonexistent plate. Change P03 to P３3 and explain the ASCII-only rejection."
     ],
     "investigate": [
       "Contrast `N2_P03_heat` with `N2_P03_heat_2`: the latter has four fields.",
       "Try `N2_Px3_heat`, `_P03_heat`, `N2_P03_Heat`, and a low-focus valid record.",
-      "Try exact equality at the threshold and an out-of-range 1.2 score. Explain why one is acceptable and the other invalid."
+      "Try exact equality at the threshold and an out-of-range 1.2 score. Explain why one is acceptable and the other invalid.",
+      "Change sample_id to 'N2_P３3_heat' (fullwidth digit) and verify that plate_ok is False without inventing a normalized identifier."
     ],
     "misconception": "A successful Python run or a high focus score proves that the sample record is scientifically valid.",
     "debug_task": "A copied script accepts `N2_Px3_heat` because its only QC criterion is the number of underscores. Identify the missing semantic check and the risk of assigning a plate incorrectly.",
@@ -753,8 +755,8 @@
     "phases": {
       "learn": {
         "title": "Plan validation and decision priority",
-        "description": "Read the identifier grammar, inspect the worked Python fragment, then predict how a malformed label and a borderline focus score should be handled.",
-        "starter_code": "# P02-CAPSTONE | LEARN | Specimen intake validator — complete chapter project\n# TASK: Predict the label parts and boundary result; inspect the specification.\n\nsample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nprint(parts)\nprint(focus_score >= minimum_focus)\n",
+        "description": "Trace four small validation probes before building the final validator: label shape, safe plate access, ASCII plate grammar, and an inclusive focus boundary. Change the ID and rerun.",
+        "starter_code": "# P02-CAPSTONE | LEARN | Specimen intake validator — complete chapter project\n# TASK: Predict shape, plate validity, and focus boundary independently.\n\nsample_id = 'N2_P03_heat'\nfocus_score = 0.80\nminimum_focus = 0.80\nparts = sample_id.split('_')\nshape_ok = len(parts) == 3\nprint('shape_ok:', shape_ok)\nif shape_ok:\n    plate = parts[1]\n    digits = plate[1:]\n    plate_ok = (plate.startswith('P') and len(plate) == 3\n                and digits.isascii() and digits.isdigit())\n    print('plate_ok:', plate_ok)\nprint('focus_in_range:', 0 <= focus_score <= 1)\nprint('focus_at_or_above_minimum:', focus_score >= minimum_focus)\n",
         "preview_inputs": {}
       },
       "apply": {
