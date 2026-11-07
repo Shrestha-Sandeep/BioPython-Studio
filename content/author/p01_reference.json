@@ -50,7 +50,7 @@
     {
       "id": "P01-G02",
       "apply_solution": "description = f'{specimen_id}: {field_count} fields, channel {channel_name}'",
-      "prove_solution": "summary = f'{condition} | replicate {replicate} | {count} images'",
+      "prove_solution": "summary = f'{condition} | replicate {replicate} | fields={count}'",
       "apply_checks": [
         {
           "inputs": {
@@ -81,7 +81,7 @@
             "count": 6
           },
           "assertions": [
-            "summary == 'control | replicate 2 | 6 images'"
+            "summary == 'control | replicate 2 | fields=6'"
           ]
         },
         {
@@ -91,7 +91,7 @@
             "count": 1
           },
           "assertions": [
-            "summary == 'heat | replicate 11 | 1 images'"
+            "summary == 'heat | replicate 11 | fields=1'"
           ]
         }
       ]
