@@ -1,0 +1,492 @@
+{
+  "schema_version": "bps.author.v1.2",
+  "chapter_id": "P01",
+  "goals": [
+    {
+      "id": "P01-G01",
+      "apply_solution": "report = f'{specimen}: {fields} fields'\nprint(report)",
+      "prove_solution": "outcome = f'{sample} | {observed} observations'\nprint(outcome)",
+      "apply_checks": [
+        {
+          "inputs": {
+            "specimen": "N2_P03",
+            "fields": 6
+          },
+          "assertions": [
+            "report == 'N2_P03: 6 fields'"
+          ]
+        },
+        {
+          "inputs": {
+            "specimen": "mutA_P13",
+            "fields": 0
+          },
+          "assertions": [
+            "report == 'mutA_P13: 0 fields'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "sample": "WT_P07",
+            "observed": 4
+          },
+          "assertions": [
+            "outcome == 'WT_P07 | 4 observations'"
+          ]
+        },
+        {
+          "inputs": {
+            "sample": "mutC_P17",
+            "observed": 11
+          },
+          "assertions": [
+            "outcome == 'mutC_P17 | 11 observations'"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G02",
+      "apply_solution": "description = f'{specimen_id}: {field_count} fields, channel {channel_name}'",
+      "prove_solution": "summary = f'{condition} | replicate {replicate} | fields={count}'",
+      "apply_checks": [
+        {
+          "inputs": {
+            "specimen_id": "N2_P03",
+            "field_count": 5,
+            "channel_name": "GFP"
+          },
+          "assertions": [
+            "description == 'N2_P03: 5 fields, channel GFP'"
+          ]
+        },
+        {
+          "inputs": {
+            "specimen_id": "ced1_P07",
+            "field_count": 0,
+            "channel_name": "DAPI"
+          },
+          "assertions": [
+            "description == 'ced1_P07: 0 fields, channel DAPI'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "condition": "control",
+            "replicate": 2,
+            "count": 6
+          },
+          "assertions": [
+            "summary == 'control | replicate 2 | fields=6'"
+          ]
+        },
+        {
+          "inputs": {
+            "condition": "heat",
+            "replicate": 11,
+            "count": 1
+          },
+          "assertions": [
+            "summary == 'heat | replicate 11 | fields=1'"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G03",
+      "apply_solution": "segment_um = segment_pixels / scale_px_per_um",
+      "prove_solution": "displacement_um = displacement_pixels / calibration_px_per_um\nspeed_um_per_min = displacement_um / interval_minutes",
+      "apply_checks": [
+        {
+          "inputs": {
+            "segment_pixels": 75,
+            "scale_px_per_um": 2.5
+          },
+          "assertions": [
+            "abs(segment_um - 30) < 1e-12"
+          ]
+        },
+        {
+          "inputs": {
+            "segment_pixels": 120,
+            "scale_px_per_um": 6
+          },
+          "assertions": [
+            "segment_um == 20"
+          ]
+        },
+        {
+          "inputs": {
+            "segment_pixels": 0,
+            "scale_px_per_um": 8
+          },
+          "assertions": [
+            "segment_um == 0"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "displacement_pixels": 36,
+            "calibration_px_per_um": 3,
+            "interval_minutes": 2
+          },
+          "assertions": [
+            "displacement_um == 12",
+            "speed_um_per_min == 6"
+          ]
+        },
+        {
+          "inputs": {
+            "displacement_pixels": 25,
+            "calibration_px_per_um": 5,
+            "interval_minutes": 4
+          },
+          "assertions": [
+            "displacement_um == 5",
+            "speed_um_per_min == 1.25"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G04",
+      "apply_solution": "measurement_um = float(measurement_text)\ntype_name = type(measurement_um).__name__",
+      "prove_solution": "type_labels = [type(count_value).__name__, type(fraction_value).__name__, type(qc_flag).__name__]",
+      "apply_checks": [
+        {
+          "inputs": {
+            "measurement_text": "12.5"
+          },
+          "assertions": [
+            "measurement_um == 12.5",
+            "type_name == 'float'"
+          ]
+        },
+        {
+          "inputs": {
+            "measurement_text": "3e-2"
+          },
+          "assertions": [
+            "abs(measurement_um-0.03)<1e-12",
+            "type_name == 'float'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "count_value": 3,
+            "fraction_value": 0.5,
+            "qc_flag": true
+          },
+          "assertions": [
+            "type_labels == ['int','float','bool']"
+          ]
+        },
+        {
+          "inputs": {
+            "count_value": 0,
+            "fraction_value": 2.5,
+            "qc_flag": false
+          },
+          "assertions": [
+            "type_labels == ['int','float','bool']"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G05",
+      "apply_solution": "result = f'{plate_id}: {field_count} fields'",
+      "prove_solution": "distance_um = pixels / pixels_per_um",
+      "apply_checks": [
+        {
+          "inputs": {
+            "plate_id": "plate03",
+            "field_count": 4
+          },
+          "assertions": [
+            "result == 'plate03: 4 fields'"
+          ]
+        },
+        {
+          "inputs": {
+            "plate_id": "plate19",
+            "field_count": 0
+          },
+          "assertions": [
+            "result == 'plate19: 0 fields'"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "pixels": 40,
+            "pixels_per_um": 5
+          },
+          "assertions": [
+            "distance_um == 8"
+          ]
+        },
+        {
+          "inputs": {
+            "pixels": 81,
+            "pixels_per_um": 9
+          },
+          "assertions": [
+            "distance_um == 9"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G06",
+      "apply_solution": "documentation_line = len.__doc__\nsample_length = len(sample_id)",
+      "prove_solution": "doc_head = abs.__doc__\nabsolute_change = abs(signed_change)",
+      "apply_checks": [
+        {
+          "inputs": {
+            "sample_id": "N2_P03"
+          },
+          "assertions": [
+            "documentation_line == len.__doc__",
+            "sample_length == 6"
+          ]
+        },
+        {
+          "inputs": {
+            "sample_id": "mutant_12_A"
+          },
+          "assertions": [
+            "documentation_line == len.__doc__",
+            "sample_length == 11"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "signed_change": -8.2
+          },
+          "assertions": [
+            "doc_head == abs.__doc__",
+            "absolute_change == 8.2"
+          ]
+        },
+        {
+          "inputs": {
+            "signed_change": 3
+          },
+          "assertions": [
+            "doc_head == abs.__doc__",
+            "absolute_change == 3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P01-G07",
+      "apply_solution": "current_total = current_count * multiplier",
+      "prove_solution": "adjusted_value = (baseline + adjustment) / scale",
+      "apply_checks": [
+        {
+          "inputs": {
+            "current_count": 9,
+            "multiplier": 2
+          },
+          "assertions": [
+            "current_total == 18"
+          ]
+        },
+        {
+          "inputs": {
+            "current_count": 4,
+            "multiplier": 3
+          },
+          "assertions": [
+            "current_total == 12"
+          ]
+        },
+        {
+          "inputs": {
+            "current_count": 0,
+            "multiplier": 7
+          },
+          "assertions": [
+            "current_total == 0"
+          ]
+        }
+      ],
+      "prove_checks": [
+        {
+          "inputs": {
+            "baseline": 24,
+            "adjustment": 6,
+            "scale": 3
+          },
+          "assertions": [
+            "adjusted_value == 10"
+          ]
+        },
+        {
+          "inputs": {
+            "baseline": 8,
+            "adjustment": -2,
+            "scale": 2
+          },
+          "assertions": [
+            "adjusted_value == 3"
+          ]
+        }
+      ]
+    }
+  ],
+  "capstone": {
+    "id": "P01-CAPSTONE",
+    "apply_solution": "width_um = width_pixels / pixels_per_um\ntype_name = type(width_um).__name__\nsummary = f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'\nprint(summary)",
+    "prove_solution": "length_um = roi_length_px / calibration_px_per_um\nnumeric_type = type(length_um).__name__\nresult_line = f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'\nprint(result_line)",
+    "apply_checks": [
+      {
+        "inputs": {
+          "specimen_id": "N2_P03",
+          "field_count": 5,
+          "channel_name": "GFP",
+          "width_pixels": 48,
+          "pixels_per_um": 4
+        },
+        "assertions": [
+          "width_um == 12.0",
+          "type_name == 'float'",
+          "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+        ]
+      },
+      {
+        "inputs": {
+          "specimen_id": "ced1_P07",
+          "field_count": 0,
+          "channel_name": "mCherry",
+          "width_pixels": 0,
+          "pixels_per_um": 8
+        },
+        "assertions": [
+          "width_um == 0.0",
+          "type_name == 'float'",
+          "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+        ]
+      },
+      {
+        "inputs": {
+          "specimen_id": "WT_P12",
+          "field_count": 11,
+          "channel_name": "DAPI",
+          "width_pixels": 42,
+          "pixels_per_um": 3.5
+        },
+        "assertions": [
+          "width_um == 12.0",
+          "type_name == 'float'",
+          "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+        ]
+      }
+    ],
+    "prove_checks": [
+      {
+        "inputs": {
+          "sample_code": "mutX_R04",
+          "observed_fields": 6,
+          "channel": "GFP",
+          "roi_length_px": 35,
+          "calibration_px_per_um": 2
+        },
+        "assertions": [
+          "length_um == 17.5",
+          "numeric_type == 'float'",
+          "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_code": "WT_R12",
+          "observed_fields": 0,
+          "channel": "mCherry",
+          "roi_length_px": 0,
+          "calibration_px_per_um": 5
+        },
+        "assertions": [
+          "length_um == 0",
+          "numeric_type == 'float'",
+          "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+        ]
+      },
+      {
+        "inputs": {
+          "sample_code": "ced1_R08",
+          "observed_fields": 12,
+          "channel": "DAPI",
+          "roi_length_px": 44,
+          "calibration_px_per_um": 4
+        },
+        "assertions": [
+          "length_um == 11",
+          "numeric_type == 'float'",
+          "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+        ]
+      }
+    ]
+  },
+  "review": {
+    "id": "P01-REVIEW",
+    "prove_solution": "physical_span_um = span_px / px_per_um\nreport_type = type(physical_span_um).__name__\nreport_line = f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'\nprint(report_line)",
+    "prove_checks": [
+      {
+        "inputs": {
+          "record_id": "WT_R23",
+          "field_total": 7,
+          "stain": "GFP",
+          "span_px": 51,
+          "px_per_um": 3
+        },
+        "assertions": [
+          "physical_span_um == 17",
+          "report_type == 'float'",
+          "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "ced1_R01",
+          "field_total": 2,
+          "stain": "DAPI",
+          "span_px": 13,
+          "px_per_um": 2
+        },
+        "assertions": [
+          "physical_span_um == 6.5",
+          "report_type == 'float'",
+          "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+        ]
+      },
+      {
+        "inputs": {
+          "record_id": "mutZ_R11",
+          "field_total": 0,
+          "stain": "mCherry",
+          "span_px": 0,
+          "px_per_um": 7
+        },
+        "assertions": [
+          "physical_span_um == 0",
+          "report_type == 'float'",
+          "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+        ]
+      }
+    ]
+  }
+}
