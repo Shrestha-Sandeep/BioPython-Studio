@@ -1510,23 +1510,25 @@
       "**Technical deliverable:** export `field_qc_report.py` with its supplied example inputs and original code, and explain which rows were unvisited. Both public test cases and a short saved reflection are evidence for review, not a hidden independent-mastery certificate."
     ],
     "worked_example": {
-      "code": "records = [['F09', 0.9], ['F02', None], ['F11', 0.2]]\nminimum_focus = 0.8\naccepted_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n    elif score >= minimum_focus:\n        accepted_ids.append(field_id)\nprint(accepted_ids)\nprint(missing_ids)",
-      "predict": "Which record is accepted and which is missing? What necessary category does this deliberately incomplete example omit?"
+      "code": "records = [['F09', 0.9], ['F02', None], ['F11', 0.2]]\nminimum_focus = 0.8\naccepted_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n    elif score >= minimum_focus:\n        accepted_ids.append(field_id)\nprint('accepted:', accepted_ids)\nprint('missing:', missing_ids)\n\n# Identity auditing is separate from focus-score classification.\ncandidate_ids = ['F09', 'F02', 'F11', 'F09']\nseen_ids = []\nfor field_id in candidate_ids:\n    repeated = field_id in seen_ids\n    print(field_id, 'duplicate' if repeated else 'new')\n    if not repeated:\n        seen_ids.append(field_id)",
+      "predict": "Which records are accepted, missing, and omitted by the first loop? Which ID is flagged as duplicate by the second loop, and why is it a separate check?"
     },
-    "prediction_answer": "F09 is accepted and F02 is missing. The worked fragment neglects low-scoring F11; the full audit must list rejected IDs as well.",
+    "prediction_answer": "F09 is accepted, F02 is missing, and F11 is omitted because low scores have no branch. The second loop prints F09 as duplicate at its second appearance; duplicate identity is distinct from a low or missing score. The final audit must combine all rules safely.",
     "walkthrough": [
       "Write down the input pair order and label each field as ID, number, or missing.",
       "Initialize accepted, rejected, missing, invalid and seen ID lists before iterating.",
       "Scan a bounded input prefix and stop at STOP before counting it.",
       "Classify duplicate IDs before checking numerical scores; for other IDs, record missingness and invalid range before threshold decisions.",
-      "Build the exact summary from output lists; verify it on empty, duplicate and cutoff-boundary inputs."
+      "Build the exact summary from output lists; verify it on empty, duplicate and cutoff-boundary inputs.",
+      "Trace the second F09 separately from its score: repeated identity must be classified before any threshold decision in the full audit."
     ],
     "investigate": [
       "Try a missing None score and a numeric zero with a zero minimum, and explain their different categories.",
       "Try the second occurrence of an accepted ID; keep the first classification and flag the repeat as invalid.",
       "Move STOP to the beginning; no actual field is visited.",
       "Set max_rows to zero; all categories stay empty even if the source contains valid records.",
-      "Set the cutoff exactly equal to a field's score; the inclusive rule accepts it."
+      "Set the cutoff exactly equal to a field's score; the inclusive rule accepts it.",
+      "Move the repeated F09 to the start of candidate_ids. Which occurrence is new, and which occurrence is a duplicate?"
     ],
     "debug_task": "A script deletes missing records from its original source list and calls its shorter length the number of acquired biological replicates. Diagnose source mutation, missingness loss and misidentified statistical sampling units.",
     "misconception": "A high number of accepted microscope fields automatically means good scientific evidence and each field is an independent biological replicate.",
@@ -1554,8 +1556,8 @@
     "phases": {
       "learn": {
         "title": "Plan a field-QC report",
-        "description": "Predict the initial accepted and missing lists, run the fragment, and identify the low-score record that it fails to include. Read the full audit requirements before Apply.",
-        "starter_code": "# P03-CAPSTONE | LEARN | Field-QC audit — complete research-style project\n# TASK: Predict the incomplete audit; identify the omitted low-score field.\n\nrecords = [['F09', 0.9], ['F02', None], ['F11', 0.2]]\nminimum_focus = 0.8\naccepted_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n    elif score >= minimum_focus:\n        accepted_ids.append(field_id)\nprint(accepted_ids)\nprint(missing_ids)\n",
+        "description": "Trace a deliberately incomplete QC classifier and a separate duplicate-ID probe. Identify which result categories are missing before you build the complete field audit.",
+        "starter_code": "# P03-CAPSTONE | LEARN | Field-QC audit — complete research-style project\n# TASK: Predict missing and accepted IDs; identify omitted low and duplicate.\n\nrecords = [['F09', 0.9], ['F02', None], ['F11', 0.2]]\nminimum_focus = 0.8\naccepted_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n    elif score >= minimum_focus:\n        accepted_ids.append(field_id)\nprint('accepted:', accepted_ids)\nprint('missing:', missing_ids)\n\n# Identity auditing is separate from focus-score classification.\ncandidate_ids = ['F09', 'F02', 'F11', 'F09']\nseen_ids = []\nfor field_id in candidate_ids:\n    repeated = field_id in seen_ids\n    print(field_id, 'duplicate' if repeated else 'new')\n    if not repeated:\n        seen_ids.append(field_id)\n",
         "preview_inputs": {}
       },
       "apply": {
