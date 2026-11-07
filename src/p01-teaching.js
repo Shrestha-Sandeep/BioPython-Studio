@@ -68,7 +68,7 @@
     img.src="./assets/witz/fluorescence-single.png";
     img.loading="lazy";
     img.alt="Published fluorescence microscopy teaching figure of cellular structures; visual context only, not calibrated raw data.";
-    const caption=paragraph("Guillaume Witz, Image Processing for Beginners, Demo.ipynb, output cell 12. Based on Human Protein Atlas Cell Atlas fluorescence imagery (source credits specify CC BY-SA 3.0). This rendered PNG is not a raw intensity image.");
+    const caption=el("figcaption","p01-quiet","Guillaume Witz, Image Processing for Beginners, Demo.ipynb, output cell 12. Based on Human Protein Atlas Cell Atlas fluorescence imagery (source credits specify CC BY-SA 3.0). This rendered PNG is not a raw intensity image.");
     const source=el("a","","Source and licensing");source.href="./assets/witz/CREDITS.md";
     source.target="_blank";source.rel="noopener noreferrer";
     figure.append(img,caption,source);
