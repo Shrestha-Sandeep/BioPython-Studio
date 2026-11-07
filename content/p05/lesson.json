@@ -30,27 +30,29 @@
       ],
       "why": "Learn to reuse one unit-correct conversion rather than copying a result using biological measurement records.",
       "explain": [
-        "A useful scientific script must reuse one unit-correct conversion rather than copying a result. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
-        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
-        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+        "A function runs only when called. Parameters are fresh input names, and `return` hands the numeric result to code that calls it. Merely printing a width would show a result once but leave subsequent calculations with `None`.",
+        "For widths, divide pixels by pixels-per-micrometre: (pixels)/(pixels/µm) gives µm. Changing calibration must change the answer, and a copied constant must fail the changed-input tests.",
+        "Call the same function with two distinct specimens. Return the converted number, print outside the function, and distinguish valid numeric conversion from the separate question of whether scale calibration is trustworthy.",
+        "Two calls use the same function definition but different parameters. Predict the results, change one input, and explain why the value changes."
       ],
       "worked_example": {
         "code": "def pixel_width(pixels, scale):\n    return pixels / scale\nprint(pixel_width(48, 4))\nprint(pixel_width(24, 4))",
-        "predict": "How does the return value change when pixel width halves?"
+        "predict": "What widths are returned for 48 pixels and 24 pixels at 4 pixels/µm?"
       },
-      "prediction_answer": "The returned physical width halves from 12.0 to 6.0; the same function handles both inputs.",
+      "prediction_answer": "12.0 µm and 6.0 µm. The function returns values; the caller prints them.",
       "walkthrough": [
-        "Identify all changing inputs and their physical units.",
-        "Predict the worked output before executing Python.",
-        "Change one input and investigate the output or error."
+        "Read the stated input and output contract for return values from a measurement function.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
       ],
       "investigate": [
-        "Try a new sample ID, missing observation or zero count.",
-        "Check one boundary without hardcoding a previously printed result.",
-        "Explain why passing code checks is not proof of correct biological calibration."
+        "Change one parameter in return values from a measurement function and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
       ],
-      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
-      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "debug_task": "Identify a real failure mode in return values from a measurement function: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "One successful function call or printed number establishes reusable and scientifically correct analysis.",
       "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
       "phases": {
         "learn": {
@@ -100,9 +102,9 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to reuse one unit-correct conversion rather than copying a result, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you reuse one unit-correct conversion rather than copying a result?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you reuse one unit-correct conversion rather than copying a result."
+            "why": "Call the same function with two distinct specimens. Return the converted number, print outside the function, and distinguish valid numeric conversion from the separate question of whether scale calibration is trustworthy.",
+            "probe": "Try a second specimen or calibration. Which aspect of return values from a measurement function changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. For widths, divide pixels by pixels-per-micrometre: (pixels)/(pixels/µm) gives µm. Changing calibration must change the answer, and a copied constant must fail the changed-input tests."
           }
         },
         "prove": {
@@ -148,16 +150,16 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to reuse one unit-correct conversion rather than copying a result, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you reuse one unit-correct conversion rather than copying a result?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you reuse one unit-correct conversion rather than copying a result."
+            "why": "Call the same function with two distinct specimens. Return the converted number, print outside the function, and distinguish valid numeric conversion from the separate question of whether scale calibration is trustworthy.",
+            "probe": "Try a second specimen or calibration. Which aspect of return values from a measurement function changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. For widths, divide pixels by pixels-per-micrometre: (pixels)/(pixels/µm) gives µm. Changing calibration must change the answer, and a copied constant must fail the changed-input tests."
           }
         }
       },
       "hints": {
         "apply": [
-          "Start by defining named function parameters and an explicit returned value.",
-          "Handle the changed inputs and edge cases before building the final report."
+          "Write the function signature and choose a clear return value before using the sample inputs.",
+          "Try the missing, empty or boundary case described in the task without copying a fixed answer."
         ],
         "prove": []
       },
@@ -182,27 +184,29 @@
       ],
       "why": "Learn to make acquisition choices visible in parameter lists using biological measurement records.",
       "explain": [
-        "A useful scientific script must make acquisition choices visible in parameter lists. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
-        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
-        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+        "A default parameter is a documented fallback used only when the caller omits that argument. `channel='GFP'` does not prevent a later call from specifying `channel='DAPI'`.",
+        "Required parameters precede optional ones. Keyword arguments clarify which scientific option is being changed, but Python does not know whether a particular channel or threshold is scientifically justified.",
+        "For QC, an inclusive threshold means exactly-equal scores pass. `None` is not zero. Values outside 0–1 are invalid under this illustrative training rule, not exceptionally low or high quality.",
+        "The channel default is only used when the caller does not supply one; predict the two labels before running."
       ],
       "worked_example": {
         "code": "def describe(field_id, channel='GFP'):\n    return f'{field_id} | {channel}'\nprint(describe('F07'))\nprint(describe('F07', channel='DAPI'))",
-        "predict": "What is the output with and without the explicit channel?"
+        "predict": "What changes between describe('F07') and describe('F07',channel='DAPI')?"
       },
-      "prediction_answer": "F07 | GFP and F07 | DAPI. The explicit keyword overrides the documented default.",
+      "prediction_answer": "Only the channel segment changes: F07 | GFP becomes F07 | DAPI. The ID is unchanged.",
       "walkthrough": [
-        "Identify all changing inputs and their physical units.",
-        "Predict the worked output before executing Python.",
-        "Change one input and investigate the output or error."
+        "Read the stated input and output contract for use explicit parameters and defaults.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
       ],
       "investigate": [
-        "Try a new sample ID, missing observation or zero count.",
-        "Check one boundary without hardcoding a previously printed result.",
-        "Explain why passing code checks is not proof of correct biological calibration."
+        "Change one parameter in use explicit parameters and defaults and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
       ],
-      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
-      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "debug_task": "Identify a real failure mode in use explicit parameters and defaults: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "One successful function call or printed number establishes reusable and scientifically correct analysis.",
       "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
       "phases": {
         "learn": {
@@ -252,9 +256,9 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to make acquisition choices visible in parameter lists, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you make acquisition choices visible in parameter lists?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you make acquisition choices visible in parameter lists."
+            "why": "For QC, an inclusive threshold means exactly-equal scores pass. `None` is not zero. Values outside 0–1 are invalid under this illustrative training rule, not exceptionally low or high quality.",
+            "probe": "Try a second specimen or calibration. Which aspect of use explicit parameters and defaults changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Required parameters precede optional ones. Keyword arguments clarify which scientific option is being changed, but Python does not know whether a particular channel or threshold is scientifically justified."
           }
         },
         "prove": {
@@ -299,16 +303,16 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to make acquisition choices visible in parameter lists, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you make acquisition choices visible in parameter lists?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you make acquisition choices visible in parameter lists."
+            "why": "For QC, an inclusive threshold means exactly-equal scores pass. `None` is not zero. Values outside 0–1 are invalid under this illustrative training rule, not exceptionally low or high quality.",
+            "probe": "Try a second specimen or calibration. Which aspect of use explicit parameters and defaults changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Required parameters precede optional ones. Keyword arguments clarify which scientific option is being changed, but Python does not know whether a particular channel or threshold is scientifically justified."
           }
         }
       },
       "hints": {
         "apply": [
-          "Start by defining named function parameters and an explicit returned value.",
-          "Handle the changed inputs and edge cases before building the final report."
+          "Write the function signature and choose a clear return value before using the sample inputs.",
+          "Try the missing, empty or boundary case described in the task without copying a fixed answer."
         ],
         "prove": []
       },
@@ -333,27 +337,29 @@
       ],
       "why": "Learn to avoid stale global values and unexpected mutation using biological measurement records.",
       "explain": [
-        "A useful scientific script must avoid stale global values and unexpected mutation. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
-        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
-        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+        "A function-local list is created anew for every call. If the list is stored outside the function and appended repeatedly, a second specimen can inherit stale results from a previous specimen.",
+        "Returning a new list also protects the source: selecting passing scores should not delete missing observations from the original acquisition. This matters for traceability and later data-quality investigations.",
+        "A function can be correct on one call yet wrong after multiple calls. Compare results for two thresholds; verify that the original input object remains unchanged and output lists are independent.",
+        "An accumulator created inside the function cannot accidentally collect the previous call's observations."
       ],
       "worked_example": {
         "code": "def keep(values, minimum):\n    chosen = []\n    for value in values:\n        if value is not None and value >= minimum:\n            chosen.append(value)\n    return chosen\nprint(keep([0.9, None, 0.3], 0.8))",
-        "predict": "Does a second call add results from the first?"
+        "predict": "Why does calling keep twice not append new results to an old list?"
       },
-      "prediction_answer": "No. A fresh chosen list is initialized on each call, so the function does not leak state.",
+      "prediction_answer": "A fresh local list is allocated on each call. The input is never modified.",
       "walkthrough": [
-        "Identify all changing inputs and their physical units.",
-        "Predict the worked output before executing Python.",
-        "Change one input and investigate the output or error."
+        "Read the stated input and output contract for separate local state from source data.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
       ],
       "investigate": [
-        "Try a new sample ID, missing observation or zero count.",
-        "Check one boundary without hardcoding a previously printed result.",
-        "Explain why passing code checks is not proof of correct biological calibration."
+        "Change one parameter in separate local state from source data and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
       ],
-      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
-      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "debug_task": "Identify a real failure mode in separate local state from source data: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "One successful function call or printed number establishes reusable and scientifically correct analysis.",
       "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
       "phases": {
         "learn": {
@@ -420,9 +426,9 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to avoid stale global values and unexpected mutation, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you avoid stale global values and unexpected mutation?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you avoid stale global values and unexpected mutation."
+            "why": "A function can be correct on one call yet wrong after multiple calls. Compare results for two thresholds; verify that the original input object remains unchanged and output lists are independent.",
+            "probe": "Try a second specimen or calibration. Which aspect of separate local state from source data changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Returning a new list also protects the source: selecting passing scores should not delete missing observations from the original acquisition. This matters for traceability and later data-quality investigations."
           }
         },
         "prove": {
@@ -477,16 +483,16 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to avoid stale global values and unexpected mutation, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you avoid stale global values and unexpected mutation?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you avoid stale global values and unexpected mutation."
+            "why": "A function can be correct on one call yet wrong after multiple calls. Compare results for two thresholds; verify that the original input object remains unchanged and output lists are independent.",
+            "probe": "Try a second specimen or calibration. Which aspect of separate local state from source data changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Returning a new list also protects the source: selecting passing scores should not delete missing observations from the original acquisition. This matters for traceability and later data-quality investigations."
           }
         }
       },
       "hints": {
         "apply": [
-          "Start by defining named function parameters and an explicit returned value.",
-          "Handle the changed inputs and edge cases before building the final report."
+          "Write the function signature and choose a clear return value before using the sample inputs.",
+          "Try the missing, empty or boundary case described in the task without copying a fixed answer."
         ],
         "prove": []
       },
@@ -511,27 +517,29 @@
       ],
       "why": "Learn to state input types, return values and missing-data policy using biological measurement records.",
       "explain": [
-        "A useful scientific script must state input types, return values and missing-data policy. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
-        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
-        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+        "A docstring is the first string literal in a function body, accessible through `function.__doc__`. It should describe purpose, input meaning, output units, and empty or invalid input behavior.",
+        "Annotations such as `fields: int` and `-> str` describe expected types, but Python does not automatically validate those types. Scientific calibration and biological identity still require explicit checks.",
+        "A useful measurement function can tell another scientist what it returns for empty data and whether the result is pixels, micrometres, or a dimensionless score. Avoid ambiguous return labels.",
+        "Distinguish documentation of a function from the actual numeric or text value it returns."
       ],
       "worked_example": {
         "code": "def specimen_label(sample_id: str, fields: int) -> str:\n    \"\"\"Return a specimen identifier and field count.\"\"\"\n    return f'{sample_id}: {fields} fields'\nprint(specimen_label('WT', 3))\nprint(specimen_label.__annotations__)",
-        "predict": "Do type hints enforce physical calibration?"
+        "predict": "Which information appears in specimen_label.__annotations__, and which in the result?"
       },
-      "prediction_answer": "No. Annotations document expected Python types; calibration validity must be checked independently.",
+      "prediction_answer": "Annotations identify the expected types; the returned string contains the sample label and count.",
       "walkthrough": [
-        "Identify all changing inputs and their physical units.",
-        "Predict the worked output before executing Python.",
-        "Change one input and investigate the output or error."
+        "Read the stated input and output contract for document types and scientific meaning.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
       ],
       "investigate": [
-        "Try a new sample ID, missing observation or zero count.",
-        "Check one boundary without hardcoding a previously printed result.",
-        "Explain why passing code checks is not proof of correct biological calibration."
+        "Change one parameter in document types and scientific meaning and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
       ],
-      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
-      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "debug_task": "Identify a real failure mode in document types and scientific meaning: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "One successful function call or printed number establishes reusable and scientifically correct analysis.",
       "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
       "phases": {
         "learn": {
@@ -582,9 +590,9 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to state input types, return values and missing-data policy, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you state input types, return values and missing-data policy?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you state input types, return values and missing-data policy."
+            "why": "A useful measurement function can tell another scientist what it returns for empty data and whether the result is pixels, micrometres, or a dimensionless score. Avoid ambiguous return labels.",
+            "probe": "Try a second specimen or calibration. Which aspect of document types and scientific meaning changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Annotations such as `fields: int` and `-> str` describe expected types, but Python does not automatically validate those types. Scientific calibration and biological identity still require explicit checks."
           }
         },
         "prove": {
@@ -636,16 +644,16 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to state input types, return values and missing-data policy, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you state input types, return values and missing-data policy?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you state input types, return values and missing-data policy."
+            "why": "A useful measurement function can tell another scientist what it returns for empty data and whether the result is pixels, micrometres, or a dimensionless score. Avoid ambiguous return labels.",
+            "probe": "Try a second specimen or calibration. Which aspect of document types and scientific meaning changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Annotations such as `fields: int` and `-> str` describe expected types, but Python does not automatically validate those types. Scientific calibration and biological identity still require explicit checks."
           }
         }
       },
       "hints": {
         "apply": [
-          "Start by defining named function parameters and an explicit returned value.",
-          "Handle the changed inputs and edge cases before building the final report."
+          "Write the function signature and choose a clear return value before using the sample inputs.",
+          "Try the missing, empty or boundary case described in the task without copying a fixed answer."
         ],
         "prove": []
       },
@@ -670,27 +678,29 @@
       ],
       "why": "Learn to reject invalid calibrations without fabricating zero using biological measurement records.",
       "explain": [
-        "A useful scientific script must reject invalid calibrations without fabricating zero. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
-        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
-        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+        "Raise `ValueError` when a calibration is zero or negative. Returning zero would conflate an invalid conversion with a real zero-width observation, giving a plausible but incorrect report.",
+        "Use a narrow `try/except ValueError` wrapper when a routine must classify expected invalid input. Do not catch `BaseException` or swallow unexpected bugs; those errors should still be visible.",
+        "Separate calculation from policy: one function raises a useful error, another records failure as `{'ok':False,'value':None}`. This makes source records auditable without fabricating a measurement.",
+        "A nonpositive calibration must produce a visible error, not a width in µm."
       ],
       "worked_example": {
         "code": "def convert(pixels, scale):\n    if scale <= 0:\n        raise ValueError('invalid scale')\n    return pixels / scale\ntry:\n    print(convert(20, 0))\nexcept ValueError as error:\n    print(type(error).__name__)",
-        "predict": "Why does this print ValueError rather than a plausible width?"
+        "predict": "What error class is printed when scale is zero, and why?"
       },
-      "prediction_answer": "A nonpositive calibration does not support a physical-width measurement; the error is explicit.",
+      "prediction_answer": "ValueError. The scale violates the conversion contract; no trustworthy physical width can be returned.",
       "walkthrough": [
-        "Identify all changing inputs and their physical units.",
-        "Predict the worked output before executing Python.",
-        "Change one input and investigate the output or error."
+        "Read the stated input and output contract for raise and handle invalid inputs.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
       ],
       "investigate": [
-        "Try a new sample ID, missing observation or zero count.",
-        "Check one boundary without hardcoding a previously printed result.",
-        "Explain why passing code checks is not proof of correct biological calibration."
+        "Change one parameter in raise and handle invalid inputs and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
       ],
-      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
-      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "debug_task": "Identify a real failure mode in raise and handle invalid inputs: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "One successful function call or printed number establishes reusable and scientifically correct analysis.",
       "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
       "phases": {
         "learn": {
@@ -740,9 +750,9 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to reject invalid calibrations without fabricating zero, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you reject invalid calibrations without fabricating zero?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you reject invalid calibrations without fabricating zero."
+            "why": "Separate calculation from policy: one function raises a useful error, another records failure as `{'ok':False,'value':None}`. This makes source records auditable without fabricating a measurement.",
+            "probe": "Try a second specimen or calibration. Which aspect of raise and handle invalid inputs changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Use a narrow `try/except ValueError` wrapper when a routine must classify expected invalid input. Do not catch `BaseException` or swallow unexpected bugs; those errors should still be visible."
           }
         },
         "prove": {
@@ -782,16 +792,16 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to reject invalid calibrations without fabricating zero, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you reject invalid calibrations without fabricating zero?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you reject invalid calibrations without fabricating zero."
+            "why": "Separate calculation from policy: one function raises a useful error, another records failure as `{'ok':False,'value':None}`. This makes source records auditable without fabricating a measurement.",
+            "probe": "Try a second specimen or calibration. Which aspect of raise and handle invalid inputs changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Use a narrow `try/except ValueError` wrapper when a routine must classify expected invalid input. Do not catch `BaseException` or swallow unexpected bugs; those errors should still be visible."
           }
         }
       },
       "hints": {
         "apply": [
-          "Start by defining named function parameters and an explicit returned value.",
-          "Handle the changed inputs and edge cases before building the final report."
+          "Write the function signature and choose a clear return value before using the sample inputs.",
+          "Try the missing, empty or boundary case described in the task without copying a fixed answer."
         ],
         "prove": []
       },
@@ -816,27 +826,29 @@
       ],
       "why": "Learn to use explicit imports instead of copied constants using biological measurement records.",
       "explain": [
-        "A useful scientific script must use explicit imports instead of copied constants. Distinguish a returned value from a printed diagnostic; a program should be reusable with changed inputs.",
-        "A function's parameters make assumptions explicit. The same code must give sensible outputs for missing, empty, changed and boundary data.",
-        "Do not mistake synthetic calibration values for verified microscope metadata. A correct calculation alone is not evidence of biological validity."
+        "Importing `math` gives access to a defined π constant. Copying a rough decimal into every function is fragile, and forgetting the import produces an error when the code runs.",
+        "Importing `statistics` gives a standard arithmetic mean; it does not tell you which experimental unit to average. An average of microscope fields is not automatically an estimate across independent biological replicates.",
+        "The imported module and function must be available in the standalone script too. Explicit imports make dependencies reproducible when leaving the browser and later packaging a local workflow.",
+        "Named modules make constants and descriptive statistics available to Python code."
       ],
       "worked_example": {
         "code": "import math\nimport statistics\nprint(round(math.pi, 3))\nprint(statistics.mean([2,4,6]))",
-        "predict": "Where do pi and arithmetic mean originate?"
+        "predict": "Which imported module supplies pi, and which supplies the arithmetic mean?"
       },
-      "prediction_answer": "math supplies pi and statistics supplies mean; imports make their source explicit.",
+      "prediction_answer": "math supplies pi; statistics supplies mean. Both must be imported in a fresh script.",
       "walkthrough": [
-        "Identify all changing inputs and their physical units.",
-        "Predict the worked output before executing Python.",
-        "Change one input and investigate the output or error."
+        "Read the stated input and output contract for import standard-library analysis tools.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
       ],
       "investigate": [
-        "Try a new sample ID, missing observation or zero count.",
-        "Check one boundary without hardcoding a previously printed result.",
-        "Explain why passing code checks is not proof of correct biological calibration."
+        "Change one parameter in import standard-library analysis tools and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
       ],
-      "debug_task": "A function silently reuses an earlier sample's output. Identify a parameter or state bug.",
-      "misconception": "A function that executes once is already a validated scientific measurement method.",
+      "debug_task": "Identify a real failure mode in import standard-library analysis tools: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "One successful function call or printed number establishes reusable and scientifically correct analysis.",
       "scientific_boundary": "All example field IDs, pixel widths and calibrations are synthetic; no raw-image measurement or biological effect is inferred.",
       "phases": {
         "learn": {
@@ -881,9 +893,9 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to use explicit imports instead of copied constants, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you use explicit imports instead of copied constants?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you use explicit imports instead of copied constants."
+            "why": "The imported module and function must be available in the standalone script too. Explicit imports make dependencies reproducible when leaving the browser and later packaging a local workflow.",
+            "probe": "Try a second specimen or calibration. Which aspect of import standard-library analysis tools changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Importing `statistics` gives a standard arithmetic mean; it does not tell you which experimental unit to average. An average of microscope fields is not automatically an estimate across independent biological replicates."
           }
         },
         "prove": {
@@ -937,16 +949,16 @@
             }
           ],
           "practice_feedback": {
-            "why": "This tests the ability to use explicit imports instead of copied constants, independently of any one set of measurements.",
-            "probe": "How could changed inputs or absent calibration invalidate the conclusion when you use explicit imports instead of copied constants?",
-            "check": "Preserve source data; use named parameters and the specified returned variables when you use explicit imports instead of copied constants."
+            "why": "The imported module and function must be available in the standalone script too. Explicit imports make dependencies reproducible when leaving the browser and later packaging a local workflow.",
+            "probe": "Try a second specimen or calibration. Which aspect of import standard-library analysis tools changes, and what remains scientifically unverified?",
+            "check": "Check the exact task inputs, edge cases and output contract. Importing `statistics` gives a standard arithmetic mean; it does not tell you which experimental unit to average. An average of microscope fields is not automatically an estimate across independent biological replicates."
           }
         }
       },
       "hints": {
         "apply": [
-          "Start by defining named function parameters and an explicit returned value.",
-          "Handle the changed inputs and edge cases before building the final report."
+          "Write the function signature and choose a clear return value before using the sample inputs.",
+          "Try the missing, empty or boundary case described in the task without copying a fixed answer."
         ],
         "prove": []
       },
