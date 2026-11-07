@@ -4,7 +4,7 @@
 
 Learn real text-file IO, JSON, testing and script composition in Python, then complete actual local .venv and Git handoff. Do not confuse a printed shell command with local execution.
 
-**Source and provenance:** https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb. Additional explanations follow Python for Biologists, the Python Data Science Handbook and Python standard-library documentation. Scientific data in lessons are fictional; image references must retain attribution in `assets/witz/CREDITS.md`.
+**Source and provenance:** https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb. Additional explanations follow Python for Biologists, Python Data Science Handbook, and Python standard-library documentation. The lesson data are fictional; source images retain their own attribution.
 
 **Science boundary:** Local shell/Git operations require separate manual evidence; synthetic data are not quantitative microscopy.
 
@@ -12,17 +12,17 @@ Learn real text-file IO, JSON, testing and script composition in Python, then co
 
 **Why:** Learn read and write utf-8 text files through traceable biological programming exercises.
 
-**Concept:** Read and write UTF-8 text files. Use Python's explicit input and output contracts instead of copying a first-example result.
+`Path.write_text(..., encoding='utf-8')` and `Path.read_text(...)` perform genuine Python filesystem operations. A temporary directory prevents leftover files from contaminating the next attempt.
 
-**Data:** Distinguish None from recorded zero and preserve the original specimen ID, physical units and calibration provenance.
+`splitlines()` turns newline-delimited text into records without inventing an extra specimen from the final newline. UTF-8 matters for non-ASCII acquisition IDs; use an explicit encoding rather than relying on the host default.
 
-**Execution boundary:** Pyodide executes genuine Python and uses its own temporary file system. It cannot run local shell commands, create a local virtual environment or commit to the user's Git repository.
+Pyodide's filesystem belongs to its browser runtime, not your laptop's project folder. The independent transfer exports a script and tests local file access separately.
 
-**Transfer:** Test changed inputs, export a working .py file, then verify local Python execution and Git evidence separately. Browser checks are not certification of scientific validity.
+A temporary Python file is created, read back, and removed after the context manager exits.
 
-**Predict:** Predict the output and distinguish executed Python from printed local shell instructions.
+**Predict:** Which field IDs reappear after the file is read?
 
-**Runnable teaching example (not the solution):**
+**Runnable teaching example (not a solution):**
 
 ```python
 from pathlib import Path
@@ -33,19 +33,20 @@ with tempfile.TemporaryDirectory() as folder:
     print(p.read_text(encoding='utf-8').splitlines())
 ```
 
-**Prediction explanation:** Python executes inside the browser; printing text does not run a local terminal.
+**Prediction explanation:** F1 and F2. The file is real inside the Python runtime, not a file saved to your computer's Documents folder.
 
 **Walkthrough:**
 
-1. Identify inputs and the expected returned output before coding.
-2. Predict and run the example; change a case and explain the difference.
-3. Record which operations still require local-machine verification.
+1. Read the stated input and output contract for read and write utf-8 text files.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a missing or empty observation.
-- Check one changed input instead of copying a fixed output.
-- Explain why local environment and biological calibration remain unverified.
+- Change one parameter in read and write utf-8 text files and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -59,7 +60,7 @@ Use tempfile.TemporaryDirectory and pathlib.Path to write newline-delimited fiel
 # INPUTS: field_ids
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -73,29 +74,29 @@ Write observations [ID,channel] to a temporary UTF-8 file, one 'ID,channel' per 
 # INPUTS: observations
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
+**Debug task:** Identify a real failure mode in read and write utf-8 text files: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** Printing shell instructions creates local Python environments or Git commits.
+**Common mistake:** A browser result proves that local software and scientifically valid data were used.
 
-**Scientific limit:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
+**Scientific boundary:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
 
 ## P06-G02 — Plan a local virtual environment
 
 **Why:** Learn plan a local virtual environment through traceable biological programming exercises.
 
-**Concept:** Plan a local virtual environment. Use Python's explicit input and output contracts instead of copying a first-example result.
+`python -m venv .venv` is a terminal command that creates an isolated environment when executed on your computer. Printing the text inside Pyodide has no such effect.
 
-**Data:** Distinguish None from recorded zero and preserve the original specimen ID, physical units and calibration provenance.
+On Linux/macOS the activation command generally uses `source .venv/bin/activate`. On Windows PowerShell the executable path uses `.venv\Scripts\Activate.ps1`. Activation is optional if you directly invoke the environment's interpreter.
 
-**Execution boundary:** Pyodide executes genuine Python and uses its own temporary file system. It cannot run local shell commands, create a local virtual environment or commit to the user's Git repository.
+The verification evidence is the local interpreter path and version plus a successfully executed script in a fresh process. Browser checks must never claim you created or activated a local `.venv`.
 
-**Transfer:** Test changed inputs, export a working .py file, then verify local Python execution and Git evidence separately. Browser checks are not certification of scientific validity.
+The browser can prepare a command plan, but cannot execute it in your machine's terminal.
 
-**Predict:** Predict the output and distinguish executed Python from printed local shell instructions.
+**Predict:** Does printing python3 -m venv .venv create a folder on your computer?
 
-**Runnable teaching example (not the solution):**
+**Runnable teaching example (not a solution):**
 
 ```python
 python_cmd='python3'
@@ -103,19 +104,20 @@ commands=[f'{python_cmd} -m venv .venv','source .venv/bin/activate','python -m p
 print('\n'.join(commands))
 ```
 
-**Prediction explanation:** Python executes inside the browser; printing text does not run a local terminal.
+**Prediction explanation:** No. The text is an instruction; perform it in a local terminal and verify its interpreter.
 
 **Walkthrough:**
 
-1. Identify inputs and the expected returned output before coding.
-2. Predict and run the example; change a case and explain the difference.
-3. Record which operations still require local-machine verification.
+1. Read the stated input and output contract for plan a local virtual environment.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a missing or empty observation.
-- Check one changed input instead of copying a fixed output.
-- Explain why local environment and biological calibration remain unverified.
+- Change one parameter in plan a local virtual environment and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -129,7 +131,7 @@ Build commands containing '<python_cmd> -m venv .venv', 'source .venv/bin/activa
 # INPUTS: python_cmd
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -143,29 +145,29 @@ For target_os 'windows' or 'posix', return activate_command '.venv\Scripts\Activ
 # INPUTS: target_os
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
+**Debug task:** Identify a real failure mode in plan a local virtual environment: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** Printing shell instructions creates local Python environments or Git commits.
+**Common mistake:** A browser result proves that local software and scientifically valid data were used.
 
-**Scientific limit:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
+**Scientific boundary:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
 
 ## P06-G03 — Serialize specimen metadata with JSON
 
 **Why:** Learn serialize specimen metadata with json through traceable biological programming exercises.
 
-**Concept:** Serialize specimen metadata with JSON. Use Python's explicit input and output contracts instead of copying a first-example result.
+`json.dumps` converts Python dictionaries into JSON text for exchange or persistence, and `json.loads` reconstructs compatible Python data from the text.
 
-**Data:** Distinguish None from recorded zero and preserve the original specimen ID, physical units and calibration provenance.
+Python `None`, `True`, and `False` become JSON `null`, `true`, and `false`, then return as their Python counterparts on decoding. A JSON string is text, not a live dictionary until parsed.
 
-**Execution boundary:** Pyodide executes genuine Python and uses its own temporary file system. It cannot run local shell commands, create a local virtual environment or commit to the user's Git repository.
+Use sorted keys for deterministic serializations when comparing training outputs; this is not a cryptographic data-integrity guarantee. Preserve source IDs, numeric types and documented missingness.
 
-**Transfer:** Test changed inputs, export a working .py file, then verify local Python execution and Git evidence separately. Browser checks are not certification of scientific validity.
+The JSON wire representation differs from Python object syntax even when the data round-trips.
 
-**Predict:** Predict the output and distinguish executed Python from printed local shell instructions.
+**Predict:** Which JSON words represent Python None and False, and what does loads recover?
 
-**Runnable teaching example (not the solution):**
+**Runnable teaching example (not a solution):**
 
 ```python
 import json
@@ -174,19 +176,20 @@ print(json.dumps(record,sort_keys=True))
 print(json.loads(json.dumps(record))==record)
 ```
 
-**Prediction explanation:** Python executes inside the browser; printing text does not run a local terminal.
+**Prediction explanation:** null and false are JSON values. `json.loads` reconstructs Python None and False.
 
 **Walkthrough:**
 
-1. Identify inputs and the expected returned output before coding.
-2. Predict and run the example; change a case and explain the difference.
-3. Record which operations still require local-machine verification.
+1. Read the stated input and output contract for serialize specimen metadata with json.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a missing or empty observation.
-- Check one changed input instead of copying a fixed output.
-- Explain why local environment and biological calibration remain unverified.
+- Change one parameter in serialize specimen metadata with json and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -200,7 +203,7 @@ Import json; create record={'id':sample_id,'fields':field_count,'channel':channe
 # INPUTS: sample_id, field_count, channel
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -214,29 +217,29 @@ Import json; encode specimen={'sample':sample,'focus':focus,'passed':passed} wit
 # INPUTS: sample, focus, passed
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
+**Debug task:** Identify a real failure mode in serialize specimen metadata with json: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** Printing shell instructions creates local Python environments or Git commits.
+**Common mistake:** A browser result proves that local software and scientifically valid data were used.
 
-**Scientific limit:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
+**Scientific boundary:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
 
 ## P06-G04 — Write assertions that expose broken code
 
 **Why:** Learn write assertions that expose broken code through traceable biological programming exercises.
 
-**Concept:** Write assertions that expose broken code. Use Python's explicit input and output contracts instead of copying a first-example result.
+An `assert` states an expected property and raises `AssertionError` when the property fails. A meaningful test checks at least two different inputs, including a boundary or zero case.
 
-**Data:** Distinguish None from recorded zero and preserve the original specimen ID, physical units and calibration provenance.
+A test that simply checks `print()` succeeded does not verify unit conversion. A deliberately broken multiplier must fail a width-conversion test that expects division.
 
-**Execution boundary:** Pyodide executes genuine Python and uses its own temporary file system. It cannot run local shell commands, create a local virtual environment or commit to the user's Git repository.
+Public browser exercises are not hidden secure assessment. The independent local task is to run the test against both correct and deliberately incorrect functions in a fresh Python process.
 
-**Transfer:** Test changed inputs, export a working .py file, then verify local Python execution and Git evidence separately. Browser checks are not certification of scientific validity.
+Assertions should distinguish a real conversion from an incorrect multiplication.
 
-**Predict:** Predict the output and distinguish executed Python from printed local shell instructions.
+**Predict:** What happens if the conversion implementation multiplies pixels by scale?
 
-**Runnable teaching example (not the solution):**
+**Runnable teaching example (not a solution):**
 
 ```python
 def width(pixels,scale):
@@ -246,19 +249,20 @@ assert width(0,4)==0
 print('tests passed')
 ```
 
-**Prediction explanation:** Python executes inside the browser; printing text does not run a local terminal.
+**Prediction explanation:** The test that expects 20/4 to equal 5 fails with AssertionError; a broken method is detected.
 
 **Walkthrough:**
 
-1. Identify inputs and the expected returned output before coding.
-2. Predict and run the example; change a case and explain the difference.
-3. Record which operations still require local-machine verification.
+1. Read the stated input and output contract for write assertions that expose broken code.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a missing or empty observation.
-- Check one changed input instead of copying a fixed output.
-- Explain why local environment and biological calibration remain unverified.
+- Change one parameter in write assertions that expose broken code and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -272,7 +276,7 @@ Define width_um(pixels,scale); define test_width(fn) using assert fn(20,4)==5 an
 # INPUTS: pixels, scale
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -287,29 +291,29 @@ Define mean_or_none(values). Define test_mean(fn) with assert fn([2,4])==3 and f
 # INPUTS: values
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
+**Debug task:** Identify a real failure mode in write assertions that expose broken code: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** Printing shell instructions creates local Python environments or Git commits.
+**Common mistake:** A browser result proves that local software and scientifically valid data were used.
 
-**Scientific limit:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
+**Scientific boundary:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
 
 ## P06-G05 — Compose a standalone analysis workflow
 
 **Why:** Learn compose a standalone analysis workflow through traceable biological programming exercises.
 
-**Concept:** Compose a standalone analysis workflow. Use Python's explicit input and output contracts instead of copying a first-example result.
+A small pipeline combines independently testable pieces: a conversion function, a record-processing function, and a final report. Each piece should take arguments and return data, not depend on stale notebook globals.
 
-**Data:** Distinguish None from recorded zero and preserve the original specimen ID, physical units and calibration provenance.
+Package inputs and assumptions explicitly. Preserve IDs next to measurements and keep missing observations visible. Invalid scale should not silently return a seemingly valid numeric measurement.
 
-**Execution boundary:** Pyodide executes genuine Python and uses its own temporary file system. It cannot run local shell commands, create a local virtual environment or commit to the user's Git repository.
+Export a standalone `.py` file and run it with local Python. Reproducing an output on a different computer requires documenting the environment, data source and dependency versions.
 
-**Transfer:** Test changed inputs, export a working .py file, then verify local Python execution and Git evidence separately. Browser checks are not certification of scientific validity.
+The conversion can be reused in a batch-processing function without duplicating its formula.
 
-**Predict:** Predict the output and distinguish executed Python from printed local shell instructions.
+**Predict:** Which code component knows the mathematical formula for each width?
 
-**Runnable teaching example (not the solution):**
+**Runnable teaching example (not a solution):**
 
 ```python
 def convert(pixels,scale):
@@ -319,19 +323,20 @@ def batch(values,scale):
 print(batch([8,12],4))
 ```
 
-**Prediction explanation:** Python executes inside the browser; printing text does not run a local terminal.
+**Prediction explanation:** The conversion function. The batch function calls it for each record rather than copying the calculation.
 
 **Walkthrough:**
 
-1. Identify inputs and the expected returned output before coding.
-2. Predict and run the example; change a case and explain the difference.
-3. Record which operations still require local-machine verification.
+1. Read the stated input and output contract for compose a standalone analysis workflow.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a missing or empty observation.
-- Check one changed input instead of copying a fixed output.
-- Explain why local environment and biological calibration remain unverified.
+- Change one parameter in compose a standalone analysis workflow and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -345,7 +350,7 @@ Define convert_field(pixels,scale) returning width or None for missing pixels or
 # INPUTS: rows, px_per_um
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -359,29 +364,29 @@ Define summarize_batch(rows,scale) for [pixels,tag], returning {'observed':N,'mi
 # INPUTS: rows, scale
 ```
 
-**Practice:** 4 changed-input public cases; no private mastery grading.
+**Practice:** 4 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
+**Debug task:** Identify a real failure mode in compose a standalone analysis workflow: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** Printing shell instructions creates local Python environments or Git commits.
+**Common mistake:** A browser result proves that local software and scientifically valid data were used.
 
-**Scientific limit:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
+**Scientific boundary:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
 
 ## P06-G06 — Plan and verify a real Git change
 
 **Why:** Learn plan and verify a real git change through traceable biological programming exercises.
 
-**Concept:** Plan and verify a real Git change. Use Python's explicit input and output contracts instead of copying a first-example result.
+Git records changes to source files. `git status` identifies the working state; `git add` stages selected files; `git commit` creates a recorded change only when actually executed in a repository.
 
-**Data:** Distinguish None from recorded zero and preserve the original specimen ID, physical units and calibration provenance.
+New untracked files do not appear in a plain unstaged `git diff -- file` until tracked or staged. Inspect `git diff --cached` after staging and confirm the hash with `git log -1`.
 
-**Execution boundary:** Pyodide executes genuine Python and uses its own temporary file system. It cannot run local shell commands, create a local virtual environment or commit to the user's Git repository.
+The browser can generate a correct command sequence but cannot certify the commands ran locally. Keep real biological or personal data out of public Git repositories.
 
-**Transfer:** Test changed inputs, export a working .py file, then verify local Python execution and Git evidence separately. Browser checks are not certification of scientific validity.
+The generated command list is a plan, not proof of a new Git commit.
 
-**Predict:** Predict the output and distinguish executed Python from printed local shell instructions.
+**Predict:** Which evidence would show that a commit actually happened?
 
-**Runnable teaching example (not the solution):**
+**Runnable teaching example (not a solution):**
 
 ```python
 script='field_report.py'
@@ -389,19 +394,20 @@ commands=['git status',f'git add {script}','git commit -m "Add field report"']
 print('\n'.join(commands))
 ```
 
-**Prediction explanation:** Python executes inside the browser; printing text does not run a local terminal.
+**Prediction explanation:** A new local commit hash in git log, the intended file in the commit, and the repository status.
 
 **Walkthrough:**
 
-1. Identify inputs and the expected returned output before coding.
-2. Predict and run the example; change a case and explain the difference.
-3. Record which operations still require local-machine verification.
+1. Read the stated input and output contract for plan and verify a real git change.
+2. Predict the worked code's output before pressing Run.
+3. Change the shown input and observe an actual changed Python result.
+4. Explain a real failure case and distinguish software correctness from scientific validity.
 
 **Investigate:**
 
-- Try a missing or empty observation.
-- Check one changed input instead of copying a fixed output.
-- Explain why local environment and biological calibration remain unverified.
+- Change one parameter in plan and verify a real git change and predict the new result.
+- Try a missing, empty or boundary input when relevant.
+- Explain whether the operation runs inside Python or needs local-machine evidence.
 
 ### Apply
 
@@ -415,7 +421,7 @@ Build commands=['git status','git add <script_name>','git commit -m "<message>"'
 # INPUTS: script_name, message
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -428,13 +434,13 @@ Set next_steps to git diff -- changed_file, git add changed_file, git commit -m 
 # INPUTS: changed_file, commit_message
 ```
 
-**Practice:** 3 changed-input public cases; no private mastery grading.
+**Practice:** 3 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
+**Debug task:** Identify a real failure mode in plan and verify a real git change: which expression or assumption would be responsible, and how would you test it?
 
-**Misconception:** Printing shell instructions creates local Python environments or Git commits.
+**Common mistake:** A browser result proves that local software and scientifically valid data were used.
 
-**Scientific limit:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
+**Scientific boundary:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
 
 ## P06-CAPSTONE — Export a reproducible specimen audit
 
@@ -450,7 +456,7 @@ Set next_steps to git diff -- changed_file, git add changed_file, git commit -m 
 
 **Predict:** Predict the output and distinguish executed Python from printed local shell instructions.
 
-**Runnable teaching example (not the solution):**
+**Runnable teaching example (not a solution):**
 
 ```python
 import json
@@ -486,7 +492,7 @@ Import json. Define build_audit(records,scale) for [id,pixels] returning {'measu
 # INPUTS: records, scale
 ```
 
-**Practice:** 4 changed-input public cases; no private mastery grading.
+**Practice:** 4 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -501,13 +507,13 @@ Import json. Define summarize_input(observations,calibration) for [pixels,id] re
 # INPUTS: observations, calibration
 ```
 
-**Practice:** 4 changed-input public cases; no private mastery grading.
+**Practice:** 4 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
+**Debug task:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
 
-**Misconception:** Printing shell instructions creates local Python environments or Git commits.
+**Common mistake:** Printing shell instructions creates local Python environments or Git commits.
 
-**Scientific limit:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
+**Scientific boundary:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
 
 **Capstone build passes:**
 
@@ -561,7 +567,7 @@ Write pseudocode comments for local Python, tests, .venv setup and Git evidence 
 #   evidence requirements.
 ```
 
-**Practice:** 0 changed-input public cases; no private mastery grading.
+**Practice:** 0 changed-input public cases; not hidden mastery grading.
 
 ### Prove independently
 
@@ -575,13 +581,13 @@ Define reproducible_summary(measures,scale) for [id,pixels] returning {'count':N
 # INPUTS: measures, scale
 ```
 
-**Practice:** 4 changed-input public cases; no private mastery grading.
+**Practice:** 4 changed-input public cases; not hidden mastery grading.
 
-**Debugging exercise:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
+**Debug task:** A printed git command is presented as proof of a local commit. Explain what evidence is actually required.
 
-**Misconception:** Printing shell instructions creates local Python environments or Git commits.
+**Common mistake:** Printing shell instructions creates local Python environments or Git commits.
 
-**Scientific limit:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
+**Scientific boundary:** Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.
 
 **Scientific reflection:**
 
@@ -589,10 +595,10 @@ Define reproducible_summary(measures,scale) for [id,pixels] returning {'count':N
 - How would you verify Python version, tests and a real Git commit?
 - Which biological assumptions remain unvalidated?
 
-## Export and independent use
+## Export and reproduce
 
 Export runnable JSON audit script and complete docs/P06_LOCAL_HANDOFF.md in a local Python environment.
 
-Export as `reproducible_specimen_audit.py` after completing the Prove capstone. A successful public check does not establish retained mastery or calibrated biological validity.
+Export `reproducible_specimen_audit.py` after completing Prove. Browser passing checks alone cannot establish retention, independent problem-solving or calibrated scientific validity.
 
-**Mandatory offline verification:** [P06 Local Python and Git Handoff](../../docs/P06_LOCAL_HANDOFF.md). The browser cannot run a local virtual environment, a native Jupyter kernel or Git. Record actual terminal evidence before calling those competencies independently demonstrated.
+The browser does not run local shell commands. See [P06 Local Python and Git Handoff](../../docs/P06_LOCAL_HANDOFF.md) for independently verifiable terminal steps.
