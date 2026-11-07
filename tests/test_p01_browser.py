@@ -40,11 +40,20 @@ def main():
 
             # Check must execute changed Python inputs, not compare fixed output strings.
             page.locator("#tab-apply").click()
+            # Comments are a prompt, not a learner attempt.
+            page.locator("#p01-check").click()
+            assert "Write your Python solution below the task comments" in page.locator("#output-placeholder").inner_text()
+            page.locator("#run-button").click()
+            assert "Write Python below the task comments" in page.locator("#output-placeholder").inner_text()
+            state = page.evaluate("JSON.parse(localStorage.getItem('biopython.p01.v1'))")
+            assert "P01-G01:apply" not in state.get("progress", {})
             page.evaluate("""() => document.querySelector('.CodeMirror').CodeMirror.setValue(
               'report = f"{specimen}: {fields} fields"\\nprint(report)')""")
             page.locator("#p01-check").click()
             page.wait_for_function("document.querySelector('#output-body').innerText.includes('Passed 2 changed-input checks')",
                                    timeout=30000)
+            assert "Why it worked:" in page.locator("#output-placeholder").inner_text()
+            assert "Think next:" in page.locator("#output-placeholder").inner_text()
             original = "# ORIGINAL_UNTOUCHED_DRAFT"
             assert page.evaluate("""() => JSON.parse(localStorage.getItem('biopython.ui-first.v1')).drafts['Python:python']""") == original, "Frozen stage draft overwritten"
 
