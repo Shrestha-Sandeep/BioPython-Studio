@@ -298,7 +298,7 @@ function mount(){
 }
 async function start(){
  try{
-  for(const id of ["P01","P02"]){
+  for(const id of ["P01","P02","P03"]){
    const r=await fetch("./content/"+id.toLowerCase()+"/lesson.json");
    if(!r.ok)throw Error(id+" content HTTP "+r.status);
    const data=await r.json();
