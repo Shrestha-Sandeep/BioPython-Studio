@@ -35,11 +35,19 @@ function status(message){
  const dot=document.createElement("span");dot.className="status-dot";dot.setAttribute("aria-hidden","true");
  target.replaceChildren(dot,document.createTextNode(" "+message));
 }
+let lastOutput = "", lastOutputFailed = false;
+function restoreOutput(){
+ const placeholder=el("output-placeholder");
+ if(!placeholder)return;
+ placeholder.textContent=lastOutput;
+ placeholder.classList.add("p01-console-result");
+ if(lastOutputFailed)placeholder.setAttribute("data-error","true");
+ else placeholder.removeAttribute("data-error");
+}
 function output(message,failed=false){
- const area=el("output-body");area.replaceChildren();
- const pre=document.createElement("pre");pre.className="p01-console-result";pre.textContent=message||"(No printed output.)";
- if(failed)pre.setAttribute("data-error","true");
- area.append(pre);el("result-output").click();
+ lastOutput=message||"(No printed output.)";lastOutputFailed=failed;
+ el("result-output").click(); // Keep the output-placeholder element required by the frozen UI.
+ restoreOutput();
 }
 function progress(value){
  const k=key(),previous=state.progress[k]||{attempts:0,hints_used:false};
@@ -161,6 +169,7 @@ function mount(){
  pane.append(prediction,hint,hintText,details,link);
  const checker=document.createElement("button");checker.type="button";checker.id="p01-check";checker.className="subtle-button";checker.textContent="Check";
  el("run-button").before(checker);checker.addEventListener("click",check);el("run-button").addEventListener("click",run);
+ el("result-output").addEventListener("click",()=>{if(lastOutput)restoreOutput();});
  el("clear-code").addEventListener("click",()=>{if(active()){state.drafts[key()]=bridge()?.readCode()??"";save();}});
  document.querySelectorAll("[data-phase]").forEach(b=>{
   b.addEventListener("click",()=>choosePhase(b.dataset.phase));
