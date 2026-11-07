@@ -99,7 +99,12 @@
                 "label == 'mutA_P04_recovery'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The declared label grammar preserves strain spelling while standardizing only the plate and condition fields.",
+            "probe": "Change `condition` to `Control` and predict the suffix.",
+            "check": "Check the values of strain, plate and condition before interpolation."
+          }
         },
         "prove": {
           "title": "Transfer to an acquisition description",
@@ -141,7 +146,12 @@
                 "normalized_id == 'WT_7/F19/recovery'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "A different delimiter and source names test the naming policy rather than the exact previously seen expression.",
+            "probe": "Change the strain from `N2` to `mutA`; verify its case remains unchanged.",
+            "check": "`plate.strip().upper()` removes the trailing space and makes P uppercase."
+          }
         }
       },
       "feedback": {
@@ -247,7 +257,12 @@
                 "structure_ok is False"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The parser tests precisely three nonempty components while making no claim about the actual specimen identity.",
+            "probe": "Replace `sample_id` with `N2__heat`. Why is the number of parts still three?",
+            "check": "A separator divides one string into a list of smaller strings."
+          }
         },
         "prove": {
           "title": "Transfer to an unfamiliar delimiter",
@@ -290,7 +305,12 @@
                 "valid_shape is False"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Switching to the pipe delimiter still requires three nonempty components and must reject ambiguous field counts.",
+            "probe": "Try `N2_P03_heat_extra`, and inspect the fourth component.",
+            "check": "`len(parts)` reports the count, not whether the components make scientific sense."
+          }
         }
       },
       "feedback": {
@@ -403,7 +423,12 @@
                 "on_boundary is True"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "A valid score must be within the illustrative 0–1 interval and meet an inclusive minimum to pass.",
+            "probe": "Set focus_score just below 0.8 and compare `>` versus `>=`.",
+            "check": "`focus_score >= minimum_focus` includes equality."
+          }
         },
         "prove": {
           "title": "Transfer to a bounded scientific ratio",
@@ -459,7 +484,12 @@
                 "at_any_edge is False"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Inclusive lower and upper limits both count as valid boundaries; exact equality is not an error.",
+            "probe": "Set focus_score to 1.2 and show why exceeding the minimum does not establish validity.",
+            "check": "`focus_score > minimum_focus` excludes equality."
+          }
         }
       },
       "feedback": {
@@ -574,7 +604,12 @@
                 "reason == 'focus below minimum'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The first applicable identifier or focus failure produces the reported reason; structure precedes quality.",
+            "probe": "Change the sample to `N2_P03_control_extra` and identify the first matching branch.",
+            "check": "Inspect `parts = sample_id.split('_')` before accessing any segment."
+          }
         },
         "prove": {
           "title": "Transfer the logic to another experiment's naming policy",
@@ -630,7 +665,12 @@
                 "reason == 'signal below minimum'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The new pipe-separated convention retains first-failure priority and never lets a good signal rescue an invalid ID.",
+            "probe": "Change focus_score to 0.79 and verify the reason is specifically focus-related.",
+            "check": "The first branch rejects structurally malformed input, so the score is not interpreted for a bad label."
+          }
         }
       },
       "feedback": {
@@ -849,7 +889,12 @@
               "reason == 'expected three fields'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "The validator checks each declared syntax and QC rule in order, preserving the raw ID for audit.",
+          "probe": "Contrast `N2_P03_heat` with `N2_P03_heat_2`: the latter has four fields.",
+          "check": "Write down the declared ID grammar and the priority order before programming."
+        }
       },
       "prove": {
         "title": "Independent transfer: new delimiter and acquisition rules",
@@ -972,14 +1017,27 @@
               "explanation == 'invalid specimen'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "Transfer replaces plate IDs with acquisition IDs, yet still requires an explicit reason for every rejected record.",
+          "probe": "Try `N2_Px3_heat`, `_P03_heat`, `N2_P03_Heat`, and a low-focus valid record.",
+          "check": "Probe `P03`, `Px3`, `P3` and `P３3` with `.startswith`, `.removeprefix`, `.isascii` and `.isdigit` to understand each syntactic requirement."
+        }
       }
     },
     "assessment": {
       "independent": "PUBLIC_CHECKS_NOT_SECURE_MASTER_CERTIFICATION",
       "export": "SAMPLE_LABEL_VALIDATOR_PY",
       "human_review": "REFLECTION_REQUIRED_BUT_NOT_AUTOGRADED"
-    }
+    },
+    "build_steps": [
+      "PASS 1 — Split and count first. Test N2_P03_heat versus N2_P03_heat_more. An extra segment must be rejected as 'expected three fields' before indexing.",
+      "PASS 2 — Verify a nonempty ASCII-alphanumeric strain. Try _P03_heat and mut-A_P03_heat; both must report 'invalid strain'.",
+      "PASS 3 — Require uppercase P plus two ASCII digits. Compare P03 with p03, P3, Px3 and a Unicode digit lookalike; invalid codes must report 'invalid plate'.",
+      "PASS 4 — Match control, heat or recovery exactly, without silently normalizing the raw ID. N2_P03_Heat must report 'unknown condition'.",
+      "PASS 5 — Validate numerical scores against synthetic 0..1 before the inclusive minimum. At a minimum of 0.8, 1.2 is invalid, 0.79 is low and 0.8 passes.",
+      "PASS 6 — Return only the first failure in the declared order and construct the exact report. Run all Apply cases before independently handling the new pipe-separated grammar in Prove."
+    ]
   },
   "review": {
     "id": "P02-REVIEW",
@@ -1034,7 +1092,12 @@
         "title": "Plan before coding",
         "description": "State the grammar and decision order as comments before attempting independent Prove.",
         "starter_code": "# P02-REVIEW | APPLY | Later recall — unfamiliar labeled acquisitions\n# TASK: Write pseudocode for grammar checks and decision order.\n\n",
-        "preview_inputs": {}
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Writing a validation order from memory prevents missing components from being indexed before shape checks.",
+          "probe": "Try before reopening the prior chapter.",
+          "check": "Recall `.split`, conditional branches and `>=` without opening old answers."
+        }
       },
       "prove": {
         "title": "Independent retrieval on new names",
@@ -1091,7 +1154,12 @@
               "reason == 'invalid site'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "The tilde-separated acquisition convention tests reconstruction of the rules without copying plate-specific code.",
+          "probe": "Include a boundary-equality example.",
+          "check": "Write down the input grammar and precise reason priority."
+        }
       }
     },
     "assessment": {
