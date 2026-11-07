@@ -93,7 +93,7 @@ def main():
             page.locator("#bps-chapter-select").select_option("P02")
             assert page.locator("#p01-goal-select option").count()==6
             assert page.locator("#lesson-summary").inner_text().startswith("P02")
-            assert "Two near-identical fluorescence" in page.locator("#phase-panel").inner_text() or "A sample label" in page.locator("#phase-panel").inner_text()
+            assert "Make labels from data rather than retyping them" in page.locator("#phase-panel").inner_text()
             assert page.locator("#bps-chapter-link").get_attribute("href")=="./content/chapters/P02_COMPLETE.md"
             page.get_by_text("See a genuine microscopy example").click()
             page.wait_for_function("document.querySelector('.p01-real-figure img').naturalWidth>0",timeout=20000)
