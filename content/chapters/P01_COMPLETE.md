@@ -178,7 +178,7 @@ A correct Apply solution must respond to the practice-check cases, not merely th
 
 ### Prove: independent transfer
 
-Build summary from condition and replicate and count using 'condition | replicate R | N images'.
+Build summary from condition, replicate and count using the format 'condition | replicate R | fields=N'. Use the changing count, not a fixed worded report.
 
 **New input names:** `condition`, `replicate`, `count`.
 
