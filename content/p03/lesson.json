@@ -1,7 +1,7 @@
 {
   "schema_version": "bps.chapter.v1",
   "chapter_id": "P03",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "status": "CONTENT_CANDIDATE_AWAITING_USER_TRIAL",
   "title": "Filter recorded microscope fields",
   "competencies": [
@@ -58,13 +58,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
-          "starter_code": "field_ids = ['F09', 'F02', 'F11']\nprint(field_ids[0])\nprint(field_ids[-1])\nprint(field_ids[1:3])",
+          "starter_code": "# P03-G01 | LEARN | Index and slice field lists\n# TASK: Predict first, last and slice; reorder the list and rerun.\n\nfield_ids = ['F09', 'F02', 'F11']\nprint(field_ids[0])\nprint(field_ids[-1])\nprint(field_ids[1:3])\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply to changed data",
           "description": "From field_ids, assign first_id and last_id (None if empty), plus a new first_two list. Never crash for an empty list.",
-          "starter_code": "# Inputs: field_ids\n",
+          "starter_code": "# P03-G01 | APPLY | Index and slice field lists\n# TASK: Create first_id, last_id and first_two; handle an empty list safely.\n# RULE: Empty input yields None for first and last.\n# INPUTS: field_ids\n\n",
           "preview_inputs": {
             "field_ids": [
               "F09",
@@ -128,7 +128,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Given roi_ids, create last_two (final up to two IDs), interior (all except first and last) and empty (Boolean).",
-          "starter_code": "# Inputs: roi_ids\n",
+          "starter_code": "# P03-G01 | PROVE | Index and slice field lists\n# TASK: Create last_two, interior and empty from roi_ids.\n# RULE: Handle lists shorter than two.\n# INPUTS: roi_ids\n\n",
           "preview_inputs": {
             "roi_ids": [
               "ROI7",
@@ -243,13 +243,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
-          "starter_code": "recorded = ['F09', 'F02']\nreviewed = recorded.copy()\nreviewed.append('F11')\nprint(recorded)\nprint(reviewed)\nprint(reviewed is recorded)",
+          "starter_code": "# P03-G02 | LEARN | Copy and change lists safely\n# TASK: Predict what changes after copy and append; check object identity.\n\nrecorded = ['F09', 'F02']\nreviewed = recorded.copy()\nreviewed.append('F11')\nprint(recorded)\nprint(reviewed)\nprint(reviewed is recorded)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply to changed data",
           "description": "Create audit_ids as an independent copy of source_ids, append new_id and leave source_ids unchanged.",
-          "starter_code": "# Inputs: source_ids, new_id\n",
+          "starter_code": "# P03-G02 | APPLY | Copy and change lists safely\n# TASK: Copy source_ids into audit_ids; append new_id; preserve the source.\n# RULE: Original list must stay unchanged.\n# INPUTS: source_ids, new_id\n\n",
           "preview_inputs": {
             "source_ids": [
               "F09",
@@ -301,7 +301,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Given raw_candidates and excluded_id, make reviewed_candidates as a copy; remove only the first matching ID when present, and set removal_done accordingly. Preserve the source.",
-          "starter_code": "# Inputs: raw_candidates, excluded_id\n",
+          "starter_code": "# P03-G02 | PROVE | Copy and change lists safely\n# TASK: Copy raw_candidates; remove first matching excluded_id; set\n#   removal_done.\n# RULE: Remove only first match; preserve original.\n# INPUTS: raw_candidates, excluded_id\n\n",
           "preview_inputs": {
             "raw_candidates": [
               "ROI7",
@@ -420,13 +420,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
-          "starter_code": "record = ('F09', 0.83)\nfield_id, score = record\nprint(field_id)\nprint(score)\nprint(type(record).__name__)",
+          "starter_code": "# P03-G03 | LEARN | Unpack immutable tuple records\n# TASK: Predict tuple unpacking and type; try a new pair.\n\nrecord = ('F09', 0.83)\nfield_id, score = record\nprint(field_id)\nprint(score)\nprint(type(record).__name__)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply to changed data",
           "description": "Unpack observed_pair into field_id and score, create frozen_pair as a tuple and report pair_type.",
-          "starter_code": "# Inputs: observed_pair\n",
+          "starter_code": "# P03-G03 | APPLY | Unpack immutable tuple records\n# TASK: Unpack observed_pair; create frozen_pair and pair_type.\n# INPUTS: observed_pair\n\n",
           "preview_inputs": {
             "observed_pair": [
               "F09",
@@ -480,7 +480,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "From endpoints (two pixel coordinates), unpack begin_px and end_px, construct immutable_interval as a tuple, and compute span_px=end_px-begin_px.",
-          "starter_code": "# Inputs: endpoints\n",
+          "starter_code": "# P03-G03 | PROVE | Unpack immutable tuple records\n# TASK: Unpack endpoints; create immutable_interval and calculate span_px.\n# INPUTS: endpoints\n\n",
           "preview_inputs": {
             "endpoints": [
               18,
@@ -585,13 +585,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
-          "starter_code": "scores = [0.9, None, 0.2]\nminimum = 0.8\naccepted = 0\nrejected = 0\nmissing = 0\nfor score in scores:\n    if score is None:\n        missing += 1\n    elif score >= minimum:\n        accepted += 1\n    else:\n        rejected += 1\nprint(accepted, rejected, missing)",
+          "starter_code": "# P03-G04 | LEARN | Iterate and summarize microscope-field lists\n# TASK: Predict accepted, rejected and missing counts; change a score.\n\nscores = [0.9, None, 0.2]\nminimum = 0.8\naccepted = 0\nrejected = 0\nmissing = 0\nfor score in scores:\n    if score is None:\n        missing += 1\n    elif score >= minimum:\n        accepted += 1\n    else:\n        rejected += 1\nprint(accepted, rejected, missing)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply to changed data",
           "description": "Given scores (0..1 or None) and minimum, compute accepted_count, rejected_count and missing_count using a for loop.",
-          "starter_code": "# Inputs: scores, minimum\n",
+          "starter_code": "# P03-G04 | APPLY | Iterate and summarize microscope-field lists\n# TASK: Count accepted, rejected and missing scores using a for loop.\n# RULE: None means missing, not zero.\n# INPUTS: scores, minimum\n\n",
           "preview_inputs": {
             "scores": [
               0.9,
@@ -673,7 +673,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "With measurements and limit, create kept_values (all values >= limit in original order), low_count and unknown_count for None.",
-          "starter_code": "# Inputs: measurements, limit\n",
+          "starter_code": "# P03-G04 | PROVE | Iterate and summarize microscope-field lists\n# TASK: Build kept_values plus low_count and unknown_count; preserve order.\n# RULE: Keep None separate from low numeric scores.\n# INPUTS: measurements, limit\n\n",
           "preview_inputs": {
             "measurements": [
               null,
@@ -797,13 +797,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
-          "starter_code": "field_ids = ['F09','F02','F11']\nfor number, field_id in enumerate(field_ids, start=1):\n    print(f'Field {number}: {field_id}')\nprint(list(range(len(field_ids))))",
+          "starter_code": "# P03-G05 | LEARN | Number fields with range and enumerate\n# TASK: Predict one-based field labels and zero-based indexes.\n\nfield_ids = ['F09','F02','F11']\nfor number, field_id in enumerate(field_ids, start=1):\n    print(f'Field {number}: {field_id}')\nprint(list(range(len(field_ids))))\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply to changed data",
           "description": "Given field_ids, create numbered_labels like 'Field 1: F09' using enumerate(start=1) and zero_indexes containing the corresponding Python indexes.",
-          "starter_code": "# Inputs: field_ids\n",
+          "starter_code": "# P03-G05 | APPLY | Number fields with range and enumerate\n# TASK: Build numbered_labels (starting at 1) and zero_indexes.\n# RULE: Keep Python indexes distinct from display numbers.\n# INPUTS: field_ids\n\n",
           "preview_inputs": {
             "field_ids": [
               "F09",
@@ -861,7 +861,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Given frame_scores (0..1 or None) and threshold, build missing_ordinals for None and passing_ordinals for numeric scores >= threshold, both using one-based positions.",
-          "starter_code": "# Inputs: frame_scores, threshold\n",
+          "starter_code": "# P03-G05 | PROVE | Number fields with range and enumerate\n# TASK: Use one-based positions to collect missing_ordinals and\n#   passing_ordinals.\n# RULE: None is missing; equality passes.\n# INPUTS: frame_scores, threshold\n\n",
           "preview_inputs": {
             "frame_scores": [
               null,
@@ -980,13 +980,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
-          "starter_code": "record_ids = ['F09','F02','F11']\nmax_checks = 2\ni = 0\nvisited = []\nwhile i < len(record_ids) and i < max_checks:\n    visited.append(record_ids[i])\n    i += 1\nprint(visited)\nprint(i)",
+          "starter_code": "# P03-G06 | LEARN | Bound a while loop to finite input\n# TASK: Predict records visited by the bounded while loop; change the limit.\n\nrecord_ids = ['F09','F02','F11']\nmax_checks = 2\ni = 0\nvisited = []\nwhile i < len(record_ids) and i < max_checks:\n    visited.append(record_ids[i])\n    i += 1\nprint(visited)\nprint(i)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply to changed data",
           "description": "Given record_ids and nonnegative max_checks, create visited in source order with a bounded while loop and next_index equal to the number visited.",
-          "starter_code": "# Inputs: record_ids, max_checks\n",
+          "starter_code": "# P03-G06 | APPLY | Bound a while loop to finite input\n# TASK: Use bounded while to create visited and next_index.\n# RULE: Respect max_checks and input length.\n# INPUTS: record_ids, max_checks\n\n",
           "preview_inputs": {
             "record_ids": [
               "F09",
@@ -1064,7 +1064,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Given measurements and max_steps, use a bounded while loop to build inspected (including None values) and attempted count. Do not skip missing records.",
-          "starter_code": "# Inputs: measurements, max_steps\n",
+          "starter_code": "# P03-G06 | PROVE | Bound a while loop to finite input\n# TASK: Use bounded while to create inspected and attempted; keep None entries.\n# RULE: Attempted includes missing entries.\n# INPUTS: measurements, max_steps\n\n",
           "preview_inputs": {
             "measurements": [
               null,
@@ -1181,13 +1181,13 @@
         "learn": {
           "title": "Predict, run, investigate",
           "description": "Read the explanation; predict stdout; run real Python; change one meaningful input and inspect the consequence.",
-          "starter_code": "readings = [0.9, None, 0.2, 'STOP', 1.0]\naccepted = []\nmissing_count = 0\nfor score in readings:\n    if score == 'STOP':\n        break\n    if score is None:\n        missing_count += 1\n        continue\n    if score >= 0.8:\n        accepted.append(score)\nprint(accepted, missing_count)",
+          "starter_code": "# P03-G07 | LEARN | Skip and stop with explicit audit reasons\n# TASK: Predict the effect of None and STOP; change the input sequence.\n\nreadings = [0.9, None, 0.2, 'STOP', 1.0]\naccepted = []\nmissing_count = 0\nfor score in readings:\n    if score == 'STOP':\n        break\n    if score is None:\n        missing_count += 1\n        continue\n    if score >= 0.8:\n        accepted.append(score)\nprint(accepted, missing_count)\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply to changed data",
           "description": "Given readings containing scores, None and optional 'STOP', create accepted_values, low_values, missing_count, invalid_count and stopped. Stop on sentinel, count None, treat out-of-range scores as invalid.",
-          "starter_code": "# Inputs: readings, minimum\n",
+          "starter_code": "# P03-G07 | APPLY | Skip and stop with explicit audit reasons\n# TASK: Before STOP, classify accepted/low/missing/invalid; set stopped.\n# RULE: None is missing; scores outside 0..1 are invalid.\n# INPUTS: readings, minimum\n\n",
           "preview_inputs": {
             "readings": [
               0.9,
@@ -1280,7 +1280,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Given field_records pairs [id,score] and limit, create passed_ids, low_ids, missing_ids, invalid_ids and stopped; stop at ID 'END', classify None as missing and outside-0..1 values as invalid.",
-          "starter_code": "# Inputs: field_records, limit\n",
+          "starter_code": "# P03-G07 | PROVE | Skip and stop with explicit audit reasons\n# TASK: Stop at END; sort field IDs into passed/low/missing/invalid; set\n#   stopped.\n# RULE: Do not process records after END.\n# INPUTS: field_records, limit\n\n",
           "preview_inputs": {
             "field_records": [
               [
@@ -1485,13 +1485,13 @@
       "learn": {
         "title": "Plan a field-QC report",
         "description": "Predict the initial accepted and missing lists, run the fragment, and identify the low-score record that it fails to include. Read the full audit requirements before Apply.",
-        "starter_code": "records = [['F09', 0.9], ['F02', None], ['F11', 0.2]]\nminimum_focus = 0.8\naccepted_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n    elif score >= minimum_focus:\n        accepted_ids.append(field_id)\nprint(accepted_ids)\nprint(missing_ids)",
+        "starter_code": "# P03-CAPSTONE | LEARN | Field-QC audit — complete research-style project\n# TASK: Predict the incomplete audit; identify the omitted low-score field.\n\nrecords = [['F09', 0.9], ['F02', None], ['F11', 0.2]]\nminimum_focus = 0.8\naccepted_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n    elif score >= minimum_focus:\n        accepted_ids.append(field_id)\nprint(accepted_ids)\nprint(missing_ids)\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Build an auditable field-quality filter",
         "description": "Given records ([field_id,score] pairs), minimum_focus and max_rows, construct accepted_ids, rejected_ids, missing_ids, invalid_ids, stopped_early and summary. Scan up to max_rows, STOP ends the scan, duplicate field IDs are invalid, None is missing, out-of-range scores are invalid, 0..1 scores at/above threshold accepted. Print summary exactly `accepted=A; rejected=R; missing=M; invalid=I`; do not mutate records.",
-        "starter_code": "# Inputs: records, minimum_focus (0..1), max_rows (>=0)\n# Create accepted_ids, rejected_ids, missing_ids, invalid_ids, stopped_early, summary.\n# Preserve source records and print(summary).\n",
+        "starter_code": "# P03-CAPSTONE | APPLY | Field-QC audit — complete research-style project\n# TASK: Audit bounded records: accepted/rejected/missing/invalid; STOP;\n#   summary.\n# RULE: Bound by max_rows; reject duplicates; never mutate input.\n# INPUTS: records, minimum_focus, max_rows\n\n",
         "preview_inputs": {
           "records": [
             [
@@ -1791,7 +1791,7 @@
       "prove": {
         "title": "Independent transfer with reversed field records",
         "description": "Given observations as [score,field_tag] pairs, cutoff and max_rows, scan a bounded prefix and stop on field_tag 'END'. Repeated tags or out-of-range scores are bad; None scores absent; numeric scores below cutoff low, otherwise kept. Create kept_tags, low_tags, absent_tags, bad_tags, stopped and report_line exactly `kept=K | low=L | absent=A | bad=B`, print it, preserve observations. Do not reverse field identity and score.",
-        "starter_code": "# Inputs: observations ([score,field_tag] pairs), cutoff, max_rows\n# Create kept_tags, low_tags, absent_tags, bad_tags, stopped and report_line.\n# Print report_line.\n",
+        "starter_code": "# P03-CAPSTONE | PROVE | Field-QC audit — complete research-style project\n# TASK: Audit [score,tag] pairs: kept/low/absent/bad; END; print report_line.\n# RULE: Preserve source and order; follow exact format in panel.\n# INPUTS: observations, cutoff, max_rows\n\n",
         "preview_inputs": {
           "observations": [
             [
@@ -2114,19 +2114,19 @@
       "learn": {
         "title": "Recall the audit contract without a solved example",
         "description": "Write down accepted/low/missing/invalid and early-stop rules before attempting the independent exercise. No worked code is supplied.",
-        "starter_code": "# Recall classification, explicit missingness, duplicate and stop rules.\n",
+        "starter_code": "# P03-REVIEW | LEARN | Later recall — reconstruct a truncated field audit\n# TASK: Recall classification, duplicates and stop rules without old code.\n\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Plan the later-session audit",
         "description": "Write pseudocode comments for a bounded DONE-stopped field audit; actual changed-input checks are in Prove.",
-        "starter_code": "# Pseudocode: source pairs, bounded prefix, DONE, duplicates, None, numeric range, threshold.\n",
+        "starter_code": "# P03-REVIEW | APPLY | Later recall — reconstruct a truncated field audit\n# TASK: Write pseudocode for a bounded audit stopping at DONE.\n\n",
         "preview_inputs": {}
       },
       "prove": {
         "title": "Independent delayed audit",
         "description": "Given field_data as [tag,score] pairs, minimum and max_visits, inspect at most max_visits, stop on DONE. Classify unique IDs into passed, below, unmeasured or corrupt (duplicates/out-of-range scores). Set ended only for DONE, print line exactly `passed=P; below=B; unmeasured=U; corrupt=C`. Preserve source order and inputs.",
-        "starter_code": "# Inputs: field_data, minimum, max_visits\n# Create passed, below, unmeasured, corrupt, ended and line. Print line.\n",
+        "starter_code": "# P03-REVIEW | PROVE | Later recall — reconstruct a truncated field audit\n# TASK: Audit [tag,score] pairs, stop at DONE; compute 4 categories and line.\n# RULE: Preserve source; duplicates and out-of-range are corrupt.\n# INPUTS: field_data, minimum, max_visits\n\n",
         "preview_inputs": {
           "field_data": [
             [
