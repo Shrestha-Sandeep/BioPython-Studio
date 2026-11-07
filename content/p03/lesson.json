@@ -1421,5 +1421,872 @@
   "retention": {
     "minimum_hours_after_capstone": 24,
     "policy": "Delayed public practice is recorded but never automatically certified."
+  },
+  "capstone": {
+    "id": "P03-CAPSTONE",
+    "title": "Field-QC audit — complete research-style project",
+    "competencies": [],
+    "why": "Filter an acquired series of microscope-field records without hiding duplicates, missing scores, invalid numbers or a truncated session.",
+    "scientific_boundary": "Training IDs and numerical scores are entirely synthetic. The 0–1 range and inclusive threshold are teaching rules, not calibrated microscope QC. Imaging fields are not independent biological replicates.",
+    "explain": [
+      "**Research problem:** A set of microscope fields has an acquisition ID and a focus-like score. Some records have no score; others fail a predeclared criterion, use an invalid value or repeat an existing ID. A useful report must retain which records were accepted, rejected, missing or invalid, and must not claim that unvisited fields were analyzed.",
+      "**Input contract:** records is an ordered list of two-element `[field_id, score]` records. IDs are strings. Scores are numeric (occasionally outside the illustrative interval 0–1) or `None` when missing. A record with field ID `STOP` terminates the scan without being classified. `max_rows` is the maximum number of rows visited, a nonnegative integer. `minimum_focus` is a declared numeric threshold in 0–1.",
+      "**Output contract:** assign `accepted_ids`, `rejected_ids`, `missing_ids` and `invalid_ids` as new lists. A numeric score within 0–1 and at or above minimum_focus is accepted; a within-range score below minimum is rejected; None is missing; a score outside 0–1 is invalid. A duplicate field ID is invalid on its second or later occurrence, regardless of its score, because counting it again could inflate the apparent number of inspected fields.",
+      "**Required priority:** inspect at most `records[:max_rows]`; stop on ID STOP before classifying it. For all other IDs, check whether the ID appeared earlier; if so append to invalid_ids and continue. Otherwise add it to a separate seen_ids list, then check for None, out-of-range values and the threshold, in that order. Never mutate records or rearrange the acquisition order.",
+      "**Use the exact report:** set `stopped_early` to True if STOP was encountered, otherwise False. Construct `summary` as `accepted=A; rejected=R; missing=M; invalid=I`, where letters are replaced by category lengths; print summary. When scanning is cut short by STOP or max_rows, the summary represents only visited non-STOP records.",
+      "**Why this matters scientifically:** None is not an observed zero; zero is an observed numeric value. A score of 1.2 is invalid under this toy scale, not exceptionally good. Treating two images of the same field as independent samples can mislead an analysis; actual biological replication requires independent experimental units. Predefine exclusion rules rather than selecting a threshold after looking at treatment differences.",
+      "**No invented raw-image measurements:** P03 does not read calibrated TIFF pixels or infer actual focus quality from the pictured example. The score, range and specimen IDs are synthetic, and successful code execution does not establish the biological significance of any record.",
+      "**Independent transfer:** Prove reverses input pair order to `[score, field_tag]`, changes names and uses END rather than STOP. You must rebuild the reasoning instead of reusing the Apply expression blindly. The altered record format deliberately tests whether you still keep each quality value attached to the correct field.",
+      "**Technical deliverable:** export `field_qc_report.py` with its supplied example inputs and original code, and explain which rows were unvisited. Both public test cases and a short saved reflection are evidence for review, not a hidden independent-mastery certificate."
+    ],
+    "worked_example": {
+      "code": "records = [['F09', 0.9], ['F02', None], ['F11', 0.2]]\nminimum_focus = 0.8\naccepted_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n    elif score >= minimum_focus:\n        accepted_ids.append(field_id)\nprint(accepted_ids)\nprint(missing_ids)",
+      "predict": "Which record is accepted and which is missing? What necessary category does this deliberately incomplete example omit?"
+    },
+    "prediction_answer": "F09 is accepted and F02 is missing. The worked fragment neglects low-scoring F11; the full audit must list rejected IDs as well.",
+    "walkthrough": [
+      "Write down the input pair order and label each field as ID, number, or missing.",
+      "Initialize accepted, rejected, missing, invalid and seen ID lists before iterating.",
+      "Scan a bounded input prefix and stop at STOP before counting it.",
+      "Classify duplicate IDs before checking numerical scores; for other IDs, record missingness and invalid range before threshold decisions.",
+      "Build the exact summary from output lists; verify it on empty, duplicate and cutoff-boundary inputs."
+    ],
+    "investigate": [
+      "Try a missing None score and a numeric zero with a zero minimum, and explain their different categories.",
+      "Try the second occurrence of an accepted ID; keep the first classification and flag the repeat as invalid.",
+      "Move STOP to the beginning; no actual field is visited.",
+      "Set max_rows to zero; all categories stay empty even if the source contains valid records.",
+      "Set the cutoff exactly equal to a field's score; the inclusive rule accepts it."
+    ],
+    "debug_task": "A script deletes missing records from its original source list and calls its shorter length the number of acquired biological replicates. Diagnose source mutation, missingness loss and misidentified statistical sampling units.",
+    "misconception": "A high number of accepted microscope fields automatically means good scientific evidence and each field is an independent biological replicate.",
+    "feedback": {
+      "TypeError": "A field score may be None. Classify missingness before numeric comparisons and confirm paired record order.",
+      "ValueError": "The source contract expects two values per record; do not reuse an earlier field's ID when a pair is malformed.",
+      "NameError": "Initialize each result list and seen_ids before iterating; use the current chapter's exact variable names.",
+      "hardcoded": "The threshold, duplicate IDs, STOP location and row budget change between cases. Never paste a fixed first-result summary."
+    },
+    "hints": {
+      "apply": [
+        "Create accepted_ids, rejected_ids, missing_ids, invalid_ids and seen_ids as empty lists; start stopped_early=False. Loop over records[:max_rows] and unpack field_id, score.",
+        "Test STOP before any classification. Test a duplicate ID using `if field_id in seen_ids` and append it to invalid_ids, then continue. Append each first-seen non-STOP ID to seen_ids.",
+        "Test `score is None`, then `not 0 <= score <= 1`, then `score >= minimum_focus`. Build summary with len(...) for each output list and print it."
+      ],
+      "prove": []
+    },
+    "reflection_prompts": [
+      "How does your code distinguish an observed zero from a missing value?",
+      "Why does a duplicated field ID belong in the invalid list instead of increasing the accepted count?",
+      "What can you conclude about unvisited fields after STOP or a max_rows limit?",
+      "Why are these focus scores and thresholds illustrative rather than established biological QC criteria?",
+      "Which specific source-record and count checks would you perform before trusting the report?"
+    ],
+    "phases": {
+      "learn": {
+        "title": "Plan a field-QC report",
+        "description": "Predict the initial accepted and missing lists, run the fragment, and identify the low-score record that it fails to include. Read the full audit requirements before Apply.",
+        "starter_code": "records = [['F09', 0.9], ['F02', None], ['F11', 0.2]]\nminimum_focus = 0.8\naccepted_ids = []\nmissing_ids = []\nfor field_id, score in records:\n    if score is None:\n        missing_ids.append(field_id)\n    elif score >= minimum_focus:\n        accepted_ids.append(field_id)\nprint(accepted_ids)\nprint(missing_ids)",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Build an auditable field-quality filter",
+        "description": "Given records ([field_id,score] pairs), minimum_focus and max_rows, construct accepted_ids, rejected_ids, missing_ids, invalid_ids, stopped_early and summary. Scan up to max_rows, STOP ends the scan, duplicate field IDs are invalid, None is missing, out-of-range scores are invalid, 0..1 scores at/above threshold accepted. Print summary exactly `accepted=A; rejected=R; missing=M; invalid=I`; do not mutate records.",
+        "starter_code": "# Inputs: records, minimum_focus (0..1), max_rows (>=0)\n# Create accepted_ids, rejected_ids, missing_ids, invalid_ids, stopped_early, summary.\n# Preserve source records and print(summary).\n",
+        "preview_inputs": {
+          "records": [
+            [
+              "F09",
+              0.9
+            ],
+            [
+              "F02",
+              null
+            ],
+            [
+              "F11",
+              0.2
+            ]
+          ],
+          "minimum_focus": 0.8,
+          "max_rows": 10
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F09",
+                  0.9
+                ],
+                [
+                  "F02",
+                  null
+                ],
+                [
+                  "F11",
+                  0.2
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 10
+            },
+            "assertions": [
+              "accepted_ids == ['F09']",
+              "rejected_ids == ['F11']",
+              "missing_ids == ['F02']",
+              "invalid_ids == []",
+              "stopped_early is False",
+              "summary == 'accepted=1; rejected=1; missing=1; invalid=0'",
+              "records == [['F09',0.9],['F02',None],['F11',0.2]]"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F02",
+                  0.8
+                ],
+                [
+                  "F09",
+                  0.79
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 5
+            },
+            "assertions": [
+              "accepted_ids == ['F02']",
+              "rejected_ids == ['F09']",
+              "missing_ids == []",
+              "invalid_ids == []"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F01",
+                  0
+                ],
+                [
+                  "F02",
+                  0.3
+                ]
+              ],
+              "minimum_focus": 0,
+              "max_rows": 5
+            },
+            "assertions": [
+              "accepted_ids == ['F01','F02']",
+              "missing_ids == []",
+              "rejected_ids == []"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F03",
+                  1.4
+                ],
+                [
+                  "F04",
+                  -0.1
+                ],
+                [
+                  "F05",
+                  0.9
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 5
+            },
+            "assertions": [
+              "accepted_ids == ['F05']",
+              "invalid_ids == ['F03','F04']",
+              "missing_ids == []"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F07",
+                  0.9
+                ],
+                [
+                  "F07",
+                  0.95
+                ],
+                [
+                  "F08",
+                  0.2
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 5
+            },
+            "assertions": [
+              "accepted_ids == ['F07']",
+              "invalid_ids == ['F07']",
+              "rejected_ids == ['F08']"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F01",
+                  null
+                ],
+                [
+                  "F01",
+                  0.9
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 2
+            },
+            "assertions": [
+              "missing_ids == ['F01']",
+              "invalid_ids == ['F01']",
+              "accepted_ids == []"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F09",
+                  0.9
+                ],
+                [
+                  "STOP",
+                  null
+                ],
+                [
+                  "F02",
+                  1
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 5
+            },
+            "assertions": [
+              "accepted_ids == ['F09']",
+              "missing_ids == []",
+              "stopped_early is True"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "STOP",
+                  null
+                ],
+                [
+                  "F01",
+                  0.9
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 3
+            },
+            "assertions": [
+              "accepted_ids == []",
+              "stopped_early is True",
+              "summary == 'accepted=0; rejected=0; missing=0; invalid=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F09",
+                  0.9
+                ],
+                [
+                  "F01",
+                  0.1
+                ],
+                [
+                  "F02",
+                  null
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 1
+            },
+            "assertions": [
+              "accepted_ids == ['F09']",
+              "rejected_ids == []",
+              "missing_ids == []",
+              "stopped_early is False"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F09",
+                  0.9
+                ]
+              ],
+              "minimum_focus": 0.8,
+              "max_rows": 0
+            },
+            "assertions": [
+              "accepted_ids == []",
+              "stopped_early is False",
+              "summary == 'accepted=0; rejected=0; missing=0; invalid=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [],
+              "minimum_focus": 0.8,
+              "max_rows": 4
+            },
+            "assertions": [
+              "accepted_ids == []",
+              "missing_ids == []",
+              "invalid_ids == []",
+              "summary == 'accepted=0; rejected=0; missing=0; invalid=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F20",
+                  0.6
+                ],
+                [
+                  "F03",
+                  0.9
+                ],
+                [
+                  "F11",
+                  null
+                ],
+                [
+                  "F02",
+                  0.5
+                ]
+              ],
+              "minimum_focus": 0.6,
+              "max_rows": 4
+            },
+            "assertions": [
+              "accepted_ids == ['F20','F03']",
+              "rejected_ids == ['F02']",
+              "missing_ids == ['F11']",
+              "invalid_ids == []"
+            ]
+          }
+        ]
+      },
+      "prove": {
+        "title": "Independent transfer with reversed field records",
+        "description": "Given observations as [score,field_tag] pairs, cutoff and max_rows, scan a bounded prefix and stop on field_tag 'END'. Repeated tags or out-of-range scores are bad; None scores absent; numeric scores below cutoff low, otherwise kept. Create kept_tags, low_tags, absent_tags, bad_tags, stopped and report_line exactly `kept=K | low=L | absent=A | bad=B`, print it, preserve observations. Do not reverse field identity and score.",
+        "starter_code": "# Inputs: observations ([score,field_tag] pairs), cutoff, max_rows\n# Create kept_tags, low_tags, absent_tags, bad_tags, stopped and report_line.\n# Print report_line.\n",
+        "preview_inputs": {
+          "observations": [
+            [
+              0.8,
+              "field9"
+            ],
+            [
+              null,
+              "field2"
+            ],
+            [
+              0.2,
+              "field7"
+            ]
+          ],
+          "cutoff": 0.8,
+          "max_rows": 8
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "observations": [
+                [
+                  0.8,
+                  "field9"
+                ],
+                [
+                  null,
+                  "field2"
+                ],
+                [
+                  0.2,
+                  "field7"
+                ]
+              ],
+              "cutoff": 0.8,
+              "max_rows": 8
+            },
+            "assertions": [
+              "kept_tags == ['field9']",
+              "low_tags == ['field7']",
+              "absent_tags == ['field2']",
+              "bad_tags == []",
+              "stopped is False",
+              "report_line == 'kept=1 | low=1 | absent=1 | bad=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  0,
+                  "field0"
+                ],
+                [
+                  1,
+                  "field1"
+                ]
+              ],
+              "cutoff": 0,
+              "max_rows": 10
+            },
+            "assertions": [
+              "kept_tags == ['field0','field1']",
+              "low_tags == []",
+              "absent_tags == []",
+              "bad_tags == []"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  0.9,
+                  "field1"
+                ],
+                [
+                  0.8,
+                  "field1"
+                ],
+                [
+                  0.4,
+                  "field2"
+                ]
+              ],
+              "cutoff": 0.8,
+              "max_rows": 3
+            },
+            "assertions": [
+              "kept_tags == ['field1']",
+              "bad_tags == ['field1']",
+              "low_tags == ['field2']"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  1.8,
+                  "field2"
+                ],
+                [
+                  -1,
+                  "field3"
+                ],
+                [
+                  1,
+                  "field4"
+                ]
+              ],
+              "cutoff": 0.8,
+              "max_rows": 5
+            },
+            "assertions": [
+              "kept_tags == ['field4']",
+              "bad_tags == ['field2','field3']"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  0.9,
+                  "field2"
+                ],
+                [
+                  null,
+                  "END"
+                ],
+                [
+                  0.9,
+                  "field3"
+                ]
+              ],
+              "cutoff": 0.8,
+              "max_rows": 5
+            },
+            "assertions": [
+              "kept_tags == ['field2']",
+              "stopped is True",
+              "absent_tags == []"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  null,
+                  "END"
+                ],
+                [
+                  0.9,
+                  "field3"
+                ]
+              ],
+              "cutoff": 0.8,
+              "max_rows": 5
+            },
+            "assertions": [
+              "stopped is True",
+              "kept_tags == []",
+              "report_line == 'kept=0 | low=0 | absent=0 | bad=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  0.9,
+                  "field1"
+                ],
+                [
+                  null,
+                  "field2"
+                ]
+              ],
+              "cutoff": 0.8,
+              "max_rows": 1
+            },
+            "assertions": [
+              "kept_tags == ['field1']",
+              "absent_tags == []",
+              "stopped is False"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  0.9,
+                  "field1"
+                ]
+              ],
+              "cutoff": 0.8,
+              "max_rows": 0
+            },
+            "assertions": [
+              "kept_tags == []",
+              "report_line == 'kept=0 | low=0 | absent=0 | bad=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [],
+              "cutoff": 0.8,
+              "max_rows": 3
+            },
+            "assertions": [
+              "kept_tags == []",
+              "low_tags == []",
+              "absent_tags == []",
+              "bad_tags == []"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  null,
+                  "field8"
+                ],
+                [
+                  0.9,
+                  "field8"
+                ],
+                [
+                  0.8,
+                  "field1"
+                ]
+              ],
+              "cutoff": 0.8,
+              "max_rows": 5
+            },
+            "assertions": [
+              "absent_tags == ['field8']",
+              "bad_tags == ['field8']",
+              "kept_tags == ['field1']"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  0.3,
+                  "X9"
+                ],
+                [
+                  0.7,
+                  "X1"
+                ],
+                [
+                  0.8,
+                  "X8"
+                ]
+              ],
+              "cutoff": 0.7,
+              "max_rows": 5
+            },
+            "assertions": [
+              "kept_tags == ['X1','X8']",
+              "low_tags == ['X9']",
+              "report_line == 'kept=2 | low=1 | absent=0 | bad=0'"
+            ]
+          }
+        ]
+      }
+    },
+    "assessment": {
+      "public_checker": "CHANGED_INPUT_PRACTICE_NOT_CERTIFICATION",
+      "scientific_reflection": "REQUIRES_HUMAN_REVIEW",
+      "export": "field_qc_report.py",
+      "independent_transfer": "REVERSED_RECORD_SHAPE"
+    }
+  },
+  "review": {
+    "id": "P03-REVIEW",
+    "title": "Later recall — reconstruct a truncated field audit",
+    "competencies": [],
+    "why": "Try reconstructing missingness, duplicate protection and bounded iteration on unfamiliar data after a break.",
+    "scientific_boundary": "This is later practice on fictional acquisition records, not authenticated mastery or a validated microscope QC workflow.",
+    "explain": [
+      "**Purpose:** Remember a procedure independently rather than recognising its source code. After at least 24 hours, or sooner as practice, attempt a new filter without opening the previous chapter answer.",
+      "**New convention:** field_data contains [tag,score] pairs; the stop marker is DONE, and max_visits limits the scanned prefix. Preserve field IDs and distinguish duplicate, missing, out-of-range and below-threshold records under an inclusive minimum.",
+      "**Limits of evidence:** A browser-visible test can confirm correct execution for changed records and record the interval since the earlier capstone, but it cannot certify retained understanding or biological validity. Explain what remains unknown about unvisited fields."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Without looking back, explain why missing None cannot be treated as observed zero and when the loop must stop."
+    },
+    "prediction_answer": "Check None before comparing numeric scores, and stop on DONE or a max_visits bound. Zero is a numeric observation.",
+    "walkthrough": [
+      "Recall all outcome categories and the stop rule.",
+      "Initialize result lists without modifying input.",
+      "Bound the iteration and keep the field identity with its score.",
+      "Record duplicates as invalid and None as missing.",
+      "Explain which rows were unvisited."
+    ],
+    "investigate": [
+      "Try the task before opening a previous solution.",
+      "Use a zero score and zero minimum.",
+      "Place DONE before a high-scoring record and explain why it is unvisited."
+    ],
+    "misconception": "Passing a repeated visible checker proves scientific retention and experimental validity.",
+    "debug_task": "A script removes missing values and renumbers all later fields. Describe exactly what identity and missingness information was lost.",
+    "feedback": {
+      "TypeError": "Check None before comparing numbers.",
+      "IndexError": "Every input entry must have two values; inspect its shape.",
+      "hardcoded": "Use the supplied new field names, bound and DONE marker."
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "reflection_prompts": [
+      "Which rules did you reconstruct without reading the earlier chapter?",
+      "Did you consult help or previous code?",
+      "What observations remained unvisited?"
+    ],
+    "phases": {
+      "learn": {
+        "title": "Recall the audit contract without a solved example",
+        "description": "Write down accepted/low/missing/invalid and early-stop rules before attempting the independent exercise. No worked code is supplied.",
+        "starter_code": "# Recall classification, explicit missingness, duplicate and stop rules.\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Plan the later-session audit",
+        "description": "Write pseudocode comments for a bounded DONE-stopped field audit; actual changed-input checks are in Prove.",
+        "starter_code": "# Pseudocode: source pairs, bounded prefix, DONE, duplicates, None, numeric range, threshold.\n",
+        "preview_inputs": {}
+      },
+      "prove": {
+        "title": "Independent delayed audit",
+        "description": "Given field_data as [tag,score] pairs, minimum and max_visits, inspect at most max_visits, stop on DONE. Classify unique IDs into passed, below, unmeasured or corrupt (duplicates/out-of-range scores). Set ended only for DONE, print line exactly `passed=P; below=B; unmeasured=U; corrupt=C`. Preserve source order and inputs.",
+        "starter_code": "# Inputs: field_data, minimum, max_visits\n# Create passed, below, unmeasured, corrupt, ended and line. Print line.\n",
+        "preview_inputs": {
+          "field_data": [
+            [
+              "R9",
+              0.8
+            ],
+            [
+              "R2",
+              null
+            ],
+            [
+              "R3",
+              0.3
+            ]
+          ],
+          "minimum": 0.8,
+          "max_visits": 7
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "field_data": [
+                [
+                  "R9",
+                  0.8
+                ],
+                [
+                  "R2",
+                  null
+                ],
+                [
+                  "R3",
+                  0.3
+                ]
+              ],
+              "minimum": 0.8,
+              "max_visits": 7
+            },
+            "assertions": [
+              "passed == ['R9']",
+              "below == ['R3']",
+              "unmeasured == ['R2']",
+              "corrupt == []",
+              "ended is False",
+              "line == 'passed=1; below=1; unmeasured=1; corrupt=0'"
+            ]
+          },
+          {
+            "inputs": {
+              "field_data": [
+                [
+                  "R1",
+                  0
+                ],
+                [
+                  "R2",
+                  1
+                ]
+              ],
+              "minimum": 0,
+              "max_visits": 5
+            },
+            "assertions": [
+              "passed == ['R1','R2']",
+              "below == []"
+            ]
+          },
+          {
+            "inputs": {
+              "field_data": [
+                [
+                  "R1",
+                  0.9
+                ],
+                [
+                  "R1",
+                  0.7
+                ],
+                [
+                  "R3",
+                  null
+                ]
+              ],
+              "minimum": 0.8,
+              "max_visits": 6
+            },
+            "assertions": [
+              "passed == ['R1']",
+              "corrupt == ['R1']",
+              "unmeasured == ['R3']"
+            ]
+          },
+          {
+            "inputs": {
+              "field_data": [
+                [
+                  "DONE",
+                  null
+                ],
+                [
+                  "R1",
+                  0.8
+                ]
+              ],
+              "minimum": 0.8,
+              "max_visits": 3
+            },
+            "assertions": [
+              "ended is True",
+              "passed == []",
+              "unmeasured == []"
+            ]
+          },
+          {
+            "inputs": {
+              "field_data": [
+                [
+                  "R1",
+                  0.9
+                ],
+                [
+                  "R2",
+                  0.2
+                ]
+              ],
+              "minimum": 0.8,
+              "max_visits": 1
+            },
+            "assertions": [
+              "passed == ['R1']",
+              "below == []",
+              "ended is False"
+            ]
+          },
+          {
+            "inputs": {
+              "field_data": [],
+              "minimum": 0.8,
+              "max_visits": 2
+            },
+            "assertions": [
+              "passed == []",
+              "below == []",
+              "unmeasured == []",
+              "corrupt == []",
+              "ended is False"
+            ]
+          }
+        ]
+      }
+    },
+    "assessment": {
+      "status": "DELAYED_PRACTICE_ONLY",
+      "minimum_hours": 24,
+      "auto_certified_retention": false
+    }
+  },
+  "final_project": {
+    "name": "field_qc_report.py",
+    "brief": "One reproducible field-level QC script with traceable accepted/rejected/missing/invalid IDs, explicit scan scope and scientific interpretation.",
+    "status": "RUNNABLE_CAPSTONE_CANDIDATE"
   }
 }
