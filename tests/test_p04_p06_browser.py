@@ -82,6 +82,8 @@ def main():
                     if idx==6:
                         reflection="Synthetic inputs, missingness, calibration, source provenance and independent biological replicates must remain distinct."
                         page.locator("#tab-prove").click()
+                        if page.locator("#lesson-toggle").get_attribute("aria-expanded") == "false":
+                            page.locator("#lesson-toggle").click()
                         page.locator("#p01-reflection").fill(reflection)
                         assert reflection in page.evaluate("JSON.parse(localStorage.getItem('biopython.'+'"+cid.lower()+"'+'.v1')).reflections['"+cid+"-CAPSTONE']")
                         with page.expect_download() as event:
@@ -112,6 +114,8 @@ def main():
                 mobile.locator("#p01-goal-select").select_option("6")
                 if width<=720:mobile.locator("#nav-toggle").click()
                 mobile.locator("#tab-prove").click()
+                assert mobile.locator("#lesson-toggle").get_attribute("aria-expanded") == "false"
+                assert mobile.evaluate("document.querySelector(\'.CodeMirror\').CodeMirror.getOption(\'lineWrapping\')") == (width <= 900)
                 assert mobile.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),width
                 rect=mobile.locator("#code-wrapper").bounding_box()
                 assert rect and rect["y"]<height,(width,rect)
