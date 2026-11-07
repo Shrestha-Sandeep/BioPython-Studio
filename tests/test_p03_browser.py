@@ -197,6 +197,16 @@ def main():
             page.wait_for_function("document.querySelector('#output-placeholder').innerText.includes('F09')", timeout=100000)
             assert "Python 3" in page.locator(".runtime-state").inner_text()
 
+            # Python input previews must not leak JavaScript null instead of None.
+            page.locator("#p01-goal-select").select_option("3")
+            page.locator("#tab-apply").click()
+            inputs = page.locator("#p01-inputs").inner_text()
+            assert "None" in inputs and "null" not in inputs, inputs
+            page.locator("#p01-check").click()
+            assert "Write your Python solution below the task comments" in page.locator("#output-placeholder").inner_text()
+            assert "P03-G04:apply" not in page.evaluate("JSON.parse(localStorage.getItem('biopython.p03.v1')).progress")
+            page.locator("#p01-goal-select").select_option("0")
+
             cases_checked = 0
             for index, (goal_id, sample) in enumerate(SOLUTIONS.items()):
                 page.locator("#p01-goal-select").select_option(str(index))
@@ -212,6 +222,9 @@ def main():
             page.wait_for_function("document.querySelector('#output-placeholder').innerText.includes('Practice condition failed')", timeout=30000)
 
             page.locator("#p01-goal-select").select_option("7")
+            page.locator("#tab-apply").click()
+            page.get_by_text("Build in short passes").click()
+            assert "PASS 5" in page.locator("#p01-detail-root").inner_text()
             run_checks(page, "P03-CAPSTONE", "apply", CAP_APPLY, 12)
             state = page.evaluate("JSON.parse(localStorage.getItem('biopython.p03.v1'))")
             assert state["capstoneFirstPassAt"] > 0
