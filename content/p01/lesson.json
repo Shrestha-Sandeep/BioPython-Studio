@@ -1,0 +1,1185 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "P01",
+  "version": "1.3.0",
+  "status": "CHAPTER_IMPLEMENTED_REQUIRES_LEARNER_VALIDATION",
+  "title": "Run your first scientific program",
+  "competencies": [
+    "001",
+    "002",
+    "003",
+    "004",
+    "005",
+    "006",
+    "007"
+  ],
+  "intro": "Your first real scientific Python deliverable is a reproducible specimen report. A microscopy record contains an identity, imaging-field count, named channel and—only where provided—a pixel calibration. Build the report from changing records rather than copying a fixed answer. The surrounding Cell Atlas context is authentic; the numerical training records are synthetic.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/Demo.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "AUTHENTIC_WITZ_RENDERED_HPA_FIGURE_FOR_CONTEXT_ONLY",
+    "caution": "The bundled PNG is a notebook rendering of source fluorescence imagery, not a raw analysis TIFF or calibrated intensity measurement. Underlying source terms are recorded in CREDITS.md."
+  },
+  "authoring_policy": {
+    "lesson_flow": "Learn → Apply → Prove",
+    "hints_during_prove": false,
+    "graded_client_tests": "PUBLIC_PRACTICE_CHECKS_NOT_SECRET_MASTERY",
+    "retained_mastery": "REQUIRES_DELAYED_UNSEEN_TRANSFER"
+  },
+  "goals": [
+    {
+      "id": "P01-G01",
+      "title": "Run a scientific Python script",
+      "competencies": [
+        "001"
+      ],
+      "why": "Python replaces handwritten transcription when the same program can describe another sample.",
+      "explain": [
+        "**A program consists of statements.** Python executes a script from top to bottom. A statement can assign a value (`specimen = 'N2_P03'`), perform a calculation, or print information. The order matters: a name must be assigned before you use it. Pressing Run executes your current editor code; typing it alone does not.",
+        "**Assignment is not an output instruction.** In `fields = 6`, the name `fields` refers to the integer 6. That line does not print anything. `print(specimen, fields)` produces one line in stdout, separating the values with a space. The output console is not a separate dataset: it is text emitted by the executed script.",
+        "**Why this is scientific programming:** specimen identity and field counts change between acquisitions. A program that prints `N2_P03 6` as a literal would appear correct once but fail for a second specimen. Store the inputs in names; then use those names when constructing the report.",
+        "**Scripts versus notebooks:** a notebook environment can display the value of its final expression automatically. For an ordinary script, rely on an explicit `print` if you want a visible report. P06 will teach real notebook files; P01 uses fresh script execution."
+      ],
+      "worked_example": {
+        "code": "sample_id = 'N2_P03'\nfields = 6\nprint(sample_id, fields)",
+        "predict": "How many lines are printed, and why?"
+      },
+      "misconception": "No output means the assignment did not execute.",
+      "scientific_boundary": "Numbers are invented training records, not biological replicate observations.",
+      "phases": {
+        "learn": {
+          "title": "Understand and investigate",
+          "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
+          "starter_code": "sample_id = 'N2_P03'\nfields = 6\nprint(sample_id, fields)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Build on changing data",
+          "description": "Given specimen and fields, assign report in the format 'ID: N fields' and print it.",
+          "starter_code": "# Available inputs: specimen, fields\n",
+          "preview_inputs": {
+            "specimen": "N2_P03",
+            "fields": 6
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "specimen": "N2_P03",
+                "fields": 6
+              },
+              "assertions": [
+                "report == 'N2_P03: 6 fields'"
+              ]
+            },
+            {
+              "inputs": {
+                "specimen": "mutA_P13",
+                "fields": 0
+              },
+              "assertions": [
+                "report == 'mutA_P13: 0 fields'"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Using unrelated variable names (sample, observed), assign outcome to 'ID | N observations' without pasting a previous output.",
+          "starter_code": "# Available inputs: sample, observed\n",
+          "preview_inputs": {
+            "sample": "WT_P07",
+            "observed": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": "WT_P07",
+                "observed": 4
+              },
+              "assertions": [
+                "outcome == 'WT_P07 | 4 observations'"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": "mutC_P17",
+                "observed": 11
+              },
+              "assertions": [
+                "outcome == 'mutC_P17 | 11 observations'"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify which names come from the supplied inputs.",
+          "Build a new result from those names rather than hardcoding the first output."
+        ],
+        "prove": []
+      },
+      "walkthrough": [
+        "Line 1 assigns a string sample identifier; line 2 assigns a numeric field count.",
+        "Line 3 reads both values and sends one combined line to stdout.",
+        "Try removing line 3. The script succeeds, but there is no output. Put it back before continuing."
+      ],
+      "investigate": [
+        "Predict precisely how many lines will appear in the console.",
+        "Change `fields` to `9`, run again, and locate the changed part of stdout.",
+        "Replace the printed variables with a fixed quoted label. Explain why that apparently works only for one record."
+      ],
+      "debug_task": "Delete the definition of `sample_id` and run. Which exception occurs? Restore the definition. Do not replace the missing variable with a fixed output.",
+      "prediction_answer": "Exactly one line: `N2_P03 6`. Two assignments create values; `print` emits the line.",
+      "feedback": {
+        "NameError": "A name was used before it was assigned, or its spelling differs. Compare the traceback's name with the defined input names.",
+        "SyntaxError": "Check matching quotes, parentheses and the exact characters in your print statement.",
+        "hardcoded": "The first sample passed, but a changed specimen did not. Build the output from the supplied variables, not a fixed string."
+      },
+      "learning_evidence": {
+        "learn": "Predict + investigate a real run (exploration, not mastery)",
+        "apply": "Pass practice checks on changed inputs, record hint use",
+        "prove": "Solve a related unfamiliar task on new inputs; public browser checks cannot certify independent mastery"
+      }
+    },
+    {
+      "id": "P01-G02",
+      "title": "Name experimental data with variables",
+      "competencies": [
+        "005"
+      ],
+      "why": "Meaningful names prevent copied scripts from silently referring to the wrong sample.",
+      "explain": [
+        "**Good scientific names identify what a value represents.** Prefer `specimen_id`, `field_count` and `channel_name` to `a`, `b` and `c`. Python identifiers may contain underscores and digits (not as the first character); they are case-sensitive. `sample_id` and `Sample_id` are different names.",
+        "**A specimen identifier is text.** The label `N2_P03` contains a number, but it is not something you should divide or average. In Python, text is written inside single or double quotes. The count of microscope fields is an integer; the two values serve different scientific purposes.",
+        "**An f-string joins values into an interpretable report.** Write `f'{specimen_id}: {field_count} fields'`. Python substitutes values for the expressions in braces. The resulting label updates when either input changes. The original variables remain unchanged.",
+        "**Assignment does not continuously recalculate derived values.** If you compute `description` and later change `field_count`, the old `description` stays as it was until you run the formatting statement again. This is a simple version of stale notebook state explored in G07."
+      ],
+      "worked_example": {
+        "code": "specimen_id = 'N2_P03'\nfield_count = 4\nprint(f'{specimen_id}: {field_count} recorded fields')",
+        "predict": "If field_count is changed to 9, which expression must be rerun?"
+      },
+      "misconception": "A specimen identifier with digits is a numerical measurement.",
+      "scientific_boundary": "Fields, images and biological replicates are distinct experimental units.",
+      "phases": {
+        "learn": {
+          "title": "Understand and investigate",
+          "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
+          "starter_code": "specimen_id = 'N2_P03'\nfield_count = 4\nprint(f'{specimen_id}: {field_count} recorded fields')",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Build on changing data",
+          "description": "Construct description from specimen_id, field_count and channel_name: 'ID: N fields, channel X'.",
+          "starter_code": "# Available: specimen_id, field_count, channel_name\n",
+          "preview_inputs": {
+            "specimen_id": "N2_P03",
+            "field_count": 5,
+            "channel_name": "GFP"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "specimen_id": "N2_P03",
+                "field_count": 5,
+                "channel_name": "GFP"
+              },
+              "assertions": [
+                "description == 'N2_P03: 5 fields, channel GFP'"
+              ]
+            },
+            {
+              "inputs": {
+                "specimen_id": "ced1_P07",
+                "field_count": 0,
+                "channel_name": "DAPI"
+              },
+              "assertions": [
+                "description == 'ced1_P07: 0 fields, channel DAPI'"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Build summary from condition, replicate and count using the format 'condition | replicate R | fields=N'. Use the changing count, not a fixed worded report.",
+          "starter_code": "# Available: condition, replicate, count\n",
+          "preview_inputs": {
+            "condition": "control",
+            "replicate": 2,
+            "count": 6
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "condition": "control",
+                "replicate": 2,
+                "count": 6
+              },
+              "assertions": [
+                "summary == 'control | replicate 2 | fields=6'"
+              ]
+            },
+            {
+              "inputs": {
+                "condition": "heat",
+                "replicate": 11,
+                "count": 1
+              },
+              "assertions": [
+                "summary == 'heat | replicate 11 | fields=1'"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify which names come from the supplied inputs.",
+          "Build a new result from those names rather than hardcoding the first output."
+        ],
+        "prove": []
+      },
+      "walkthrough": [
+        "The quoted specimen ID is stored as text; field_count is a number.",
+        "The f-string reads their current values to build a new string.",
+        "Rerun the assignment creating the description after changing one input."
+      ],
+      "investigate": [
+        "Change the field count without changing the quoted report text, then rerun.",
+        "Change the condition to another specimen and check that only its identifier changes.",
+        "Intentionally refer to `specimen_ID` instead of `specimen_id`; inspect the case-sensitive NameError."
+      ],
+      "debug_task": "A colleague wrote `description = 'specimen_id: field_count fields'`. Why does this print literal words? Replace the string with an f-string.",
+      "prediction_answer": "The report uses whatever values the variables hold at the moment the f-string is evaluated. A changed count must be followed by rerunning the report assignment.",
+      "feedback": {
+        "NameError": "Variable names are case-sensitive. Compare the field name used in the report with the available input identifiers.",
+        "TypeError": "Do not add a string and an integer directly. Use an f-string or str(...) deliberately.",
+        "hardcoded": "Your description must change when specimen, field count or channel changes."
+      },
+      "learning_evidence": {
+        "learn": "Predict + investigate a real run (exploration, not mastery)",
+        "apply": "Pass practice checks on changed inputs, record hint use",
+        "prove": "Solve a related unfamiliar task on new inputs; public browser checks cannot certify independent mastery"
+      }
+    },
+    {
+      "id": "P01-G03",
+      "title": "Calculate quantities and units",
+      "competencies": [
+        "006"
+      ],
+      "why": "Science requires dimensional meaning as well as arithmetic correctness.",
+      "explain": [
+        "**Python arithmetic is straightforward; dimensional reasoning is not.** Use `+`, `-`, `*`, `/` and parentheses as you would in a scientific calculation. But write the units next to every input before choosing an operation.",
+        "**Suppose a microscope scale is given as pixels per micrometre.** A measured width of 48 pixels and a calibration of 4 pixels/µm implies 48 ÷ 4 = 12 µm. Multiplying would be dimensionally wrong. The variable name `pixels_per_um` makes the denominator's meaning visible.",
+        "**Physical scale is an assumption to verify, not an inference from a JPEG.** In this chapter the scale values are invented examples. In a real image-analysis workflow, you must obtain and validate calibration from acquisition metadata or a trustworthy scale bar.",
+        "**Boundary cases matter.** A width of 0 pixels converts to 0 µm with positive calibration. A calibration of 0 is invalid and division raises `ZeroDivisionError`. Do not quietly substitute 1 for missing calibration. Conditional validation will be introduced in P02.",
+        "**Never round early.** Floating-point arithmetic may represent values approximately. Keep numerical precision for analysis; format the presentation separately if needed, while respecting the uncertainty of the original measurement."
+      ],
+      "worked_example": {
+        "code": "width_pixels = 48\npixels_per_um = 4.0\nwidth_um = width_pixels / pixels_per_um\nprint(width_um)",
+        "predict": "What happens to width_um if pixels_per_um is doubled?"
+      },
+      "misconception": "A numerical result with no units is already scientifically meaningful.",
+      "scientific_boundary": "The calibration and time interval here are synthetic assumptions, not microscope metadata.",
+      "phases": {
+        "learn": {
+          "title": "Understand and investigate",
+          "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
+          "starter_code": "width_pixels = 48\npixels_per_um = 4.0\nwidth_um = width_pixels / pixels_per_um\nprint(width_um)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Build on changing data",
+          "description": "Compute segment_um from segment_pixels / scale_px_per_um.",
+          "starter_code": "# Available: segment_pixels, scale_px_per_um (> 0)\n",
+          "preview_inputs": {
+            "segment_pixels": 75,
+            "scale_px_per_um": 2.5
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "segment_pixels": 75,
+                "scale_px_per_um": 2.5
+              },
+              "assertions": [
+                "abs(segment_um - 30) < 1e-12"
+              ]
+            },
+            {
+              "inputs": {
+                "segment_pixels": 120,
+                "scale_px_per_um": 6
+              },
+              "assertions": [
+                "segment_um == 20"
+              ]
+            },
+            {
+              "inputs": {
+                "segment_pixels": 0,
+                "scale_px_per_um": 8
+              },
+              "assertions": [
+                "segment_um == 0"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Calculate displacement_um and speed_um_per_min from displacement_pixels, calibration_px_per_um and interval_minutes.",
+          "starter_code": "# Available: displacement_pixels, calibration_px_per_um, interval_minutes (> 0)\n",
+          "preview_inputs": {
+            "displacement_pixels": 36,
+            "calibration_px_per_um": 3,
+            "interval_minutes": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "displacement_pixels": 36,
+                "calibration_px_per_um": 3,
+                "interval_minutes": 2
+              },
+              "assertions": [
+                "displacement_um == 12",
+                "speed_um_per_min == 6"
+              ]
+            },
+            {
+              "inputs": {
+                "displacement_pixels": 25,
+                "calibration_px_per_um": 5,
+                "interval_minutes": 4
+              },
+              "assertions": [
+                "displacement_um == 5",
+                "speed_um_per_min == 1.25"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify which names come from the supplied inputs.",
+          "Build a new result from those names rather than hardcoding the first output."
+        ],
+        "prove": []
+      },
+      "walkthrough": [
+        "`width_pixels` is a measured size in pixels; `pixels_per_um` is a scale in pixels/µm.",
+        "Dividing the two gives a value with units µm.",
+        "Double the scale and observe that the physical width halves; this is the key dimensional check."
+      ],
+      "investigate": [
+        "Before running, calculate 48 / 4 on paper, including units.",
+        "Change the calibration to 8 pixels/µm. Predict and verify the new width.",
+        "Temporarily use calibration = 0. Read the traceback and describe why inventing a physical size would be scientifically wrong."
+      ],
+      "debug_task": "A script multiplies width_pixels * pixels_per_um and calls it width_um. Python runs it. Is the result scientifically correct? Repair the formula.",
+      "prediction_answer": "If pixels_per_um doubles from 4 to 8, the same 48 pixels represent 6 µm instead of 12 µm.",
+      "feedback": {
+        "ZeroDivisionError": "The calibration denominator is zero. A positive verified scale is required; do not replace it with a guessed value.",
+        "TypeError": "Check that both pixel count and calibration are numeric, not quoted measurement labels.",
+        "hardcoded": "A width calculation must change when either pixel length or calibration changes."
+      },
+      "learning_evidence": {
+        "learn": "Predict + investigate a real run (exploration, not mastery)",
+        "apply": "Pass practice checks on changed inputs, record hint use",
+        "prove": "Solve a related unfamiliar task on new inputs; public browser checks cannot certify independent mastery"
+      }
+    },
+    {
+      "id": "P01-G04",
+      "title": "Inspect integers, floats and Booleans",
+      "competencies": [
+        "007"
+      ],
+      "why": "Correct type interpretation prevents subtle errors in scientific code.",
+      "explain": [
+        "**Python distinguishes types.** `int` represents whole-number counts, `float` represents numerical values including fractions, and `bool` represents truth values `True` or `False`. A specimen name such as `'WT_07'` is text (`str`) even though it contains digits.",
+        "**Inspect rather than guess.** `type(field_count).__name__` produces the type name `'int'`; `type(width_um).__name__` gives `'float'`. These names help diagnose why an operation or comparison fails.",
+        "**Printed appearance can be misleading.** `print('7')` and `print(7)` both display 7, but the first is text and the second a number. `float('12.5')` makes an explicit numeric conversion; `float('unreadable')` raises ValueError.",
+        "**Division and logical interpretation:** the `/` operator produces floating-point output in ordinary numerical examples. Although Python's `bool` has a numerical relationship to integers, a QC pass/fail flag must be analyzed as a decision, not averaged as if it were biological fluorescence."
+      ],
+      "worked_example": {
+        "code": "field_count = 6\nwidth_um = 12.5\nqc_pass = True\nprint(type(field_count).__name__)\nprint(type(width_um).__name__)\nprint(type(qc_pass).__name__)",
+        "predict": "Which three Python type names are printed, in order?"
+      },
+      "misconception": "What print displays is sufficient to identify a value's type.",
+      "scientific_boundary": "A Boolean QC flag is not a quantitative measurement.",
+      "phases": {
+        "learn": {
+          "title": "Understand and investigate",
+          "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
+          "starter_code": "field_count = 6\nwidth_um = 12.5\nqc_pass = True\nprint(type(field_count).__name__)\nprint(type(width_um).__name__)\nprint(type(qc_pass).__name__)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Build on changing data",
+          "description": "Convert measurement_text to float measurement_um; put its Python type name in type_name.",
+          "starter_code": "# Available: measurement_text\n",
+          "preview_inputs": {
+            "measurement_text": "12.5"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "measurement_text": "12.5"
+              },
+              "assertions": [
+                "measurement_um == 12.5",
+                "type_name == 'float'"
+              ]
+            },
+            {
+              "inputs": {
+                "measurement_text": "3e-2"
+              },
+              "assertions": [
+                "abs(measurement_um-0.03)<1e-12",
+                "type_name == 'float'"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From count_value, fraction_value and qc_flag, store their type names in type_labels in the same order.",
+          "starter_code": "# Available: count_value, fraction_value, qc_flag\n",
+          "preview_inputs": {
+            "count_value": 3,
+            "fraction_value": 0.5,
+            "qc_flag": true
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "count_value": 3,
+                "fraction_value": 0.5,
+                "qc_flag": true
+              },
+              "assertions": [
+                "type_labels == ['int','float','bool']"
+              ]
+            },
+            {
+              "inputs": {
+                "count_value": 0,
+                "fraction_value": 2.5,
+                "qc_flag": false
+              },
+              "assertions": [
+                "type_labels == ['int','float','bool']"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify which names come from the supplied inputs.",
+          "Build a new result from those names rather than hardcoding the first output."
+        ],
+        "prove": []
+      },
+      "walkthrough": [
+        "Print the types of three separately named variables, one per statement.",
+        "Try quotation marks around field_count and watch its type change from int to str.",
+        "A boolean `True` is not the same scientific quantity as a measured value of 1."
+      ],
+      "investigate": [
+        "Predict int, float and bool for the three original variables.",
+        "Put quotation marks around field_count; rerun the type inspection.",
+        "Try `float('12.5')` and `float('unreadable')` and distinguish a successful conversion from ValueError."
+      ],
+      "debug_task": "A measurement is stored as `'12.5'` and the program attempts `measurement_text / 2`. Diagnose the error and convert explicitly before dividing.",
+      "prediction_answer": "`int`, `float`, `bool` appear on separate lines, in the same order as the three print calls.",
+      "feedback": {
+        "ValueError": "The text cannot be converted into a numeric measurement. Do not invent a value for malformed data.",
+        "TypeError": "You are trying to use text as a number. Inspect type(...) and convert only valid numeric text.",
+        "hardcoded": "The result type must be inferred from the changing value, not typed as a fixed label."
+      },
+      "learning_evidence": {
+        "learn": "Predict + investigate a real run (exploration, not mastery)",
+        "apply": "Pass practice checks on changed inputs, record hint use",
+        "prove": "Solve a related unfamiliar task on new inputs; public browser checks cannot certify independent mastery"
+      }
+    },
+    {
+      "id": "P01-G05",
+      "title": "Read tracebacks and repair mistakes",
+      "competencies": [
+        "002"
+      ],
+      "why": "Tracebacks are diagnostic evidence; masking them threatens reproducibility.",
+      "explain": [
+        "**A traceback is not a verdict on your ability; it is a program diagnostic.** When an exception interrupts execution, the traceback shows the affected line and ends with an exception class and message. Read the final line first, then inspect the highlighted source line.",
+        "**NameError means a name is unavailable.** In the worked example the code defines `sample_id` but refers to `sampel_id`. Python sees different names. Carefully compare the characters; changing the code to print a fixed string does not repair the underlying bug.",
+        "**Other failures reveal different causes.** `ZeroDivisionError` points to division by zero; `ValueError` often occurs when input text cannot be parsed as a number. The correct response is to understand the relevant inputs and operation.",
+        "**Scientific significance:** a program that silently swallows errors might produce believable but invalid results. Later chapters will teach controlled exception handling; here preserve the full traceback and make a minimal fix.",
+        "**A debugging protocol:** reproduce the failure; locate the first relevant line; identify variable names and types; change one cause; rerun with the original *and* a new input."
+      ],
+      "worked_example": {
+        "code": "sample_id = 'N2_P03'\nprint(sampel_id)  # deliberately wrong spelling",
+        "predict": "Which variable name does NameError identify?"
+      },
+      "misconception": "An exception can be ignored if the final-looking number is plausible.",
+      "scientific_boundary": "Do not replace invalid calibration with an invented measurement.",
+      "phases": {
+        "learn": {
+          "title": "Understand and investigate",
+          "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
+          "starter_code": "sample_id = 'N2_P03'\nprint(sampel_id)  # deliberately wrong spelling",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Build on changing data",
+          "description": "Repair the example so result describes plate_id and field_count; the broken name was plateid.",
+          "starter_code": "# Available: plate_id, field_count\n# Broken: result = f'{plateid}: {field_count} fields'\n",
+          "preview_inputs": {
+            "plate_id": "plate03",
+            "field_count": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "plate_id": "plate03",
+                "field_count": 4
+              },
+              "assertions": [
+                "result == 'plate03: 4 fields'"
+              ]
+            },
+            {
+              "inputs": {
+                "plate_id": "plate19",
+                "field_count": 0
+              },
+              "assertions": [
+                "result == 'plate19: 0 fields'"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "The broken program uses pixel rather than pixels; compute distance_um from pixels / pixels_per_um.",
+          "starter_code": "# Available: pixels, pixels_per_um\n# Broken: distance_um = pixel / pixels_per_um\n",
+          "preview_inputs": {
+            "pixels": 40,
+            "pixels_per_um": 5
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixels": 40,
+                "pixels_per_um": 5
+              },
+              "assertions": [
+                "distance_um == 8"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": 81,
+                "pixels_per_um": 9
+              },
+              "assertions": [
+                "distance_um == 9"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify which names come from the supplied inputs.",
+          "Build a new result from those names rather than hardcoding the first output."
+        ],
+        "prove": []
+      },
+      "walkthrough": [
+        "Read the final traceback line for `NameError` and the misspelled variable.",
+        "Find the definition and the later use; compare `sample_id` with `sampel_id`.",
+        "Correct the spelling, rerun, then change the specimen ID and rerun to verify the fix generalizes."
+      ],
+      "investigate": [
+        "Run the faulty example before editing it and copy the exception name.",
+        "Fix the one-character spelling mistake rather than replacing the output.",
+        "Create a different NameError using a different undefined variable, then recover it."
+      ],
+      "debug_task": "Change `sample_id` to `sampel_id` in only one location and trace the failure. Why does a quoted fixed output conceal the error?",
+      "prediction_answer": "Python raises `NameError` because `sampel_id` was never assigned. The defined variable is `sample_id`.",
+      "feedback": {
+        "NameError": "Look for a missing input name or a spelling/case error. The traceback shows the name that Python could not resolve.",
+        "SyntaxError": "Before correcting variable names, check syntax such as matching quotes and parentheses.",
+        "hardcoded": "A fixed output can hide a typo. Make sure your result depends on the supplied input variables."
+      },
+      "learning_evidence": {
+        "learn": "Predict + investigate a real run (exploration, not mastery)",
+        "apply": "Pass practice checks on changed inputs, record hint use",
+        "prove": "Solve a related unfamiliar task on new inputs; public browser checks cannot certify independent mastery"
+      }
+    },
+    {
+      "id": "P01-G06",
+      "title": "Read help and function documentation",
+      "competencies": [
+        "003"
+      ],
+      "why": "Documentation skills transfer across NumPy, Pandas, scikit-image and rapidly changing libraries.",
+      "explain": [
+        "**Documentation is a research skill.** You cannot and need not memorize every Python or scientific-library function. Instead, find what a function expects, what it returns and any important caveats. Built-in `help(function)` displays information in the running interpreter.",
+        "**Docstrings are a short route to reference information.** Many functions expose `function.__doc__`. You can inspect it using print or store it in a variable. `len` reports the number of items in a sequence, such as characters in a sample ID; `abs` returns an absolute magnitude.",
+        "**Be careful what a number means.** The length of a sample identifier is not a biological size or microscope measurement. It is a count of characters. Similarly, rounding with `round(...)` changes how a number is represented, not the accuracy of its origin.",
+        "**When libraries change, trust the installed environment's documentation.** Prefer current documentation for the Python version in your browser or local notebook. P06 will teach using package versions and reproducible environments."
+      ],
+      "worked_example": {
+        "code": "print(len('N2_P03'))\nprint(len.__doc__)",
+        "predict": "What does len('N2_P03') count, and what does its documentation describe?"
+      },
+      "misconception": "Reading an example's output is the same as knowing its documented behavior.",
+      "scientific_boundary": "Formatting is not scientific calibration or measurement uncertainty.",
+      "phases": {
+        "learn": {
+          "title": "Understand and investigate",
+          "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
+          "starter_code": "print(len('N2_P03'))\nprint(len.__doc__)",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Build on changing data",
+          "description": "Set documentation_line to the actual len.__doc__ string, and sample_length to len(sample_id). Do not paste documentation text.",
+          "starter_code": "# Available: sample_id\n",
+          "preview_inputs": {
+            "sample_id": "N2_P03"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample_id": "N2_P03"
+              },
+              "assertions": [
+                "documentation_line == len.__doc__",
+                "sample_length == 6"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_id": "mutant_12_A"
+              },
+              "assertions": [
+                "documentation_line == len.__doc__",
+                "sample_length == 11"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Store abs.__doc__ in doc_head and compute absolute_change from signed_change. Show how documentation helps you choose the correct built-in.",
+          "starter_code": "# Available: signed_change\n",
+          "preview_inputs": {
+            "signed_change": -8.2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "signed_change": -8.2
+              },
+              "assertions": [
+                "doc_head == abs.__doc__",
+                "absolute_change == 8.2"
+              ]
+            },
+            {
+              "inputs": {
+                "signed_change": 3
+              },
+              "assertions": [
+                "doc_head == abs.__doc__",
+                "absolute_change == 3"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect len.__doc__ without editing the returned text.",
+          "The result of len(sample_id) is the number of characters, not a physical dimension."
+        ],
+        "prove": []
+      },
+      "walkthrough": [
+        "Run `print(len('N2_P03'))`: it reports six characters.",
+        "Print `len.__doc__` and identify the purpose of the function. You need not parse the documentation with unfamiliar string methods.",
+        "Read `help(round)` if you want to learn about an optional argument; note how output formatting differs from improving measurement accuracy."
+      ],
+      "investigate": [
+        "Use len to count an ID you choose, then change that ID.",
+        "Inspect len.__doc__ and find the statement describing its input.",
+        "Use abs(-5.0), then change the sign and explain why the output is nonnegative."
+      ],
+      "debug_task": "A learner claims `len('WT_07')` is a cell length in micrometres. Explain what it actually measures and where a genuine physical calibration must come from.",
+      "prediction_answer": "`len('N2_P03')` returns 6 characters. The function measures the length of a Python sequence, not a physical dimension.",
+      "feedback": {
+        "NameError": "Use the actual Python function name `len` or `abs`, without quotation marks around the function.",
+        "TypeError": "Read the function's documented accepted input types; do not guess a new one.",
+        "hardcoded": "Read function documentation from the actual runtime instead of pasting a memorized first line."
+      },
+      "learning_evidence": {
+        "learn": "Predict + investigate a real run (exploration, not mastery)",
+        "apply": "Pass practice checks on changed inputs, record hint use",
+        "prove": "Solve a related unfamiliar task on new inputs; public browser checks cannot certify independent mastery"
+      }
+    },
+    {
+      "id": "P01-G07",
+      "title": "Understand notebook state and clean runs",
+      "competencies": [
+        "004"
+      ],
+      "why": "Out-of-order notebooks can produce plausible but stale numbers even without an exception.",
+      "explain": [
+        "**Notebook execution state can become stale.** When a Jupyter notebook executes a cell, variables persist in a kernel's namespace. Editing a previously executed cell does not execute it again or automatically update later results.",
+        "**In the example**, `field_count` is 4 when Python calculates `doubled = field_count * 2`. That saves 8 in `doubled`. Later assigning `field_count = 9` does not alter the stored 8. To obtain 18, rerun the `doubled` calculation *after* updating field_count.",
+        "**A script makes the order explicit.** A clean script run starts at the first line and executes downward. The studio P01 worker also evaluates changed-input checks in a fresh execution namespace, to avoid accepting old values as current results.",
+        "**Reproducibility rule for notebooks:** restart the kernel and run all cells in intended order before sharing a result. A plausible result can be stale without any traceback. You will practice this with a real local Jupyter notebook later in P06.",
+        "**Explain the discrepancy, don't merely fix the print.** If a figure continues to show an old value, find the cell that last computed it and the inputs that were active at the time."
+      ],
+      "worked_example": {
+        "code": "field_count = 4\ndoubled = field_count * 2\nfield_count = 9\nprint(doubled)  # still 8",
+        "predict": "Why does doubled remain 8 after field_count becomes 9?"
+      },
+      "misconception": "Changing code in a previous cell automatically updates stored values.",
+      "scientific_boundary": "A visually plausible but stale analysis result is not reproducible.",
+      "phases": {
+        "learn": {
+          "title": "Understand and investigate",
+          "description": "Predict, run and then change one input in the worked example. Explain any change in output or error.",
+          "starter_code": "field_count = 4\ndoubled = field_count * 2\nfield_count = 9\nprint(doubled)  # still 8",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Build on changing data",
+          "description": "Compute current_total freshly from current_count and multiplier without trusting an earlier result.",
+          "starter_code": "# Available: current_count, multiplier\n",
+          "preview_inputs": {
+            "current_count": 9,
+            "multiplier": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "current_count": 9,
+                "multiplier": 2
+              },
+              "assertions": [
+                "current_total == 18"
+              ]
+            },
+            {
+              "inputs": {
+                "current_count": 4,
+                "multiplier": 3
+              },
+              "assertions": [
+                "current_total == 12"
+              ]
+            },
+            {
+              "inputs": {
+                "current_count": 0,
+                "multiplier": 7
+              },
+              "assertions": [
+                "current_total == 0"
+              ]
+            }
+          ]
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "On a clean run, compute adjusted_value = (baseline + adjustment) / scale.",
+          "starter_code": "# Available: baseline, adjustment, scale (> 0)\n",
+          "preview_inputs": {
+            "baseline": 24,
+            "adjustment": 6,
+            "scale": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "baseline": 24,
+                "adjustment": 6,
+                "scale": 3
+              },
+              "assertions": [
+                "adjusted_value == 10"
+              ]
+            },
+            {
+              "inputs": {
+                "baseline": 8,
+                "adjustment": -2,
+                "scale": 2
+              },
+              "assertions": [
+                "adjusted_value == 3"
+              ]
+            }
+          ]
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify which names come from the supplied inputs.",
+          "Build a new result from those names rather than hardcoding the first output."
+        ],
+        "prove": []
+      },
+      "walkthrough": [
+        "At line 1, field_count is 4. At line 2, doubled becomes 8.",
+        "Line 3 sets field_count to 9 but does not recalculate doubled.",
+        "Move the doubled assignment after line 3; the script now prints 18."
+      ],
+      "investigate": [
+        "Predict whether the original script prints 8 or 18.",
+        "Move the calculation line to the end, rerun and explain the changed number.",
+        "Write a two-sentence notebook reproducibility note: what persists in memory and what requires rerunning."
+      ],
+      "debug_task": "A researcher changes a calibration in an earlier notebook cell but sees the same downstream result. Identify the stale variable and specify a clean-run procedure.",
+      "prediction_answer": "The output is 8, not 18. The variable `doubled` held the earlier result and was never recalculated after field_count changed.",
+      "feedback": {
+        "NameError": "Run the assignment that creates the variable before referring to it.",
+        "TypeError": "Check whether an old variable has a different type than the newly supplied input.",
+        "hardcoded": "Derive the result from current inputs in each fresh run rather than saving an earlier calculation."
+      },
+      "learning_evidence": {
+        "learn": "Predict + investigate a real run (exploration, not mastery)",
+        "apply": "Pass practice checks on changed inputs, record hint use",
+        "prove": "Solve a related unfamiliar task on new inputs; public browser checks cannot certify independent mastery"
+      }
+    }
+  ],
+  "final_project": {
+    "name": "specimen_report.py",
+    "brief": "Independently create a clean-run specimen report from at least two unfamiliar records, with explicit units, a meaningful calculated quantity, one traceable debugging correction and a notebook-state explanation.",
+    "rubric": [
+      "Uses supplied data instead of hardcoded outputs",
+      "Calculates with consistent units",
+      "Prints interpretable stdout",
+      "Can explain a NameError and a stale result",
+      "Reproduces after a fresh start"
+    ],
+    "status": "IMPLEMENTED_AS_RUNNABLE_P01_CAPSTONE_PENDING_INDEPENDENT_USER_REVIEW"
+  },
+  "chapter_method": "Work through each mini-goal in Learn, Apply and Prove. Read the explanation, predict the outcome, inspect the real Python result, modify one assumption, then write your own program against changed inputs. Explanations and feedback are part of this package rather than external Markdown only.",
+  "capstone": {
+    "id": "P01-CAPSTONE",
+    "title": "Independent specimen report — chapter project",
+    "competencies": [],
+    "why": "Build a reproducible specimen record using all P01 skills rather than solving isolated syntax problems.",
+    "scientific_boundary": "The reported calibration and measurements are synthetic. Field counts are not biological replicates, and passing checks does not validate a microscopy measurement.",
+    "explain": [
+      "**Scientific question:** Can one short Python program describe changing microscope records without altering its calculation? A record has an ID, the number of imaged fields, the channel name, a length in pixels and a *supplied* calibration in pixels/µm.",
+      "**Required outputs:** Compute `width_um`, create the text `summary`, and store the Python type name of the converted width in `type_name`. Print the summary so it can be inspected. Each value must depend on the inputs supplied by the test case, not on a copied first-example answer.",
+      "**Design decision:** Work with a positive, verified calibration. The current P01 checker tests positive calibrations; invalid scales are discussed conceptually, not silently substituted. You will learn input validation and conditional rejection in P02.",
+      "**Evidence:** The Apply phase can be assisted. Prove uses unfamiliar field names and data. After a changed-input check, write a short scientific explanation of the units, when the result would be invalid and why fields are not biological replicates.",
+      "**Transfer:** Export the program as `specimen_report.py`, then revisit on a different day and rewrite the main calculation on new inputs without looking up your old solution. Browser-visible test cases cannot, alone, verify retained understanding."
+    ],
+    "worked_example": {
+      "code": "specimen_id = 'N2_P03'\nfield_count = 5\nchannel_name = 'GFP'\nwidth_pixels = 48\npixels_per_um = 4.0\nwidth_um = width_pixels / pixels_per_um\nsummary = f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'\nprint(summary)",
+      "predict": "Why does width_um equal 12.0, and which parts of summary should change for another specimen?"
+    },
+    "prediction_answer": "48 pixels divided by 4 pixels/µm gives 12 µm. An accurate reusable program updates specimen ID, field count, channel and width when those inputs change.",
+    "walkthrough": [
+      "Read every record field and write down its units.",
+      "Compute width_um by dividing width_pixels by pixels_per_um.",
+      "Construct summary from current values and print it. Use type(...) to inspect the computed width."
+    ],
+    "investigate": [
+      "Change a specimen ID and channel name, rerun and confirm both update.",
+      "Double pixels_per_um, rerun and verify that width_um halves.",
+      "Explain why a synthetic calibration does not authorize quantitative claims about an actual HPA RGB image."
+    ],
+    "misconception": "One successfully printed report proves the program is reusable.",
+    "debug_task": "If the second specimen prints the first specimen's width, inspect which variable or literal is stale, not the font or output panel.",
+    "feedback": {
+      "NameError": "Check the exact supplied input names. The capstone Apply and Prove cases use intentionally different names.",
+      "ZeroDivisionError": "A calibration of zero is invalid; do not fabricate a result.",
+      "hardcoded": "The program must compute results for different specimen IDs, field counts, pixel widths, channels and calibrations."
+    },
+    "hints": {
+      "apply": [
+        "Calculate width_um = width_pixels / pixels_per_um; units reduce to µm.",
+        "Create summary using an f-string with current inputs. Use type(width_um).__name__ to inspect the computed type."
+      ],
+      "prove": []
+    },
+    "reflection_prompts": [
+      "Why do you divide pixel length by pixels-per-micrometre rather than multiply?",
+      "What would make the numerical result scientifically untrustworthy despite correct Python execution?",
+      "Why is the number of microscope fields not necessarily the number of independent biological replicates?",
+      "What error or stale-value risk did you investigate, and how would you reproduce your result from a clean run?"
+    ],
+    "phases": {
+      "learn": {
+        "title": "Plan the reusable specimen report",
+        "description": "Read the scientific specification, predict the example, then run and change the sample, channel and calibration. Confirm that the formula is dimensionally sensible.",
+        "starter_code": "specimen_id = 'N2_P03'\nfield_count = 5\nchannel_name = 'GFP'\nwidth_pixels = 48\npixels_per_um = 4.0\nwidth_um = width_pixels / pixels_per_um\nsummary = f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'\nprint(summary)",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Build the complete specimen report",
+        "description": "Given specimen_id, field_count, channel_name, width_pixels and pixels_per_um, compute width_um and type_name, then construct summary exactly as 'ID | N fields | W um | channel X'. Print the summary. Inputs change between cases.",
+        "starter_code": "# Available: specimen_id, field_count, channel_name, width_pixels, pixels_per_um (> 0)\n# Create width_um, type_name, summary; print(summary).\n",
+        "preview_inputs": {
+          "specimen_id": "N2_P03",
+          "field_count": 5,
+          "channel_name": "GFP",
+          "width_pixels": 48,
+          "pixels_per_um": 4
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "specimen_id": "N2_P03",
+              "field_count": 5,
+              "channel_name": "GFP",
+              "width_pixels": 48,
+              "pixels_per_um": 4
+            },
+            "assertions": [
+              "width_um == 12.0",
+              "type_name == 'float'",
+              "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+            ]
+          },
+          {
+            "inputs": {
+              "specimen_id": "ced1_P07",
+              "field_count": 0,
+              "channel_name": "mCherry",
+              "width_pixels": 0,
+              "pixels_per_um": 8
+            },
+            "assertions": [
+              "width_um == 0.0",
+              "type_name == 'float'",
+              "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+            ]
+          },
+          {
+            "inputs": {
+              "specimen_id": "WT_P12",
+              "field_count": 11,
+              "channel_name": "DAPI",
+              "width_pixels": 42,
+              "pixels_per_um": 3.5
+            },
+            "assertions": [
+              "width_um == 12.0",
+              "type_name == 'float'",
+              "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
+            ]
+          }
+        ]
+      },
+      "prove": {
+        "title": "Independent transfer: unfamiliar experimental record",
+        "description": "Write from a blank editor. With new input names sample_code, observed_fields, channel, roi_length_px and calibration_px_per_um, calculate length_um and numeric_type. Make result_line exactly 'ID: W um (N fields; X)' using the current input values. Print result_line.",
+        "starter_code": "# Available: sample_code, observed_fields, channel, roi_length_px, calibration_px_per_um\n# Create length_um, numeric_type, result_line; print(result_line).\n",
+        "preview_inputs": {
+          "sample_code": "mutX_R04",
+          "observed_fields": 6,
+          "channel": "GFP",
+          "roi_length_px": 35,
+          "calibration_px_per_um": 2
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample_code": "mutX_R04",
+              "observed_fields": 6,
+              "channel": "GFP",
+              "roi_length_px": 35,
+              "calibration_px_per_um": 2
+            },
+            "assertions": [
+              "length_um == 17.5",
+              "numeric_type == 'float'",
+              "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+            ]
+          },
+          {
+            "inputs": {
+              "sample_code": "WT_R12",
+              "observed_fields": 0,
+              "channel": "mCherry",
+              "roi_length_px": 0,
+              "calibration_px_per_um": 5
+            },
+            "assertions": [
+              "length_um == 0",
+              "numeric_type == 'float'",
+              "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+            ]
+          },
+          {
+            "inputs": {
+              "sample_code": "ced1_R08",
+              "observed_fields": 12,
+              "channel": "DAPI",
+              "roi_length_px": 44,
+              "calibration_px_per_um": 4
+            },
+            "assertions": [
+              "length_um == 11",
+              "numeric_type == 'float'",
+              "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
+            ]
+          }
+        ]
+      }
+    },
+    "assessment": {
+      "code": "CHANGED_INPUT_PUBLIC_CHECKS",
+      "reflection": "SELF_EXPLANATION_REQUIRED_FOR_CHAPTER_REVIEW",
+      "export": "SPECIMEN_REPORT_PY",
+      "independent": "NEVER_AUTO_CERTIFY_BY_PUBLIC_CHECKS",
+      "retained": "OPTIONAL_DELAYED_REWRITE_ON_NEW_INPUTS"
+    }
+  },
+  "retention": {
+    "prompt": "On a later day, without viewing your previous code, write a fresh report for an unseen specimen and explain why the scale is valid. Your prior attempt remains saved and the interval is recorded; a browser-visible test cannot guarantee independent mastery.",
+    "minimum_hours_after_capstone": 24,
+    "assessment_policy": "Only display evidence and elapsed interval; do not automatically promote to retained mastery based on public checks."
+  },
+  "review": {
+    "id": "P01-REVIEW",
+    "title": "Return later — new specimen, no worked solution",
+    "competencies": [],
+    "why": "Test whether you can reconstruct the P01 approach from memory on new biological metadata without returning to the previous code.",
+    "scientific_boundary": "Successful reconstruction after an interval is evidence of practice, not proof of independent scientific competency. All measurements are fictional and calibration is illustrative.",
+    "explain": [
+      "**Purpose:** Reconstruct a report after a delay instead of recognising familiar syntax. The recommended interval is at least 24 hours after your first successful chapter capstone, but you can use this task sooner for practice.",
+      "**Procedure:** Hide your earlier code and reference answers. Read the unfamiliar field names, write the physical-unit relationship on paper, then write new code from scratch. You may use Python's own documentation if you record that assistance.",
+      "**When you finish:** Verify on changed inputs; write why the result changes with calibration and how a stale notebook calculation could mislead you. The app records elapsed time and help use but does not award automatic retained mastery."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Before coding: Which inputs are identifiers, which are numeric observations, and which supply physical calibration?"
+    },
+    "prediction_answer": "Labels and channel names are text; counts are integers; pixel length and pixels-per-micrometre are quantities. Physical length in micrometres = pixel length / (pixels per micrometre).",
+    "walkthrough": [
+      "Inspect the new variable names and classify their meanings without looking at P01's previous code.",
+      "Write the unit-correct formula before running anything.",
+      "Compare two cases and explain why the reported length changes."
+    ],
+    "investigate": [
+      "Try once from memory before opening any previous section.",
+      "After a check, investigate one changed input and explain the result.",
+      "Record whether the retrieval happened at least one day after your first capstone check."
+    ],
+    "misconception": "Recognition of a previously seen answer means it can be independently recalled later.",
+    "debug_task": "An old notebook variable contains yesterday's converted length. Describe the minimum clean-run action needed to reconstruct the measurement from today's calibration.",
+    "feedback": {
+      "NameError": "Look carefully at the *new* input names. This return task changes the record's vocabulary.",
+      "ZeroDivisionError": "A calibration must be valid and positive. Do not invent a physical length.",
+      "hardcoded": "The retrieval report must respond to a new specimen and a new calibration."
+    },
+    "hints": {
+      "learn": [],
+      "apply": [],
+      "prove": []
+    },
+    "reflection_prompts": [
+      "What is the exact unit-correct calculation?",
+      "Which input could be wrong even when the Python execution is successful?",
+      "Did you look at an earlier solution, and what would you change on another attempt?"
+    ],
+    "phases": {
+      "learn": {
+        "title": "Recall the model, without opening old code",
+        "description": "Think through the scientific problem and write down the input/output relationship. This phase intentionally has no solved code.",
+        "starter_code": "# Prepare to write a fresh specimen analysis after a delay.\n# Do not reuse the earlier solution.\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Plan a fresh script",
+        "description": "Draft pseudocode as comments: classify each supplied input and identify how to convert a pixel measure to micrometres. The actual independent check is under Prove.",
+        "starter_code": "# Available in Prove: record_id, field_total, stain, span_px, px_per_um\n# 1. Identify text, number and calibration inputs.\n# 2. Describe output and unit conversion as comments.\n",
+        "preview_inputs": {}
+      },
+      "prove": {
+        "title": "Independent delayed reconstruction",
+        "description": "Write a fresh Python program. Given record_id, field_total, stain, span_px and px_per_um, compute physical_span_um, report_type and report_line exactly 'ID / N fields / X um / stain'. Print report_line. Avoid looking at the prior chapter solution.",
+        "starter_code": "# Available: record_id, field_total, stain, span_px, px_per_um (> 0)\n# Compute physical_span_um, report_type, report_line; print it.\n",
+        "preview_inputs": {
+          "record_id": "WT_R23",
+          "field_total": 7,
+          "stain": "GFP",
+          "span_px": 51,
+          "px_per_um": 3
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "record_id": "WT_R23",
+              "field_total": 7,
+              "stain": "GFP",
+              "span_px": 51,
+              "px_per_um": 3
+            },
+            "assertions": [
+              "physical_span_um == 17",
+              "report_type == 'float'",
+              "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+            ]
+          },
+          {
+            "inputs": {
+              "record_id": "ced1_R01",
+              "field_total": 2,
+              "stain": "DAPI",
+              "span_px": 13,
+              "px_per_um": 2
+            },
+            "assertions": [
+              "physical_span_um == 6.5",
+              "report_type == 'float'",
+              "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+            ]
+          },
+          {
+            "inputs": {
+              "record_id": "mutZ_R11",
+              "field_total": 0,
+              "stain": "mCherry",
+              "span_px": 0,
+              "px_per_um": 7
+            },
+            "assertions": [
+              "physical_span_um == 0",
+              "report_type == 'float'",
+              "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
+            ]
+          }
+        ]
+      }
+    },
+    "assessment": {
+      "status": "PUBLIC_DELAYED_RETRIEVAL_PRACTICE",
+      "auto_certified_retention": false,
+      "minimum_hours_for_delayed_label": 24
+    }
+  }
+}
