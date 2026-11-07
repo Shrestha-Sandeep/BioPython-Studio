@@ -26,6 +26,15 @@
     (items||[]).forEach(item=>{const li=el("li");rich(li,item);list.append(li);});
     return list;
   }
+  function pythonRepr(value){
+    if(value===null)return "None";
+    if(value===true)return "True";
+    if(value===false)return "False";
+    if(typeof value==="string")return JSON.stringify(value);
+    if(Array.isArray(value))return "["+value.map(pythonRepr).join(", ")+"]";
+    if(value&&typeof value==="object")return "{"+Object.entries(value).map(([name,item])=>pythonRepr(name)+": "+pythonRepr(item)).join(", ")+"}";
+    return String(value);
+  }
   function intro(root,goal,phase){
     const section=el("div","p01-reading");
     if(phase==="learn"){
@@ -49,14 +58,15 @@
       section.append(el("h3","","Available example inputs"));
       const values=goal.phases.apply.preview_inputs||{};
       section.append(el("pre","p01-inputs",Object.keys(values).length?
-        Object.entries(values).map(([k,v])=>k+" = "+JSON.stringify(v)).join("\n"):
+        Object.entries(values).map(([k,v])=>k+" = "+pythonRepr(v)).join("\n"):
         "No variables are injected during this planning activity."));
       section.append(paragraph("Construct a solution for changing inputs. Check runs genuine Python against multiple cases, not a fixed output."));
+      if(Array.isArray(goal.build_steps)&&goal.build_steps.length)section.append(details("Build in short passes",[ordered(goal.build_steps)]));
       if(goal.id!=="P01-REVIEW")section.append(details("Review the concept",(goal.explain||[]).map(paragraph)));
     }else{
       section.append(el("h3","","Independent input"));
       const values=goal.phases.prove.preview_inputs||{};
-      section.append(el("pre","p01-inputs",Object.entries(values).map(([k,v])=>k+" = "+JSON.stringify(v)).join("\n")));
+      section.append(el("pre","p01-inputs",Object.entries(values).map(([k,v])=>k+" = "+pythonRepr(v)).join("\n")));
       section.append(paragraph("Work from unfamiliar input names. Public checks support practice but do not independently certify mastery."));
       if(goal.id.endsWith("-REVIEW"))section.append(paragraph("For a genuine return exercise, avoid opening old solutions; record any help that you needed."));
     }
