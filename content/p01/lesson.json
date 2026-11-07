@@ -1,7 +1,7 @@
 {
   "schema_version": "bps.chapter.v1",
   "chapter_id": "P01",
-  "version": "1.3.1",
+  "version": "1.3.0",
   "status": "CHAPTER_IMPLEMENTED_REQUIRES_LEARNER_VALIDATION",
   "title": "Run your first scientific program",
   "competencies": [
