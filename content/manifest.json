@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0.0",
+  "status": "AUTHORED_CONTENT_PILOT_NOT_UI_WIRED",
+  "syllabus": "curriculum/v3_manifest.json",
+  "learning_spine": "curriculum/witz_spine.json",
+  "format": "Markdown chapters + JSON activities with CPython regression fixtures",
+  "chapters": [
+    {
+      "mission": "P01",
+      "path": "content/chapters/P01.md",
+      "competencies": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "005",
+        "006",
+        "007"
+      ]
+    },
+    {
+      "mission": "P02",
+      "path": "content/chapters/P02.md",
+      "competencies": [
+        "008",
+        "009",
+        "010",
+        "011"
+      ]
+    },
+    {
+      "mission": "P03",
+      "path": "content/chapters/P03.md",
+      "competencies": [
+        "012",
+        "013",
+        "014",
+        "015",
+        "016",
+        "017",
+        "018"
+      ]
+    }
+  ],
+  "activity_path": "content/activities/foundations.json",
+  "count_activities": 12,
+  "ui_contract": {
+    "lesson_id": "id",
+    "learning_mission": "mission",
+    "competency_numbers": "competencies",
+    "display_markdown": "chapters",
+    "input_injection": "fixtures[].inputs",
+    "starter_editor": "starter_code",
+    "reference_solutions": "AUTHOR_ONLY",
+    "check_expressions": "AUTHOR_ONLY",
+    "mastery": "NEVER_INFER_FROM_AUTHOR_TESTS"
+  },
+  "warning": "Reference solutions and assertion fixtures are for content regression and prototype verification; they are not secret tests if published client-side."
+}
