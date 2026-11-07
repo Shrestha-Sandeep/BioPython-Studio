@@ -81,7 +81,12 @@
                 "report == 'mutA_P13: 0 fields'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Formatting live specimen and count inputs produces a report that changes when the acquisition changes.",
+            "probe": "Predict precisely how many lines will appear in the console.",
+            "check": "Line 1 assigns a string sample identifier; line 2 assigns a numeric field count."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -110,7 +115,12 @@
                 "outcome == 'mutC_P17 | 11 observations'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The unfamiliar names still describe the same observed quantities; the result is computed rather than copied.",
+            "probe": "Change `fields` to `9`, run again, and locate the changed part of stdout.",
+            "check": "Line 3 reads both values and sends one combined line to stdout."
+          }
         }
       },
       "hints": {
@@ -199,7 +209,12 @@
                 "description == 'ced1_P07: 0 fields, channel DAPI'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "A specimen ID, number of fields and channel name remain separate metadata even when combined into one readable label.",
+            "probe": "Change the field count without changing the quoted report text, then rerun.",
+            "check": "The quoted specimen ID is stored as text; field_count is a number."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -231,7 +246,12 @@
                 "summary == 'heat | replicate 11 | fields=1'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Condition, replicate and count are assembled from current values; changing one input changes the relevant part.",
+            "probe": "Change the condition to another specimen and check that only its identifier changes.",
+            "check": "The f-string reads their current values to build a new string."
+          }
         }
       },
       "hints": {
@@ -327,7 +347,12 @@
                 "segment_um == 0"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Dividing a pixel length by pixels per micrometre cancels the pixel unit and gives a physical length.",
+            "probe": "Before running, calculate 48 / 4 on paper, including units.",
+            "check": "`width_pixels` is a measured size in pixels; `pixels_per_um` is a scale in pixels/µm."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -361,7 +386,12 @@
                 "speed_um_per_min == 1.25"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The displacement must be calibrated before it is divided by elapsed minutes to compute a physical speed.",
+            "probe": "Change the calibration to 8 pixels/µm. Predict and verify the new width.",
+            "check": "Dividing the two gives a value with units µm."
+          }
         }
       },
       "hints": {
@@ -446,7 +476,12 @@
                 "type_name == 'float'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The text measurement is converted to a numeric object before its Python type is inspected.",
+            "probe": "Predict int, float and bool for the three original variables.",
+            "check": "Print the types of three separately named variables, one per statement."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -478,7 +513,12 @@
                 "type_labels == ['int','float','bool']"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The collected labels reflect the actual objects and retain the supplied order, including Boolean as a distinct type.",
+            "probe": "Put quotation marks around field_count; rerun the type inspection.",
+            "check": "Try quotation marks around field_count and watch its type change from int to str."
+          }
         }
       },
       "hints": {
@@ -565,7 +605,12 @@
                 "result == 'plate19: 0 fields'"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The repair uses the actual supplied plate variable instead of an undefined lookalike name.",
+            "probe": "Run the faulty example before editing it and copy the exception name.",
+            "check": "Read the final traceback line for `NameError` and the misspelled variable."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -594,7 +639,12 @@
                 "distance_um == 9"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The calculation reads pixels rather than a misspelled name, so changing pixel counts changes the result.",
+            "probe": "Fix the one-character spelling mistake rather than replacing the output.",
+            "check": "Find the definition and the later use; compare `sample_id` with `sampel_id`."
+          }
         }
       },
       "hints": {
@@ -679,7 +729,12 @@
                 "sample_length == 11"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "Documentation and identifier length are read from live Python functions rather than pasted constants.",
+            "probe": "Use len to count an ID you choose, then change that ID.",
+            "check": "Run `print(len('N2_P03'))`: it reports six characters."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -707,7 +762,12 @@
                 "absolute_change == 3"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The real abs function handles signed input and exposes documentation instead of requiring a memorized result.",
+            "probe": "Inspect len.__doc__ and find the statement describing its input.",
+            "check": "Print `len.__doc__` and identify the purpose of the function. You need not parse the documentation with unfamiliar string methods."
+          }
         }
       },
       "hints": {
@@ -803,7 +863,12 @@
                 "current_total == 0"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The total is recalculated from current count and multiplier rather than relying on a stale notebook value.",
+            "probe": "Predict whether the original script prints 8 or 18.",
+            "check": "At line 1, field_count is 4. At line 2, doubled becomes 8."
+          }
         },
         "prove": {
           "title": "Independent transfer",
@@ -835,7 +900,12 @@
                 "adjusted_value == 3"
               ]
             }
-          ]
+          ],
+          "practice_feedback": {
+            "why": "The adjusted quantity depends on the new baseline, adjustment and positive scale in one clean run.",
+            "probe": "Move the calculation line to the end, rerun and explain the changed number.",
+            "check": "Line 3 sets field_count to 9 but does not recalculate doubled."
+          }
         }
       },
       "hints": {
@@ -991,7 +1061,12 @@
               "summary == f'{specimen_id} | {field_count} fields | {width_um} um | channel {channel_name}'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "Current specimen metadata and a supplied positive calibration produce an independently recomputed, unit-labelled report.",
+          "probe": "Change a specimen ID and channel name, rerun and confirm both update.",
+          "check": "Read every record field and write down its units."
+        }
       },
       "prove": {
         "title": "Independent transfer: unfamiliar experimental record",
@@ -1047,7 +1122,12 @@
               "result_line == f'{sample_code}: {length_um} um ({observed_fields} fields; {channel})'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "Reconstructing the physical calculation with unfamiliar variable names demonstrates transfer beyond one copied template.",
+          "probe": "Double pixels_per_um, rerun and verify that width_um halves.",
+          "check": "Compute width_um by dividing width_pixels by pixels_per_um."
+        }
       }
     },
     "assessment": {
@@ -1056,7 +1136,12 @@
       "export": "SPECIMEN_REPORT_PY",
       "independent": "NEVER_AUTO_CERTIFY_BY_PUBLIC_CHECKS",
       "retained": "OPTIONAL_DELAYED_REWRITE_ON_NEW_INPUTS"
-    }
+    },
+    "build_steps": [
+      "PASS 1 — Generate a specimen ID and channel report from supplied inputs; changing either input must change the printed report without manual text edits.",
+      "PASS 2 — Convert pixel width with a supplied positive pixel-per-micrometre calibration. Predict what happens when calibration doubles and check your units.",
+      "PASS 3 — Add the result type and exact summary format; check zero width and a different specimen. Distinguish a correct calculation from verified microscope calibration."
+    ]
   },
   "retention": {
     "prompt": "On a later day, without viewing your previous code, write a fresh report for an unseen specimen and explain why the scale is valid. Your prior attempt remains saved and the interval is recorded; a browser-visible test cannot guarantee independent mastery.",
@@ -1117,7 +1202,12 @@
         "title": "Plan a fresh script",
         "description": "Draft pseudocode as comments: classify each supplied input and identify how to convert a pixel measure to micrometres. The actual independent check is under Prove.",
         "starter_code": "# P01-REVIEW | APPLY | Return later — new specimen, no worked solution\n# TASK: Write pseudocode for input types, pixel conversion and report output.\n\n",
-        "preview_inputs": {}
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Planning a clean report from unfamiliar metadata requires distinguishing identifiers, observed counts and calibration.",
+          "probe": "Try once from memory before opening any previous section.",
+          "check": "Inspect the new variable names and classify their meanings without looking at P01's previous code."
+        }
       },
       "prove": {
         "title": "Independent delayed reconstruction",
@@ -1173,7 +1263,12 @@
               "report_line == f'{record_id} / {field_total} fields / {physical_span_um} um / {stain}'"
             ]
           }
-        ]
+        ],
+        "practice_feedback": {
+          "why": "A fresh reconstruction after an interval uses the new specimen and calibration rather than a remembered answer.",
+          "probe": "After a check, investigate one changed input and explain the result.",
+          "check": "Write the unit-correct formula before running anything."
+        }
       }
     },
     "assessment": {
