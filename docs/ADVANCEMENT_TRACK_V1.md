@@ -14,8 +14,8 @@ The foundation curriculum has working Python and introductory image analysis, bu
 |---|---|---|---|
 | G0 | Independent learner pilot of P01, I05, I13, N01, L01; full technical inventory | Documented real learner attempts, no regressions | Prepared, not passed |
 | G1 | A00 local-Python bridge; A01 native-image literacy | Actual local Python; truthful OME axes/scale audit with 16-bit round-trips | Initial working slice; local user evidence pending |
-| G2 | A02 classical segmentation with parameter sensitivity | Reproducible masks/measurements, real failure cases | Not started |
-| G3 | A03 annotations, detection matching and held-out validation | Object-aware metrics and group-disjoint holdout | Not started |
+| G2 | A02 classical segmentation with parameter sensitivity | Reproducible masks/measurements, real failure cases | Native implementation and synthetic QA; real-image learner gate pending |
+| G3 | A03 annotations, detection matching and held-out validation | Object-aware metrics and group-disjoint holdout | Native benchmark/annotation loader implemented; independent real-data evaluation pending |
 | G4 | A05 biological statistics, A06 reproducible batch software | Correct animal/field units, clean checkout output equivalence | Not started |
 | G5 | A07 independent unknown-dataset capstone | Blind interpretation and reproducible outputs | Not started |
 | G6 | Conditional A04 3D/tracking; X01 Fiji/napari; X02 ML; X03 NGS; X04 data management; X05 LLM | Only after a demonstrated use case | Deferred |
@@ -48,3 +48,13 @@ See `projects/advanced/a00/START_HERE.md` for the independent desktop setup and 
 E0 exposure; E1 guided code; E2 independent changed inputs; E3 blind annotated-data transfer; E4 fresh-environment reproduction + delayed attempt; E5 new real dataset with documented scientific limitations. No automatic E3–E5 badges.
 
 Never assign a numerical 9.5/10 teaching quality from automated CI.
+
+## A02/A03 native research components (development branch)
+
+- [A02 scientific segmentation project](../projects/advanced/a02/README.md): Gaussian/background handling, Otsu/local/manual thresholds, morphology, optional watershed and source-preserving native TIFF candidate labels with region geometry.
+- [A02 parameter sensitivity](../projects/advanced/a02/sensitivity.py): run fixed variant configurations on unchanged source pixels and compare candidate counts and foreground mask instability; this is **not** an annotation-based accuracy score.
+- [A03 annotated-data benchmark](../projects/advanced/a03/README.md): BBBC038-style separate per-nucleus PNG annotations, explicit group and split manifest, IoU-thresholded one-to-one object matching, pixel versus object metrics, cyan/red QC overlays, frozen calibration parameters and held-out-only evaluation.
+- Python tests produce **synthetic** PNG/TIFF/masks and validate contracts, source protection, error cases and exact metrics. These are engineering tests, not demonstrated real biological segmentation performance.
+- The BBBC038 archive is **not bundled**; the user must download its original images and target masks, verify experimental groups, and run the benchmark before asserting G3 scientific completion.
+
+A00–A07 remains the intended route; no advanced frontend stage is released until research workflows and independent teaching quality are demonstrated.
