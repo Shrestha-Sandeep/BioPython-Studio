@@ -554,6 +554,7 @@
     readCode: getCode,
     writeCode: setCode,
     selectPhase: choosePhase,
+    selectStage: chooseStage,
     expandLesson: show => openLesson(Boolean(show))
   });
   $("run-button").disabled = true;
