@@ -53,6 +53,8 @@ for cid,n in expected.items():
             else:
                 assert len(cases)==3,(goal["id"],phase,len(cases))
                 assert all(len(c["inputs"])==1 and c["assertions"] for c in cases)
+                for case in cases:
+                    for expr in case["assertions"]: compile(expr,"<public check syntax>","eval")
                 assert all(next(iter(c["inputs"]))==("data" if phase=="apply" else "sample") for c in cases)
             assert bool(refs[goal["id"]][phase])==bool(cases),(goal["id"],phase)
             cases_count+=len(cases)

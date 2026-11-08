@@ -255,7 +255,7 @@
               },
               "assertions": [
                 "len(result)==len(data['test_X'])",
-                "result==[max(sorted(set(data['train_y'])),key=lambda c:data['train_y'].count(c))]*len(data['test_X'])"
+                "result==[min(set(data['train_y']),key=lambda c:(-data['train_y'].count(c),c))]*len(data['test_X'])"
               ]
             },
             {
@@ -360,7 +360,7 @@
               },
               "assertions": [
                 "len(result)==len(data['test_X'])",
-                "result==[max(sorted(set(data['train_y'])),key=lambda c:data['train_y'].count(c))]*len(data['test_X'])"
+                "result==[min(set(data['train_y']),key=lambda c:(-data['train_y'].count(c),c))]*len(data['test_X'])"
               ]
             },
             {
@@ -461,7 +461,7 @@
               },
               "assertions": [
                 "len(result)==len(data['test_X'])",
-                "result==[max(sorted(set(data['train_y'])),key=lambda c:data['train_y'].count(c))]*len(data['test_X'])"
+                "result==[min(set(data['train_y']),key=lambda c:(-data['train_y'].count(c),c))]*len(data['test_X'])"
               ]
             }
           ],
@@ -668,7 +668,7 @@
                 }
               },
               "assertions": [
-                "result['majority']==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c))",
+                "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
                 "0<=result['accuracy']<=1"
               ]
             },
@@ -773,7 +773,7 @@
                 }
               },
               "assertions": [
-                "result['majority']==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c))",
+                "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
                 "0<=result['accuracy']<=1"
               ]
             },
@@ -874,7 +874,7 @@
                 }
               },
               "assertions": [
-                "result['majority']==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c))",
+                "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
                 "0<=result['accuracy']<=1"
               ]
             }
@@ -3340,7 +3340,7 @@
               "assertions": [
                 "0<=result['tree_accuracy']<=1",
                 "0<=result['dummy_accuracy']<=1",
-                "result['dummy_accuracy']==sum(y==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c)) for y in sample['test_y'])/len(sample['test_y'])"
+                "result['dummy_accuracy']==sum(y==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c)) for y in sample['test_y'])/len(sample['test_y'])"
               ]
             },
             {
@@ -3446,7 +3446,7 @@
               "assertions": [
                 "0<=result['tree_accuracy']<=1",
                 "0<=result['dummy_accuracy']<=1",
-                "result['dummy_accuracy']==sum(y==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c)) for y in sample['test_y'])/len(sample['test_y'])"
+                "result['dummy_accuracy']==sum(y==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c)) for y in sample['test_y'])/len(sample['test_y'])"
               ]
             },
             {
@@ -3548,7 +3548,7 @@
               "assertions": [
                 "0<=result['tree_accuracy']<=1",
                 "0<=result['dummy_accuracy']<=1",
-                "result['dummy_accuracy']==sum(y==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c)) for y in sample['test_y'])/len(sample['test_y'])"
+                "result['dummy_accuracy']==sum(y==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c)) for y in sample['test_y'])/len(sample['test_y'])"
               ]
             }
           ],
@@ -4811,7 +4811,7 @@
               }
             },
             "assertions": [
-              "result['majority']==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c))",
+              "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
               "result['test_errors']==sum(y!=result['majority'] for y in sample['test_y'])"
             ]
           },
@@ -4916,7 +4916,7 @@
               }
             },
             "assertions": [
-              "result['majority']==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c))",
+              "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
               "result['test_errors']==sum(y!=result['majority'] for y in sample['test_y'])"
             ]
           },
@@ -5017,7 +5017,7 @@
               }
             },
             "assertions": [
-              "result['majority']==max(sorted(set(sample['train_y'])),key=lambda c:sample['train_y'].count(c))",
+              "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
               "result['test_errors']==sum(y!=result['majority'] for y in sample['test_y'])"
             ]
           }

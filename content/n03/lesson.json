@@ -2185,7 +2185,7 @@
             "assertions": [
               "len(result)==len(sample['reads'])",
               "all(0<=n<=len(r['seq']) for (_,n),r in zip(result,sample['reads']))",
-              "result[0][0]==sample['reads'][0]['id'"
+              "result[0][0]==sample['reads'][0]['id']"
             ]
           },
           {
@@ -2233,7 +2233,7 @@
             "assertions": [
               "len(result)==len(sample['reads'])",
               "all(0<=n<=len(r['seq']) for (_,n),r in zip(result,sample['reads']))",
-              "result[0][0]==sample['reads'][0]['id'"
+              "result[0][0]==sample['reads'][0]['id']"
             ]
           },
           {
@@ -2274,7 +2274,7 @@
             "assertions": [
               "len(result)==len(sample['reads'])",
               "all(0<=n<=len(r['seq']) for (_,n),r in zip(result,sample['reads']))",
-              "result[0][0]==sample['reads'][0]['id'"
+              "result[0][0]==sample['reads'][0]['id']"
             ]
           }
         ],
