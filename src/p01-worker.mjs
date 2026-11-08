@@ -18,6 +18,7 @@ const PYTHON_RUNNER = String.raw`import json, io, contextlib, traceback, os, sys
 os.environ.setdefault('MPLBACKEND', 'agg')
 _bps_env = {"__name__": "__main__"}
 _bps_env.update(json.loads(__bps_inputs_json))
+_bps_env["uploaded_image_paths"] = json.loads(__bps_uploaded_paths_json)
 _bps_out = io.StringIO()
 _bps_err = io.StringIO()
 _bps_error = ""
@@ -58,6 +59,32 @@ if not __bps_render_figures and 'matplotlib.pyplot' in sys.modules:
 json.dumps({"stdout": _bps_out.getvalue(), "stderr": _bps_err.getvalue(), "traceback": _bps_error, "checks": _bps_results, "figures": _bps_figures})
 `;
 let publishedFigureReady = false;
+let uploadedPaths = [];
+const ANALYSIS_DIR = "/home/pyodide/learner_images";
+function stageUploadedFiles(py, files) {
+  if (!Array.isArray(files) || files.length > 8) throw Error("At most eight image files are allowed");
+  const max = 32 * 1024 * 1024;
+  const total = files.reduce((sum,f) => sum + (f.bytes?.byteLength || 0), 0);
+  if (total > 96 * 1024 * 1024) throw Error("Images exceed the 96 MB browser limit");
+  py.FS.mkdirTree(ANALYSIS_DIR);
+  for (const oldPath of uploadedPaths) {
+    try { py.FS.unlink(oldPath); } catch { /* It was already removed. */ }
+  }
+  uploadedPaths = [];
+  for (const [index, file] of files.entries()) {
+    const name = String(file.name || "");
+    if (!/\.(?:ome\.)?(?:tif|tiff)$|\.(?:png|jpg|jpeg|webp|gif)$/i.test(name))
+      throw Error("Unsupported image file type: " + name);
+    if (!(file.bytes instanceof ArrayBuffer) || file.bytes.byteLength < 1 || file.bytes.byteLength > max)
+      throw Error("Invalid image byte count: " + name);
+    const safeName = name.replace(/[^A-Za-z0-9._-]/g,"_").slice(-90);
+    const path = ANALYSIS_DIR + "/" + index + "_" + safeName;
+    py.FS.writeFile(path, new Uint8Array(file.bytes));
+    uploadedPaths.push(path);
+  }
+  return uploadedPaths.slice();
+}
+
 async function preparePython(py, code, cases = []) {
   // Load only packages requested by learner code; never predownload large
   // scientific wheels for P01-P06 standard-library lessons.
@@ -74,12 +101,13 @@ async function preparePython(py, code, cases = []) {
     publishedFigureReady = true;
   }
 }
-function runCode(pyodide, code, inputs = {}, assertions = [], renderFigures = false) {
+function runCode(pyodide, code, inputs = {}, assertions = [], renderFigures = false, imagePaths = []) {
   // Convert nested JSON through Python's parser instead of shallow JS->Py proxies.
   // This guarantees a field pair [id, null] becomes [id, None], not a JS null proxy.
   // All chapter data are JSON-compatible; expressions remain evaluation fixtures.
   pyodide.globals.set("__bps_source", code);
   pyodide.globals.set("__bps_inputs_json", JSON.stringify(inputs));
+  pyodide.globals.set("__bps_uploaded_paths_json", JSON.stringify(imagePaths));
   pyodide.globals.set("__bps_assertions_json", JSON.stringify(assertions));
   pyodide.globals.set("__bps_render_figures", Boolean(renderFigures));
   try {
@@ -87,25 +115,27 @@ function runCode(pyodide, code, inputs = {}, assertions = [], renderFigures = fa
   } finally {
     pyodide.globals.delete("__bps_source");
     pyodide.globals.delete("__bps_inputs_json");
+    pyodide.globals.delete("__bps_uploaded_paths_json");
     pyodide.globals.delete("__bps_assertions_json");
     pyodide.globals.delete("__bps_render_figures");
   }
 }
 self.onmessage = async event => {
-  const { id, type, code, inputs, cases } = event.data ?? {};
+  const { id, type, code, inputs, cases, files=[] } = event.data ?? {};
   if (!Number.isInteger(id) || !["run", "check"].includes(type)) return;
   try {
     if (typeof code !== "string" || code.length > 20000) throw new Error("Python code is empty or exceeds the 20,000-character P01 limit.");
     const py = await ready();
     await preparePython(py, code, type === "check" ? cases ?? [] : [{inputs: inputs ?? {}}]);
+    const imagePaths = stageUploadedFiles(py, files);
     if (type === "run") {
-      self.postMessage({ id, ok: true, result: runCode(py, code, inputs ?? {}, [], true) });
+      self.postMessage({ id, ok: true, result: runCode(py, code, inputs ?? {}, [], true, imagePaths) });
       return;
     }
     if (!Array.isArray(cases) || cases.length === 0 || cases.length > 12) throw new Error("Invalid practice-check definition.");
     const results = [];
     for (const item of cases) {
-      const current = runCode(py, code, item.inputs ?? {}, item.assertions ?? []);
+      const current = runCode(py, code, item.inputs ?? {}, item.assertions ?? [], false, imagePaths);
       results.push(current);
       if (current.traceback || current.checks.some(c => !c.passed)) break;
     }
