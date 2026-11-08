@@ -1,0 +1,3795 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "A02",
+  "version": "1.0.0",
+  "status": "OPTIONAL_ADVANCED_PILOT_NOT_LEARNER_VALIDATED",
+  "title": "Candidate segmentation and sensitivity",
+  "competencies": [
+    "A02-G01",
+    "A02-G02",
+    "A02-G03",
+    "A02-G04",
+    "A02-G05",
+    "A02-CAPSTONE",
+    "A02-REVIEW"
+  ],
+  "intro": "A02 teaches interpretable, testable candidate segmentation. Synthetic browser exercises are linked to a native TIFF pipeline and quantified real-world failures on BBBC038/039.",
+  "scientific_context": {
+    "source": "https://bbbc.broadinstitute.org/BBBC038",
+    "use": "SYNTHETIC_PRACTICE_WITH_REAL_LOCAL_TIFF_PIPELINE",
+    "caution": "BBBC038 fixed bright Otsu+watershed official test object F1 0.385. Passing a synthetic challenge does not establish accurate nuclei or exopher identification."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review; then compare multiple real TIFF configurations locally.",
+  "goals": [
+    {
+      "id": "A02-G01",
+      "title": "Background subtraction and binary mask",
+      "competencies": [
+        "A02-G01"
+      ],
+      "why": "Unsigned numeric overflow or unreviewed background subtraction can corrupt candidate masks.",
+      "explain": [
+        "Background correction must be explicit and performed in sufficient precision.",
+        "A threshold selects foreground pixels, not whole biological objects."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nraw=np.array([2,250,20],dtype=np.uint8)\nprint(np.maximum(raw.astype(float)-15,0))",
+        "predict": "Predict the mask and candidate counts before running real Python."
+      },
+      "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
+      "walkthrough": [
+        "Name the intended object/background polarity before looking at the output.",
+        "Run and inspect a changed threshold or touching-object input.",
+        "Identify one failure case and explain how it affects a biological count."
+      ],
+      "investigate": [
+        "Vary a threshold or minimum size; note when a candidate disappears.",
+        "Distinguish foreground pixel overlap from correct separated objects."
+      ],
+      "debug_task": "Explain one oversegmentation, merge or intensity-overflow failure.",
+      "misconception": "Every connected region is necessarily one correctly identified nucleus.",
+      "scientific_boundary": "Practice arrays and sample masks are synthetic. Real segmentation needs independent annotations and the same prespecified method on held-out images.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Cast the uint16 array to float before subtracting.",
+          "Count strictly greater-than pixels after correction and clipping."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from the image mask and parameters, never from one known answer."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Run the demonstration and predict effects of parameter changes.",
+          "starter_code": "# A02-G01 | LEARN | Background subtraction and binary mask\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nraw=np.array([2,250,20],dtype=np.uint8)\nprint(np.maximum(raw.astype(float)-15,0))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed image inputs",
+          "description": "Convert data.image to float, subtract data.background, clip at zero, threshold > data.threshold and return result={'positive_pixels':int,'corrected_max':float}.",
+          "starter_code": "# A02-G01 | APPLY | Background subtraction and binary mask\n# TASK: Convert data.image to float, subtract data.background, clip at zero,\n#   threshold > data.threshold and return\n#   result={'positive_pixels':int,'corrected_max':float}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  10,
+                  200
+                ],
+                [
+                  2,
+                  300,
+                  100
+                ]
+              ],
+              "background": 20,
+              "threshold": 80
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      10,
+                      200
+                    ],
+                    [
+                      2,
+                      300,
+                      100
+                    ]
+                  ],
+                  "background": 20,
+                  "threshold": 80
+                }
+              },
+              "assertions": [
+                "result['positive_pixels']==int(np.count_nonzero(np.maximum(np.asarray(data['image'],dtype=np.uint16).astype(float)-data['background'],0)>data['threshold']))",
+                "np.isclose(result['corrected_max'],float(np.maximum(np.asarray(data['image'],dtype=np.uint16).astype(float)-data['background'],0).max()))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      100,
+                      150,
+                      400
+                    ],
+                    [
+                      0,
+                      40,
+                      900
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 240
+                }
+              },
+              "assertions": [
+                "result['positive_pixels']==int(np.count_nonzero(np.maximum(np.asarray(data['image'],dtype=np.uint16).astype(float)-data['background'],0)>data['threshold']))",
+                "np.isclose(result['corrected_max'],float(np.maximum(np.asarray(data['image'],dtype=np.uint16).astype(float)-data['background'],0).max()))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "Convert data.image to float, subtract data.background, clip at zero, threshold > data.threshold and return result={'positive_pixels':int,'corrected_max':float}.",
+          "starter_code": "# A02-G01 | PROVE | Background subtraction and binary mask\n# TASK: Convert data.image to float, subtract data.background, clip at zero,\n#   threshold > data.threshold and return\n#   result={'positive_pixels':int,'corrected_max':float}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  65535,
+                  0,
+                  200
+                ],
+                [
+                  400,
+                  22,
+                  10
+                ]
+              ],
+              "background": 300,
+              "threshold": 100
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      65535,
+                      0,
+                      200
+                    ],
+                    [
+                      400,
+                      22,
+                      10
+                    ]
+                  ],
+                  "background": 300,
+                  "threshold": 100
+                }
+              },
+              "assertions": [
+                "result['positive_pixels']==int(np.count_nonzero(np.maximum(np.asarray(data['image'],dtype=np.uint16).astype(float)-data['background'],0)>data['threshold']))",
+                "np.isclose(result['corrected_max'],float(np.maximum(np.asarray(data['image'],dtype=np.uint16).astype(float)-data['background'],0).max()))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      10,
+                      10
+                    ],
+                    [
+                      55,
+                      111
+                    ]
+                  ],
+                  "background": 25,
+                  "threshold": 30
+                }
+              },
+              "assertions": [
+                "result['positive_pixels']==int(np.count_nonzero(np.maximum(np.asarray(data['image'],dtype=np.uint16).astype(float)-data['background'],0)>data['threshold']))",
+                "np.isclose(result['corrected_max'],float(np.maximum(np.asarray(data['image'],dtype=np.uint16).astype(float)-data['background'],0).max()))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        }
+      }
+    },
+    {
+      "id": "A02-G02",
+      "title": "Choose the correct foreground polarity",
+      "competencies": [
+        "A02-G02"
+      ],
+      "why": "Bright nuclei and dark nuclei require opposite mask polarity.",
+      "explain": [
+        "Bright nuclei and dark nuclei require opposite mask polarity.",
+        "A source-intensity heuristic is a testable hypothesis, not a universal modality classifier."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nim=np.full((5,5),240,dtype=np.uint8);im[2,2]=20\nprint('border background:',np.median(im[0,:]),'dark center:',im[2,2])",
+        "predict": "Predict the mask and candidate counts before running real Python."
+      },
+      "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
+      "walkthrough": [
+        "Name the intended object/background polarity before looking at the output.",
+        "Run and inspect a changed threshold or touching-object input.",
+        "Identify one failure case and explain how it affects a biological count."
+      ],
+      "investigate": [
+        "Vary a threshold or minimum size; note when a candidate disappears.",
+        "Distinguish foreground pixel overlap from correct separated objects."
+      ],
+      "debug_task": "Explain one oversegmentation, merge or intensity-overflow failure.",
+      "misconception": "Every connected region is necessarily one correctly identified nucleus.",
+      "scientific_boundary": "Practice arrays and sample masks are synthetic. Real segmentation needs independent annotations and the same prespecified method on held-out images.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Calculate a border median from the first and last rows and columns.",
+          "Use < for dark foreground and > for bright foreground; neither certifies object identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from the image mask and parameters, never from one known answer."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Run the demonstration and predict effects of parameter changes.",
+          "starter_code": "# A02-G02 | LEARN | Choose the correct foreground polarity\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nim=np.full((5,5),240,dtype=np.uint8);im[2,2]=20\nprint('border background:',np.median(im[0,:]),'dark center:',im[2,2])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed image inputs",
+          "description": "Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.",
+          "starter_code": "# A02-G02 | APPLY | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535).\n#   Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels\n#   above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245
+                ],
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245
+                ],
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245
+                ],
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  25,
+                  25,
+                  25,
+                  245,
+                  245,
+                  245,
+                  245
+                ],
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  25,
+                  25,
+                  25,
+                  245,
+                  245,
+                  245,
+                  245
+                ],
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  25,
+                  25,
+                  25,
+                  245,
+                  245,
+                  245,
+                  245
+                ],
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245
+                ],
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245
+                ],
+                [
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245,
+                  245
+                ]
+              ],
+              "max_possible": 255,
+              "threshold": 120
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245
+                    ],
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245
+                    ],
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245
+                    ],
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      25,
+                      25,
+                      25,
+                      245,
+                      245,
+                      245,
+                      245
+                    ],
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      25,
+                      25,
+                      25,
+                      245,
+                      245,
+                      245,
+                      245
+                    ],
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      25,
+                      25,
+                      25,
+                      245,
+                      245,
+                      245,
+                      245
+                    ],
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245
+                    ],
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245
+                    ],
+                    [
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245,
+                      245
+                    ]
+                  ],
+                  "max_possible": 255,
+                  "threshold": 120
+                }
+              },
+              "assertions": [
+                "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')",
+                "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      45000,
+                      45000,
+                      45000,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      45000,
+                      45000,
+                      45000,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      45000,
+                      45000,
+                      45000,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "max_possible": 65535,
+                  "threshold": 10000
+                }
+              },
+              "assertions": [
+                "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')",
+                "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.",
+          "starter_code": "# A02-G02 | PROVE | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535).\n#   Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels\n#   above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200
+                ]
+              ],
+              "max_possible": 255,
+              "threshold": 90
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200
+                    ]
+                  ],
+                  "max_possible": 255,
+                  "threshold": 90
+                }
+              },
+              "assertions": [
+                "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')",
+                "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ]
+                  ],
+                  "max_possible": 65535,
+                  "threshold": 9000
+                }
+              },
+              "assertions": [
+                "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')",
+                "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        }
+      }
+    },
+    {
+      "id": "A02-G03",
+      "title": "Filter small objects without silently merging",
+      "competencies": [
+        "A02-G03"
+      ],
+      "why": "The size filter can remove noise or erase meaningful small objects.",
+      "explain": [
+        "Label connectivity and area units must be declared before interpreting counts.",
+        "A size threshold on connected objects is not a validated classifier.",
+        "Changing the threshold changes object counts and may bias biology."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,0,1],[1,0,0],[0,0,0]],bool)\nlabels,n=ndi.label(m)\nprint('objects:',n,'pixel counts:',np.bincount(labels.ravel())[1:].tolist())",
+        "predict": "Predict the mask and candidate counts before running real Python."
+      },
+      "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
+      "walkthrough": [
+        "Name the intended object/background polarity before looking at the output.",
+        "Run and inspect a changed threshold or touching-object input.",
+        "Identify one failure case and explain how it affects a biological count."
+      ],
+      "investigate": [
+        "Vary a threshold or minimum size; note when a candidate disappears.",
+        "Distinguish foreground pixel overlap from correct separated objects."
+      ],
+      "debug_task": "Explain one oversegmentation, merge or intensity-overflow failure.",
+      "misconception": "Every connected region is necessarily one correctly identified nucleus.",
+      "scientific_boundary": "Practice arrays and sample masks are synthetic. Real segmentation needs independent annotations and the same prespecified method on held-out images.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Label foreground components with four-neighbor connectivity.",
+          "Count pixels per nonzero label; retain components meeting min_area."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from the image mask and parameters, never from one known answer."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Run the demonstration and predict effects of parameter changes.",
+          "starter_code": "# A02-G03 | LEARN | Filter small objects without silently merging\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,0,1],[1,0,0],[0,0,0]],bool)\nlabels,n=ndi.label(m)\nprint('objects:',n,'pixel counts:',np.bincount(labels.ravel())[1:].tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed image inputs",
+          "description": "Treat data.mask as binary 2-D; label 4-connected objects and keep only components with pixel area >= data.min_area; return result={'kept_objects':int,'kept_pixels':int}.",
+          "starter_code": "# A02-G03 | APPLY | Filter small objects without silently merging\n# TASK: Treat data.mask as binary 2-D; label 4-connected objects and keep only\n#   components with pixel area >= data.min_area; return\n#   result={'kept_objects':int,'kept_pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "mask": [
+                [
+                  1,
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  0,
+                  0
+                ]
+              ],
+              "min_area": 2
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      1,
+                      1,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      1,
+                      0,
+                      0,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      0,
+                      0
+                    ]
+                  ],
+                  "min_area": 2
+                }
+              },
+              "assertions": [
+                "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))",
+                "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      1,
+                      0,
+                      1,
+                      1,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "min_area": 3
+                }
+              },
+              "assertions": [
+                "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))",
+                "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "Treat data.mask as binary 2-D; label 4-connected objects and keep only components with pixel area >= data.min_area; return result={'kept_objects':int,'kept_pixels':int}.",
+          "starter_code": "# A02-G03 | PROVE | Filter small objects without silently merging\n# TASK: Treat data.mask as binary 2-D; label 4-connected objects and keep only\n#   components with pixel area >= data.min_area; return\n#   result={'kept_objects':int,'kept_pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "mask": [
+                [
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "min_area": 3
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      1,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "min_area": 3
+                }
+              },
+              "assertions": [
+                "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))",
+                "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      1,
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0,
+                      1
+                    ]
+                  ],
+                  "min_area": 2
+                }
+              },
+              "assertions": [
+                "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))",
+                "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        }
+      }
+    },
+    {
+      "id": "A02-G04",
+      "title": "Separate connected candidates using watershed seeds",
+      "competencies": [
+        "A02-G04"
+      ],
+      "why": "Touching nuclei may be undercounted, while inappropriate seeds cause oversegmentation.",
+      "explain": [
+        "Marker-controlled watershed is sensitive to selected seeds and signal quality.",
+        "The distance transform describes separation from the background.",
+        "Seeds define object identities and can create false splits."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[0,1,1,1,0],[0,1,1,1,0]],bool)\nprint('distances:',ndi.distance_transform_edt(m).round(1).tolist())",
+        "predict": "Predict the mask and candidate counts before running real Python."
+      },
+      "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
+      "walkthrough": [
+        "Name the intended object/background polarity before looking at the output.",
+        "Run and inspect a changed threshold or touching-object input.",
+        "Identify one failure case and explain how it affects a biological count."
+      ],
+      "investigate": [
+        "Vary a threshold or minimum size; note when a candidate disappears.",
+        "Distinguish foreground pixel overlap from correct separated objects."
+      ],
+      "debug_task": "Explain one oversegmentation, merge or intensity-overflow failure.",
+      "misconception": "Every connected region is necessarily one correctly identified nucleus.",
+      "scientific_boundary": "Practice arrays and sample masks are synthetic. Real segmentation needs independent annotations and the same prespecified method on held-out images.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Make one integer marker with a distinct ID at each provided seed.",
+          "Run watershed on negative distance, constrained to the original mask."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from the image mask and parameters, never from one known answer."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Run the demonstration and predict effects of parameter changes.",
+          "starter_code": "# A02-G04 | LEARN | Separate connected candidates using watershed seeds\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[0,1,1,1,0],[0,1,1,1,0]],bool)\nprint('distances:',ndi.distance_transform_edt(m).round(1).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed image inputs",
+          "description": "From data.mask and data.seeds (YX coordinates), create watershed markers on a distance transform. Return result={'objects':int,'total_px':int} with all mask pixels assigned.",
+          "starter_code": "# A02-G04 | APPLY | Separate connected candidates using watershed seeds\n# TASK: From data.mask and data.seeds (YX coordinates), create watershed markers on\n#   a distance transform. Return result={'objects':int,'total_px':int} with all mask\n#   pixels assigned.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "mask": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "seeds": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  2,
+                  4
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "seeds": [
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      4
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['objects']==len(data['seeds'])",
+                "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "seeds": [
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      2,
+                      3
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['objects']==len(data['seeds'])",
+                "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "From data.mask and data.seeds (YX coordinates), create watershed markers on a distance transform. Return result={'objects':int,'total_px':int} with all mask pixels assigned.",
+          "starter_code": "# A02-G04 | PROVE | Separate connected candidates using watershed seeds\n# TASK: From data.mask and data.seeds (YX coordinates), create watershed markers on\n#   a distance transform. Return result={'objects':int,'total_px':int} with all mask\n#   pixels assigned.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "mask": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "seeds": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  3,
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "seeds": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      3,
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['objects']==len(data['seeds'])",
+                "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "seeds": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      1,
+                      4
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['objects']==len(data['seeds'])",
+                "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        }
+      }
+    },
+    {
+      "id": "A02-G05",
+      "title": "Measure parameter sensitivity, not accuracy",
+      "competencies": [
+        "A02-G05"
+      ],
+      "why": "Parameter instability indicates sensitivity but does not measure segmentation validity.",
+      "explain": [
+        "Only independently annotated object matches can support biological detection accuracy.",
+        "Foreground IoU compares binary masks, not cell identities.",
+        "A parameter comparison is not a ground-truth metric."
+      ],
+      "worked_example": {
+        "code": "a={1,2,3};b={2,3,4}\nprint('set overlap:',len(a&b)/len(a|b))",
+        "predict": "Predict the mask and candidate counts before running real Python."
+      },
+      "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
+      "walkthrough": [
+        "Name the intended object/background polarity before looking at the output.",
+        "Run and inspect a changed threshold or touching-object input.",
+        "Identify one failure case and explain how it affects a biological count."
+      ],
+      "investigate": [
+        "Vary a threshold or minimum size; note when a candidate disappears.",
+        "Distinguish foreground pixel overlap from correct separated objects."
+      ],
+      "debug_task": "Explain one oversegmentation, merge or intensity-overflow failure.",
+      "misconception": "Every connected region is necessarily one correctly identified nucleus.",
+      "scientific_boundary": "Practice arrays and sample masks are synthetic. Real segmentation needs independent annotations and the same prespecified method on held-out images.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Count foreground intersection and union; no reference annotations are present.",
+          "For both-empty masks document IoU=1; stability is not accuracy."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from the image mask and parameters, never from one known answer."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Run the demonstration and predict effects of parameter changes.",
+          "starter_code": "# A02-G05 | LEARN | Measure parameter sensitivity, not accuracy\n# TASK: Predict, run and inspect the example.\n\na={1,2,3};b={2,3,4}\nprint('set overlap:',len(a&b)/len(a|b))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed image inputs",
+          "description": "Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.",
+          "starter_code": "# A02-G05 | APPLY | Measure parameter sensitivity, not accuracy\n# TASK: Compare data.baseline and data.variant binary masks; return\n#   result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "baseline": [
+                [
+                  0,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  1,
+                  0
+                ]
+              ],
+              "variant": [
+                [
+                  0,
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  0,
+                  0
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "baseline": [
+                    [
+                      0,
+                      1,
+                      1
+                    ],
+                    [
+                      0,
+                      1,
+                      0
+                    ]
+                  ],
+                  "variant": [
+                    [
+                      0,
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['foreground_iou'], (np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0)",
+                "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))",
+                "result['verified_accuracy'] is False"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "baseline": [
+                    [
+                      1,
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "variant": [
+                    [
+                      1,
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['foreground_iou'], (np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0)",
+                "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))",
+                "result['verified_accuracy'] is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.",
+          "starter_code": "# A02-G05 | PROVE | Measure parameter sensitivity, not accuracy\n# TASK: Compare data.baseline and data.variant binary masks; return\n#   result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "baseline": [
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "variant": [
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "baseline": [
+                    [
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "variant": [
+                    [
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['foreground_iou'], (np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0)",
+                "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))",
+                "result['verified_accuracy'] is False"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "baseline": [
+                    [
+                      1,
+                      1,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "variant": [
+                    [
+                      1,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      1
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['foreground_iou'], (np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0)",
+                "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))",
+                "result['verified_accuracy'] is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        }
+      }
+    }
+  ],
+  "capstone": {
+    "id": "A02-CAPSTONE",
+    "title": "Generate traceable candidate objects",
+    "competencies": [
+      "A02-CAPSTONE"
+    ],
+    "why": "An end-to-end classical mask must preserve parameters, error cases and candidate status.",
+    "explain": [
+      "Bright/dark rules alter segmentation dramatically; manual reference is needed for detection accuracy.",
+      "Use explicit strict foreground comparisons before connected labeling.",
+      "Size filtering is performed on connected components, not global pixel count."
+    ],
+    "worked_example": {
+      "code": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,1,0],[0,0,0],[0,1,1]],bool)\nprint('connected candidates:',ndi.label(m)[1])",
+      "predict": "Predict the mask and candidate counts before running real Python."
+    },
+    "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
+    "walkthrough": [
+      "Name the intended object/background polarity before looking at the output.",
+      "Run and inspect a changed threshold or touching-object input.",
+      "Identify one failure case and explain how it affects a biological count."
+    ],
+    "investigate": [
+      "Vary a threshold or minimum size; note when a candidate disappears.",
+      "Distinguish foreground pixel overlap from correct separated objects."
+    ],
+    "debug_task": "Explain one oversegmentation, merge or intensity-overflow failure.",
+    "misconception": "Every connected region is necessarily one correctly identified nucleus.",
+    "scientific_boundary": "Practice arrays and sample masks are synthetic. Real segmentation needs independent annotations and the same prespecified method on held-out images.",
+    "hints": {
+      "learn": [],
+      "apply": [
+        "Use > for bright and < for dark foreground.",
+        "Label 4-connected components, filter by area and retain unvalidated status."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Compute from the image mask and parameters, never from one known answer."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict → Run → Investigate",
+        "description": "Run the demonstration and predict effects of parameter changes.",
+        "starter_code": "# A02-CAPSTONE | LEARN | Generate traceable candidate objects\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,1,0],[0,0,0],[0,1,1]],bool)\nprint('connected candidates:',ndi.label(m)[1])\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with changed image inputs",
+        "description": "Threshold 2-D data.image using data.threshold and data.foreground ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area; result={'candidate_count':int,'areas_px':sorted list,'validated':False}.",
+        "starter_code": "# A02-CAPSTONE | APPLY | Generate traceable candidate objects\n# TASK: Threshold 2-D data.image using data.threshold and data.foreground\n#   ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area;\n#   result={'candidate_count':int,'areas_px':sorted list,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "image": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                200,
+                200,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                200,
+                200,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                220,
+                220,
+                220,
+                220,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                220,
+                220,
+                220,
+                220,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                220,
+                220,
+                220,
+                220,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "threshold": 80,
+            "foreground": "bright",
+            "min_area": 3
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    200,
+                    200,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    200,
+                    200,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    220,
+                    220,
+                    220,
+                    220,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    220,
+                    220,
+                    220,
+                    220,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    220,
+                    220,
+                    220,
+                    220,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                ],
+                "threshold": 80,
+                "foreground": "bright",
+                "min_area": 3
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))",
+              "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])",
+              "result['validated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  [
+                    255,
+                    10,
+                    10,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  [
+                    255,
+                    10,
+                    10,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  [
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  [
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  [
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    0,
+                    0,
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  [
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    0,
+                    0,
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  [
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    0,
+                    0,
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  [
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255
+                  ]
+                ],
+                "threshold": 120,
+                "foreground": "dark",
+                "min_area": 4
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))",
+              "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])",
+              "result['validated'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+          "probe": "Where would this algorithm merge, split or miss biological objects?",
+          "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+        }
+      },
+      "prove": {
+        "title": "Independent changed-image transfer",
+        "description": "Threshold 2-D data.image using data.threshold and data.foreground ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area; result={'candidate_count':int,'areas_px':sorted list,'validated':False}.",
+        "starter_code": "# A02-CAPSTONE | PROVE | Generate traceable candidate objects\n# TASK: Threshold 2-D data.image using data.threshold and data.foreground\n#   ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area;\n#   result={'candidate_count':int,'areas_px':sorted list,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "image": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                400,
+                400,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                400,
+                400,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                400,
+                400,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                300,
+                300,
+                300,
+                300,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                300,
+                300,
+                300,
+                300,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "threshold": 100,
+            "foreground": "bright",
+            "min_area": 6
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    400,
+                    400,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    400,
+                    400,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    400,
+                    400,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    300,
+                    300,
+                    300,
+                    300,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    300,
+                    300,
+                    300,
+                    300,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                ],
+                "threshold": 100,
+                "foreground": "bright",
+                "min_area": 6
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))",
+              "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])",
+              "result['validated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    20,
+                    20,
+                    20,
+                    20,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    20,
+                    20,
+                    20,
+                    20,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    20,
+                    20,
+                    20,
+                    20,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    0,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ]
+                ],
+                "threshold": 100,
+                "foreground": "dark",
+                "min_area": 3
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))",
+              "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])",
+              "result['validated'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+          "probe": "Where would this algorithm merge, split or miss biological objects?",
+          "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+        }
+      }
+    },
+    "build_steps": [
+      "Prespecify foreground polarity, threshold and minimum region size before processing.",
+      "Perform explicit source-preserving masking and connected-component labeling.",
+      "Remove only the objects specified by the documented QC rule; keep pixel-area units.",
+      "Test multiple changed input images and explain which biological claims remain unjustified."
+    ]
+  },
+  "review": {
+    "id": "A02-REVIEW",
+    "title": "Return later: independent segmentation transfer",
+    "competencies": [
+      "A02-REVIEW"
+    ],
+    "why": "Recall and transfer must be evaluated later without looking up the solution.",
+    "explain": [
+      "An unfamiliar image tests whether the decision rule is understood.",
+      "Do not turn a practice check into an automatic research-validity label."
+    ],
+    "worked_example": {
+      "code": "print('A02 delayed review: return later and solve from memory.')",
+      "predict": "Predict the mask and candidate counts before running real Python."
+    },
+    "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
+    "walkthrough": [
+      "Name the intended object/background polarity before looking at the output.",
+      "Run and inspect a changed threshold or touching-object input.",
+      "Identify one failure case and explain how it affects a biological count."
+    ],
+    "investigate": [
+      "Vary a threshold or minimum size; note when a candidate disappears.",
+      "Distinguish foreground pixel overlap from correct separated objects."
+    ],
+    "debug_task": "Explain one oversegmentation, merge or intensity-overflow failure.",
+    "misconception": "Every connected region is necessarily one correctly identified nucleus.",
+    "scientific_boundary": "Practice arrays and sample masks are synthetic. Real segmentation needs independent annotations and the same prespecified method on held-out images.",
+    "hints": {
+      "learn": [],
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Compute from the image mask and parameters, never from one known answer."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict → Run → Investigate",
+        "description": "Run the demonstration and predict effects of parameter changes.",
+        "starter_code": "# A02-REVIEW | LEARN | Return later: independent segmentation transfer\n# TASK: Predict, run and inspect the example.\n\nprint('A02 delayed review: return later and solve from memory.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with changed image inputs",
+        "description": "Return candidate count and foreground-pixel count from data.image threshold/polarity without copying the capstone; result={'candidate_count':int,'foreground_pixels':int,'validated':False}.",
+        "starter_code": "# A02-REVIEW | APPLY | Return later: independent segmentation transfer\n# TASK: Return candidate count and foreground-pixel count from data.image\n#   threshold/polarity without copying the capstone;\n#   result={'candidate_count':int,'foreground_pixels':int,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "image": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                220,
+                220,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                220,
+                220,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "foreground": "bright",
+            "threshold": 50
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    220,
+                    220,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    220,
+                    220,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                ],
+                "foreground": "bright",
+                "threshold": 50
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(ndi.label(np.asarray(data['image'])>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'])<data['threshold'])[1])",
+              "result['foreground_pixels']==int(np.count_nonzero(np.asarray(data['image'])>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'])<data['threshold']))",
+              "result['validated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ],
+                  [
+                    200,
+                    40,
+                    40,
+                    40,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ],
+                  [
+                    200,
+                    40,
+                    40,
+                    40,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ],
+                  [
+                    200,
+                    40,
+                    40,
+                    40,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ],
+                  [
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ],
+                  [
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ],
+                  [
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ],
+                  [
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ],
+                  [
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200,
+                    200
+                  ]
+                ],
+                "foreground": "dark",
+                "threshold": 80
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(ndi.label(np.asarray(data['image'])>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'])<data['threshold'])[1])",
+              "result['foreground_pixels']==int(np.count_nonzero(np.asarray(data['image'])>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'])<data['threshold']))",
+              "result['validated'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+          "probe": "Where would this algorithm merge, split or miss biological objects?",
+          "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+        }
+      },
+      "prove": {
+        "title": "Independent changed-image transfer",
+        "description": "Return candidate count and foreground-pixel count from data.image threshold/polarity without copying the capstone; result={'candidate_count':int,'foreground_pixels':int,'validated':False}.",
+        "starter_code": "# A02-REVIEW | PROVE | Return later: independent segmentation transfer\n# TASK: Return candidate count and foreground-pixel count from data.image\n#   threshold/polarity without copying the capstone;\n#   result={'candidate_count':int,'foreground_pixels':int,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "image": [
+              [
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                180,
+                180,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                180,
+                180,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                250,
+                250,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                250,
+                250,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10
+              ]
+            ],
+            "foreground": "bright",
+            "threshold": 100
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10
+                  ],
+                  [
+                    10,
+                    180,
+                    180,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10
+                  ],
+                  [
+                    10,
+                    180,
+                    180,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10
+                  ],
+                  [
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10
+                  ],
+                  [
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10
+                  ],
+                  [
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    250,
+                    250,
+                    10,
+                    10,
+                    10
+                  ],
+                  [
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    250,
+                    250,
+                    10,
+                    10,
+                    10
+                  ],
+                  [
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10
+                  ],
+                  [
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10,
+                    10
+                  ]
+                ],
+                "foreground": "bright",
+                "threshold": 100
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(ndi.label(np.asarray(data['image'])>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'])<data['threshold'])[1])",
+              "result['foreground_pixels']==int(np.count_nonzero(np.asarray(data['image'])>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'])<data['threshold']))",
+              "result['validated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250
+                  ],
+                  [
+                    250,
+                    30,
+                    30,
+                    30,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250
+                  ],
+                  [
+                    250,
+                    30,
+                    30,
+                    30,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250
+                  ],
+                  [
+                    250,
+                    30,
+                    30,
+                    30,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250
+                  ],
+                  [
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250
+                  ],
+                  [
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    20,
+                    20,
+                    20,
+                    250,
+                    250
+                  ],
+                  [
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    20,
+                    20,
+                    20,
+                    250,
+                    250
+                  ],
+                  [
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    20,
+                    20,
+                    20,
+                    250,
+                    250
+                  ],
+                  [
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250,
+                    250
+                  ]
+                ],
+                "foreground": "dark",
+                "threshold": 90
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(ndi.label(np.asarray(data['image'])>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'])<data['threshold'])[1])",
+              "result['foreground_pixels']==int(np.count_nonzero(np.asarray(data['image'])>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'])<data['threshold']))",
+              "result['validated'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+          "probe": "Where would this algorithm merge, split or miss biological objects?",
+          "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+        }
+      }
+    }
+  },
+  "final_project": {
+    "name": "a02_candidate_segmentation.py",
+    "description": "Export a source-aware candidate analysis and test its parameter sensitivity on an original TIFF."
+  }
+}

@@ -17,6 +17,24 @@ The existing 19-chapter progress and frozen editor/viewer shell are preserved. T
 - **Production:** this is an isolated draft branch; `main` is unchanged. The frozen UI structure remains intact.
 - **Quality status:** automated browser and content tests do not establish retained learner skill, independent scientific truth, or an empirically measured 9.5+/10 learning score.
 
+## Optional advanced research lab — A01–A03 (draft)
+
+This development branch adds an **opt-in advanced microscopy learning track** without changing the original 26-chapter course or its saved progress. Start a local server from the repository root:
+
+```sh
+python -m http.server 8000
+```
+
+Open `http://localhost:8000/?lab=advanced` to use the same CodeMirror/Pyodide IDE for **20 advanced activities** (14 goals, three capstones and three delayed reviews). The standard `http://localhost:8000/` remains the uncluttered 26-chapter course. From the standard I13 lesson, the advanced route is also linked as **A01–A03 · Advanced research lab**. The selected advanced chapter uses `biopython.advanced-selected.v1`; drafts for `A01`, `A02` and `A03` use their own `biopython.a0*.v1` keys.
+
+- A01: native image axes, uint16 source integrity, pixel-size calibration caution and source checksums.
+- A02: candidate segmentation, polarity, morphology, seeded watershed and parameter sensitivity.
+- A03: pixel versus object accuracy, one-to-one annotation matching, biological group leakage and independent-validation reporting.
+
+Browser exercises use clearly **synthetic teaching arrays**, while original TIFF/OME-TIFF and independently annotated BBBC038/BBBC039 data are processed through [local advanced research projects](projects/advanced/) outside the browser. All 80 advanced changed-input cases pass both CPython and actual Pyodide, including capstone exports, 16-bit TIFF browser import, and 390/768/1440-pixel layouts. See the [technical QA and remaining gates](docs/ADVANCEMENT_A01_A03_RELEASE_QA.md).
+
+**Draft-only status:** no production merge, no independently measured human learning success, no verified general-purpose nuclei/exopher detector, and no completed A04/A05–A07 research track. A green browser test is not a scientific detection-accuracy claim.
+
 ## Python Foundations chapter sequence
 
 | Chapter | Mission | Central deliverable |
