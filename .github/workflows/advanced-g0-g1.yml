@@ -33,5 +33,7 @@ jobs:
       - name: CLI and bytecode smoke
         run: |
           python projects/advanced/a01/image_audit.py --help
+          python -m projects.advanced.a02.run_tiff --help
+          python -m projects.advanced.a02.sensitivity --help
           python -m projects.advanced.a03.benchmark --help
-          python -m py_compile projects/advanced/a01/image_audit.py projects/advanced/a02/segmentation.py projects/advanced/a03/dataset.py projects/advanced/a03/metrics.py projects/advanced/a03/benchmark.py
+          python -m py_compile projects/advanced/a01/image_audit.py projects/advanced/a02/segmentation.py projects/advanced/a02/run_tiff.py projects/advanced/a02/sensitivity.py projects/advanced/a03/dataset.py projects/advanced/a03/metrics.py projects/advanced/a03/benchmark.py
