@@ -45,7 +45,7 @@ jobs:
           set -euo pipefail
           ROOT="${RUNNER_TEMP}/bbbc038-training-only"
           python -m projects.advanced.a02b.probe_bbbc038_training \
-            --train "$ROOT/stage1_train" \
+            --train "$ROOT" \
             --out artifacts/training-router \
             --count 40 \
             | tee artifacts/training-router/training_diagnostic_console.txt
