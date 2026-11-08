@@ -19,7 +19,7 @@ permissions:
 jobs:
   microscopy-i01:
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -36,11 +36,15 @@ jobs:
           node --check src/p01-worker.mjs
           node --test tests/preview.test.mjs tests/witz_sources.test.mjs
       - name: Scientific Python packages
-        run: python -m pip install numpy pillow matplotlib
+        run: python -m pip install numpy pillow matplotlib pandas
       - name: Canonical I01 contract and CPython reference cases
         run: |
           python tests/test_i01_import.py
           python tests/test_i01_reference.py
+      - name: All six scientific missions, exact competence mapping and CPython QA
+        run: |
+          python tests/test_scientific_foundation_import.py
+          python tests/test_scientific_foundation_reference.py
       - name: Preserve P01-P06 learner contracts
         run: |
           python tests/test_p01_import.py
