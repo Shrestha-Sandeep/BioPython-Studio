@@ -435,7 +435,8 @@ async function start(){
      throw Error(id+" chapter import contract failed");
    chapters[id]=data;states[id]=loadState(id);
   }
-  if(!chapters[activeId])activeId=advancedLab?"A01":"P01";
+  if(!chapters[activeId])activeId="P01";
+  if(advancedLab && !A_IDS.includes(activeId))activeId="A01";
   chapter=chapters[activeId];state=states[activeId];
   rememberLast(activeId);
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
