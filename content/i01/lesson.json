@@ -743,7 +743,7 @@
         "apply": {
           "title": "Apply to changing records",
           "description": "Build provenance={'filename':filename,'source_url':source_url,'license':license_name,'raw_calibrated':False}. Set can_measure_absolute=False. Preserve all incoming strings.",
-          "starter_code": "# I01-G04 | APPLY | Document a genuine source image\n# TASK: Build\n#   provenance={'filename':filename,'source_url':source_url,'license':license_name,'raw_calibrated':False}.\n#   Set can_measure_absolute=False. Preserve all incoming strings.\n# INPUTS: filename, source_url, license_name\n\n",
+          "starter_code": "# I01-G04 | APPLY | Document a genuine source image\n# TASK: Build\n#   \n#   provenance={'filename':filename,'source_url':source_url,'license':license_name,'raw_calibrated':False}.\n#   Set can_measure_absolute=False. Preserve all incoming strings.\n# INPUTS: filename, source_url, license_name\n\n",
           "preview_inputs": {
             "filename": "fluorescence-single.png",
             "source_url": "https://github.com/guiwitz/PyImageCourse_beginner",
@@ -795,7 +795,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Create image_record={'id':image_id,'origin':origin,'display_only':True,'pixel_size_um':None} and provenance_ok=bool(origin.strip()). Do not fabricate calibration.",
-          "starter_code": "# I01-G04 | PROVE | Document a genuine source image\n# TASK: Create\n#   image_record={'id':image_id,'origin':origin,'display_only':True,'pixel_size_um':None}\n#   and provenance_ok=bool(origin.strip()). Do not fabricate calibration.\n# INPUTS: image_id, origin\n\n",
+          "starter_code": "# I01-G04 | PROVE | Document a genuine source image\n# TASK: Create\n#   \n#   image_record={'id':image_id,'origin':origin,'display_only':True,'pixel_size_um':None}\n#   and provenance_ok=bool(origin.strip()). Do not fabricate calibration.\n# INPUTS: image_id, origin\n\n",
           "preview_inputs": {
             "image_id": "HPA_F01",
             "origin": "Human Protein Atlas via Witz"
@@ -1313,7 +1313,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Decode image_path as RGB; from selected row, col and component_index create coordinate_report={'x':col,'y':row,'component':component_index,'value':int(pixel)}.",
-          "starter_code": "# I01-G07 | PROVE | Explain pixel coordinates precisely\n# TASK: Decode image_path as RGB; from selected row, col and component_index create\n#   coordinate_report={'x':col,'y':row,'component':component_index,'value':int(pixel)}.\n# INPUTS: image_path, row, col, component_index\n\n",
+          "starter_code": "# I01-G07 | PROVE | Explain pixel coordinates precisely\n# TASK: Decode image_path as RGB; from selected row, col and component_index create\n#   \n#   coordinate_report={'x':col,'y':row,'component':component_index,'value':int(pixel)}.\n# INPUTS: image_path, row, col, component_index\n\n",
           "preview_inputs": {
             "image_path": "/home/pyodide/witz_published_figure.png",
             "row": 2,
@@ -1593,7 +1593,7 @@
       "apply": {
         "title": "Apply to changing records",
         "description": "Decode image_path as RGB; create image_report={'height':H,'width':W,'components':3,'dtype':'uint8','source':'Witz/HPA rendered figure','calibrated':False,'component_mean':float(selected channel mean)}. Print the source and pixel shape.",
-        "starter_code": "# I01-CAPSTONE | APPLY | Create an honest Witz/HPA image-inspection report\n# TASK: Decode image_path as RGB; create\n#   image_report={'height':H,'width':W,'components':3,'dtype':'uint8','source':'Witz/HPA\n#   rendered figure','calibrated':False,'component_mean':float(selected channel\n#   mean)}. Print the source and pixel shape.\n# INPUTS: image_path, component_index\n\n",
+        "starter_code": "# I01-CAPSTONE | APPLY | Create an honest Witz/HPA image-inspection report\n# TASK: Decode image_path as RGB; create\n#   \n#   image_report={'height':H,'width':W,'components':3,'dtype':'uint8','source':'Witz/HPA\n#   rendered figure','calibrated':False,'component_mean':float(selected channel\n#   mean)}. Print the source and pixel shape.\n# INPUTS: image_path, component_index\n\n",
         "preview_inputs": {
           "image_path": "/home/pyodide/witz_published_figure.png",
           "component_index": 0
@@ -1643,7 +1643,7 @@
       "prove": {
         "title": "Independent transfer",
         "description": "Decode the same credited RGB figure, and build audit={'shape':tuple(rgb.shape),'component':component_index,'pixel':int(rgb[row,col,component_index]),'raw_calibrated':False}. Print audit and preserve the actual numeric pixel.",
-        "starter_code": "# I01-CAPSTONE | PROVE | Create an honest Witz/HPA image-inspection report\n# TASK: Decode the same credited RGB figure, and build\n#   audit={'shape':tuple(rgb.shape),'component':component_index,'pixel':int(rgb[row,col,component_index]),'raw_calibrated':False}.\n#   Print audit and preserve the actual numeric pixel.\n# INPUTS: image_path, component_index, row, col\n\n",
+        "starter_code": "# I01-CAPSTONE | PROVE | Create an honest Witz/HPA image-inspection report\n# TASK: Decode the same credited RGB figure, and build\n#   \n#   audit={'shape':tuple(rgb.shape),'component':component_index,'pixel':int(rgb[row,col,component_index]),'raw_calibrated':False}.\n#   Print audit and preserve the actual numeric pixel.\n# INPUTS: image_path, component_index, row, col\n\n",
         "preview_inputs": {
           "image_path": "/home/pyodide/witz_published_figure.png",
           "component_index": 2,
@@ -1782,7 +1782,7 @@
       "prove": {
         "title": "Independent transfer",
         "description": "Open the credited image_path as RGB and create result={'xy':(col,row),'value':int(rgb[row,col,color_index]),'dimensions':(height,width),'calibrated':False}. Print result.",
-        "starter_code": "# I01-REVIEW | PROVE | Read a genuine image independently\n# TASK: Open the credited image_path as RGB and create\n#   result={'xy':(col,row),'value':int(rgb[row,col,color_index]),'dimensions':(height,width),'calibrated':False}.\n#   Print result.\n# INPUTS: image_path, row, col, color_index\n\n",
+        "starter_code": "# I01-REVIEW | PROVE | Read a genuine image independently\n# TASK: Open the credited image_path as RGB and create\n#   \n#   result={'xy':(col,row),'value':int(rgb[row,col,color_index]),'dimensions':(height,width),'calibrated':False}.\n#   Print result.\n# INPUTS: image_path, row, col, color_index\n\n",
         "preview_inputs": {
           "image_path": "/home/pyodide/witz_published_figure.png",
           "row": 2,
