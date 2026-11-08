@@ -70,7 +70,7 @@
         "apply": {
           "title": "Apply with changed image inputs",
           "description": "Convert data.image to float, subtract data.background, clip at zero, threshold > data.threshold and return result={'positive_pixels':int,'corrected_max':float}.",
-          "starter_code": "# A02-G01 | APPLY | Background subtraction and binary mask\n# TASK: Convert data.image to float, subtract data.background, clip at zero, threshold > data.threshold and return result={'positive_pixels':int,'corrected_max':float}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A02-G01 | APPLY | Background subtraction and binary mask\n# TASK: Convert data.image to float, subtract data.background, clip at zero,\n#   threshold > data.threshold and return\n#   result={'positive_pixels':int,'corrected_max':float}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "image": [
@@ -148,7 +148,7 @@
         "prove": {
           "title": "Independent changed-image transfer",
           "description": "Convert data.image to float, subtract data.background, clip at zero, threshold > data.threshold and return result={'positive_pixels':int,'corrected_max':float}.",
-          "starter_code": "# A02-G01 | PROVE | Background subtraction and binary mask\n# TASK: Convert data.image to float, subtract data.background, clip at zero, threshold > data.threshold and return result={'positive_pixels':int,'corrected_max':float}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A02-G01 | PROVE | Background subtraction and binary mask\n# TASK: Convert data.image to float, subtract data.background, clip at zero,\n#   threshold > data.threshold and return\n#   result={'positive_pixels':int,'corrected_max':float}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "image": [
@@ -272,7 +272,7 @@
         "apply": {
           "title": "Apply with changed image inputs",
           "description": "Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.",
-          "starter_code": "# A02-G02 | APPLY | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A02-G02 | APPLY | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535).\n#   Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels\n#   above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "image": [
@@ -671,7 +671,7 @@
         "prove": {
           "title": "Independent changed-image transfer",
           "description": "Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.",
-          "starter_code": "# A02-G02 | PROVE | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A02-G02 | PROVE | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535).\n#   Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels\n#   above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "image": [
@@ -1076,12 +1076,13 @@
         "A02-G03"
       ],
       "why": "The size filter can remove noise or erase meaningful small objects.",
-      "explain": "Label connectivity and area units must be declared before interpreting counts.",
+      "explain": [
+        "Label connectivity and area units must be declared before interpreting counts.",
+        "A size threshold on connected objects is not a validated classifier.",
+        "Changing the threshold changes object counts and may bias biology."
+      ],
       "worked_example": {
-        "code": [
-          "A size threshold on connected objects is not a validated classifier.",
-          "Changing the threshold changes object counts and may bias biology."
-        ],
+        "code": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,0,1],[1,0,0],[0,0,0]],bool)\nlabels,n=ndi.label(m)\nprint('objects:',n,'pixel counts:',np.bincount(labels.ravel())[1:].tolist())",
         "predict": "Predict the mask and candidate counts before running real Python."
       },
       "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
@@ -1100,55 +1101,8 @@
       "hints": {
         "learn": [],
         "apply": [
-          {
-            "mask": [
-              [
-                1,
-                1,
-                1,
-                0
-              ],
-              [
-                1,
-                0,
-                0,
-                0
-              ],
-              [
-                0,
-                0,
-                1,
-                1
-              ],
-              [
-                0,
-                0,
-                0,
-                0
-              ]
-            ],
-            "min_area": 3
-          },
-          {
-            "mask": [
-              [
-                1,
-                0,
-                1
-              ],
-              [
-                0,
-                0,
-                1
-              ],
-              [
-                1,
-                0,
-                1
-              ]
-            ],
-            "min_area": 2
-          }
+          "Label foreground components with four-neighbor connectivity.",
+          "Count pixels per nonzero label; retain components meeting min_area."
         ],
         "prove": []
       },
@@ -1159,40 +1113,13 @@
         "learn": {
           "title": "Predict → Run → Investigate",
           "description": "Run the demonstration and predict effects of parameter changes.",
-          "starter_code": "# A02-G03 | LEARN | Filter small objects without silently merging\n# TASK: Predict, run and inspect the example.\n\nA size threshold on connected objects is not a validated classifier.,Changing the threshold changes object counts and may bias biology.\n",
+          "starter_code": "# A02-G03 | LEARN | Filter small objects without silently merging\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,0,1],[1,0,0],[0,0,0]],bool)\nlabels,n=ndi.label(m)\nprint('objects:',n,'pixel counts:',np.bincount(labels.ravel())[1:].tolist())\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply with changed image inputs",
           "description": "Treat data.mask as binary 2-D; label 4-connected objects and keep only components with pixel area >= data.min_area; return result={'kept_objects':int,'kept_pixels':int}.",
-          "starter_code": "# A02-G03 | APPLY | Filter small objects without silently merging\n# TASK: Treat data.mask as binary 2-D; label 4-connected objects and keep only components with pixel area >= data.min_area; return result={'kept_objects':int,'kept_pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
-          "preview_inputs": {
-            "data": "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))"
-          },
-          "public_checks": [
-            {
-              "inputs": {
-                "data": "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))"
-              },
-              "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nmask=np.asarray(data[\"mask\"],bool)\nlabels,n=ndi.label(mask)\ncounts=np.bincount(labels.ravel())\nvalid=np.flatnonzero(counts[1:]>=data[\"min_area\"])+1\nkept=np.isin(labels,valid)&mask\nresult={\"kept_objects\":int(len(valid)),\"kept_pixels\":int(kept.sum())}\nprint(result)"
-            },
-            {
-              "inputs": {
-                "data": "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
-              },
-              "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nmask=np.asarray(data[\"mask\"],bool)\nlabels,n=ndi.label(mask)\ncounts=np.bincount(labels.ravel())\nvalid=np.flatnonzero(counts[1:]>=data[\"min_area\"])+1\nkept=np.isin(labels,valid)&mask\nresult={\"kept_objects\":int(len(valid)),\"kept_pixels\":int(kept.sum())}\nprint(result)"
-            }
-          ],
-          "practice_feedback": {
-            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
-            "probe": "Where would this algorithm merge, split or miss biological objects?",
-            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
-          }
-        },
-        "prove": {
-          "title": "Independent changed-image transfer",
-          "description": "Treat data.mask as binary 2-D; label 4-connected objects and keep only components with pixel area >= data.min_area; return result={'kept_objects':int,'kept_pixels':int}.",
-          "starter_code": "# A02-G03 | PROVE | Filter small objects without silently merging\n# TASK: Treat data.mask as binary 2-D; label 4-connected objects and keep only components with pixel area >= data.min_area; return result={'kept_objects':int,'kept_pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A02-G03 | APPLY | Filter small objects without silently merging\n# TASK: Treat data.mask as binary 2-D; label 4-connected objects and keep only\n#   components with pixel area >= data.min_area; return\n#   result={'kept_objects':int,'kept_pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "mask": [
@@ -1265,7 +1192,10 @@
                   "min_area": 2
                 }
               },
-              "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nmask=np.asarray(data[\"mask\"],bool)\nlabels,n=ndi.label(mask)\ncounts=np.bincount(labels.ravel())\nvalid=np.flatnonzero(counts[1:]>=data[\"min_area\"])+1\nkept=np.isin(labels,valid)&mask\nresult={\"kept_objects\":int(len(valid)),\"kept_pixels\":int(kept.sum())}\nprint(result)"
+              "assertions": [
+                "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))",
+                "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
+              ]
             },
             {
               "inputs": {
@@ -1303,7 +1233,118 @@
                   "min_area": 3
                 }
               },
-              "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nmask=np.asarray(data[\"mask\"],bool)\nlabels,n=ndi.label(mask)\ncounts=np.bincount(labels.ravel())\nvalid=np.flatnonzero(counts[1:]>=data[\"min_area\"])+1\nkept=np.isin(labels,valid)&mask\nresult={\"kept_objects\":int(len(valid)),\"kept_pixels\":int(kept.sum())}\nprint(result)"
+              "assertions": [
+                "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))",
+                "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "Treat data.mask as binary 2-D; label 4-connected objects and keep only components with pixel area >= data.min_area; return result={'kept_objects':int,'kept_pixels':int}.",
+          "starter_code": "# A02-G03 | PROVE | Filter small objects without silently merging\n# TASK: Treat data.mask as binary 2-D; label 4-connected objects and keep only\n#   components with pixel area >= data.min_area; return\n#   result={'kept_objects':int,'kept_pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "mask": [
+                [
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "min_area": 3
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      1,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "min_area": 3
+                }
+              },
+              "assertions": [
+                "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))",
+                "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      1,
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0,
+                      1
+                    ]
+                  ],
+                  "min_area": 2
+                }
+              },
+              "assertions": [
+                "result['kept_objects']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:]>=data['min_area']))",
+                "result['kept_pixels']==int(sum(v for v in np.bincount(ndi.label(np.asarray(data['mask'],bool))[0].ravel())[1:] if v>=data['min_area']))"
+              ]
             }
           ],
           "practice_feedback": {
@@ -1321,12 +1362,13 @@
         "A02-G04"
       ],
       "why": "Touching nuclei may be undercounted, while inappropriate seeds cause oversegmentation.",
-      "explain": "Marker-controlled watershed is sensitive to selected seeds and signal quality.",
+      "explain": [
+        "Marker-controlled watershed is sensitive to selected seeds and signal quality.",
+        "The distance transform describes separation from the background.",
+        "Seeds define object identities and can create false splits."
+      ],
       "worked_example": {
-        "code": [
-          "The distance transform describes separation from the background.",
-          "Seeds define object identities and can create false splits."
-        ],
+        "code": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[0,1,1,1,0],[0,1,1,1,0]],bool)\nprint('distances:',ndi.distance_transform_edt(m).round(1).tolist())",
         "predict": "Predict the mask and candidate counts before running real Python."
       },
       "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
@@ -1345,119 +1387,8 @@
       "hints": {
         "learn": [],
         "apply": [
-          {
-            "mask": [
-              [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-              ],
-              [
-                0,
-                1,
-                1,
-                1,
-                1,
-                1,
-                0
-              ],
-              [
-                0,
-                1,
-                1,
-                1,
-                1,
-                1,
-                0
-              ],
-              [
-                0,
-                1,
-                1,
-                1,
-                1,
-                1,
-                0
-              ],
-              [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-              ]
-            ],
-            "seeds": [
-              [
-                1,
-                1
-              ],
-              [
-                3,
-                5
-              ]
-            ]
-          },
-          {
-            "mask": [
-              [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-              ],
-              [
-                0,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                0
-              ],
-              [
-                0,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                0
-              ],
-              [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-              ]
-            ],
-            "seeds": [
-              [
-                1,
-                2
-              ],
-              [
-                1,
-                4
-              ]
-            ]
-          }
+          "Make one integer marker with a distinct ID at each provided seed.",
+          "Run watershed on negative distance, constrained to the original mask."
         ],
         "prove": []
       },
@@ -1468,40 +1399,13 @@
         "learn": {
           "title": "Predict → Run → Investigate",
           "description": "Run the demonstration and predict effects of parameter changes.",
-          "starter_code": "# A02-G04 | LEARN | Separate connected candidates using watershed seeds\n# TASK: Predict, run and inspect the example.\n\nThe distance transform describes separation from the background.,Seeds define object identities and can create false splits.\n",
+          "starter_code": "# A02-G04 | LEARN | Separate connected candidates using watershed seeds\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[0,1,1,1,0],[0,1,1,1,0]],bool)\nprint('distances:',ndi.distance_transform_edt(m).round(1).tolist())\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply with changed image inputs",
           "description": "From data.mask and data.seeds (YX coordinates), create watershed markers on a distance transform. Return result={'objects':int,'total_px':int} with all mask pixels assigned.",
-          "starter_code": "# A02-G04 | APPLY | Separate connected candidates using watershed seeds\n# TASK: From data.mask and data.seeds (YX coordinates), create watershed markers on a distance transform. Return result={'objects':int,'total_px':int} with all mask pixels assigned.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
-          "preview_inputs": {
-            "data": "result['objects']==len(data['seeds'])"
-          },
-          "public_checks": [
-            {
-              "inputs": {
-                "data": "result['objects']==len(data['seeds'])"
-              },
-              "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nfrom skimage.segmentation import watershed\nmask=np.asarray(data[\"mask\"],bool)\nmarkers=np.zeros(mask.shape,dtype=np.int32)\nfor idx,(y,x) in enumerate(data[\"seeds\"],1):\n    markers[y,x]=idx\nlabels=watershed(-ndi.distance_transform_edt(mask),markers,mask=mask)\nresult={\"objects\":int(len(np.unique(labels[labels>0]))),\"total_px\":int(np.count_nonzero(labels))}\nprint(result)"
-            },
-            {
-              "inputs": {
-                "data": "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
-              },
-              "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nfrom skimage.segmentation import watershed\nmask=np.asarray(data[\"mask\"],bool)\nmarkers=np.zeros(mask.shape,dtype=np.int32)\nfor idx,(y,x) in enumerate(data[\"seeds\"],1):\n    markers[y,x]=idx\nlabels=watershed(-ndi.distance_transform_edt(mask),markers,mask=mask)\nresult={\"objects\":int(len(np.unique(labels[labels>0]))),\"total_px\":int(np.count_nonzero(labels))}\nprint(result)"
-            }
-          ],
-          "practice_feedback": {
-            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
-            "probe": "Where would this algorithm merge, split or miss biological objects?",
-            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
-          }
-        },
-        "prove": {
-          "title": "Independent changed-image transfer",
-          "description": "From data.mask and data.seeds (YX coordinates), create watershed markers on a distance transform. Return result={'objects':int,'total_px':int} with all mask pixels assigned.",
-          "starter_code": "# A02-G04 | PROVE | Separate connected candidates using watershed seeds\n# TASK: From data.mask and data.seeds (YX coordinates), create watershed markers on a distance transform. Return result={'objects':int,'total_px':int} with all mask pixels assigned.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A02-G04 | APPLY | Separate connected candidates using watershed seeds\n# TASK: From data.mask and data.seeds (YX coordinates), create watershed markers on\n#   a distance transform. Return result={'objects':int,'total_px':int} with all mask\n#   pixels assigned.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "mask": [
@@ -1626,7 +1530,10 @@
                   ]
                 }
               },
-              "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nfrom skimage.segmentation import watershed\nmask=np.asarray(data[\"mask\"],bool)\nmarkers=np.zeros(mask.shape,dtype=np.int32)\nfor idx,(y,x) in enumerate(data[\"seeds\"],1):\n    markers[y,x]=idx\nlabels=watershed(-ndi.distance_transform_edt(mask),markers,mask=mask)\nresult={\"objects\":int(len(np.unique(labels[labels>0]))),\"total_px\":int(np.count_nonzero(labels))}\nprint(result)"
+              "assertions": [
+                "result['objects']==len(data['seeds'])",
+                "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
+              ]
             },
             {
               "inputs": {
@@ -1685,7 +1592,212 @@
                   ]
                 }
               },
-              "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nfrom skimage.segmentation import watershed\nmask=np.asarray(data[\"mask\"],bool)\nmarkers=np.zeros(mask.shape,dtype=np.int32)\nfor idx,(y,x) in enumerate(data[\"seeds\"],1):\n    markers[y,x]=idx\nlabels=watershed(-ndi.distance_transform_edt(mask),markers,mask=mask)\nresult={\"objects\":int(len(np.unique(labels[labels>0]))),\"total_px\":int(np.count_nonzero(labels))}\nprint(result)"
+              "assertions": [
+                "result['objects']==len(data['seeds'])",
+                "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "From data.mask and data.seeds (YX coordinates), create watershed markers on a distance transform. Return result={'objects':int,'total_px':int} with all mask pixels assigned.",
+          "starter_code": "# A02-G04 | PROVE | Separate connected candidates using watershed seeds\n# TASK: From data.mask and data.seeds (YX coordinates), create watershed markers on\n#   a distance transform. Return result={'objects':int,'total_px':int} with all mask\n#   pixels assigned.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "mask": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "seeds": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  3,
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "seeds": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      3,
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['objects']==len(data['seeds'])",
+                "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "mask": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "seeds": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      1,
+                      4
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['objects']==len(data['seeds'])",
+                "result['total_px']==int(np.count_nonzero(np.asarray(data['mask'],bool)))"
+              ]
             }
           ],
           "practice_feedback": {
@@ -1703,12 +1815,13 @@
         "A02-G05"
       ],
       "why": "Parameter instability indicates sensitivity but does not measure segmentation validity.",
-      "explain": "Only independently annotated object matches can support biological detection accuracy.",
+      "explain": [
+        "Only independently annotated object matches can support biological detection accuracy.",
+        "Foreground IoU compares binary masks, not cell identities.",
+        "A parameter comparison is not a ground-truth metric."
+      ],
       "worked_example": {
-        "code": [
-          "Foreground IoU compares binary masks, not cell identities.",
-          "A parameter comparison is not a ground-truth metric."
-        ],
+        "code": "a={1,2,3};b={2,3,4}\nprint('set overlap:',len(a&b)/len(a|b))",
         "predict": "Predict the mask and candidate counts before running real Python."
       },
       "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
@@ -1727,58 +1840,8 @@
       "hints": {
         "learn": [],
         "apply": [
-          {
-            "baseline": [
-              [
-                0,
-                0,
-                0
-              ],
-              [
-                0,
-                0,
-                0
-              ]
-            ],
-            "variant": [
-              [
-                0,
-                0,
-                0
-              ],
-              [
-                0,
-                0,
-                0
-              ]
-            ]
-          },
-          {
-            "baseline": [
-              [
-                1,
-                1,
-                1
-              ],
-              [
-                0,
-                0,
-                0
-              ]
-            ],
-            "variant": [
-              [
-                1,
-                0,
-                0
-              ],
-              [
-                0,
-                0,
-                1
-              ]
-            ]
-          }
+          "Count foreground intersection and union; no reference annotations are present.",
+          "For both-empty masks document IoU=1; stability is not accuracy."
         ],
         "prove": []
       },
@@ -1789,46 +1852,13 @@
         "learn": {
           "title": "Predict → Run → Investigate",
           "description": "Run the demonstration and predict effects of parameter changes.",
-          "starter_code": "# A02-G05 | LEARN | Measure parameter sensitivity, not accuracy\n# TASK: Predict, run and inspect the example.\n\nForeground IoU compares binary masks, not cell identities.,A parameter comparison is not a ground-truth metric.\n",
+          "starter_code": "# A02-G05 | LEARN | Measure parameter sensitivity, not accuracy\n# TASK: Predict, run and inspect the example.\n\na={1,2,3};b={2,3,4}\nprint('set overlap:',len(a&b)/len(a|b))\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply with changed image inputs",
           "description": "Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.",
-          "starter_code": "# A02-G05 | APPLY | Measure parameter sensitivity, not accuracy\n# TASK: Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
-          "preview_inputs": {
-            "data": "np.isclose(result['foreground_iou'],np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/max(1,np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0))"
-          },
-          "public_checks": [
-            {
-              "inputs": {
-                "data": "np.isclose(result['foreground_iou'],np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/max(1,np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0))"
-              },
-              "assertions": "import numpy as np\na=np.asarray(data[\"baseline\"],bool)\nb=np.asarray(data[\"variant\"],bool)\ninter=int(np.count_nonzero(a&b));union=int(np.count_nonzero(a|b))\nresult={\"foreground_iou\":float(inter/union if union else 1.0),\"changed_fraction\":float(np.mean(a!=b)),\"verified_accuracy\":False}\nprint(result)"
-            },
-            {
-              "inputs": {
-                "data": "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))"
-              },
-              "assertions": "import numpy as np\na=np.asarray(data[\"baseline\"],bool)\nb=np.asarray(data[\"variant\"],bool)\ninter=int(np.count_nonzero(a&b));union=int(np.count_nonzero(a|b))\nresult={\"foreground_iou\":float(inter/union if union else 1.0),\"changed_fraction\":float(np.mean(a!=b)),\"verified_accuracy\":False}\nprint(result)"
-            },
-            {
-              "inputs": {
-                "data": "result['verified_accuracy'] is False"
-              },
-              "assertions": "import numpy as np\na=np.asarray(data[\"baseline\"],bool)\nb=np.asarray(data[\"variant\"],bool)\ninter=int(np.count_nonzero(a&b));union=int(np.count_nonzero(a|b))\nresult={\"foreground_iou\":float(inter/union if union else 1.0),\"changed_fraction\":float(np.mean(a!=b)),\"verified_accuracy\":False}\nprint(result)"
-            }
-          ],
-          "practice_feedback": {
-            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
-            "probe": "Where would this algorithm merge, split or miss biological objects?",
-            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
-          }
-        },
-        "prove": {
-          "title": "Independent changed-image transfer",
-          "description": "Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.",
-          "starter_code": "# A02-G05 | PROVE | Measure parameter sensitivity, not accuracy\n# TASK: Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A02-G05 | APPLY | Measure parameter sensitivity, not accuracy\n# TASK: Compare data.baseline and data.variant binary masks; return\n#   result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "baseline": [
@@ -1887,7 +1917,11 @@
                   ]
                 }
               },
-              "assertions": "import numpy as np\na=np.asarray(data[\"baseline\"],bool)\nb=np.asarray(data[\"variant\"],bool)\ninter=int(np.count_nonzero(a&b));union=int(np.count_nonzero(a|b))\nresult={\"foreground_iou\":float(inter/union if union else 1.0),\"changed_fraction\":float(np.mean(a!=b)),\"verified_accuracy\":False}\nprint(result)"
+              "assertions": [
+                "np.isclose(result['foreground_iou'], (np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0)",
+                "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))",
+                "result['verified_accuracy'] is False"
+              ]
             },
             {
               "inputs": {
@@ -1918,7 +1952,121 @@
                   ]
                 }
               },
-              "assertions": "import numpy as np\na=np.asarray(data[\"baseline\"],bool)\nb=np.asarray(data[\"variant\"],bool)\ninter=int(np.count_nonzero(a&b));union=int(np.count_nonzero(a|b))\nresult={\"foreground_iou\":float(inter/union if union else 1.0),\"changed_fraction\":float(np.mean(a!=b)),\"verified_accuracy\":False}\nprint(result)"
+              "assertions": [
+                "np.isclose(result['foreground_iou'], (np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0)",
+                "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))",
+                "result['verified_accuracy'] is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.",
+          "starter_code": "# A02-G05 | PROVE | Measure parameter sensitivity, not accuracy\n# TASK: Compare data.baseline and data.variant binary masks; return\n#   result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "baseline": [
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "variant": [
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "baseline": [
+                    [
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "variant": [
+                    [
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['foreground_iou'], (np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0)",
+                "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))",
+                "result['verified_accuracy'] is False"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "baseline": [
+                    [
+                      1,
+                      1,
+                      1
+                    ],
+                    [
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "variant": [
+                    [
+                      1,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      1
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['foreground_iou'], (np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0)",
+                "np.isclose(result['changed_fraction'],np.mean(np.asarray(data['baseline'])!=np.asarray(data['variant'])))",
+                "result['verified_accuracy'] is False"
+              ]
             }
           ],
           "practice_feedback": {
@@ -1937,12 +2085,13 @@
       "A02-CAPSTONE"
     ],
     "why": "An end-to-end classical mask must preserve parameters, error cases and candidate status.",
-    "explain": "Bright/dark rules alter segmentation dramatically; manual reference is needed for detection accuracy.",
+    "explain": [
+      "Bright/dark rules alter segmentation dramatically; manual reference is needed for detection accuracy.",
+      "Use explicit strict foreground comparisons before connected labeling.",
+      "Size filtering is performed on connected components, not global pixel count."
+    ],
     "worked_example": {
-      "code": [
-        "Use explicit strict foreground comparisons before connected labeling.",
-        "Size filtering is performed on connected components, not global pixel count."
-      ],
+      "code": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,1,0],[0,0,0],[0,1,1]],bool)\nprint('connected candidates:',ndi.label(m)[1])",
       "predict": "Predict the mask and candidate counts before running real Python."
     },
     "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
@@ -1961,254 +2110,8 @@
     "hints": {
       "learn": [],
       "apply": [
-        {
-          "image": [
-            [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              400,
-              400,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              400,
-              400,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              400,
-              400,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0,
-              0,
-              0,
-              300,
-              300,
-              300,
-              300,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0,
-              0,
-              0,
-              300,
-              300,
-              300,
-              300,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ]
-          ],
-          "threshold": 100,
-          "foreground": "bright",
-          "min_area": 6
-        },
-        {
-          "image": [
-            [
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220
-            ],
-            [
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220
-            ],
-            [
-              220,
-              220,
-              20,
-              20,
-              20,
-              20,
-              220,
-              220,
-              220,
-              220,
-              220
-            ],
-            [
-              220,
-              220,
-              20,
-              20,
-              20,
-              20,
-              220,
-              220,
-              220,
-              220,
-              220
-            ],
-            [
-              220,
-              220,
-              20,
-              20,
-              20,
-              20,
-              220,
-              220,
-              220,
-              220,
-              220
-            ],
-            [
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220
-            ],
-            [
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              0,
-              220,
-              220,
-              220
-            ],
-            [
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220
-            ],
-            [
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220,
-              220
-            ]
-          ],
-          "threshold": 100,
-          "foreground": "dark",
-          "min_area": 3
-        }
+        "Use > for bright and < for dark foreground.",
+        "Label 4-connected components, filter by area and retain unvalidated status."
       ],
       "prove": []
     },
@@ -2219,46 +2122,13 @@
       "learn": {
         "title": "Predict → Run → Investigate",
         "description": "Run the demonstration and predict effects of parameter changes.",
-        "starter_code": "# A02-CAPSTONE | LEARN | Generate traceable candidate objects\n# TASK: Predict, run and inspect the example.\n\nUse explicit strict foreground comparisons before connected labeling.,Size filtering is performed on connected components, not global pixel count.\n",
+        "starter_code": "# A02-CAPSTONE | LEARN | Generate traceable candidate objects\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,1,0],[0,0,0],[0,1,1]],bool)\nprint('connected candidates:',ndi.label(m)[1])\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Apply with changed image inputs",
         "description": "Threshold 2-D data.image using data.threshold and data.foreground ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area; result={'candidate_count':int,'areas_px':sorted list,'validated':False}.",
-        "starter_code": "# A02-CAPSTONE | APPLY | Generate traceable candidate objects\n# TASK: Threshold 2-D data.image using data.threshold and data.foreground ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area; result={'candidate_count':int,'areas_px':sorted list,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
-        "preview_inputs": {
-          "data": "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))"
-        },
-        "public_checks": [
-          {
-            "inputs": {
-              "data": "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))"
-            },
-            "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nraw=np.asarray(data[\"image\"],dtype=float)\nmask=raw>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else raw<data[\"threshold\"]\nlabels,n=ndi.label(mask)\nareas=np.bincount(labels.ravel())[1:]\nresult={\"candidate_count\":int(np.count_nonzero(areas>=data[\"min_area\"])),\"areas_px\":sorted([int(v) for v in areas if v>=data[\"min_area\"]]),\"validated\":False}\nprint(result)"
-          },
-          {
-            "inputs": {
-              "data": "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])"
-            },
-            "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nraw=np.asarray(data[\"image\"],dtype=float)\nmask=raw>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else raw<data[\"threshold\"]\nlabels,n=ndi.label(mask)\nareas=np.bincount(labels.ravel())[1:]\nresult={\"candidate_count\":int(np.count_nonzero(areas>=data[\"min_area\"])),\"areas_px\":sorted([int(v) for v in areas if v>=data[\"min_area\"]]),\"validated\":False}\nprint(result)"
-          },
-          {
-            "inputs": {
-              "data": "result['validated'] is False"
-            },
-            "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nraw=np.asarray(data[\"image\"],dtype=float)\nmask=raw>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else raw<data[\"threshold\"]\nlabels,n=ndi.label(mask)\nareas=np.bincount(labels.ravel())[1:]\nresult={\"candidate_count\":int(np.count_nonzero(areas>=data[\"min_area\"])),\"areas_px\":sorted([int(v) for v in areas if v>=data[\"min_area\"]]),\"validated\":False}\nprint(result)"
-          }
-        ],
-        "practice_feedback": {
-          "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
-          "probe": "Where would this algorithm merge, split or miss biological objects?",
-          "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
-        }
-      },
-      "prove": {
-        "title": "Independent changed-image transfer",
-        "description": "Threshold 2-D data.image using data.threshold and data.foreground ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area; result={'candidate_count':int,'areas_px':sorted list,'validated':False}.",
-        "starter_code": "# A02-CAPSTONE | PROVE | Generate traceable candidate objects\n# TASK: Threshold 2-D data.image using data.threshold and data.foreground ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area; result={'candidate_count':int,'areas_px':sorted list,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A02-CAPSTONE | APPLY | Generate traceable candidate objects\n# TASK: Threshold 2-D data.image using data.threshold and data.foreground\n#   ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area;\n#   result={'candidate_count':int,'areas_px':sorted list,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "image": [
@@ -2513,7 +2383,11 @@
                 "min_area": 3
               }
             },
-            "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nraw=np.asarray(data[\"image\"],dtype=float)\nmask=raw>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else raw<data[\"threshold\"]\nlabels,n=ndi.label(mask)\nareas=np.bincount(labels.ravel())[1:]\nresult={\"candidate_count\":int(np.count_nonzero(areas>=data[\"min_area\"])),\"areas_px\":sorted([int(v) for v in areas if v>=data[\"min_area\"]]),\"validated\":False}\nprint(result)"
+            "assertions": [
+              "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))",
+              "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])",
+              "result['validated'] is False"
+            ]
           },
           {
             "inputs": {
@@ -2642,7 +2516,415 @@
                 "min_area": 4
               }
             },
-            "assertions": "import numpy as np\nfrom scipy import ndimage as ndi\nraw=np.asarray(data[\"image\"],dtype=float)\nmask=raw>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else raw<data[\"threshold\"]\nlabels,n=ndi.label(mask)\nareas=np.bincount(labels.ravel())[1:]\nresult={\"candidate_count\":int(np.count_nonzero(areas>=data[\"min_area\"])),\"areas_px\":sorted([int(v) for v in areas if v>=data[\"min_area\"]]),\"validated\":False}\nprint(result)"
+            "assertions": [
+              "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))",
+              "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])",
+              "result['validated'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+          "probe": "Where would this algorithm merge, split or miss biological objects?",
+          "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+        }
+      },
+      "prove": {
+        "title": "Independent changed-image transfer",
+        "description": "Threshold 2-D data.image using data.threshold and data.foreground ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area; result={'candidate_count':int,'areas_px':sorted list,'validated':False}.",
+        "starter_code": "# A02-CAPSTONE | PROVE | Generate traceable candidate objects\n# TASK: Threshold 2-D data.image using data.threshold and data.foreground\n#   ('bright'/'dark'), label 4-connected regions, filter area >= data.min_area;\n#   result={'candidate_count':int,'areas_px':sorted list,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "image": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                400,
+                400,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                400,
+                400,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                400,
+                400,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                300,
+                300,
+                300,
+                300,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                300,
+                300,
+                300,
+                300,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "threshold": 100,
+            "foreground": "bright",
+            "min_area": 6
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    400,
+                    400,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    400,
+                    400,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    400,
+                    400,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    300,
+                    300,
+                    300,
+                    300,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    300,
+                    300,
+                    300,
+                    300,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                ],
+                "threshold": 100,
+                "foreground": "bright",
+                "min_area": 6
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))",
+              "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])",
+              "result['validated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "image": [
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    20,
+                    20,
+                    20,
+                    20,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    20,
+                    20,
+                    20,
+                    20,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    20,
+                    20,
+                    20,
+                    20,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    0,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ],
+                  [
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220,
+                    220
+                  ]
+                ],
+                "threshold": 100,
+                "foreground": "dark",
+                "min_area": 3
+              }
+            },
+            "assertions": [
+              "result['candidate_count']==int(np.count_nonzero(np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:]>=data['min_area']))",
+              "result['areas_px']==sorted(int(x) for x in np.bincount(ndi.label(np.asarray(data['image'],float)>data['threshold'] if data['foreground']=='bright' else np.asarray(data['image'],float)<data['threshold'])[0].ravel())[1:] if x>=data['min_area'])",
+              "result['validated'] is False"
+            ]
           }
         ],
         "practice_feedback": {
@@ -2705,7 +2987,7 @@
       "apply": {
         "title": "Apply with changed image inputs",
         "description": "Return candidate count and foreground-pixel count from data.image threshold/polarity without copying the capstone; result={'candidate_count':int,'foreground_pixels':int,'validated':False}.",
-        "starter_code": "# A02-REVIEW | APPLY | Return later: independent segmentation transfer\n# TASK: Return candidate count and foreground-pixel count from data.image threshold/polarity without copying the capstone; result={'candidate_count':int,'foreground_pixels':int,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A02-REVIEW | APPLY | Return later: independent segmentation transfer\n# TASK: Return candidate count and foreground-pixel count from data.image\n#   threshold/polarity without copying the capstone;\n#   result={'candidate_count':int,'foreground_pixels':int,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "image": [
@@ -3106,7 +3388,7 @@
       "prove": {
         "title": "Independent changed-image transfer",
         "description": "Return candidate count and foreground-pixel count from data.image threshold/polarity without copying the capstone; result={'candidate_count':int,'foreground_pixels':int,'validated':False}.",
-        "starter_code": "# A02-REVIEW | PROVE | Return later: independent segmentation transfer\n# TASK: Return candidate count and foreground-pixel count from data.image threshold/polarity without copying the capstone; result={'candidate_count':int,'foreground_pixels':int,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A02-REVIEW | PROVE | Return later: independent segmentation transfer\n# TASK: Return candidate count and foreground-pixel count from data.image\n#   threshold/polarity without copying the capstone;\n#   result={'candidate_count':int,'foreground_pixels':int,'validated':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "image": [
