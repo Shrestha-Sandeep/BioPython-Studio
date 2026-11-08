@@ -39,6 +39,60 @@
   let cm = null, hasImage = false, imageURL = null, imageScale = 1, imageX = 0, imageY = 0, drag = null;
   let originalImage = null, pixelData = null, pixelWidth = 0, pixelHeight = 0;
   let comparisonURL = null, comparisonImage = null, compareEnabled = false;
+  const MAX_ANALYSIS_FILES = 8, MAX_ANALYSIS_FILE_BYTES = 32 * 1024 * 1024;
+  const MAX_ANALYSIS_BYTES = 96 * 1024 * 1024;
+  const ANALYSIS_SUFFIX = /\.(?:ome\.)?(?:tif|tiff)$|\.(?:png|jpg|jpeg|webp|gif)$/i;
+  let analysisFiles = [];
+  function datasetStatus(message, hasFiles=false) {
+    const info = $("analysis-dataset-status");
+    info.hidden = !message;
+    info.textContent = message || "";
+    $("clear-analysis-files").hidden = !hasFiles;
+  }
+  function stageAnalysisFiles(input) {
+    const files = Array.from(input || []);
+    if (!files.length) return false;
+    if (files.length > MAX_ANALYSIS_FILES ||
+        files.some(f => !ANALYSIS_SUFFIX.test(f.name) || f.size < 1 || f.size > MAX_ANALYSIS_FILE_BYTES) ||
+        files.reduce((sum, f) => sum + f.size, 0) > MAX_ANALYSIS_BYTES) {
+      datasetStatus("Choose 1–8 PNG/JPEG/TIFF images; at most 32 MB each and 96 MB in total.", analysisFiles.length>0);
+      return false;
+    }
+    analysisFiles = files;
+    const summary = files.map(f => f.name).join(", ");
+    datasetStatus(files.length + " image file(s) ready for Python (uploaded_image_paths): " +
+      summary.slice(0, 100) + (summary.length > 100 ? "…" : ""), true);
+    const preview = files.find(f => ["image/png", "image/jpeg", "image/webp", "image/gif"].includes(f.type));
+    if (preview) openImage(preview);
+    else if (!hasImage) $("image-meta").textContent = "TIFF ready for Python; no browser TIFF preview";
+    return true;
+  }
+  async function loadWitzPair() {
+    const button = $("witz-dataset-button");
+    if (button.disabled) return;
+    button.disabled = true; button.textContent = "Loading TIFFs…";
+    datasetStatus("Fetching two credited Witz/HPA JPEG-derived TIFF files…", analysisFiles.length>0);
+    const names = ["46658_784_B12_1.tif", "24138_196_F7_2.tif"];
+    try {
+      const files = [];
+      for (const name of names) {
+        const url = "https://raw.githubusercontent.com/guiwitz/PyImageCourse_beginner/master/images/" + name;
+        const response = await fetch(url, {mode:"cors", cache:"force-cache"});
+        if (!response.ok) throw new Error("HTTP " + response.status + " for " + name);
+        if (Number(response.headers.get("content-length")) > MAX_ANALYSIS_FILE_BYTES)
+          throw new Error(name + " exceeds the browser file limit");
+        const bytes = await response.arrayBuffer();
+        files.push(new File([bytes], name, {type:"image/tiff"}));
+      }
+      if (!stageAnalysisFiles(files)) throw new Error("Sample TIFFs exceed file limits");
+      $("image-meta").title = "Microscopy-derived Witz/HPA RGB; JPEG-to-TIFF conversion, not calibrated raw acquisition";
+    } catch(e) {
+      datasetStatus("Witz pair unavailable: " + String(e.message||e) + ". Download manually and use Open images.", analysisFiles.length>0);
+    } finally {
+      button.disabled = false; button.textContent = "Witz TIFF pair";
+    }
+  }
+
   let dividerDrag = null;
 
   function save() {
@@ -503,7 +557,13 @@
     $("nav-toggle").setAttribute("aria-expanded", String(show));
   });
   $("image-upload").addEventListener("change", event => {
-    openImage(event.target.files?.[0]); event.target.value = "";
+    stageAnalysisFiles(event.target.files); event.target.value = "";
+  });
+  $("witz-dataset-button").addEventListener("click", loadWitzPair);
+  $("clear-analysis-files").addEventListener("click", () => {
+    analysisFiles = [];
+    datasetStatus("",false);
+    $("image-meta").title = "Viewer is only a contextual preview; no dataset is staged";
   });
   document.querySelector(".load-button").addEventListener("keydown", event => {
     if (event.key === " " || event.key === "Enter") { event.preventDefault(); $("image-upload").click(); }
@@ -545,7 +605,7 @@
   $("image-canvas").addEventListener("dragover", event => { if (mode === "image") event.preventDefault(); });
   $("image-canvas").addEventListener("drop", event => {
     event.preventDefault();
-    if (mode === "image") openImage(event.dataTransfer?.files?.[0]);
+    if (mode === "image") stageAnalysisFiles(event.dataTransfer?.files);
   });
   configureResizableHandle("horizontal-resizer", "x", () => memory.layout.editorShare, setEditorShare, 5, [30,75]);
   configureResizableHandle("vertical-resizer", "y", () => memory.layout.consoleHeight, setConsoleHeight, 20, [100,380]);
@@ -574,6 +634,7 @@
     selectPhase: choosePhase,
     selectStage: chooseStage,
     ensureExampleImage,
+    getAnalysisFiles: () => analysisFiles.slice(),
     expandLesson: show => openLesson(Boolean(show))
   });
   $("run-button").disabled = true;
