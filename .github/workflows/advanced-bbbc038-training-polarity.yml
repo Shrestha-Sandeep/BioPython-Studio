@@ -39,7 +39,7 @@ jobs:
             | sed "s|$ROOT/||g" > artifacts/training-router/source_sha256.txt
           unzip -t "$ROOT/stage1_train.zip" | tail -n 1
           unzip -q "$ROOT/stage1_train.zip" -d "$ROOT"
-      - name: Retrospective method development: training images ONLY
+      - name: 'Retrospective method development - training images ONLY'
         shell: bash
         run: |
           set -euo pipefail
