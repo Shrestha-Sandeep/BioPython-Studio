@@ -13,11 +13,11 @@ The existing 19-chapter progress and frozen editor/viewer shell are preserved. T
 ## Repository and implementation status
 
 - **Curriculum authority:** the frozen v3 design in [docs/CURRICULUM_V3_FROZEN.md](https://github.com/Shrestha-Sandeep/BioPython-Studio/blob/docs/frozen-v3-curriculum/docs/CURRICULUM_V3_FROZEN.md) defines 156 distinct competencies and safe prerequisite ordering. The [Witz-first mission map](curriculum/witz_spine.json) defines 26 connected missions. These are **not 156 shipped interactive lessons**.
-- **Current development integration:** P01–P06 (six missions; 36 distinct canonical competencies), each with Learn, Apply, Prove, a capstone and a delayed-review activity. P01–P03 remain protected by their original regression suites.
+- **Python Foundations pathway:** P01–P06 (36 canonical competencies) with Learn, Apply, Prove, a capstone and a delayed review. All 13 Microscopy, four NGS and three ML chapters are also present as documented in the complete-course status above.
 - **Production:** this is an isolated draft branch; `main` is unchanged. The frozen UI structure remains intact.
 - **Quality status:** automated browser and content tests do not establish retained learner skill, independent scientific truth, or an empirically measured 9.5+/10 learning score.
 
-## Current chapter sequence
+## Python Foundations chapter sequence
 
 | Chapter | Mission | Central deliverable |
 |---|---|---|

@@ -33,7 +33,7 @@ For every selected source element record: repository and pinned commit/blob SHA,
 ## Do not confuse source availability with course completion
 
 Witz and Carpentries contain ready-made problems, not a fully tested browser learning engine. Most require adapting notebook state, data URLs, packages, tests, feedback and learning scaffolds. Witz is the primary sequential source; supporting references should fill gaps without a second curriculum competing for attention.
-## Current Witz ingestion (source-first preview)
+## Historical Witz ingestion (early source-first preview; not current implementation status)
 
 - Indexed **12** Witz main/appendix/demo notebooks with **90** headings and **7** exercise notebooks with **54** numbered source tasks. Full source-cell provenance and original texts reside in [`curriculum/witz_exercise_inventory.json`](../curriculum/witz_exercise_inventory.json).
 - **12** original worked-code excerpts from Witz's lesson notebooks are available in the Learn interface with their original notebook paths and cell indices. They may require preceding notebook setup and are not claimed to be ready-to-run standalone code.
