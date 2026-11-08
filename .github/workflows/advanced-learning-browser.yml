@@ -1,0 +1,57 @@
+name: Optional A01-A03 advanced lab real-browser QA
+
+on:
+  push:
+    branches:
+      - 'advancement/learner-a01-a03-integration-qa'
+    paths:
+      - '.github/workflows/advanced-learning-browser.yml'
+      - 'content/a0*/**'
+      - 'content/chapters/A0*'
+      - 'src/course-adapter.js'
+      - 'tests/test_advanced_learning_browser.py'
+      - 'tests/reference_a0*_advanced.json'
+  pull_request:
+    paths:
+      - '.github/workflows/advanced-learning-browser.yml'
+      - 'content/a0*/**'
+      - 'src/course-adapter.js'
+      - 'tests/test_advanced_learning_browser.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pyodide-advanced-learner:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install scientific Python and Chromium
+        run: |
+          python -m pip install -r projects/advanced/requirements.txt playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Frozen base shell and advanced adapter syntax
+        run: |
+          node --check src/course-adapter.js
+          node --check src/ui-first.js
+          node --test tests/preview.test.mjs tests/witz_sources.test.mjs
+      - name: Validate all 80 advanced cases in CPython
+        run: python -m pytest -q tests/test_advanced_learning_import.py
+      - name: Actual Pyodide 80-case browser, original 16-bit TIFF transfer and responsive QA
+        run: python tests/test_advanced_learning_browser.py
+      - name: Preserve opt-in lab screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: advanced-a01-a03-pyodide-qa
+          path: artifacts/advanced-learning/*.png
+          if-no-files-found: ignore
+          retention-days: 30
