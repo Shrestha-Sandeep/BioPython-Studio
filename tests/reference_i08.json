@@ -1,0 +1,42 @@
+{
+  "I08-G01": {
+    "apply": "import pandas as pd\nfields=pd.DataFrame(field_rows,columns=['sample_id','field_id'])\nmetadata=pd.DataFrame(sample_rows,columns=['sample_id','condition'])\nmetadata_unique=bool(~metadata['sample_id'].duplicated().any())\njoined=fields.merge(metadata,on='sample_id',how='left',validate='many_to_one') if metadata_unique else None\nunmatched_fields=joined.loc[joined['condition'].isna(),'field_id'].tolist() if metadata_unique else []",
+    "prove": "import pandas as pd\nacq=pd.DataFrame(acquisitions,columns=['specimen','acq'])\nmeta=pd.DataFrame(treatments,columns=['specimen','treatment'])\njoin_safe=not bool(meta['specimen'].duplicated().any())\nif join_safe:\n    joined=acq.merge(meta,on='specimen',how='left',validate='many_to_one')\n    result_rows=joined.to_dict('records')\n    unknown_ids=joined.loc[joined['treatment'].isna(),'acq'].tolist()\nelse:\n    result_rows=[];unknown_ids=[]"
+  },
+  "I08-G02": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(records,columns=['specimen_id','value'])\nspecimen_summary=[]\nfor sid,group in df.groupby('specimen_id',sort=False):\n    observed=int(group['value'].notna().sum())\n    mean=float(group['value'].mean()) if observed else None\n    specimen_summary.append({'specimen_id':sid,'field_count':len(group),'observed':observed,'mean_value':mean})",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(batch_rows,columns=['replicate','signal'])\nreplicate_summary=[]\nfor sid,group in df.groupby('replicate',sort=False):\n    n=int(group['signal'].notna().sum())\n    replicate_summary.append({'replicate':sid,'n_observed':n,'mean_signal':float(group['signal'].mean()) if n else None})"
+  },
+  "I08-G03": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(records,columns=['sample_id','GFP','DAPI'])\nlong_df=df.melt(id_vars='sample_id',value_vars=['GFP','DAPI'],var_name='channel',value_name='signal')\nlong_records=long_df.to_dict('records')",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(rows,columns=['specimen','channel','score'])\nunique_pairs=not bool(df.duplicated(subset=['specimen','channel']).any())\nwide=df.pivot(index='specimen',columns='channel',values='score') if unique_pairs and len(df) else pd.DataFrame() if unique_pairs else None"
+  },
+  "I08-G04": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(acquisitions,columns=['specimen_id','time','condition'])\ndf['parsed_time']=pd.to_datetime(df['time'],utc=True,errors='coerce',format='mixed')\ninvalid_times=df.loc[df['parsed_time'].isna(),'specimen_id'].tolist()",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(records,columns=['run_id','recorded_at','treatment'])\ndf['parsed']=pd.to_datetime(df['recorded_at'],utc=True,errors='coerce',format='mixed')\nmissing_run_ids=df.loc[df['parsed'].isna(),'run_id'].tolist()\ncategory_names=df['treatment'].drop_duplicates().tolist()"
+  },
+  "I08-G05": {
+    "apply": "import pandas as pd,io\ndf=pd.DataFrame(specimen_rows,columns=['specimen_id','value'])\nbuffer=io.StringIO();df.to_csv(buffer,index=False)\ncsv_text=buffer.getvalue()\nrestored=pd.read_csv(io.StringIO(csv_text),dtype={'specimen_id':'string'})\npreserved_ids=restored['specimen_id'].tolist()\nmissing_count=int(restored['value'].isna().sum())",
+    "prove": "import pandas as pd,io\ndf=pd.DataFrame(field_records,columns=['field_id','score'])\nbuffer=io.StringIO();df.to_csv(buffer,index=False)\nreloaded=pd.read_csv(io.StringIO(buffer.getvalue()),dtype={'field_id':'string'})\nmissing_ids=reloaded.loc[reloaded['score'].isna(),'field_id'].tolist()\nis_traceable=bool(reloaded['field_id'].tolist()==[row['field_id'] for row in field_records])"
+  },
+  "I08-G06": {
+    "apply": "import matplotlib.pyplot as plt\ngroup_order=list(dict.fromkeys(group_labels))\nxs=[group_order.index(label) for label in group_labels]\nfig,ax=plt.subplots();ax.scatter(xs,values)\nax.set(xlabel='Condition index',ylabel='Specimen summary (a.u.)')\nplotted_count=len(values)",
+    "prove": "import matplotlib.pyplot as plt\nunique_treatments=list(dict.fromkeys(treatments))\nxs=[unique_treatments.index(x) for x in treatments]\nfig,ax=plt.subplots();ax.scatter(xs,measurements)\nobservations=len(measurements)\nno_significance_test=True"
+  },
+  "I08-G07": {
+    "apply": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots();line,=ax.plot(x,y,marker='o')\nax.set(xlabel=x_label,ylabel=y_label);ax.set_ylim(bottom=0)\nlimits_ok=bool(ax.get_ylim()[0]==0)\nmarker_used=line.get_marker()=='o'",
+    "prove": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots();ax.bar(categories,values)\nax.set(xlabel='Condition',ylabel='Descriptive count');ax.set_ylim(bottom=0)\naccessible=bool(ax.get_xlabel() and ax.get_ylabel() and ax.get_ylim()[0]==0 and len(ax.patches)==len(categories))"
+  },
+  "I08-G08": {
+    "apply": "import matplotlib.pyplot as plt,io\nfig,ax=plt.subplots();ax.plot(x,y);ax.set(xlabel='Observation',ylabel=label)\nsvg=io.BytesIO();fig.savefig(svg,format='svg')\npng=io.BytesIO();fig.savefig(png,format='png',dpi=150)\npng_bytes=len(png.getvalue())\nsvg_contains_label=label.encode('utf-8') in svg.getvalue()\nexported_formats=['svg','png']",
+    "prove": "import matplotlib.pyplot as plt,io\nfig,ax=plt.subplots();ax.scatter(positions,values);ax.set(xlabel='Position',ylabel='Value')\nbuf=io.BytesIO();fig.savefig(buf,format='png',dpi=200)\nis_png_signature=buf.getvalue().startswith(bytes([137,80,78,71,13,10,26,10]))\nbyte_count=len(buf.getvalue())\ndpi_used=200\nexported_locally=False"
+  },
+  "I08-CAPSTONE": {
+    "apply": "import pandas as pd\nimport matplotlib.pyplot as plt\nfields=pd.DataFrame(field_rows,columns=['sample_id','field_id','value'])\nmeta=pd.DataFrame(metadata_rows,columns=['sample_id','condition'])\nsafe=not bool(meta['sample_id'].duplicated().any())\njoined=fields.merge(meta,on='sample_id',how='left',validate='many_to_one') if safe else None\nunmatched=joined.loc[joined['condition'].isna(),'field_id'].tolist() if safe else []\nmissing=joined.loc[joined['value'].isna(),'field_id'].tolist() if safe else []\nreport={'rows':len(joined) if safe else 0,'unmatched':unmatched,'missing':missing,'join_safe':safe}\nfig,ax=plt.subplots();ax.scatter(list(range(len(fields))),fields['value']);ax.set(xlabel='Field index',ylabel='Field value (a.u.)')\nprint(report)",
+    "prove": "import pandas as pd,io\nobs=pd.DataFrame(observations,columns=['specimen','tag','value'])\nmeta=pd.DataFrame(treatments,columns=['specimen','treatment'])\nsafe=not bool(meta['specimen'].duplicated().any())\nif safe:\n    joined=obs.merge(meta,on='specimen',how='left',validate='many_to_one')\n    unknown=joined.loc[joined['treatment'].isna(),'tag'].tolist()\n    csv_text=joined.to_csv(index=False)\nelse:\n    joined=None;unknown=[];csv_text=''\naudit={'safe':safe,'rows':len(joined) if safe else 0,'unknown':unknown}\nprint(audit)"
+  },
+  "I08-REVIEW": {
+    "apply": "",
+    "prove": "import pandas as pd\nobs=pd.DataFrame(observed,columns=['batch','tag'])\nmeta=pd.DataFrame(batches,columns=['batch','label'])\nsafe_join=not bool(meta['batch'].duplicated().any())\nif safe_join:\n    joined=obs.merge(meta,on='batch',how='left',validate='many_to_one')\n    missing_tags=joined.loc[joined['label'].isna(),'tag'].tolist()\n    n_rows=len(joined)\nelse:\n    missing_tags=[];n_rows=0"
+  }
+}
