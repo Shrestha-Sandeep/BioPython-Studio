@@ -85,7 +85,7 @@ def test_editor_briefs_no_solutions_and_public_changed_inputs():
                 assert all(len(line) <= 220 for line in source.splitlines() if line.startswith("#"))
                 ast.parse(source)
                 if phase in ("apply", "prove"):
-                    assert "result=" not in source.replace(" ", "")
+                    assert ast.parse(source).body == [], "Apply/Prove starters should contain instructions but no solved code"
                     assert not goal["hints"]["prove"]
                     cases = goal["phases"][phase]["public_checks"]
                     assert len(cases) == 2, (goal["id"], phase)
