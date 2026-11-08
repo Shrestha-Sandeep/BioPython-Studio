@@ -185,8 +185,19 @@ function send(type,fields){
    resolve({ok:false,error:"Python did not finish. Check code or connectivity; your draft is preserved."});
   },isImaging(activeId)?180000:60000);
   pending={id,resolve,timer};
-  try{instance().postMessage(Object.assign({id,type},fields));}
-  catch(e){clearTimeout(timer);pending=null;busy=false;resolve({ok:false,error:String(e)});}
+  (async()=>{
+    try{
+      const selected=isImaging(activeId)?(bridge()?.getAnalysisFiles?.()||[]):[];
+      const files=await Promise.all(selected.map(async file=>({name:file.name,bytes:await file.arrayBuffer()})));
+      if(pending?.id!==id)return;
+      instance().postMessage(Object.assign({id,type,files},fields),files.map(f=>f.bytes));
+    }catch(e){
+      if(pending?.id!==id)return;
+      clearTimeout(timer);pending=null;busy=false;
+      el("run-button").disabled=false;el("p01-check").disabled=false;
+      resolve({ok:false,error:"Cannot stage selected image files: "+String(e)});
+    }
+  })();
  });
 }
 async function run(){
@@ -251,6 +262,7 @@ function syncActivity(){
  document.body.classList.toggle("p01-active",visible);
  const navigation=el("p01-navigation");
  if(navigation)navigation.hidden=!visible;
+ const realLink=el("bps-real-data-project");if(realLink)realLink.hidden=activeId!=="I13"||!visible;
  el("run-button").disabled=!visible||busy;
  const checkButton=el("p01-check");
  if(checkButton)checkButton.disabled=!visible||busy;
@@ -276,11 +288,18 @@ function exportPython(){
  const vars={...(task().preview_inputs||{})};
  if(isImaging(activeId)&&vars.image_path==="/home/pyodide/witz_published_figure.png")vars.image_path="./assets/witz/fluorescence-single.png";
  const preamble=Object.entries(vars).map(([name,value])=>name+" = "+pyLiteral(value)).join("\n");
+ const localImages=isImaging(activeId)?bridge()?.getAnalysisFiles?.()||[]:[];
+ const localPrelude=isImaging(activeId)?[
+  "# Browser-selected file paths are ephemeral; put originals beside this .py script.",
+  "# Do not substitute a rendered PNG for the original analysis data.",
+  "uploaded_image_paths = "+pyLiteral(localImages.map(f=>"./"+f.name)),
+  ""
+ ].join("\n"):"";
  const code=bridge()?.readCode()||"";
  if(!hasExecutableCode(code)){output("Write your Python program before exporting.");return;}
  const source=["# BioPython Studio "+activeId+" · original learner code",
  (isImaging(activeId)?"# Witz/HPA published RGB notebook figure, not calibrated raw intensity. Keep source image beside this exported script.":"# Synthetic microscopy records and example calibration, not real image measurements."),
- "# The assignments below reproduce one supplied practice input.",preamble,"",code,""].join("\n");
+ "# The assignments below reproduce one supplied practice input.",preamble,"",localPrelude,code,""].join("\n");
  const blob=new Blob([source],{type:"text/x-python;charset=utf-8"});
  const url=URL.createObjectURL(blob);
  const link=document.createElement("a");
@@ -318,6 +337,7 @@ function switchChapter(next){
  bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
  if(isImaging(activeId))bridge()?.ensureExampleImage?.();
  render();save();
+ const projectLink=el("bps-real-data-project");if(projectLink)projectLink.hidden=activeId!=="I13";
 }
 function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
@@ -344,6 +364,13 @@ function mount(){
  const link=document.createElement("a");link.id="bps-chapter-link";link.href="./content/chapters/"+activeId+"_COMPLETE.md";link.target="_blank";link.rel="noopener";link.textContent="Full "+activeId+" chapter (Markdown)";
  const teaching=document.createElement("div");teaching.id="p01-detail-root";
  pane.append(prediction,teaching,hint,hintText,details,link);
+ const projectLink=document.createElement("a");
+ projectLink.id="bps-real-data-project";
+ projectLink.href="./projects/real-microscopy/START_HERE.md";
+ projectLink.target="_blank";projectLink.rel="noopener";
+ projectLink.textContent="I13 · Real-image project";
+ projectLink.hidden=activeId!=="I13";
+ pane.append(projectLink);
  const checker=document.createElement("button");checker.type="button";checker.id="p01-check";checker.className="subtle-button";checker.textContent="Check";
  const exportButton=document.createElement("button");
  exportButton.id="p01-export";exportButton.className="subtle-button";exportButton.type="button";

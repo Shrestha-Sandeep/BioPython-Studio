@@ -37,7 +37,7 @@ test("editor is genuine CodeMirror, with accessible offline fallback and saved d
  assert.match(js, /requestAnimationFrame/);
  assert.ok(!js.includes("eval("));
 });
-test("viewer provides RGB-only local preview, with disabled scientific processing", () => {
+test("viewer retains an RGB-only preview while TIFF analysis uses the separate Python engine", () => {
  const html = read("index.html");
  const js = read("src/ui-first.js");
  for (const term of ["Original", "Image viewer"]) assert.ok(html.includes(term) || term === "Original");
@@ -52,7 +52,7 @@ test("viewer provides RGB-only local preview, with disabled scientific processin
  assert.match(html, /Comparison/);
  assert.match(js, /imageX/);
  assert.match(js, /pointermove/);
- assert.match(html, /TIFF\/OME support will be added/);
+ assert.match(html, /TIFF\/OME-TIFF files can be analyzed in real Python/);
  assert.match(html, /Python engine not connected/);
 });
 test("responsive and keyboard-resizable panels preserve old course data", () => {

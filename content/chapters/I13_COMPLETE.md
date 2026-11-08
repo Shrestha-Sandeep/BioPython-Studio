@@ -170,3 +170,7 @@ To reproduce Witz's biological nuclear-versus-edge localization conclusion rathe
 - All changed-input source-image reference tests in real CPython and Pyodide.
 - Successful standalone source-relative capstone export and genuine Matplotlib rendering.
 - Learner trial, saved progress and mobile QA.
+
+## Authentic file-processing project
+
+After completing the I13 capstone, continue to [Real microscopy data — start here](../../projects/real-microscopy/START_HERE.md). Open TIFF/OME-TIFF files into actual Python via uploaded_image_paths, inspect axes and original 16-bit values, reproduce the multi-image local baseline, then attempt the blind independent challenge. This optional project adds no duplicate competency IDs or hidden solved Prove code.

@@ -107,8 +107,9 @@
               <button id="zoom-out" class="icon-button compact" type="button" aria-label="Zoom out" disabled>−</button>
               <button id="zoom-reset" class="subtle-button" type="button" disabled>Fit</button>
               <button id="zoom-in" class="icon-button compact" type="button" aria-label="Zoom in" disabled>+</button>
-              <label class="load-button" for="image-upload" tabindex="0">Open image</label>
-              <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+              <label class="load-button" for="image-upload" tabindex="0">Open images</label>
+              <input id="image-upload" type="file" accept=".tif,.tiff,.ome.tif,.ome.tiff,image/png,image/jpeg,image/webp,image/gif" multiple hidden>
+              <button type="button" id="witz-dataset-button" class="subtle-button" title="Stage two credited Witz/HPA microscopy-derived TIFF files in Python">Witz TIFF pair</button>
             </div>
           </div>
           <div class="viewer-options">
@@ -145,7 +146,7 @@
             <div id="image-empty" class="image-empty">
               <svg width="48" height="48" viewBox="0 0 52 52" fill="none" aria-hidden="true"><rect x="6" y="7" width="40" height="38" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="18" cy="19" r="4" stroke="currentColor" stroke-width="1.5"/><path d="m9 39 10-11 8 7 9-12 7 11" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
               <strong>Open a microscopy image</strong>
-              <p>PNG, JPEG, WebP. TIFF/OME support will be added with the analysis engine.</p>
+              <p>RGB display preview. TIFF/OME-TIFF files can be analyzed in real Python, without display-pixel conversion.</p>
             </div>
             <div id="source-image-frame" class="image-frame source-frame" hidden>
               <span class="frame-tag">Original</span>
@@ -159,6 +160,8 @@
           </div>
           <div class="panel-footer viewer-footer">
             <span id="image-meta">No image loaded</span>
+            <span id="analysis-dataset-status" class="comparison-filename" role="status" hidden></span>
+            <button type="button" id="clear-analysis-files" class="subtle-button" hidden>Clear files</button>
             <span id="pixel-readout" class="pixel-readout">x — y —</span>
             <span id="image-zoom">—</span>
           </div>
