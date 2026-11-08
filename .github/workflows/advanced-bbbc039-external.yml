@@ -6,6 +6,10 @@ on:
       - advancement/a04-modality-aware-external-bbbc039
     paths:
       - '.github/workflows/advanced-bbbc039-external.yml'
+      - 'projects/advanced/a03/run_external_bbbc039.py'
+      - 'projects/advanced/a03/bbbc039.py'
+      - 'projects/advanced/a02b/modality.py'
+      - 'tests/test_advanced_modality_bbbc039.py'
   workflow_dispatch:
 
 permissions:
