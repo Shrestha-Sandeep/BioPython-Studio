@@ -29,8 +29,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-mib", type=int, default=256)
     args = parser.parse_args(argv)
     try:
-        if args.out.resolve() == args.input.resolve():
-            raise ValueError("Refusing to overwrite TIFF source")
+        if args.out.resolve() in (args.input.resolve(), args.input.parent.resolve()):
+            raise ValueError("Refusing to write candidate outputs over source image/folder")
         config = SegmentConfig(**json.loads(args.config.read_text(encoding="utf-8")))
         audit = audit_image(args.input, channel=args.channel, z=args.z,
                             time=args.time,
