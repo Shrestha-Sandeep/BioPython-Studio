@@ -4,7 +4,7 @@
     "prove": "import pandas as pd\nmeasurements=pd.DataFrame({'field_id':field_ids,'score':scores})\nn_fields=len(measurements)\nmissing_scores=int(measurements['score'].isna().sum())\nvalid_ids=measurements.loc[measurements['score'].notna(),'field_id'].tolist()"
   },
   "I07-G02": {
-    "apply": "import pandas as pd,io\ndf=pd.read_csv(io.StringIO(csv_text),dtype={'sample_id':'string'})\nparsed_ids=df['sample_id'].tolist()\nnumeric_total=int(df['fields'].sum())\nsource_ids=[line.split(',',1)[0] for line in csv_text.splitlines()[1:] if line]\\nleading_zero_preserved=(parsed_ids==source_ids)",
+    "apply": "import pandas as pd,io\ndf=pd.read_csv(io.StringIO(csv_text),dtype={'sample_id':'string'})\nparsed_ids=df['sample_id'].tolist()\nnumeric_total=int(df['fields'].sum())\nsource_ids=[line.split(',',1)[0] for line in csv_text.splitlines()[1:] if line]\nleading_zero_preserved=(parsed_ids==source_ids)",
     "prove": "import pandas as pd,io\ntable=pd.read_csv(io.StringIO(csv_text),dtype={'field_id':'string'})\ntable['score']=pd.to_numeric(table['score'],errors='coerce')\nmissing_count=int(table['score'].isna().sum())\npassing_ids=table.loc[table['score']>=minimum,'field_id'].tolist()"
   },
   "I07-G03": {
