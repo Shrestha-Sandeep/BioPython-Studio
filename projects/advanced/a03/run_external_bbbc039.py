@@ -16,6 +16,8 @@ from pathlib import Path
 
 import numpy as np
 import tifffile
+from PIL import Image
+from skimage.segmentation import find_boundaries
 
 from projects.advanced.a02.segmentation import SegmentConfig, segment
 from projects.advanced.a02b.modality import segment_routed
@@ -27,6 +29,56 @@ CONFIG = SegmentConfig(method="otsu", gaussian_sigma=1.0, min_area=20,
                        foreground="bright", separate_touching=True,
                        peak_min_distance=7, clear_border=False)
 
+
+
+def save_reference_overlays(root: Path, out: Path, rows: list[dict]) -> None:
+    """Render worst/best real-image QC without altering native TIFF pixels."""
+    selected = []
+    used = set()
+    for group, ordered, count in (
+        ("worst", sorted(rows, key=lambda r: (r["routed_object_f1"],
+                                             -r["routed_count_abs_error"])), 5),
+        ("best", sorted(rows, key=lambda r: (-r["routed_object_f1"],
+                                             r["routed_count_abs_error"])), 3),
+    ):
+        for row in ordered:
+            if row["image_id"] in used:
+                continue
+            used.add(row["image_id"])
+            selected.append((group, row))
+            count -= 1
+            if count == 0:
+                break
+    folder = out / "qc-overlays"
+    folder.mkdir(parents=True, exist_ok=True)
+    index = []
+    for n, (category, row) in enumerate(selected, 1):
+        filename = row["image_id"] + ".png"
+        image, truth, _ = load_original_pair(root, filename)
+        labels, _ = segment_routed(image, CONFIG)
+        values = image.astype(np.float64)
+        lo, hi = np.percentile(values, (1, 99))
+        if hi <= lo:
+            hi = lo + 1
+        display = (255 * np.clip((values - lo) / (hi - lo), 0, 1)).astype(np.uint8)
+        rgb = np.repeat(display[..., None], 3, axis=2)
+        ref_boundary = find_boundaries(truth, mode="outer")
+        pred_boundary = find_boundaries(labels, mode="outer")
+        rgb[ref_boundary] = (0, 255, 255)
+        rgb[pred_boundary] = (255, 70, 70)
+        rgb[ref_boundary & pred_boundary] = (255, 255, 0)
+        name = f"{category}_{n}_{row['image_id'][:36]}.png"
+        Image.fromarray(rgb, "RGB").save(folder / name)
+        index.append({
+            "image_id": row["image_id"], "category": category, "overlay_file": name,
+            "object_f1": row["routed_object_f1"], "pixel_iou": row["routed_pixel_iou"],
+            "reference_objects": row["reference_objects"],
+            "candidate_objects": row["routed_predicted"],
+            "warning": "8-bit display-rendered source with cyan reference boundaries, red candidate boundaries, yellow shared boundaries. Original native TIFF is unchanged.",
+        })
+    (folder / "index.json").write_text(
+        json.dumps(index, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
 def run(root: Path, out: Path, *, split: str = "test") -> dict:
     if split != "test":
@@ -126,6 +178,7 @@ def run(root: Path, out: Path, *, split: str = "test") -> dict:
         f.write("\n**Interpretation:** Public official test; some possible overlap with earlier BBBC038; "
                 "class-code-one nucleus interiors vs predictions; fixed heuristic not a learned image classifier. "
                 "These results do not certify general-purpose segmentation.\n")
+    save_reference_overlays(root, out, rows)
     print("BEGIN_REAL_BBBC039_SUMMARY")
     print(json.dumps({k: v for k, v in report.items() if k != "per_image"},
                      ensure_ascii=False, sort_keys=True))
