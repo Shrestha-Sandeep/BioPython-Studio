@@ -58,3 +58,14 @@ Never assign a numerical 9.5/10 teaching quality from automated CI.
 - The BBBC038 archive is **not bundled**; the user must download its original images and target masks, verify experimental groups, and run the benchmark before asserting G3 scientific completion.
 
 A00–A07 remains the intended route; no advanced frontend stage is released until research workflows and independent teaching quality are demonstrated.
+
+## A02b — real modality/foreground-polarity diagnostic (8 Nov 2026)
+
+See [the full original-image benchmark report](A02B_REAL_MODALITY_TEST_2026-11-08.md) and [A02b's independent-learning instructions](../projects/advanced/a02b/README.md).
+
+- 40 retrospective **BBBC038 training images**: image-macro object F1 0.6904 fixed versus 0.7730 input-only polarity. This is **not held-out evidence**; dark foreground selected on 7 / 40.
+- External **BBBC039 official test** (50 original 16-bit images): image-micro object F1 0.8413, image-macro F1 0.8390, mean foreground pixel IoU 0.8142; polarity route made **no change at all** (bright on all 50).
+- BBBC039 has partial source overlap with BBBC038 and a different nucleus boundary encoding; no independent experiment-level generalization established. Actual source images/masks are not bundled.
+- A04 is **still reserved for 3D/time-lapse**; the new modality-experiment label is A02b to keep the blueprint consistent.
+- Keep the advancement PR stack draft. The frozen 26 chapters, frontend and original progress keys have **not** changed.
+
