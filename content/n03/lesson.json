@@ -1,0 +1,2319 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "N03",
+  "version": "1.0.0",
+  "status": "INTEGRATED_LEARNER_PILOT",
+  "title": "Inspect read quality, trim and align",
+  "competencies": [
+    "131",
+    "132",
+    "133",
+    "134"
+  ],
+  "intro": "Implement transparent read QC, trailing-quality trimming, overlap-aware k-mer counting and a tiny alignment diagnostic.",
+  "scientific_context": {
+    "source": "https://biopython.org/docs/latest/Tutorial/chapter_pairwise.html",
+    "asset": null,
+    "credited_in": "docs/SOURCE_LEDGER.md",
+    "use": "ORIGINAL_SYNTHETIC_SEQUENCE_RECORDS",
+    "caution": "Small synthetic read sets are teaching data. This is not FastQC, Cutadapt, a production aligner or a validated sequencing pipeline."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review.",
+  "goals": [
+    {
+      "id": "N03-G01",
+      "title": "Summarize per-cycle base quality",
+      "competencies": [
+        "131"
+      ],
+      "why": "Average quality across an entire run can hide the lower quality at read ends.",
+      "explain": [
+        "Calculate mean Phred Q separately at each cycle, treating absent positions in short reads as missing, not zero.",
+        "Padding shorter reads with Q=0 biases cycle means and falsely suggests low quality.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "reads=[[30,20,10],[40,20]]\nprint([sum(r[i] for r in reads if i<len(r))/sum(i<len(r) for r in reads) for i in range(3)])",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Calculate mean Phred Q separately at each cycle, treating absent positions in short reads as missing, not zero.",
+        "Aggregate only reads that actually contain a given cycle.",
+        "Why does a late-cycle mean have a different n when read lengths vary?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Padding shorter reads with Q=0 biases cycle means and falsely suggests low quality.",
+      "scientific_boundary": "Small synthetic read sets are teaching data. This is not FastQC, Cutadapt, a production aligner or a validated sequencing pipeline.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N03-G01 | LEARN | Summarize per-cycle base quality\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nreads=[[30,20,10],[40,20]]\nprint([sum(r[i] for r in reads if i<len(r))/sum(i<len(r) for r in reads) for i in range(3)])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Using data.reads with q arrays, return result={'cycle_mean':[float], 'cycle_n':[int]} computed from positions present at each cycle.",
+          "starter_code": "# N03-G01 | APPLY | Summarize per-cycle base quality\n# TASK: Using data.reads with q arrays, return result={'cycle_mean':[float],\n# 'cycle_n':[int]} computed from positions present at each cycle.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "reads": [
+                {
+                  "id": "r1",
+                  "seq": "ACGTT",
+                  "q": [
+                    35,
+                    38,
+                    38,
+                    9,
+                    5
+                  ]
+                },
+                {
+                  "id": "r2",
+                  "seq": "ACGTN",
+                  "q": [
+                    32,
+                    32,
+                    10,
+                    10,
+                    10
+                  ]
+                }
+              ],
+              "threshold": 20,
+              "min_len": 3,
+              "k": 2,
+              "reference": "ACGTT",
+              "query": "ACGCT"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "r1",
+                      "seq": "ACGTT",
+                      "q": [
+                        35,
+                        38,
+                        38,
+                        9,
+                        5
+                      ]
+                    },
+                    {
+                      "id": "r2",
+                      "seq": "ACGTN",
+                      "q": [
+                        32,
+                        32,
+                        10,
+                        10,
+                        10
+                      ]
+                    }
+                  ],
+                  "threshold": 20,
+                  "min_len": 3,
+                  "k": 2,
+                  "reference": "ACGTT",
+                  "query": "ACGCT"
+                }
+              },
+              "assertions": [
+                "len(result['cycle_mean'])==max(len(r['q']) for r in data['reads'])",
+                "result['cycle_n']==[sum(i<len(r['q']) for r in data['reads']) for i in range(len(result['cycle_mean']))]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "a",
+                      "seq": "GGGGA",
+                      "q": [
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                      ]
+                    },
+                    {
+                      "id": "b",
+                      "seq": "GNNNA",
+                      "q": [
+                        35,
+                        8,
+                        8,
+                        8,
+                        30
+                      ]
+                    },
+                    {
+                      "id": "c",
+                      "seq": "TT",
+                      "q": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "threshold": 30,
+                  "min_len": 2,
+                  "k": 3,
+                  "reference": "ATGCG",
+                  "query": "ATGCG"
+                }
+              },
+              "assertions": [
+                "len(result['cycle_mean'])==max(len(r['q']) for r in data['reads'])",
+                "result['cycle_n']==[sum(i<len(r['q']) for r in data['reads']) for i in range(len(result['cycle_mean']))]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "only",
+                      "seq": "ATATAT",
+                      "q": [
+                        0,
+                        5,
+                        10,
+                        15,
+                        20,
+                        25
+                      ]
+                    },
+                    {
+                      "id": "good",
+                      "seq": "CCCCC",
+                      "q": [
+                        40,
+                        40,
+                        40,
+                        40,
+                        40
+                      ]
+                    }
+                  ],
+                  "threshold": 15,
+                  "min_len": 4,
+                  "k": 2,
+                  "reference": "AAAAC",
+                  "query": "AAAC"
+                }
+              },
+              "assertions": [
+                "len(result['cycle_mean'])==max(len(r['q']) for r in data['reads'])",
+                "result['cycle_n']==[sum(i<len(r['q']) for r in data['reads']) for i in range(len(result['cycle_mean']))]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Calculate mean Phred Q separately at each cycle, treating absent positions in short reads as missing, not zero.",
+            "probe": "Why does a late-cycle mean have a different n when read lengths vary?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From sample.reads return result as the 0-based cycle index with the lowest mean quality; when tied select the earliest cycle.",
+          "starter_code": "# N03-G01 | PROVE | Summarize per-cycle base quality\n# TASK: From sample.reads return result as the 0-based cycle index with the lowest\n# mean quality; when tied select the earliest cycle.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "reads": [
+                {
+                  "id": "r1",
+                  "seq": "ACGTT",
+                  "q": [
+                    35,
+                    38,
+                    38,
+                    9,
+                    5
+                  ]
+                },
+                {
+                  "id": "r2",
+                  "seq": "ACGTN",
+                  "q": [
+                    32,
+                    32,
+                    10,
+                    10,
+                    10
+                  ]
+                }
+              ],
+              "threshold": 20,
+              "min_len": 3,
+              "k": 2,
+              "reference": "ACGTT",
+              "query": "ACGCT"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "r1",
+                      "seq": "ACGTT",
+                      "q": [
+                        35,
+                        38,
+                        38,
+                        9,
+                        5
+                      ]
+                    },
+                    {
+                      "id": "r2",
+                      "seq": "ACGTN",
+                      "q": [
+                        32,
+                        32,
+                        10,
+                        10,
+                        10
+                      ]
+                    }
+                  ],
+                  "threshold": 20,
+                  "min_len": 3,
+                  "k": 2,
+                  "reference": "ACGTT",
+                  "query": "ACGCT"
+                }
+              },
+              "assertions": [
+                "result==min(range(max(len(r['q']) for r in sample['reads'])),key=lambda i:sum(r['q'][i] for r in sample['reads'] if i<len(r['q']))/sum(i<len(r['q']) for r in sample['reads']))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "a",
+                      "seq": "GGGGA",
+                      "q": [
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                      ]
+                    },
+                    {
+                      "id": "b",
+                      "seq": "GNNNA",
+                      "q": [
+                        35,
+                        8,
+                        8,
+                        8,
+                        30
+                      ]
+                    },
+                    {
+                      "id": "c",
+                      "seq": "TT",
+                      "q": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "threshold": 30,
+                  "min_len": 2,
+                  "k": 3,
+                  "reference": "ATGCG",
+                  "query": "ATGCG"
+                }
+              },
+              "assertions": [
+                "result==min(range(max(len(r['q']) for r in sample['reads'])),key=lambda i:sum(r['q'][i] for r in sample['reads'] if i<len(r['q']))/sum(i<len(r['q']) for r in sample['reads']))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "only",
+                      "seq": "ATATAT",
+                      "q": [
+                        0,
+                        5,
+                        10,
+                        15,
+                        20,
+                        25
+                      ]
+                    },
+                    {
+                      "id": "good",
+                      "seq": "CCCCC",
+                      "q": [
+                        40,
+                        40,
+                        40,
+                        40,
+                        40
+                      ]
+                    }
+                  ],
+                  "threshold": 15,
+                  "min_len": 4,
+                  "k": 2,
+                  "reference": "AAAAC",
+                  "query": "AAAC"
+                }
+              },
+              "assertions": [
+                "result==min(range(max(len(r['q']) for r in sample['reads'])),key=lambda i:sum(r['q'][i] for r in sample['reads'] if i<len(r['q']))/sum(i<len(r['q']) for r in sample['reads']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Calculate mean Phred Q separately at each cycle, treating absent positions in short reads as missing, not zero.",
+            "probe": "Why does a late-cycle mean have a different n when read lengths vary?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Aggregate only reads that actually contain a given cycle.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Why does a late-cycle mean have a different n when read lengths vary?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N03-G02",
+      "title": "Trim trailing low-quality bases",
+      "competencies": [
+        "132"
+      ],
+      "why": "Poor-quality read ends can degrade downstream alignment and k-mer summaries.",
+      "explain": [
+        "Walk backward from the last base until a Q >= threshold; retain internal low-quality bases until explicitly cleaned by another policy.",
+        "Removing all low-Q positions independently changes sequence coordinates and breaks read/quality correspondence.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "seq='ACGTT';q=[35,35,35,7,4];n=len(q)\nwhile n and q[n-1]<20:n-=1\nprint(seq[:n])",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Walk backward from the last base until a Q >= threshold; retain internal low-quality bases until explicitly cleaned by another policy.",
+        "Find the last position meeting the threshold; retain everything up to that position.",
+        "Why is a trimming rule a preprocessing choice that must be fixed before comparing conditions?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Removing all low-Q positions independently changes sequence coordinates and breaks read/quality correspondence.",
+      "scientific_boundary": "Small synthetic read sets are teaching data. This is not FastQC, Cutadapt, a production aligner or a validated sequencing pipeline.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N03-G02 | LEARN | Trim trailing low-quality bases\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nseq='ACGTT';q=[35,35,35,7,4];n=len(q)\nwhile n and q[n-1]<20:n-=1\nprint(seq[:n])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Trim only trailing q values below data.threshold; keep reads of length >= data.min_len. Return result list of (read id, trimmed sequence) preserving source order.",
+          "starter_code": "# N03-G02 | APPLY | Trim trailing low-quality bases\n# TASK: Trim only trailing q values below data.threshold; keep reads of length >=\n# data.min_len. Return result list of (read id, trimmed sequence) preserving source\n# order.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "reads": [
+                {
+                  "id": "r1",
+                  "seq": "ACGTT",
+                  "q": [
+                    35,
+                    38,
+                    38,
+                    9,
+                    5
+                  ]
+                },
+                {
+                  "id": "r2",
+                  "seq": "ACGTN",
+                  "q": [
+                    32,
+                    32,
+                    10,
+                    10,
+                    10
+                  ]
+                }
+              ],
+              "threshold": 20,
+              "min_len": 3,
+              "k": 2,
+              "reference": "ACGTT",
+              "query": "ACGCT"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "r1",
+                      "seq": "ACGTT",
+                      "q": [
+                        35,
+                        38,
+                        38,
+                        9,
+                        5
+                      ]
+                    },
+                    {
+                      "id": "r2",
+                      "seq": "ACGTN",
+                      "q": [
+                        32,
+                        32,
+                        10,
+                        10,
+                        10
+                      ]
+                    }
+                  ],
+                  "threshold": 20,
+                  "min_len": 3,
+                  "k": 2,
+                  "reference": "ACGTT",
+                  "query": "ACGCT"
+                }
+              },
+              "assertions": [
+                "all(len(s)>=data['min_len'] for _,s in result)",
+                "all(name in [r['id'] for r in data['reads']] for name,_ in result)",
+                "result==[(r['id'],r['seq'][:next((i for i in range(len(r['q']),0,-1) if r['q'][i-1]>=data['threshold']),0)]) for r in data['reads'] if next((i for i in range(len(r['q']),0,-1) if r['q'][i-1]>=data['threshold']),0)>=data['min_len']]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "a",
+                      "seq": "GGGGA",
+                      "q": [
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                      ]
+                    },
+                    {
+                      "id": "b",
+                      "seq": "GNNNA",
+                      "q": [
+                        35,
+                        8,
+                        8,
+                        8,
+                        30
+                      ]
+                    },
+                    {
+                      "id": "c",
+                      "seq": "TT",
+                      "q": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "threshold": 30,
+                  "min_len": 2,
+                  "k": 3,
+                  "reference": "ATGCG",
+                  "query": "ATGCG"
+                }
+              },
+              "assertions": [
+                "all(len(s)>=data['min_len'] for _,s in result)",
+                "all(name in [r['id'] for r in data['reads']] for name,_ in result)",
+                "result==[(r['id'],r['seq'][:next((i for i in range(len(r['q']),0,-1) if r['q'][i-1]>=data['threshold']),0)]) for r in data['reads'] if next((i for i in range(len(r['q']),0,-1) if r['q'][i-1]>=data['threshold']),0)>=data['min_len']]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "only",
+                      "seq": "ATATAT",
+                      "q": [
+                        0,
+                        5,
+                        10,
+                        15,
+                        20,
+                        25
+                      ]
+                    },
+                    {
+                      "id": "good",
+                      "seq": "CCCCC",
+                      "q": [
+                        40,
+                        40,
+                        40,
+                        40,
+                        40
+                      ]
+                    }
+                  ],
+                  "threshold": 15,
+                  "min_len": 4,
+                  "k": 2,
+                  "reference": "AAAAC",
+                  "query": "AAAC"
+                }
+              },
+              "assertions": [
+                "all(len(s)>=data['min_len'] for _,s in result)",
+                "all(name in [r['id'] for r in data['reads']] for name,_ in result)",
+                "result==[(r['id'],r['seq'][:next((i for i in range(len(r['q']),0,-1) if r['q'][i-1]>=data['threshold']),0)]) for r in data['reads'] if next((i for i in range(len(r['q']),0,-1) if r['q'][i-1]>=data['threshold']),0)>=data['min_len']]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Walk backward from the last base until a Q >= threshold; retain internal low-quality bases until explicitly cleaned by another policy.",
+            "probe": "Why is a trimming rule a preprocessing choice that must be fixed before comparing conditions?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Return result={'retained':number,'discarded_ids':list,'retained_bases':sum} after trailing trimming of sample.reads and sample.min_len.",
+          "starter_code": "# N03-G02 | PROVE | Trim trailing low-quality bases\n# TASK: Return result={'retained':number,'discarded_ids':list,'retained_bases':sum}\n# after trailing trimming of sample.reads and sample.min_len.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "reads": [
+                {
+                  "id": "r1",
+                  "seq": "ACGTT",
+                  "q": [
+                    35,
+                    38,
+                    38,
+                    9,
+                    5
+                  ]
+                },
+                {
+                  "id": "r2",
+                  "seq": "ACGTN",
+                  "q": [
+                    32,
+                    32,
+                    10,
+                    10,
+                    10
+                  ]
+                }
+              ],
+              "threshold": 20,
+              "min_len": 3,
+              "k": 2,
+              "reference": "ACGTT",
+              "query": "ACGCT"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "r1",
+                      "seq": "ACGTT",
+                      "q": [
+                        35,
+                        38,
+                        38,
+                        9,
+                        5
+                      ]
+                    },
+                    {
+                      "id": "r2",
+                      "seq": "ACGTN",
+                      "q": [
+                        32,
+                        32,
+                        10,
+                        10,
+                        10
+                      ]
+                    }
+                  ],
+                  "threshold": 20,
+                  "min_len": 3,
+                  "k": 2,
+                  "reference": "ACGTT",
+                  "query": "ACGCT"
+                }
+              },
+              "assertions": [
+                "result['retained']+len(result['discarded_ids'])==len(sample['reads'])",
+                "result['retained_bases']>=result['retained']*sample['min_len']"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "a",
+                      "seq": "GGGGA",
+                      "q": [
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                      ]
+                    },
+                    {
+                      "id": "b",
+                      "seq": "GNNNA",
+                      "q": [
+                        35,
+                        8,
+                        8,
+                        8,
+                        30
+                      ]
+                    },
+                    {
+                      "id": "c",
+                      "seq": "TT",
+                      "q": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "threshold": 30,
+                  "min_len": 2,
+                  "k": 3,
+                  "reference": "ATGCG",
+                  "query": "ATGCG"
+                }
+              },
+              "assertions": [
+                "result['retained']+len(result['discarded_ids'])==len(sample['reads'])",
+                "result['retained_bases']>=result['retained']*sample['min_len']"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "only",
+                      "seq": "ATATAT",
+                      "q": [
+                        0,
+                        5,
+                        10,
+                        15,
+                        20,
+                        25
+                      ]
+                    },
+                    {
+                      "id": "good",
+                      "seq": "CCCCC",
+                      "q": [
+                        40,
+                        40,
+                        40,
+                        40,
+                        40
+                      ]
+                    }
+                  ],
+                  "threshold": 15,
+                  "min_len": 4,
+                  "k": 2,
+                  "reference": "AAAAC",
+                  "query": "AAAC"
+                }
+              },
+              "assertions": [
+                "result['retained']+len(result['discarded_ids'])==len(sample['reads'])",
+                "result['retained_bases']>=result['retained']*sample['min_len']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Walk backward from the last base until a Q >= threshold; retain internal low-quality bases until explicitly cleaned by another policy.",
+            "probe": "Why is a trimming rule a preprocessing choice that must be fixed before comparing conditions?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Find the last position meeting the threshold; retain everything up to that position.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Why is a trimming rule a preprocessing choice that must be fixed before comparing conditions?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N03-G03",
+      "title": "Count overlapping k-mers and exclude Ns",
+      "competencies": [
+        "133"
+      ],
+      "why": "Short sequence motifs are useful for QC but ambiguous bases must not create fabricated motifs.",
+      "explain": [
+        "Slide a window by one position and count all overlapping A/C/G/T-only k-mers; never cross N calls.",
+        "Using nonoverlapping windows or replacing N with A changes motif counts.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "from collections import Counter\ns='AAAA';print(Counter(s[i:i+2] for i in range(len(s)-1)))",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Slide a window by one position and count all overlapping A/C/G/T-only k-mers; never cross N calls.",
+        "A k-mer starting at i is seq[i:i+k]; skip if any base falls outside A/C/G/T.",
+        "Can a high k-mer count imply contamination without controls or reference context?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Using nonoverlapping windows or replacing N with A changes motif counts.",
+      "scientific_boundary": "Small synthetic read sets are teaching data. This is not FastQC, Cutadapt, a production aligner or a validated sequencing pipeline.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N03-G03 | LEARN | Count overlapping k-mers and exclude Ns\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom collections import Counter\ns='AAAA';print(Counter(s[i:i+2] for i in range(len(s)-1)))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "For each read in data.reads count overlapping length data.k DNA-only motifs, excluding any k-mer containing N. Return result as a Counter/dict mapping motif->count.",
+          "starter_code": "# N03-G03 | APPLY | Count overlapping k-mers and exclude Ns\n# TASK: For each read in data.reads count overlapping length data.k DNA-only\n# motifs, excluding any k-mer containing N. Return result as a Counter/dict mapping\n# motif->count.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "reads": [
+                {
+                  "id": "r1",
+                  "seq": "ACGTT",
+                  "q": [
+                    35,
+                    38,
+                    38,
+                    9,
+                    5
+                  ]
+                },
+                {
+                  "id": "r2",
+                  "seq": "ACGTN",
+                  "q": [
+                    32,
+                    32,
+                    10,
+                    10,
+                    10
+                  ]
+                }
+              ],
+              "threshold": 20,
+              "min_len": 3,
+              "k": 2,
+              "reference": "ACGTT",
+              "query": "ACGCT"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "r1",
+                      "seq": "ACGTT",
+                      "q": [
+                        35,
+                        38,
+                        38,
+                        9,
+                        5
+                      ]
+                    },
+                    {
+                      "id": "r2",
+                      "seq": "ACGTN",
+                      "q": [
+                        32,
+                        32,
+                        10,
+                        10,
+                        10
+                      ]
+                    }
+                  ],
+                  "threshold": 20,
+                  "min_len": 3,
+                  "k": 2,
+                  "reference": "ACGTT",
+                  "query": "ACGCT"
+                }
+              },
+              "assertions": [
+                "sum(result.values())==sum(set(r['seq'][i:i+data['k']].upper())<=set('ACGT') for r in data['reads'] for i in range(len(r['seq'])-data['k']+1))",
+                "all(len(k)==data['k'] and set(k)<=set('ACGT') for k in result)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "a",
+                      "seq": "GGGGA",
+                      "q": [
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                      ]
+                    },
+                    {
+                      "id": "b",
+                      "seq": "GNNNA",
+                      "q": [
+                        35,
+                        8,
+                        8,
+                        8,
+                        30
+                      ]
+                    },
+                    {
+                      "id": "c",
+                      "seq": "TT",
+                      "q": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "threshold": 30,
+                  "min_len": 2,
+                  "k": 3,
+                  "reference": "ATGCG",
+                  "query": "ATGCG"
+                }
+              },
+              "assertions": [
+                "sum(result.values())==sum(set(r['seq'][i:i+data['k']].upper())<=set('ACGT') for r in data['reads'] for i in range(len(r['seq'])-data['k']+1))",
+                "all(len(k)==data['k'] and set(k)<=set('ACGT') for k in result)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "only",
+                      "seq": "ATATAT",
+                      "q": [
+                        0,
+                        5,
+                        10,
+                        15,
+                        20,
+                        25
+                      ]
+                    },
+                    {
+                      "id": "good",
+                      "seq": "CCCCC",
+                      "q": [
+                        40,
+                        40,
+                        40,
+                        40,
+                        40
+                      ]
+                    }
+                  ],
+                  "threshold": 15,
+                  "min_len": 4,
+                  "k": 2,
+                  "reference": "AAAAC",
+                  "query": "AAAC"
+                }
+              },
+              "assertions": [
+                "sum(result.values())==sum(set(r['seq'][i:i+data['k']].upper())<=set('ACGT') for r in data['reads'] for i in range(len(r['seq'])-data['k']+1))",
+                "all(len(k)==data['k'] and set(k)<=set('ACGT') for k in result)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Slide a window by one position and count all overlapping A/C/G/T-only k-mers; never cross N calls.",
+            "probe": "Can a high k-mer count imply contamination without controls or reference context?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Using sample.reads, count length sample.k valid A/C/G/T-only windows and return result={'valid_windows':int,'distinct_motifs':int}.",
+          "starter_code": "# N03-G03 | PROVE | Count overlapping k-mers and exclude Ns\n# TASK: Using sample.reads, count length sample.k valid A/C/G/T-only windows and\n# return result={'valid_windows':int,'distinct_motifs':int}.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "reads": [
+                {
+                  "id": "r1",
+                  "seq": "ACGTT",
+                  "q": [
+                    35,
+                    38,
+                    38,
+                    9,
+                    5
+                  ]
+                },
+                {
+                  "id": "r2",
+                  "seq": "ACGTN",
+                  "q": [
+                    32,
+                    32,
+                    10,
+                    10,
+                    10
+                  ]
+                }
+              ],
+              "threshold": 20,
+              "min_len": 3,
+              "k": 2,
+              "reference": "ACGTT",
+              "query": "ACGCT"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "r1",
+                      "seq": "ACGTT",
+                      "q": [
+                        35,
+                        38,
+                        38,
+                        9,
+                        5
+                      ]
+                    },
+                    {
+                      "id": "r2",
+                      "seq": "ACGTN",
+                      "q": [
+                        32,
+                        32,
+                        10,
+                        10,
+                        10
+                      ]
+                    }
+                  ],
+                  "threshold": 20,
+                  "min_len": 3,
+                  "k": 2,
+                  "reference": "ACGTT",
+                  "query": "ACGCT"
+                }
+              },
+              "assertions": [
+                "result['valid_windows']==sum(set(r['seq'][i:i+sample['k']].upper())<=set('ACGT') for r in sample['reads'] for i in range(len(r['seq'])-sample['k']+1))",
+                "result['distinct_motifs']<=result['valid_windows']"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "a",
+                      "seq": "GGGGA",
+                      "q": [
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                      ]
+                    },
+                    {
+                      "id": "b",
+                      "seq": "GNNNA",
+                      "q": [
+                        35,
+                        8,
+                        8,
+                        8,
+                        30
+                      ]
+                    },
+                    {
+                      "id": "c",
+                      "seq": "TT",
+                      "q": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "threshold": 30,
+                  "min_len": 2,
+                  "k": 3,
+                  "reference": "ATGCG",
+                  "query": "ATGCG"
+                }
+              },
+              "assertions": [
+                "result['valid_windows']==sum(set(r['seq'][i:i+sample['k']].upper())<=set('ACGT') for r in sample['reads'] for i in range(len(r['seq'])-sample['k']+1))",
+                "result['distinct_motifs']<=result['valid_windows']"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "only",
+                      "seq": "ATATAT",
+                      "q": [
+                        0,
+                        5,
+                        10,
+                        15,
+                        20,
+                        25
+                      ]
+                    },
+                    {
+                      "id": "good",
+                      "seq": "CCCCC",
+                      "q": [
+                        40,
+                        40,
+                        40,
+                        40,
+                        40
+                      ]
+                    }
+                  ],
+                  "threshold": 15,
+                  "min_len": 4,
+                  "k": 2,
+                  "reference": "AAAAC",
+                  "query": "AAAC"
+                }
+              },
+              "assertions": [
+                "result['valid_windows']==sum(set(r['seq'][i:i+sample['k']].upper())<=set('ACGT') for r in sample['reads'] for i in range(len(r['seq'])-sample['k']+1))",
+                "result['distinct_motifs']<=result['valid_windows']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Slide a window by one position and count all overlapping A/C/G/T-only k-mers; never cross N calls.",
+            "probe": "Can a high k-mer count imply contamination without controls or reference context?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "A k-mer starting at i is seq[i:i+k]; skip if any base falls outside A/C/G/T.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Can a high k-mer count imply contamination without controls or reference context?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N03-G04",
+      "title": "Compare short sequences with pairwise alignment",
+      "competencies": [
+        "134"
+      ],
+      "why": "A score is informative only if mismatch and gap penalties are declared.",
+      "explain": [
+        "Biopython PairwiseAligner scores reference/query pairs under explicit match, mismatch and gap penalties.",
+        "Using default scoring without documenting gap penalties makes alignment outputs hard to compare.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "from Bio.Align import PairwiseAligner\na=PairwiseAligner();a.match_score=2;a.mismatch_score=-1;a.open_gap_score=-2;a.extend_gap_score=-0.5\nprint(a.score('ACG','ACG'))",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Biopython PairwiseAligner scores reference/query pairs under explicit match, mismatch and gap penalties.",
+        "Assign all four scores explicitly on a PairwiseAligner object.",
+        "What biological meaning is missing from a high score on two short synthetic strings?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Using default scoring without documenting gap penalties makes alignment outputs hard to compare.",
+      "scientific_boundary": "Small synthetic read sets are teaching data. This is not FastQC, Cutadapt, a production aligner or a validated sequencing pipeline.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N03-G04 | LEARN | Compare short sequences with pairwise alignment\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom Bio.Align import PairwiseAligner\na=PairwiseAligner();a.match_score=2;a.mismatch_score=-1;a.open_gap_score=-2;a.extend_gap_score=-0.5\nprint(a.score('ACG','ACG'))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Use Bio.Align.PairwiseAligner with match=2, mismatch=-1, open_gap=-2, extend_gap=-0.5. Return result as numeric alignment score for data.reference/query.",
+          "starter_code": "# N03-G04 | APPLY | Compare short sequences with pairwise alignment\n# TASK: Use Bio.Align.PairwiseAligner with match=2, mismatch=-1, open_gap=-2,\n# extend_gap=-0.5. Return result as numeric alignment score for\n# data.reference/query.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "reads": [
+                {
+                  "id": "r1",
+                  "seq": "ACGTT",
+                  "q": [
+                    35,
+                    38,
+                    38,
+                    9,
+                    5
+                  ]
+                },
+                {
+                  "id": "r2",
+                  "seq": "ACGTN",
+                  "q": [
+                    32,
+                    32,
+                    10,
+                    10,
+                    10
+                  ]
+                }
+              ],
+              "threshold": 20,
+              "min_len": 3,
+              "k": 2,
+              "reference": "ACGTT",
+              "query": "ACGCT"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "r1",
+                      "seq": "ACGTT",
+                      "q": [
+                        35,
+                        38,
+                        38,
+                        9,
+                        5
+                      ]
+                    },
+                    {
+                      "id": "r2",
+                      "seq": "ACGTN",
+                      "q": [
+                        32,
+                        32,
+                        10,
+                        10,
+                        10
+                      ]
+                    }
+                  ],
+                  "threshold": 20,
+                  "min_len": 3,
+                  "k": 2,
+                  "reference": "ACGTT",
+                  "query": "ACGCT"
+                }
+              },
+              "assertions": [
+                "isinstance(result,(int,float))",
+                "result<=2*max(len(data['reference']),len(data['query']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "a",
+                      "seq": "GGGGA",
+                      "q": [
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                      ]
+                    },
+                    {
+                      "id": "b",
+                      "seq": "GNNNA",
+                      "q": [
+                        35,
+                        8,
+                        8,
+                        8,
+                        30
+                      ]
+                    },
+                    {
+                      "id": "c",
+                      "seq": "TT",
+                      "q": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "threshold": 30,
+                  "min_len": 2,
+                  "k": 3,
+                  "reference": "ATGCG",
+                  "query": "ATGCG"
+                }
+              },
+              "assertions": [
+                "isinstance(result,(int,float))",
+                "result<=2*max(len(data['reference']),len(data['query']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "reads": [
+                    {
+                      "id": "only",
+                      "seq": "ATATAT",
+                      "q": [
+                        0,
+                        5,
+                        10,
+                        15,
+                        20,
+                        25
+                      ]
+                    },
+                    {
+                      "id": "good",
+                      "seq": "CCCCC",
+                      "q": [
+                        40,
+                        40,
+                        40,
+                        40,
+                        40
+                      ]
+                    }
+                  ],
+                  "threshold": 15,
+                  "min_len": 4,
+                  "k": 2,
+                  "reference": "AAAAC",
+                  "query": "AAAC"
+                }
+              },
+              "assertions": [
+                "isinstance(result,(int,float))",
+                "result<=2*max(len(data['reference']),len(data['query']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Biopython PairwiseAligner scores reference/query pairs under explicit match, mismatch and gap penalties.",
+            "probe": "What biological meaning is missing from a high score on two short synthetic strings?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Return result={'score':pairwise alignment score,'perfect_reference':score == 2*len(sample.reference)} with the same declared penalties.",
+          "starter_code": "# N03-G04 | PROVE | Compare short sequences with pairwise alignment\n# TASK: Return result={'score':pairwise alignment score,'perfect_reference':score\n# == 2*len(sample.reference)} with the same declared penalties.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "reads": [
+                {
+                  "id": "r1",
+                  "seq": "ACGTT",
+                  "q": [
+                    35,
+                    38,
+                    38,
+                    9,
+                    5
+                  ]
+                },
+                {
+                  "id": "r2",
+                  "seq": "ACGTN",
+                  "q": [
+                    32,
+                    32,
+                    10,
+                    10,
+                    10
+                  ]
+                }
+              ],
+              "threshold": 20,
+              "min_len": 3,
+              "k": 2,
+              "reference": "ACGTT",
+              "query": "ACGCT"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "r1",
+                      "seq": "ACGTT",
+                      "q": [
+                        35,
+                        38,
+                        38,
+                        9,
+                        5
+                      ]
+                    },
+                    {
+                      "id": "r2",
+                      "seq": "ACGTN",
+                      "q": [
+                        32,
+                        32,
+                        10,
+                        10,
+                        10
+                      ]
+                    }
+                  ],
+                  "threshold": 20,
+                  "min_len": 3,
+                  "k": 2,
+                  "reference": "ACGTT",
+                  "query": "ACGCT"
+                }
+              },
+              "assertions": [
+                "isinstance(result['score'],(int,float))",
+                "result['perfect_reference']==(result['score']==2*len(sample['reference']))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "a",
+                      "seq": "GGGGA",
+                      "q": [
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                      ]
+                    },
+                    {
+                      "id": "b",
+                      "seq": "GNNNA",
+                      "q": [
+                        35,
+                        8,
+                        8,
+                        8,
+                        30
+                      ]
+                    },
+                    {
+                      "id": "c",
+                      "seq": "TT",
+                      "q": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "threshold": 30,
+                  "min_len": 2,
+                  "k": 3,
+                  "reference": "ATGCG",
+                  "query": "ATGCG"
+                }
+              },
+              "assertions": [
+                "isinstance(result['score'],(int,float))",
+                "result['perfect_reference']==(result['score']==2*len(sample['reference']))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "reads": [
+                    {
+                      "id": "only",
+                      "seq": "ATATAT",
+                      "q": [
+                        0,
+                        5,
+                        10,
+                        15,
+                        20,
+                        25
+                      ]
+                    },
+                    {
+                      "id": "good",
+                      "seq": "CCCCC",
+                      "q": [
+                        40,
+                        40,
+                        40,
+                        40,
+                        40
+                      ]
+                    }
+                  ],
+                  "threshold": 15,
+                  "min_len": 4,
+                  "k": 2,
+                  "reference": "AAAAC",
+                  "query": "AAAC"
+                }
+              },
+              "assertions": [
+                "isinstance(result['score'],(int,float))",
+                "result['perfect_reference']==(result['score']==2*len(sample['reference']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Biopython PairwiseAligner scores reference/query pairs under explicit match, mismatch and gap penalties.",
+            "probe": "What biological meaning is missing from a high score on two short synthetic strings?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Assign all four scores explicitly on a PairwiseAligner object.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "What biological meaning is missing from a high score on two short synthetic strings?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "N03-CAPSTONE",
+    "title": "Create a per-read QC and k-mer summary",
+    "competencies": [],
+    "why": "Combine quality-based trimming and motif counting without losing read identifiers.",
+    "explain": [
+      "A reproducible QC pipeline makes the threshold, minimum length and k-mer definition explicit.",
+      "A quality-trimmed read is not necessarily uniquely mappable or biologically interpretable.",
+      "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+    ],
+    "worked_example": {
+      "code": "reads=[('a','ACGT'),('b','NNNN')]\nprint([name for name,seq in reads if 'N' not in seq])",
+      "predict": "Predict the printed output before running."
+    },
+    "prediction_answer": "Explain the output using the source data and the declared denominator.",
+    "walkthrough": [
+      "A reproducible QC pipeline makes the threshold, minimum length and k-mer definition explicit.",
+      "Keep sequence and quality indexed together through every filtering operation.",
+      "Which assumption could fail with unfamiliar samples?"
+    ],
+    "investigate": [
+      "Change one input and compare the predicted and observed output.",
+      "Try an empty, ambiguous or boundary-valued input.",
+      "Explain why a correct Python result is not evidence of a biological effect."
+    ],
+    "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+    "misconception": "A quality-trimmed read is not necessarily uniquely mappable or biologically interpretable.",
+    "scientific_boundary": "Small synthetic read sets are teaching data. This is not FastQC, Cutadapt, a production aligner or a validated sequencing pipeline.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+        "starter_code": "# N03-CAPSTONE | LEARN | Create a per-read QC and k-mer summary\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nreads=[('a','ACGT'),('b','NNNN')]\nprint([name for name,seq in reads if 'N' not in seq])\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Integrated practice",
+        "description": "Trim reads by data.threshold/min_len and return result={'ids':retained ids,'kmer_counts':dict of valid data.k motifs in trimmed reads}.",
+        "starter_code": "# N03-CAPSTONE | APPLY | Create a per-read QC and k-mer summary\n# TASK: Trim reads by data.threshold/min_len and return result={'ids':retained\n# ids,'kmer_counts':dict of valid data.k motifs in trimmed reads}.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "reads": [
+              {
+                "id": "r1",
+                "seq": "ACGTT",
+                "q": [
+                  35,
+                  38,
+                  38,
+                  9,
+                  5
+                ]
+              },
+              {
+                "id": "r2",
+                "seq": "ACGTN",
+                "q": [
+                  32,
+                  32,
+                  10,
+                  10,
+                  10
+                ]
+              }
+            ],
+            "threshold": 20,
+            "min_len": 3,
+            "k": 2,
+            "reference": "ACGTT",
+            "query": "ACGCT"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "reads": [
+                  {
+                    "id": "r1",
+                    "seq": "ACGTT",
+                    "q": [
+                      35,
+                      38,
+                      38,
+                      9,
+                      5
+                    ]
+                  },
+                  {
+                    "id": "r2",
+                    "seq": "ACGTN",
+                    "q": [
+                      32,
+                      32,
+                      10,
+                      10,
+                      10
+                    ]
+                  }
+                ],
+                "threshold": 20,
+                "min_len": 3,
+                "k": 2,
+                "reference": "ACGTT",
+                "query": "ACGCT"
+              }
+            },
+            "assertions": [
+              "all(k.isupper() and len(k)==data['k'] for k in result['kmer_counts'])",
+              "all(x in [r['id'] for r in data['reads']] for x in result['ids'])"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "reads": [
+                  {
+                    "id": "a",
+                    "seq": "GGGGA",
+                    "q": [
+                      32,
+                      31,
+                      30,
+                      29,
+                      28
+                    ]
+                  },
+                  {
+                    "id": "b",
+                    "seq": "GNNNA",
+                    "q": [
+                      35,
+                      8,
+                      8,
+                      8,
+                      30
+                    ]
+                  },
+                  {
+                    "id": "c",
+                    "seq": "TT",
+                    "q": [
+                      5,
+                      5
+                    ]
+                  }
+                ],
+                "threshold": 30,
+                "min_len": 2,
+                "k": 3,
+                "reference": "ATGCG",
+                "query": "ATGCG"
+              }
+            },
+            "assertions": [
+              "all(k.isupper() and len(k)==data['k'] for k in result['kmer_counts'])",
+              "all(x in [r['id'] for r in data['reads']] for x in result['ids'])"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "reads": [
+                  {
+                    "id": "only",
+                    "seq": "ATATAT",
+                    "q": [
+                      0,
+                      5,
+                      10,
+                      15,
+                      20,
+                      25
+                    ]
+                  },
+                  {
+                    "id": "good",
+                    "seq": "CCCCC",
+                    "q": [
+                      40,
+                      40,
+                      40,
+                      40,
+                      40
+                    ]
+                  }
+                ],
+                "threshold": 15,
+                "min_len": 4,
+                "k": 2,
+                "reference": "AAAAC",
+                "query": "AAAC"
+              }
+            },
+            "assertions": [
+              "all(k.isupper() and len(k)==data['k'] for k in result['kmer_counts'])",
+              "all(x in [r['id'] for r in data['reads']] for x in result['ids'])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A reproducible QC pipeline makes the threshold, minimum length and k-mer definition explicit.",
+          "probe": "What assumption would break this analysis on a real experiment?",
+          "check": "Check changed inputs, missing cases and source provenance."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Return result={'input_bases','retained_bases','retained_count'} after sample trailing-trim rule; keep the input records unchanged.",
+        "starter_code": "# N03-CAPSTONE | PROVE | Create a per-read QC and k-mer summary\n# TASK: Return result={'input_bases','retained_bases','retained_count'} after\n# sample trailing-trim rule; keep the input records unchanged.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "reads": [
+              {
+                "id": "r1",
+                "seq": "ACGTT",
+                "q": [
+                  35,
+                  38,
+                  38,
+                  9,
+                  5
+                ]
+              },
+              {
+                "id": "r2",
+                "seq": "ACGTN",
+                "q": [
+                  32,
+                  32,
+                  10,
+                  10,
+                  10
+                ]
+              }
+            ],
+            "threshold": 20,
+            "min_len": 3,
+            "k": 2,
+            "reference": "ACGTT",
+            "query": "ACGCT"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "reads": [
+                  {
+                    "id": "r1",
+                    "seq": "ACGTT",
+                    "q": [
+                      35,
+                      38,
+                      38,
+                      9,
+                      5
+                    ]
+                  },
+                  {
+                    "id": "r2",
+                    "seq": "ACGTN",
+                    "q": [
+                      32,
+                      32,
+                      10,
+                      10,
+                      10
+                    ]
+                  }
+                ],
+                "threshold": 20,
+                "min_len": 3,
+                "k": 2,
+                "reference": "ACGTT",
+                "query": "ACGCT"
+              }
+            },
+            "assertions": [
+              "result['input_bases']==sum(len(r['seq']) for r in sample['reads'])",
+              "0<=result['retained_bases']<=result['input_bases']",
+              "0<=result['retained_count']<=len(sample['reads'])"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "reads": [
+                  {
+                    "id": "a",
+                    "seq": "GGGGA",
+                    "q": [
+                      32,
+                      31,
+                      30,
+                      29,
+                      28
+                    ]
+                  },
+                  {
+                    "id": "b",
+                    "seq": "GNNNA",
+                    "q": [
+                      35,
+                      8,
+                      8,
+                      8,
+                      30
+                    ]
+                  },
+                  {
+                    "id": "c",
+                    "seq": "TT",
+                    "q": [
+                      5,
+                      5
+                    ]
+                  }
+                ],
+                "threshold": 30,
+                "min_len": 2,
+                "k": 3,
+                "reference": "ATGCG",
+                "query": "ATGCG"
+              }
+            },
+            "assertions": [
+              "result['input_bases']==sum(len(r['seq']) for r in sample['reads'])",
+              "0<=result['retained_bases']<=result['input_bases']",
+              "0<=result['retained_count']<=len(sample['reads'])"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "reads": [
+                  {
+                    "id": "only",
+                    "seq": "ATATAT",
+                    "q": [
+                      0,
+                      5,
+                      10,
+                      15,
+                      20,
+                      25
+                    ]
+                  },
+                  {
+                    "id": "good",
+                    "seq": "CCCCC",
+                    "q": [
+                      40,
+                      40,
+                      40,
+                      40,
+                      40
+                    ]
+                  }
+                ],
+                "threshold": 15,
+                "min_len": 4,
+                "k": 2,
+                "reference": "AAAAC",
+                "query": "AAAC"
+              }
+            },
+            "assertions": [
+              "result['input_bases']==sum(len(r['seq']) for r in sample['reads'])",
+              "0<=result['retained_bases']<=result['input_bases']",
+              "0<=result['retained_count']<=len(sample['reads'])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A reproducible QC pipeline makes the threshold, minimum length and k-mer definition explicit.",
+          "probe": "Which decision must be verified against actual biological sources?",
+          "check": "Solve with a different operation or data representation than Apply."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Keep sequence and quality indexed together through every filtering operation.",
+        "Use explicit checks and preserve source identity."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Inspect declared data format, dimensionality and missing values.",
+      "TypeError": "Check string versus numeric values; avoid silent coercion.",
+      "KeyError": "Read each input contract and preserve source identifiers.",
+      "hardcoded": "A solution must work on all three changed-input scenarios."
+    },
+    "reflection_prompts": [
+      "What would you check before using this method on a real dataset?"
+    ],
+    "learning_evidence": {
+      "learn": "Prediction and investigation only",
+      "apply": "Public changed-input practice checks",
+      "prove": "Independent transfer practice, not retained-mastery certification"
+    }
+  },
+  "review": {
+    "id": "N03-REVIEW",
+    "title": "Delayed quality-tail diagnostic",
+    "competencies": [],
+    "why": "Retain quality-score reasoning on unfamiliar reads without a worked example.",
+    "explain": [
+      "A trailing quality cutoff affects sequence length and is not a substitution correction.",
+      "Discarding internal low-Q bases changes coordinates.",
+      "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Recall the earlier scientific reasoning before opening the code."
+    },
+    "prediction_answer": "Explain the output using the source data and the declared denominator.",
+    "walkthrough": [
+      "A trailing quality cutoff affects sequence length and is not a substitution correction.",
+      "Check data types and source order explicitly.",
+      "Which assumption could fail with unfamiliar samples?"
+    ],
+    "investigate": [
+      "Change one input and compare the predicted and observed output.",
+      "Try an empty, ambiguous or boundary-valued input.",
+      "Explain why a correct Python result is not evidence of a biological effect."
+    ],
+    "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+    "misconception": "Discarding internal low-Q bases changes coordinates.",
+    "scientific_boundary": "Small synthetic read sets are teaching data. This is not FastQC, Cutadapt, a production aligner or a validated sequencing pipeline.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Recall an earlier technique from memory; no worked answer is supplied.",
+        "starter_code": "# N03-REVIEW | LEARN | Delayed quality-tail diagnostic\n# TASK: Recall the method independently before trying Prove.\n\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Review without a worked key",
+        "description": "Recall the previous QC rule without a worked solution.",
+        "starter_code": "# N03-REVIEW | APPLY | Delayed quality-tail diagnostic\n# TASK: Recall the previous QC rule without a worked solution.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "reads": [
+              {
+                "id": "r1",
+                "seq": "ACGTT",
+                "q": [
+                  35,
+                  38,
+                  38,
+                  9,
+                  5
+                ]
+              },
+              {
+                "id": "r2",
+                "seq": "ACGTN",
+                "q": [
+                  32,
+                  32,
+                  10,
+                  10,
+                  10
+                ]
+              }
+            ],
+            "threshold": 20,
+            "min_len": 3,
+            "k": 2,
+            "reference": "ACGTT",
+            "query": "ACGCT"
+          }
+        },
+        "practice_feedback": {
+          "why": "A trailing quality cutoff affects sequence length and is not a substitution correction.",
+          "probe": "What assumption would break this analysis on a real experiment?",
+          "check": "Check changed inputs, missing cases and source provenance."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Given sample.reads and threshold, return result as list of (id, trimmed length) for all reads including those trimmed to zero.",
+        "starter_code": "# N03-REVIEW | PROVE | Delayed quality-tail diagnostic\n# TASK: Given sample.reads and threshold, return result as list of (id, trimmed\n# length) for all reads including those trimmed to zero.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "reads": [
+              {
+                "id": "r1",
+                "seq": "ACGTT",
+                "q": [
+                  35,
+                  38,
+                  38,
+                  9,
+                  5
+                ]
+              },
+              {
+                "id": "r2",
+                "seq": "ACGTN",
+                "q": [
+                  32,
+                  32,
+                  10,
+                  10,
+                  10
+                ]
+              }
+            ],
+            "threshold": 20,
+            "min_len": 3,
+            "k": 2,
+            "reference": "ACGTT",
+            "query": "ACGCT"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "reads": [
+                  {
+                    "id": "r1",
+                    "seq": "ACGTT",
+                    "q": [
+                      35,
+                      38,
+                      38,
+                      9,
+                      5
+                    ]
+                  },
+                  {
+                    "id": "r2",
+                    "seq": "ACGTN",
+                    "q": [
+                      32,
+                      32,
+                      10,
+                      10,
+                      10
+                    ]
+                  }
+                ],
+                "threshold": 20,
+                "min_len": 3,
+                "k": 2,
+                "reference": "ACGTT",
+                "query": "ACGCT"
+              }
+            },
+            "assertions": [
+              "len(result)==len(sample['reads'])",
+              "all(0<=n<=len(r['seq']) for (_,n),r in zip(result,sample['reads']))",
+              "result[0][0]==sample['reads'][0]['id'"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "reads": [
+                  {
+                    "id": "a",
+                    "seq": "GGGGA",
+                    "q": [
+                      32,
+                      31,
+                      30,
+                      29,
+                      28
+                    ]
+                  },
+                  {
+                    "id": "b",
+                    "seq": "GNNNA",
+                    "q": [
+                      35,
+                      8,
+                      8,
+                      8,
+                      30
+                    ]
+                  },
+                  {
+                    "id": "c",
+                    "seq": "TT",
+                    "q": [
+                      5,
+                      5
+                    ]
+                  }
+                ],
+                "threshold": 30,
+                "min_len": 2,
+                "k": 3,
+                "reference": "ATGCG",
+                "query": "ATGCG"
+              }
+            },
+            "assertions": [
+              "len(result)==len(sample['reads'])",
+              "all(0<=n<=len(r['seq']) for (_,n),r in zip(result,sample['reads']))",
+              "result[0][0]==sample['reads'][0]['id'"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "reads": [
+                  {
+                    "id": "only",
+                    "seq": "ATATAT",
+                    "q": [
+                      0,
+                      5,
+                      10,
+                      15,
+                      20,
+                      25
+                    ]
+                  },
+                  {
+                    "id": "good",
+                    "seq": "CCCCC",
+                    "q": [
+                      40,
+                      40,
+                      40,
+                      40,
+                      40
+                    ]
+                  }
+                ],
+                "threshold": 15,
+                "min_len": 4,
+                "k": 2,
+                "reference": "AAAAC",
+                "query": "AAAC"
+              }
+            },
+            "assertions": [
+              "len(result)==len(sample['reads'])",
+              "all(0<=n<=len(r['seq']) for (_,n),r in zip(result,sample['reads']))",
+              "result[0][0]==sample['reads'][0]['id'"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A trailing quality cutoff affects sequence length and is not a substitution correction.",
+          "probe": "Which decision must be verified against actual biological sources?",
+          "check": "Solve with a different operation or data representation than Apply."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start by checking the input keys and expected result type.",
+        "Use explicit checks and preserve source identity."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Inspect declared data format, dimensionality and missing values.",
+      "TypeError": "Check string versus numeric values; avoid silent coercion.",
+      "KeyError": "Read each input contract and preserve source identifiers.",
+      "hardcoded": "A solution must work on all three changed-input scenarios."
+    },
+    "reflection_prompts": [
+      "What would you check before using this method on a real dataset?"
+    ],
+    "learning_evidence": {
+      "learn": "Prediction and investigation only",
+      "apply": "Public changed-input practice checks",
+      "prove": "Independent transfer practice, not retained-mastery certification"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "n03_sequence_project.py",
+    "brief": "Create a per-read QC and k-mer summary",
+    "status": "INTEGRATED_LEARNER_PILOT"
+  }
+}
