@@ -1,0 +1,1756 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I07",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_PANDAS",
+  "title": "Clean a scientific measurements table",
+  "competencies": [
+    "051",
+    "052",
+    "053",
+    "054",
+    "055",
+    "056",
+    "057"
+  ],
+  "intro": "Create Pandas DataFrames, read typed CSV, select records, validate schemas, normalize identifiers cautiously, audit conflicting duplicates and preserve missing image-derived observations. All rows are synthetic educational data, not real biological replicates.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/06-Regions.ipynb",
+    "asset": "assets/witz/fluorescence-examples.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "ATTRIBUTED_VISUAL_CONTEXT_SYNTHETIC_MEASUREMENTS",
+    "caution": "These measurement tables are constructed teaching data; no direct instrument data or raw fluorescence source is implied."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove with real Pandas execution and auditable row policies.",
+  "goals": [
+    {
+      "id": "I07-G01",
+      "title": "Create and inspect a Pandas DataFrame",
+      "competencies": [
+        "051"
+      ],
+      "why": "A table must keep specimen identity linked to numerical image-derived observations.",
+      "explain": [
+        "A Pandas DataFrame stores named columns with potentially different dtypes. It is not merely an array of numbers.",
+        "Record IDs and measurements should remain separate: an imaging field is not necessarily a biological replicate.",
+        "DataFrame operations will remain transparent when future genuine per-image measurements are imported."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\nframe=pd.DataFrame({'sample_id':['WT','mut'],'fields':[3,4]})\nprint(frame.shape,frame['fields'].dtype)",
+        "predict": "Predict the table values and explain the input/record contract."
+      },
+      "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+      "walkthrough": [
+        "Identify the sample ID column, measurement types and possible missing data.",
+        "Predict the Pandas output, execute the example and change a realistic input.",
+        "Explain which data-quality choice would affect downstream biological interpretation."
+      ],
+      "investigate": [
+        "Try changed field identities, missing values or duplicate keys.",
+        "Check that original source records remain auditable.",
+        "Distinguish field-level metadata from independent biological units."
+      ],
+      "debug_task": "Identify a Pandas schema, identity or missingness bug in create and inspect a pandas dataframe and describe the changed input that reveals it.",
+      "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+      "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and modify the Pandas example.",
+          "starter_code": "# I07-G01 | LEARN | Create and inspect a Pandas DataFrame\n# TASK: Predict, run and modify the Pandas example.\n\nimport pandas as pd\nframe=pd.DataFrame({'sample_id':['WT','mut'],'fields':[3,4]})\nprint(frame.shape,frame['fields'].dtype)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Create df=pd.DataFrame(records) from supplied list of dicts. Set column_names=df.columns.tolist(), n_rows=len(df), mean_fields=float(df['fields'].mean()) or None for empty.",
+          "starter_code": "# I07-G01 | APPLY | Create and inspect a Pandas DataFrame\n# TASK: Create df=pd.DataFrame(records) from supplied list of dicts. Set\n#   column_names=df.columns.tolist(), n_rows=len(df),\n#   mean_fields=float(df['fields'].mean()) or None for empty.\n# INPUTS: records\n\n",
+          "preview_inputs": {
+            "records": [
+              {
+                "sample_id": "WT",
+                "fields": 3
+              },
+              {
+                "sample_id": "mut",
+                "fields": 4
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "sample_id": "WT",
+                    "fields": 3
+                  },
+                  {
+                    "sample_id": "mut",
+                    "fields": 4
+                  }
+                ]
+              },
+              "assertions": [
+                "column_names==['sample_id','fields']",
+                "n_rows==2",
+                "mean_fields==3.5"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "sample_id": "X",
+                    "fields": 0
+                  }
+                ]
+              },
+              "assertions": [
+                "n_rows==1",
+                "mean_fields==0"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "sample_id": "X",
+                    "fields": 6
+                  },
+                  {
+                    "sample_id": "Y",
+                    "fields": 2
+                  }
+                ]
+              },
+              "assertions": [
+                "mean_fields==4"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Record IDs and measurements should remain separate: an imaging field is not necessarily a biological replicate.",
+            "probe": "Which source identity, missing value or duplicate would change the result of create and inspect a pandas dataframe?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for create and inspect a pandas dataframe."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Build measurements DataFrame with columns 'field_id' and 'score' from field_ids,scores. Set n_fields=len(df), missing_scores=int(df['score'].isna().sum()) and valid_ids in order.",
+          "starter_code": "# I07-G01 | PROVE | Create and inspect a Pandas DataFrame\n# TASK: Build measurements DataFrame with columns 'field_id' and 'score' from\n#   field_ids,scores. Set n_fields=len(df),\n#   missing_scores=int(df['score'].isna().sum()) and valid_ids in order.\n# INPUTS: field_ids, scores\n\n",
+          "preview_inputs": {
+            "field_ids": [
+              "F1",
+              "F2",
+              "F3"
+            ],
+            "scores": [
+              0.8,
+              null,
+              0
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_ids": [
+                  "F1",
+                  "F2",
+                  "F3"
+                ],
+                "scores": [
+                  0.8,
+                  null,
+                  0
+                ]
+              },
+              "assertions": [
+                "n_fields==3",
+                "missing_scores==1",
+                "valid_ids==['F1','F3']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [
+                  "A"
+                ],
+                "scores": [
+                  0
+                ]
+              },
+              "assertions": [
+                "n_fields==1",
+                "valid_ids==['A']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [],
+                "scores": []
+              },
+              "assertions": [
+                "n_fields==0",
+                "valid_ids==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Record IDs and measurements should remain separate: an imaging field is not necessarily a biological replicate.",
+            "probe": "Which source identity, missing value or duplicate would change the result of create and inspect a pandas dataframe?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for create and inspect a pandas dataframe."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use explicit DataFrame column names and preserve source IDs.",
+          "Check empty, missing and duplicate cases before reporting a summary."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "Required column absent: inspect the schema and source identifiers.",
+        "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+        "ValueError": "Check CSV formatting and nonnumeric measurements.",
+        "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Unfamiliar transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I07-G02",
+      "title": "Read CSV with explicit column types",
+      "competencies": [
+        "052"
+      ],
+      "why": "Leading zeros in specimen IDs are meaningful and must not be stripped by numeric type inference.",
+      "explain": [
+        "`pd.read_csv(io.StringIO(text),dtype={'specimen':'string'})` reads data while preserving identifier fields as text.",
+        "Numeric measurement columns should be converted with a documented error policy, not silently mistaken for specimen labels.",
+        "CSV is a text exchange format; validate delimiters, missing values, measurement units and actual source provenance."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd,io\ntext='sample_id,fields\\n001,2\\n002,4\\n'\ndf=pd.read_csv(io.StringIO(text),dtype={'sample_id':'string'})\nprint(df['sample_id'].tolist())",
+        "predict": "Predict the table values and explain the input/record contract."
+      },
+      "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+      "walkthrough": [
+        "Identify the sample ID column, measurement types and possible missing data.",
+        "Predict the Pandas output, execute the example and change a realistic input.",
+        "Explain which data-quality choice would affect downstream biological interpretation."
+      ],
+      "investigate": [
+        "Try changed field identities, missing values or duplicate keys.",
+        "Check that original source records remain auditable.",
+        "Distinguish field-level metadata from independent biological units."
+      ],
+      "debug_task": "Identify a Pandas schema, identity or missingness bug in read csv with explicit column types and describe the changed input that reveals it.",
+      "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+      "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and modify the Pandas example.",
+          "starter_code": "# I07-G02 | LEARN | Read CSV with explicit column types\n# TASK: Predict, run and modify the Pandas example.\n\nimport pandas as pd,io\ntext='sample_id,fields\\n001,2\\n002,4\\n'\ndf=pd.read_csv(io.StringIO(text),dtype={'sample_id':'string'})\nprint(df['sample_id'].tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Read csv_text via io.StringIO and pd.read_csv with sample_id dtype='string'. Set parsed_ids, numeric_total=int(df['fields'].sum()), leading_zero_preserved bool.",
+          "starter_code": "# I07-G02 | APPLY | Read CSV with explicit column types\n# TASK: Read csv_text via io.StringIO and pd.read_csv with sample_id\n#   dtype='string'. Set parsed_ids, numeric_total=int(df['fields'].sum()),\n#   leading_zero_preserved bool.\n# INPUTS: csv_text\n\n",
+          "preview_inputs": {
+            "csv_text": "sample_id,fields\n001,2\n002,4\n"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "csv_text": "sample_id,fields\n001,2\n002,4\n"
+              },
+              "assertions": [
+                "parsed_ids==['001','002']",
+                "numeric_total==6",
+                "leading_zero_preserved is True"
+              ]
+            },
+            {
+              "inputs": {
+                "csv_text": "sample_id,fields\nX,0\nY,5\n"
+              },
+              "assertions": [
+                "parsed_ids==['X','Y']",
+                "numeric_total==5"
+              ]
+            },
+            {
+              "inputs": {
+                "csv_text": "sample_id,fields\n007,0\n"
+              },
+              "assertions": [
+                "parsed_ids==['007']",
+                "leading_zero_preserved is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Numeric measurement columns should be converted with a documented error policy, not silently mistaken for specimen labels.",
+            "probe": "Which source identity, missing value or duplicate would change the result of read csv with explicit column types?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for read csv with explicit column types."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Read CSV text with field_id forced to string (retain e.g. '0003'). Convert score to numeric via pd.to_numeric(errors='coerce'); return table, missing_count and passing_ids for numeric >= minimum.",
+          "starter_code": "# I07-G02 | PROVE | Read CSV with explicit column types\n# TASK: Read CSV text with field_id forced to string (retain e.g. '0003').\n#   Convert score to numeric via pd.to_numeric(errors='coerce'); return table,\n#   missing_count and passing_ids for numeric >= minimum.\n# INPUTS: csv_text, minimum\n\n",
+          "preview_inputs": {
+            "csv_text": "field_id,score\n0001,0.9\n0002,\n0003,0.4\n",
+            "minimum": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "csv_text": "field_id,score\n0001,0.9\n0002,\n0003,0.4\n",
+                "minimum": 0.8
+              },
+              "assertions": [
+                "passing_ids==['0001']",
+                "missing_count==1",
+                "table['field_id'].iloc[0]=='0001'"
+              ]
+            },
+            {
+              "inputs": {
+                "csv_text": "field_id,score\nF1,0\nF2,1\n",
+                "minimum": 0
+              },
+              "assertions": [
+                "passing_ids==['F1','F2']",
+                "missing_count==0"
+              ]
+            },
+            {
+              "inputs": {
+                "csv_text": "field_id,score\n05,bad\n06,0.8\n",
+                "minimum": 0.8
+              },
+              "assertions": [
+                "missing_count==1",
+                "passing_ids==['06']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Numeric measurement columns should be converted with a documented error policy, not silently mistaken for specimen labels.",
+            "probe": "Which source identity, missing value or duplicate would change the result of read csv with explicit column types?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for read csv with explicit column types."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use explicit DataFrame column names and preserve source IDs.",
+          "Check empty, missing and duplicate cases before reporting a summary."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "Required column absent: inspect the schema and source identifiers.",
+        "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+        "ValueError": "Check CSV formatting and nonnumeric measurements.",
+        "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Unfamiliar transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I07-G03",
+      "title": "Select rows and columns without losing IDs",
+      "competencies": [
+        "053"
+      ],
+      "why": "Filtering must keep field identities attached to their numerical values.",
+      "explain": [
+        "`.loc` selects by labels and conditions; `.iloc` selects by integer positions. They are not interchangeable after filtering or reindexing.",
+        "Select both field IDs and measurement columns when creating a reporting table, rather than generating a detached list of intensities.",
+        "Index position is not biological replicate identity. A new filtered table should be explicitly created from the original."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\ndf=pd.DataFrame({'field_id':['F1','F2','F3'],'score':[.9,.2,.8]})\nprint(df.loc[df.score>=.8,['field_id','score']].to_dict('records'))",
+        "predict": "Predict the table values and explain the input/record contract."
+      },
+      "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+      "walkthrough": [
+        "Identify the sample ID column, measurement types and possible missing data.",
+        "Predict the Pandas output, execute the example and change a realistic input.",
+        "Explain which data-quality choice would affect downstream biological interpretation."
+      ],
+      "investigate": [
+        "Try changed field identities, missing values or duplicate keys.",
+        "Check that original source records remain auditable.",
+        "Distinguish field-level metadata from independent biological units."
+      ],
+      "debug_task": "Identify a Pandas schema, identity or missingness bug in select rows and columns without losing ids and describe the changed input that reveals it.",
+      "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+      "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and modify the Pandas example.",
+          "starter_code": "# I07-G03 | LEARN | Select rows and columns without losing IDs\n# TASK: Predict, run and modify the Pandas example.\n\nimport pandas as pd\ndf=pd.DataFrame({'field_id':['F1','F2','F3'],'score':[.9,.2,.8]})\nprint(df.loc[df.score>=.8,['field_id','score']].to_dict('records'))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Build df from records and create selected=df.loc[df['score']>=minimum,['field_id','score']].copy(); set selected_ids and retained_count. Preserve records.",
+          "starter_code": "# I07-G03 | APPLY | Select rows and columns without losing IDs\n# TASK: Build df from records and create\n#   selected=df.loc[df['score']>=minimum,['field_id','score']].copy(); set\n#   selected_ids and retained_count. Preserve records.\n# INPUTS: records, minimum\n\n",
+          "preview_inputs": {
+            "records": [
+              {
+                "field_id": "F1",
+                "score": 0.9
+              },
+              {
+                "field_id": "F2",
+                "score": 0.4
+              },
+              {
+                "field_id": "F3",
+                "score": 0.8
+              }
+            ],
+            "minimum": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "field_id": "F1",
+                    "score": 0.9
+                  },
+                  {
+                    "field_id": "F2",
+                    "score": 0.4
+                  },
+                  {
+                    "field_id": "F3",
+                    "score": 0.8
+                  }
+                ],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "selected_ids==['F1','F3']",
+                "retained_count==2",
+                "selected.columns.tolist()==['field_id','score']"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "field_id": "A",
+                    "score": 0
+                  }
+                ],
+                "minimum": 0
+              },
+              "assertions": [
+                "selected_ids==['A']",
+                "retained_count==1"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "field_id": "A",
+                    "score": 0.2
+                  }
+                ],
+                "minimum": 0.5
+              },
+              "assertions": [
+                "selected_ids==[]",
+                "retained_count==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Select both field IDs and measurement columns when creating a reporting table, rather than generating a detached list of intensities.",
+            "probe": "Which source identity, missing value or duplicate would change the result of select rows and columns without losing ids?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for select rows and columns without losing ids."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Create df from sample_records, get first_record=df.iloc[0].to_dict() if nonempty else None; use .loc to select records whose channel == wanted_channel and store matching_ids.",
+          "starter_code": "# I07-G03 | PROVE | Select rows and columns without losing IDs\n# TASK: Create df from sample_records, get first_record=df.iloc[0].to_dict() if\n#   nonempty else None; use .loc to select records whose channel ==\n#   wanted_channel and store matching_ids.\n# INPUTS: sample_records, wanted_channel\n\n",
+          "preview_inputs": {
+            "sample_records": [
+              {
+                "id": "A",
+                "channel": "GFP"
+              },
+              {
+                "id": "B",
+                "channel": "DAPI"
+              }
+            ],
+            "wanted_channel": "GFP"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample_records": [
+                  {
+                    "id": "A",
+                    "channel": "GFP"
+                  },
+                  {
+                    "id": "B",
+                    "channel": "DAPI"
+                  }
+                ],
+                "wanted_channel": "GFP"
+              },
+              "assertions": [
+                "first_record=={'id':'A','channel':'GFP'}",
+                "matching_ids==['A']"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_records": [
+                  {
+                    "id": "X",
+                    "channel": "RFP"
+                  }
+                ],
+                "wanted_channel": "GFP"
+              },
+              "assertions": [
+                "matching_ids==[]",
+                "first_record['id']=='X'"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_records": [],
+                "wanted_channel": "GFP"
+              },
+              "assertions": [
+                "first_record is None",
+                "matching_ids==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Select both field IDs and measurement columns when creating a reporting table, rather than generating a detached list of intensities.",
+            "probe": "Which source identity, missing value or duplicate would change the result of select rows and columns without losing ids?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for select rows and columns without losing ids."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use explicit DataFrame column names and preserve source IDs.",
+          "Check empty, missing and duplicate cases before reporting a summary."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "Required column absent: inspect the schema and source identifiers.",
+        "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+        "ValueError": "Check CSV formatting and nonnumeric measurements.",
+        "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Unfamiliar transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I07-G04",
+      "title": "Validate a scientific table schema",
+      "competencies": [
+        "054"
+      ],
+      "why": "A table missing its specimen or measurement columns should fail explicitly, not silently merge incorrectly.",
+      "explain": [
+        "Schema checking compares required field names to DataFrame columns, records missing columns and avoids KeyError.",
+        "Type validation should check whether numeric values can be converted without losing source strings or inventing measurements.",
+        "A schema is a computational contract; correct headers do not guarantee real instrument provenance."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\ndf=pd.DataFrame({'sample_id':['A'],'score':[.9]})\nprint(set(['sample_id','score']).issubset(df.columns))",
+        "predict": "Predict the table values and explain the input/record contract."
+      },
+      "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+      "walkthrough": [
+        "Identify the sample ID column, measurement types and possible missing data.",
+        "Predict the Pandas output, execute the example and change a realistic input.",
+        "Explain which data-quality choice would affect downstream biological interpretation."
+      ],
+      "investigate": [
+        "Try changed field identities, missing values or duplicate keys.",
+        "Check that original source records remain auditable.",
+        "Distinguish field-level metadata from independent biological units."
+      ],
+      "debug_task": "Identify a Pandas schema, identity or missingness bug in validate a scientific table schema and describe the changed input that reveals it.",
+      "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+      "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and modify the Pandas example.",
+          "starter_code": "# I07-G04 | LEARN | Validate a scientific table schema\n# TASK: Predict, run and modify the Pandas example.\n\nimport pandas as pd\ndf=pd.DataFrame({'sample_id':['A'],'score':[.9]})\nprint(set(['sample_id','score']).issubset(df.columns))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Create df from records, and validate required_columns. Set missing_columns in required order and schema_ok. Empty records may lack columns.",
+          "starter_code": "# I07-G04 | APPLY | Validate a scientific table schema\n# TASK: Create df from records, and validate required_columns. Set\n#   missing_columns in required order and schema_ok. Empty records may lack\n#   columns.\n# INPUTS: records, required_columns\n\n",
+          "preview_inputs": {
+            "records": [
+              {
+                "sample_id": "A",
+                "score": 0.9
+              }
+            ],
+            "required_columns": [
+              "sample_id",
+              "score"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "sample_id": "A",
+                    "score": 0.9
+                  }
+                ],
+                "required_columns": [
+                  "sample_id",
+                  "score"
+                ]
+              },
+              "assertions": [
+                "schema_ok is True",
+                "missing_columns==[]"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "sample_id": "X"
+                  }
+                ],
+                "required_columns": [
+                  "sample_id",
+                  "score"
+                ]
+              },
+              "assertions": [
+                "schema_ok is False",
+                "missing_columns==['score']"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [],
+                "required_columns": [
+                  "id",
+                  "value"
+                ]
+              },
+              "assertions": [
+                "schema_ok is False",
+                "missing_columns==['id','value']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Type validation should check whether numeric values can be converted without losing source strings or inventing measurements.",
+            "probe": "Which source identity, missing value or duplicate would change the result of validate a scientific table schema?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for validate a scientific table schema."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given DataFrame from row_data and must_have columns, create report={'ok':bool,'missing':[names]} and print it; validate without referencing columns that do not exist.",
+          "starter_code": "# I07-G04 | PROVE | Validate a scientific table schema\n# TASK: Given DataFrame from row_data and must_have columns, create\n#   report={'ok':bool,'missing':[names]} and print it; validate without\n#   referencing columns that do not exist.\n# INPUTS: row_data, must_have\n\n",
+          "preview_inputs": {
+            "row_data": [
+              {
+                "field_id": "F1",
+                "channel": "GFP",
+                "score": 0.8
+              }
+            ],
+            "must_have": [
+              "field_id",
+              "channel",
+              "score"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "row_data": [
+                  {
+                    "field_id": "F1",
+                    "channel": "GFP",
+                    "score": 0.8
+                  }
+                ],
+                "must_have": [
+                  "field_id",
+                  "channel",
+                  "score"
+                ]
+              },
+              "assertions": [
+                "report=={'ok':True,'missing':[]}"
+              ]
+            },
+            {
+              "inputs": {
+                "row_data": [
+                  {
+                    "field_id": "F1",
+                    "score": 0.8
+                  }
+                ],
+                "must_have": [
+                  "field_id",
+                  "channel",
+                  "score"
+                ]
+              },
+              "assertions": [
+                "report=={'ok':False,'missing':['channel']}"
+              ]
+            },
+            {
+              "inputs": {
+                "row_data": [],
+                "must_have": [
+                  "a"
+                ]
+              },
+              "assertions": [
+                "report=={'ok':False,'missing':['a']}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Type validation should check whether numeric values can be converted without losing source strings or inventing measurements.",
+            "probe": "Which source identity, missing value or duplicate would change the result of validate a scientific table schema?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for validate a scientific table schema."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use explicit DataFrame column names and preserve source IDs.",
+          "Check empty, missing and duplicate cases before reporting a summary."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "Required column absent: inspect the schema and source identifiers.",
+        "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+        "ValueError": "Check CSV formatting and nonnumeric measurements.",
+        "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Unfamiliar transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I07-G05",
+      "title": "Normalize only allowed sample-ID whitespace",
+      "competencies": [
+        "055"
+      ],
+      "why": "Silent case conversion can create false matches or merge distinct genotypes.",
+      "explain": [
+        "Specimen names may be case-sensitive. `.str.strip()` removes external accidental whitespace without inventing an ID change policy.",
+        "Preserve original ID in a `raw_id` column for auditing and create a separate `clean_id` field.",
+        "A normalized text match does not verify that the physical specimen was labeled correctly during acquisition."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\ndf=pd.DataFrame({'raw_id':[' N2 ','mutA ','muta']})\ndf['clean_id']=df.raw_id.str.strip()\nprint(df.clean_id.tolist())",
+        "predict": "Predict the table values and explain the input/record contract."
+      },
+      "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+      "walkthrough": [
+        "Identify the sample ID column, measurement types and possible missing data.",
+        "Predict the Pandas output, execute the example and change a realistic input.",
+        "Explain which data-quality choice would affect downstream biological interpretation."
+      ],
+      "investigate": [
+        "Try changed field identities, missing values or duplicate keys.",
+        "Check that original source records remain auditable.",
+        "Distinguish field-level metadata from independent biological units."
+      ],
+      "debug_task": "Identify a Pandas schema, identity or missingness bug in normalize only allowed sample-id whitespace and describe the changed input that reveals it.",
+      "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+      "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and modify the Pandas example.",
+          "starter_code": "# I07-G05 | LEARN | Normalize only allowed sample-ID whitespace\n# TASK: Predict, run and modify the Pandas example.\n\nimport pandas as pd\ndf=pd.DataFrame({'raw_id':[' N2 ','mutA ','muta']})\ndf['clean_id']=df.raw_id.str.strip()\nprint(df.clean_id.tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Create DataFrame with raw_id from raw_ids, clean_id as trimmed exterior whitespace only; output clean_ids list and changed_count. Preserve case.",
+          "starter_code": "# I07-G05 | APPLY | Normalize only allowed sample-ID whitespace\n# TASK: Create DataFrame with raw_id from raw_ids, clean_id as trimmed exterior\n#   whitespace only; output clean_ids list and changed_count. Preserve case.\n# INPUTS: raw_ids\n\n",
+          "preview_inputs": {
+            "raw_ids": [
+              " N2 ",
+              "mutA ",
+              "muta"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "raw_ids": [
+                  " N2 ",
+                  "mutA ",
+                  "muta"
+                ]
+              },
+              "assertions": [
+                "clean_ids==['N2','mutA','muta']",
+                "changed_count==2",
+                "df['raw_id'].tolist()==raw_ids"
+              ]
+            },
+            {
+              "inputs": {
+                "raw_ids": [
+                  "A",
+                  " B"
+                ]
+              },
+              "assertions": [
+                "clean_ids==['A','B']",
+                "changed_count==1"
+              ]
+            },
+            {
+              "inputs": {
+                "raw_ids": []
+              },
+              "assertions": [
+                "clean_ids==[]",
+                "changed_count==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Preserve original ID in a `raw_id` column for auditing and create a separate `clean_id` field.",
+            "probe": "Which source identity, missing value or duplicate would change the result of normalize only allowed sample-id whitespace?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for normalize only allowed sample-id whitespace."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For acquisition_ids, build table with original_id and normalized_id (strip exterior spaces). Set collisions for normalized IDs appearing more than once, in first duplicated-ID order.",
+          "starter_code": "# I07-G05 | PROVE | Normalize only allowed sample-ID whitespace\n# TASK: For acquisition_ids, build table with original_id and normalized_id\n#   (strip exterior spaces). Set collisions for normalized IDs appearing more\n#   than once, in first duplicated-ID order.\n# INPUTS: acquisition_ids\n\n",
+          "preview_inputs": {
+            "acquisition_ids": [
+              " F01",
+              "F01 ",
+              "F02"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "acquisition_ids": [
+                  " F01",
+                  "F01 ",
+                  "F02"
+                ]
+              },
+              "assertions": [
+                "table['original_id'].tolist()==acquisition_ids",
+                "collisions==['F01']"
+              ]
+            },
+            {
+              "inputs": {
+                "acquisition_ids": [
+                  "A",
+                  "B"
+                ]
+              },
+              "assertions": [
+                "collisions==[]"
+              ]
+            },
+            {
+              "inputs": {
+                "acquisition_ids": [
+                  "a",
+                  "A"
+                ]
+              },
+              "assertions": [
+                "collisions==[]",
+                "table['normalized_id'].tolist()==['a','A']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Preserve original ID in a `raw_id` column for auditing and create a separate `clean_id` field.",
+            "probe": "Which source identity, missing value or duplicate would change the result of normalize only allowed sample-id whitespace?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for normalize only allowed sample-id whitespace."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use explicit DataFrame column names and preserve source IDs.",
+          "Check empty, missing and duplicate cases before reporting a summary."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "Required column absent: inspect the schema and source identifiers.",
+        "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+        "ValueError": "Check CSV formatting and nonnumeric measurements.",
+        "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Unfamiliar transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I07-G06",
+      "title": "Audit duplicate and conflicting sample keys",
+      "competencies": [
+        "056"
+      ],
+      "why": "Repeated keys can duplicate quantitative results during merges and hide mislabeled treatment groups.",
+      "explain": [
+        "`duplicated` flags repeated identifiers while preserving all source rows. A duplicate may be harmless technical repetition or a serious identity conflict.",
+        "Compare metadata across rows with the same sample key: two different conditions for one ID require investigation rather than automatic resolution.",
+        "Do not drop duplicate rows before assessing biological units, replicate structure and experimental provenance."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\ndf=pd.DataFrame({'id':['A','A','B'],'condition':['ctrl','heat','ctrl']})\nprint(df.loc[df.id.duplicated(),'id'].tolist())",
+        "predict": "Predict the table values and explain the input/record contract."
+      },
+      "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+      "walkthrough": [
+        "Identify the sample ID column, measurement types and possible missing data.",
+        "Predict the Pandas output, execute the example and change a realistic input.",
+        "Explain which data-quality choice would affect downstream biological interpretation."
+      ],
+      "investigate": [
+        "Try changed field identities, missing values or duplicate keys.",
+        "Check that original source records remain auditable.",
+        "Distinguish field-level metadata from independent biological units."
+      ],
+      "debug_task": "Identify a Pandas schema, identity or missingness bug in audit duplicate and conflicting sample keys and describe the changed input that reveals it.",
+      "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+      "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and modify the Pandas example.",
+          "starter_code": "# I07-G06 | LEARN | Audit duplicate and conflicting sample keys\n# TASK: Predict, run and modify the Pandas example.\n\nimport pandas as pd\ndf=pd.DataFrame({'id':['A','A','B'],'condition':['ctrl','heat','ctrl']})\nprint(df.loc[df.id.duplicated(),'id'].tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Create df from records. Set duplicate_ids with unique IDs occurring more than once, and conflicting_ids with same ID but >1 distinct condition, both in first-appearance order.",
+          "starter_code": "# I07-G06 | APPLY | Audit duplicate and conflicting sample keys\n# TASK: Create df from records. Set duplicate_ids with unique IDs occurring more\n#   than once, and conflicting_ids with same ID but >1 distinct condition, both\n#   in first-appearance order.\n# INPUTS: records\n\n",
+          "preview_inputs": {
+            "records": [
+              {
+                "id": "A",
+                "condition": "ctrl"
+              },
+              {
+                "id": "A",
+                "condition": "heat"
+              },
+              {
+                "id": "B",
+                "condition": "ctrl"
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "id": "A",
+                    "condition": "ctrl"
+                  },
+                  {
+                    "id": "A",
+                    "condition": "heat"
+                  },
+                  {
+                    "id": "B",
+                    "condition": "ctrl"
+                  }
+                ]
+              },
+              "assertions": [
+                "duplicate_ids==['A']",
+                "conflicting_ids==['A']"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "id": "A",
+                    "condition": "ctrl"
+                  },
+                  {
+                    "id": "A",
+                    "condition": "ctrl"
+                  }
+                ]
+              },
+              "assertions": [
+                "duplicate_ids==['A']",
+                "conflicting_ids==[]"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "id": "X",
+                    "condition": "a"
+                  },
+                  {
+                    "id": "Y",
+                    "condition": "b"
+                  },
+                  {
+                    "id": "X",
+                    "condition": "a"
+                  }
+                ]
+              },
+              "assertions": [
+                "duplicate_ids==['X']",
+                "conflicting_ids==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Compare metadata across rows with the same sample key: two different conditions for one ID require investigation rather than automatic resolution.",
+            "probe": "Which source identity, missing value or duplicate would change the result of audit duplicate and conflicting sample keys?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for audit duplicate and conflicting sample keys."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For field_rows of [field_id,channel] records, set repeated list for duplicated field_id and ambiguous list if an ID has >1 channel. Preserve input order and unique outputs.",
+          "starter_code": "# I07-G06 | PROVE | Audit duplicate and conflicting sample keys\n# TASK: For field_rows of [field_id,channel] records, set repeated list for\n#   duplicated field_id and ambiguous list if an ID has >1 channel. Preserve\n#   input order and unique outputs.\n# INPUTS: field_rows\n\n",
+          "preview_inputs": {
+            "field_rows": [
+              {
+                "field_id": "F1",
+                "channel": "GFP"
+              },
+              {
+                "field_id": "F1",
+                "channel": "DAPI"
+              },
+              {
+                "field_id": "F2",
+                "channel": "GFP"
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_rows": [
+                  {
+                    "field_id": "F1",
+                    "channel": "GFP"
+                  },
+                  {
+                    "field_id": "F1",
+                    "channel": "DAPI"
+                  },
+                  {
+                    "field_id": "F2",
+                    "channel": "GFP"
+                  }
+                ]
+              },
+              "assertions": [
+                "repeated==['F1']",
+                "ambiguous==['F1']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_rows": [
+                  {
+                    "field_id": "X",
+                    "channel": "GFP"
+                  },
+                  {
+                    "field_id": "X",
+                    "channel": "GFP"
+                  }
+                ]
+              },
+              "assertions": [
+                "repeated==['X']",
+                "ambiguous==[]"
+              ]
+            },
+            {
+              "inputs": {
+                "field_rows": []
+              },
+              "assertions": [
+                "repeated==[]",
+                "ambiguous==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Compare metadata across rows with the same sample key: two different conditions for one ID require investigation rather than automatic resolution.",
+            "probe": "Which source identity, missing value or duplicate would change the result of audit duplicate and conflicting sample keys?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for audit duplicate and conflicting sample keys."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use explicit DataFrame column names and preserve source IDs.",
+          "Check empty, missing and duplicate cases before reporting a summary."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "Required column absent: inspect the schema and source identifiers.",
+        "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+        "ValueError": "Check CSV formatting and nonnumeric measurements.",
+        "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Unfamiliar transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I07-G07",
+      "title": "Preserve missing measurements explicitly",
+      "competencies": [
+        "057"
+      ],
+      "why": "Dropping rows with absent measurements can bias a scientific report and erase identifiable imaging fields.",
+      "explain": [
+        "Pandas `isna` detects missing values, while numerical zero remains a valid recorded value.",
+        "Compute separate lists of observed and missing fields before filtering. Keep an audit table with all source IDs.",
+        "Missingness may depend on acquisition or biological condition; a convenient `.dropna()` is not automatically a scientifically justified exclusion."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\ndf=pd.DataFrame({'id':['F1','F2'],'score':[0,None]})\nprint(df.score.isna().tolist())",
+        "predict": "Predict the table values and explain the input/record contract."
+      },
+      "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+      "walkthrough": [
+        "Identify the sample ID column, measurement types and possible missing data.",
+        "Predict the Pandas output, execute the example and change a realistic input.",
+        "Explain which data-quality choice would affect downstream biological interpretation."
+      ],
+      "investigate": [
+        "Try changed field identities, missing values or duplicate keys.",
+        "Check that original source records remain auditable.",
+        "Distinguish field-level metadata from independent biological units."
+      ],
+      "debug_task": "Identify a Pandas schema, identity or missingness bug in preserve missing measurements explicitly and describe the changed input that reveals it.",
+      "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+      "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and modify the Pandas example.",
+          "starter_code": "# I07-G07 | LEARN | Preserve missing measurements explicitly\n# TASK: Predict, run and modify the Pandas example.\n\nimport pandas as pd\ndf=pd.DataFrame({'id':['F1','F2'],'score':[0,None]})\nprint(df.score.isna().tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Build df from records, set missing_ids for score NaN/None, observed_ids for nonmissing score, missing_count and preserved_rows. Do not drop original records.",
+          "starter_code": "# I07-G07 | APPLY | Preserve missing measurements explicitly\n# TASK: Build df from records, set missing_ids for score NaN/None, observed_ids\n#   for nonmissing score, missing_count and preserved_rows. Do not drop original\n#   records.\n# INPUTS: records\n\n",
+          "preview_inputs": {
+            "records": [
+              {
+                "id": "F1",
+                "score": 0
+              },
+              {
+                "id": "F2",
+                "score": null
+              },
+              {
+                "id": "F3",
+                "score": 0.7
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "id": "F1",
+                    "score": 0
+                  },
+                  {
+                    "id": "F2",
+                    "score": null
+                  },
+                  {
+                    "id": "F3",
+                    "score": 0.7
+                  }
+                ]
+              },
+              "assertions": [
+                "missing_ids==['F2']",
+                "observed_ids==['F1','F3']",
+                "missing_count==1",
+                "preserved_rows==3"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "id": "X",
+                    "score": null
+                  }
+                ]
+              },
+              "assertions": [
+                "missing_ids==['X']",
+                "observed_ids==[]"
+              ]
+            },
+            {
+              "inputs": {
+                "records": []
+              },
+              "assertions": [
+                "missing_ids==[]",
+                "preserved_rows==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Compute separate lists of observed and missing fields before filtering. Keep an audit table with all source IDs.",
+            "probe": "Which source identity, missing value or duplicate would change the result of preserve missing measurements explicitly?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for preserve missing measurements explicitly."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From field_ids and readings, create audit DataFrame; assign status='MISSING' if None/NaN, 'ZERO' if 0, otherwise 'OBSERVED'. Set status_list and invalid_fraction=missing_count/rows (0 for empty).",
+          "starter_code": "# I07-G07 | PROVE | Preserve missing measurements explicitly\n# TASK: From field_ids and readings, create audit DataFrame; assign\n#   status='MISSING' if None/NaN, 'ZERO' if 0, otherwise 'OBSERVED'. Set\n#   status_list and invalid_fraction=missing_count/rows (0 for empty).\n# INPUTS: field_ids, readings\n\n",
+          "preview_inputs": {
+            "field_ids": [
+              "A",
+              "B",
+              "C"
+            ],
+            "readings": [
+              0,
+              null,
+              2
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_ids": [
+                  "A",
+                  "B",
+                  "C"
+                ],
+                "readings": [
+                  0,
+                  null,
+                  2
+                ]
+              },
+              "assertions": [
+                "status_list==['ZERO','MISSING','OBSERVED']",
+                "invalid_fraction==1/3"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [
+                  "A"
+                ],
+                "readings": [
+                  null
+                ]
+              },
+              "assertions": [
+                "status_list==['MISSING']",
+                "invalid_fraction==1"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [],
+                "readings": []
+              },
+              "assertions": [
+                "status_list==[]",
+                "invalid_fraction==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Compute separate lists of observed and missing fields before filtering. Keep an audit table with all source IDs.",
+            "probe": "Which source identity, missing value or duplicate would change the result of preserve missing measurements explicitly?",
+            "check": "Preserve original rows and dtypes, check exact input names and output columns for preserve missing measurements explicitly."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use explicit DataFrame column names and preserve source IDs.",
+          "Check empty, missing and duplicate cases before reporting a summary."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "KeyError": "Required column absent: inspect the schema and source identifiers.",
+        "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+        "ValueError": "Check CSV formatting and nonnumeric measurements.",
+        "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Unfamiliar transfer, not certified mastery"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I07-CAPSTONE",
+    "title": "Build a source-preserving Pandas QC audit",
+    "competencies": [],
+    "why": "Valid tabular analysis must identify missing, duplicate and ambiguous records before any group comparison.",
+    "explain": [
+      "Build a DataFrame from changing acquisition records; keep source specimen IDs and conditions as documented.",
+      "Separate unique first-seen records from repeated IDs and missing numeric observations. Do not silently drop rows or infer biological replicates.",
+      "Summarize observed, missing and conflicting rows as a reproducible audit, not a biological effect-size calculation."
+    ],
+    "worked_example": {
+      "code": "import pandas as pd\nrows=[{'id':'F1','score':.8},{'id':'F2','score':None}]\ndf=pd.DataFrame(rows)\nprint(df.score.isna().tolist())",
+      "predict": "Predict the table values and explain the input/record contract."
+    },
+    "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+    "walkthrough": [
+      "Identify the sample ID column, measurement types and possible missing data.",
+      "Predict the Pandas output, execute the example and change a realistic input.",
+      "Explain which data-quality choice would affect downstream biological interpretation."
+    ],
+    "investigate": [
+      "Try changed field identities, missing values or duplicate keys.",
+      "Check that original source records remain auditable.",
+      "Distinguish field-level metadata from independent biological units."
+    ],
+    "debug_task": "Identify a Pandas schema, identity or missingness bug in build a source-preserving pandas qc audit and describe the changed input that reveals it.",
+    "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+    "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and investigate",
+        "description": "Predict, run and modify the Pandas example.",
+        "starter_code": "# I07-CAPSTONE | LEARN | Build a source-preserving Pandas QC audit\n# TASK: Predict, run and modify the Pandas example.\n\nimport pandas as pd\nrows=[{'id':'F1','score':.8},{'id':'F2','score':None}]\ndf=pd.DataFrame(rows)\nprint(df.score.isna().tolist())\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed data",
+        "description": "Build df from records id/condition/score. Output report={'rows':N,'missing':[unique IDs with missing score],'duplicates':[unique repeated IDs],'conflicts':[IDs with >1 condition]}. Print report; preserve original rows.",
+        "starter_code": "# I07-CAPSTONE | APPLY | Build a source-preserving Pandas QC audit\n# TASK: Build df from records id/condition/score. Output\n#   report={'rows':N,'missing':[unique IDs with missing\n#   score],'duplicates':[unique repeated IDs],'conflicts':[IDs with >1\n#   condition]}. Print report; preserve original rows.\n# INPUTS: records\n\n",
+        "preview_inputs": {
+          "records": [
+            {
+              "id": "A",
+              "condition": "ctrl",
+              "score": 0.8
+            },
+            {
+              "id": "A",
+              "condition": "heat",
+              "score": 0.9
+            },
+            {
+              "id": "B",
+              "condition": "ctrl",
+              "score": null
+            }
+          ]
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "records": [
+                {
+                  "id": "A",
+                  "condition": "ctrl",
+                  "score": 0.8
+                },
+                {
+                  "id": "A",
+                  "condition": "heat",
+                  "score": 0.9
+                },
+                {
+                  "id": "B",
+                  "condition": "ctrl",
+                  "score": null
+                }
+              ]
+            },
+            "assertions": [
+              "report=={'rows':3,'missing':['B'],'duplicates':['A'],'conflicts':['A']}"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                {
+                  "id": "X",
+                  "condition": "c",
+                  "score": 0
+                }
+              ]
+            },
+            "assertions": [
+              "report=={'rows':1,'missing':[],'duplicates':[],'conflicts':[]}"
+            ]
+          },
+          {
+            "inputs": {
+              "records": []
+            },
+            "assertions": [
+              "report=={'rows':0,'missing':[],'duplicates':[],'conflicts':[]}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Separate unique first-seen records from repeated IDs and missing numeric observations. Do not silently drop rows or infer biological replicates.",
+          "probe": "Which source identity, missing value or duplicate would change the result of build a source-preserving pandas qc audit?",
+          "check": "Preserve original rows and dtypes, check exact input names and output columns for build a source-preserving pandas qc audit."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "For rows with specimen_id,field_id,value, construct DataFrame and audit={'n':rows,'missing_fields':[IDs],'duplicate_fields':[unique field IDs]} without removing any records. Print audit.",
+        "starter_code": "# I07-CAPSTONE | PROVE | Build a source-preserving Pandas QC audit\n# TASK: For rows with specimen_id,field_id,value, construct DataFrame and\n#   audit={'n':rows,'missing_fields':[IDs],'duplicate_fields':[unique field IDs]}\n#   without removing any records. Print audit.\n# INPUTS: rows\n\n",
+        "preview_inputs": {
+          "rows": [
+            {
+              "specimen_id": "S1",
+              "field_id": "F1",
+              "value": 0.8
+            },
+            {
+              "specimen_id": "S1",
+              "field_id": "F1",
+              "value": 0.9
+            },
+            {
+              "specimen_id": "S2",
+              "field_id": "F2",
+              "value": null
+            }
+          ]
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "rows": [
+                {
+                  "specimen_id": "S1",
+                  "field_id": "F1",
+                  "value": 0.8
+                },
+                {
+                  "specimen_id": "S1",
+                  "field_id": "F1",
+                  "value": 0.9
+                },
+                {
+                  "specimen_id": "S2",
+                  "field_id": "F2",
+                  "value": null
+                }
+              ]
+            },
+            "assertions": [
+              "audit=={'n':3,'missing_fields':['F2'],'duplicate_fields':['F1']}"
+            ]
+          },
+          {
+            "inputs": {
+              "rows": []
+            },
+            "assertions": [
+              "audit=={'n':0,'missing_fields':[],'duplicate_fields':[]}"
+            ]
+          },
+          {
+            "inputs": {
+              "rows": [
+                {
+                  "specimen_id": "X",
+                  "field_id": "A",
+                  "value": 0
+                }
+              ]
+            },
+            "assertions": [
+              "audit=={'n':1,'missing_fields':[],'duplicate_fields':[]}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Separate unique first-seen records from repeated IDs and missing numeric observations. Do not silently drop rows or infer biological replicates.",
+          "probe": "Which source identity, missing value or duplicate would change the result of build a source-preserving pandas qc audit?",
+          "check": "Preserve original rows and dtypes, check exact input names and output columns for build a source-preserving pandas qc audit."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Use explicit DataFrame column names and preserve source IDs.",
+        "Check empty, missing and duplicate cases before reporting a summary."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "KeyError": "Required column absent: inspect the schema and source identifiers.",
+      "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+      "ValueError": "Check CSV formatting and nonnumeric measurements.",
+      "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+    },
+    "reflection_prompts": [
+      "Which source rows were preserved?",
+      "What is the true biological replicate unit?",
+      "Which exclusions and duplicates might bias later inference?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Unfamiliar transfer, not certified mastery"
+    },
+    "build_steps": [
+      "Import synthetic acquisition rows with explicit specimen and field IDs.",
+      "Validate required columns and preserve case-sensitive identities.",
+      "Find missing numerical measurements separately from recorded zeros.",
+      "Report duplicate and conflicting source keys without dropping rows.",
+      "Rebuild an independent audit for unfamiliar table layout."
+    ],
+    "assessment": {
+      "code": "PUBLIC_CHANGED_INPUT_PANDAS",
+      "scientific": "NO_BIOLOGICAL_REPLICATE_INFERENCE",
+      "independent": "NOT_AUTO_CERTIFIED"
+    }
+  },
+  "review": {
+    "id": "I07-REVIEW",
+    "title": "Reconstruct a metadata QC table independently",
+    "competencies": [],
+    "why": "Independent coding on a different table should retain source rows and missingness evidence.",
+    "explain": [
+      "Rebuild a table audit without prefilled solutions.",
+      "Reject duplicates or missing values explicitly; do not confuse missingness with numeric zero.",
+      "Defensible biological inference requires experimental units and acquisition provenance beyond a schema check."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the table values and explain the input/record contract."
+    },
+    "prediction_answer": "The DataFrame transformation follows explicit input columns. It does not establish physical sample identity or biological replicates.",
+    "walkthrough": [
+      "Identify the sample ID column, measurement types and possible missing data.",
+      "Predict the Pandas output, execute the example and change a realistic input.",
+      "Explain which data-quality choice would affect downstream biological interpretation."
+    ],
+    "investigate": [
+      "Try changed field identities, missing values or duplicate keys.",
+      "Check that original source records remain auditable.",
+      "Distinguish field-level metadata from independent biological units."
+    ],
+    "debug_task": "Identify a Pandas schema, identity or missingness bug in reconstruct a metadata qc table independently and describe the changed input that reveals it.",
+    "misconception": "A valid table schema or cleaned ID proves a biological specimen is correctly identified or an imaging field is a replicate.",
+    "scientific_boundary": "All tabular measurements are synthetic teaching examples; fields and images are not independent biological replicates. No calibrated raw-image measurements are inferred.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and investigate",
+        "description": "Recall a new Pandas data-quality task.",
+        "starter_code": "# I07-REVIEW | LEARN | Reconstruct a metadata QC table independently\n# TASK: Recall a new Pandas data-quality task.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed data",
+        "description": "Write pseudocode comments for validating IDs, missing values, schema and duplicate fields.",
+        "starter_code": "# I07-REVIEW | APPLY | Reconstruct a metadata QC table independently\n# TASK: Write pseudocode comments for validating IDs, missing values, schema and\n#   duplicate fields.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Reject duplicates or missing values explicitly; do not confuse missingness with numeric zero.",
+          "probe": "Which source identity, missing value or duplicate would change the result of reconstruct a metadata qc table independently?",
+          "check": "Preserve original rows and dtypes, check exact input names and output columns for reconstruct a metadata qc table independently."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Construct DataFrame from readings [id,score]; set kept IDs where score is not None and >=minimum and missing IDs where score None. Report {'kept':..., 'missing':..., 'rows':N}; print.",
+        "starter_code": "# I07-REVIEW | PROVE | Reconstruct a metadata QC table independently\n# TASK: Construct DataFrame from readings [id,score]; set kept IDs where score is\n#   not None and >=minimum and missing IDs where score None. Report {'kept':...,\n#   'missing':..., 'rows':N}; print.\n# INPUTS: readings, minimum\n\n",
+        "preview_inputs": {
+          "readings": [
+            [
+              "F1",
+              0.9
+            ],
+            [
+              "F2",
+              null
+            ],
+            [
+              "F3",
+              0.5
+            ]
+          ],
+          "minimum": 0.8
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "readings": [
+                [
+                  "F1",
+                  0.9
+                ],
+                [
+                  "F2",
+                  null
+                ],
+                [
+                  "F3",
+                  0.5
+                ]
+              ],
+              "minimum": 0.8
+            },
+            "assertions": [
+              "report=={'kept':['F1'],'missing':['F2'],'rows':3}"
+            ]
+          },
+          {
+            "inputs": {
+              "readings": [
+                [
+                  "X",
+                  0
+                ]
+              ],
+              "minimum": 0
+            },
+            "assertions": [
+              "report=={'kept':['X'],'missing':[],'rows':1}"
+            ]
+          },
+          {
+            "inputs": {
+              "readings": [],
+              "minimum": 0.5
+            },
+            "assertions": [
+              "report=={'kept':[],'missing':[],'rows':0}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Reject duplicates or missing values explicitly; do not confuse missingness with numeric zero.",
+          "probe": "Which source identity, missing value or duplicate would change the result of reconstruct a metadata qc table independently?",
+          "check": "Preserve original rows and dtypes, check exact input names and output columns for reconstruct a metadata qc table independently."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "KeyError": "Required column absent: inspect the schema and source identifiers.",
+      "TypeError": "Check missingness and explicit numeric dtypes before comparisons.",
+      "ValueError": "Check CSV formatting and nonnumeric measurements.",
+      "hardcoded": "Changed IDs and table rows must determine the result; avoid fixed sample labels."
+    },
+    "reflection_prompts": [
+      "Which source rows were preserved?",
+      "What is the true biological replicate unit?",
+      "Which exclusions and duplicates might bias later inference?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Unfamiliar transfer, not certified mastery"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "measurement_table_qc.py",
+    "brief": "A reproducible Pandas audit script preserving source identity, missing values, duplicates and schema failures.",
+    "status": "BROWSER_QA_PENDING"
+  }
+}
