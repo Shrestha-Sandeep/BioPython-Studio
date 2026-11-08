@@ -33,7 +33,7 @@ The foundation curriculum has working Python and introductory image analysis, bu
 
 ## First implemented slice
 
-See \`projects/advanced/a00/START_HERE.md\` for the independent desktop setup and \`projects/advanced/a01/README.md\` for the original TIFF/OME-TIFF image audit. The A01 tool refuses ambiguous T/C/Z selections, preserves original data bytes, returns SHA-256 and native pixel statistics, and never claims verified physical calibration. It uses the existing numpy + tifffile stack.
+See `projects/advanced/a00/START_HERE.md` for the independent desktop setup and `projects/advanced/a01/README.md` for the original TIFF/OME-TIFF image audit. The A01 tool refuses ambiguous T/C/Z selections, preserves original data bytes, returns SHA-256 and native pixel statistics, and never claims verified physical calibration. It uses the existing numpy + tifffile stack.
 
 ## What remains unverified
 
