@@ -129,6 +129,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--min-iou", type=float, default=0.5)
     args = parser.parse_args(argv)
     try:
+        if args.lock.resolve().is_relative_to(args.root.resolve()):
+            raise ValueError("Keep parameter lock outside the original dataset root")
+        if args.lock.resolve() == args.manifest.resolve():
+            raise ValueError("Refusing to overwrite the manifest with the parameter lock")
+        if args.config is not None and args.lock.resolve() == args.config.resolve():
+            raise ValueError("Refusing to overwrite the parameter configuration")
         if args.phase == "calibration":
             if args.config is None:
                 raise ValueError("--config is required for calibration")
