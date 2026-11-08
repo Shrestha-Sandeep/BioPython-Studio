@@ -1,0 +1,26 @@
+{
+  "A01-G01": {
+    "apply": "import numpy as np\nraw=np.arange(int(np.prod(data[\"shape\"])),dtype=np.uint16).reshape(data[\"shape\"])\nindex={\"Z\":data[\"z\"],\"C\":data[\"channel\"]}\nplane=raw[tuple(index.get(axis,slice(None)) for axis in data[\"axes\"])]\nresult={\"shape\":list(plane.shape),\"first\":int(plane[0,0]),\"last\":int(plane[-1,-1])}\nprint(result)",
+    "prove": "import numpy as np\nraw=np.arange(int(np.prod(data[\"shape\"])),dtype=np.uint16).reshape(data[\"shape\"])\nindex={\"Z\":data[\"z\"],\"C\":data[\"channel\"]}\nplane=raw[tuple(index.get(axis,slice(None)) for axis in data[\"axes\"])]\nresult={\"shape\":list(plane.shape),\"first\":int(plane[0,0]),\"last\":int(plane[-1,-1])}\nprint(result)"
+  },
+  "A01-G02": {
+    "apply": "import numpy as np\nraw=np.asarray(data[\"pixels\"],dtype=np.uint16)\ncorrected=np.maximum(raw.astype(float)-float(data[\"background\"]),0)\nresult={\"values\":corrected.tolist(),\"native_dtype\":str(raw.dtype)}\nprint(result)",
+    "prove": "import numpy as np\nraw=np.asarray(data[\"pixels\"],dtype=np.uint16)\ncorrected=np.maximum(raw.astype(float)-float(data[\"background\"]),0)\nresult={\"values\":corrected.tolist(),\"native_dtype\":str(raw.dtype)}\nprint(result)"
+  },
+  "A01-G03": {
+    "apply": "sx=data[\"pixel_x_um\"];sy=data[\"pixel_y_um\"]\nvalid=bool(data[\"verified\"]) and sx is not None and sy is not None and sx>0 and sy>0\nresult={\"area_um2\":float(data[\"area_px\"]*sx*sy) if valid else None,\"status\":\"verified\" if valid else \"unverified\"}\nprint(result)",
+    "prove": "sx=data[\"pixel_x_um\"];sy=data[\"pixel_y_um\"]\nvalid=bool(data[\"verified\"]) and sx is not None and sy is not None and sx>0 and sy>0\nresult={\"area_um2\":float(data[\"area_px\"]*sx*sy) if valid else None,\"status\":\"verified\" if valid else \"unverified\"}\nprint(result)"
+  },
+  "A01-G04": {
+    "apply": "import hashlib\nsource=bytes(data[\"bytes\"])\nresult={\"sha256\":hashlib.sha256(source).hexdigest(),\"byte_count\":len(source)}\nprint(result)",
+    "prove": "import hashlib\nsource=bytes(data[\"bytes\"])\nresult={\"sha256\":hashlib.sha256(source).hexdigest(),\"byte_count\":len(source)}\nprint(result)"
+  },
+  "A01-CAPSTONE": {
+    "apply": "import numpy as np\nraw=np.asarray(data[\"pixels\"],dtype=np.uint16).reshape(data[\"shape\"])\nindex={\"Z\":data[\"z\"],\"C\":data[\"channel\"]}\nplane=raw[tuple(index.get(a,slice(None)) for a in data[\"axes\"])]\nresult={\"plane_shape\":list(plane.shape),\"candidate_pixels\":int(np.count_nonzero(plane>data[\"threshold\"])),\"calibration_status\":\"verified\" if data[\"verified\"] else \"unverified\"}\nprint(result)",
+    "prove": "import numpy as np\nraw=np.asarray(data[\"pixels\"],dtype=np.uint16).reshape(data[\"shape\"])\nindex={\"Z\":data[\"z\"],\"C\":data[\"channel\"]}\nplane=raw[tuple(index.get(a,slice(None)) for a in data[\"axes\"])]\nresult={\"plane_shape\":list(plane.shape),\"candidate_pixels\":int(np.count_nonzero(plane>data[\"threshold\"])),\"calibration_status\":\"verified\" if data[\"verified\"] else \"unverified\"}\nprint(result)"
+  },
+  "A01-REVIEW": {
+    "apply": "import numpy as np\nraw=np.asarray(data[\"pixels\"]).reshape(data[\"shape\"])\nselection={\"Z\":data[\"z\"],\"C\":data[\"channel\"]}\nplane=raw[tuple(selection.get(a,slice(None)) for a in data[\"axes\"])]\nresult={\"shape\":list(plane.shape),\"sum\":int(plane.sum()),\"requires_calibration\":not bool(data[\"verified\"])}\nprint(result)",
+    "prove": "import numpy as np\nraw=np.asarray(data[\"pixels\"]).reshape(data[\"shape\"])\nselection={\"Z\":data[\"z\"],\"C\":data[\"channel\"]}\nplane=raw[tuple(selection.get(a,slice(None)) for a in data[\"axes\"])]\nresult={\"shape\":list(plane.shape),\"sum\":int(plane.sum()),\"requires_calibration\":not bool(data[\"verified\"])}\nprint(result)"
+  }
+}
