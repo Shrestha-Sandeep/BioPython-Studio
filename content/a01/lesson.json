@@ -69,7 +69,7 @@
         "apply": {
           "title": "Apply to changing input data",
           "description": "Build a synthetic array from data.shape and data.axes. Select data.channel and data.z, return result={'shape':[Y,X],'first':int,'last':int}.",
-          "starter_code": "# A01-G01 | APPLY | Select channel and Z by named axes\n# TASK: Build a synthetic array from data.shape and data.axes. Select data.channel and data.z, return result={'shape':[Y,X],'first':int,'last':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A01-G01 | APPLY | Select channel and Z by named axes\n# TASK: Build a synthetic array from data.shape and data.axes. Select data.channel\n#   and data.z, return result={'shape':[Y,X],'first':int,'last':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "axes": "ZCYX",
@@ -134,7 +134,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Independently solve changed input without consulting the worked example: Build a synthetic array from data.shape and data.axes. Select data.channel and data.z, return result={'shape':[Y,X],'first':int,'last':int}.",
-          "starter_code": "# A01-G01 | PROVE | Select channel and Z by named axes\n# TASK: Build a synthetic array from data.shape and data.axes. Select data.channel and data.z, return result={'shape':[Y,X],'first':int,'last':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A01-G01 | PROVE | Select channel and Z by named axes\n# TASK: Build a synthetic array from data.shape and data.axes. Select data.channel\n#   and data.z, return result={'shape':[Y,X],'first':int,'last':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "axes": "CZYX",
@@ -247,7 +247,7 @@
         "apply": {
           "title": "Apply to changing input data",
           "description": "Subtract data.background from data.pixels without unsigned wraparound; result={'values':nonnegative float nested list,'native_dtype':'uint16'}.",
-          "starter_code": "# A01-G02 | APPLY | Protect 16-bit source values\n# TASK: Subtract data.background from data.pixels without unsigned wraparound; result={'values':nonnegative float nested list,'native_dtype':'uint16'}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A01-G02 | APPLY | Protect 16-bit source values\n# TASK: Subtract data.background from data.pixels without unsigned wraparound;\n#   result={'values':nonnegative float nested list,'native_dtype':'uint16'}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "pixels": [
@@ -316,7 +316,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Independently solve changed input without consulting the worked example: Subtract data.background from data.pixels without unsigned wraparound; result={'values':nonnegative float nested list,'native_dtype':'uint16'}.",
-          "starter_code": "# A01-G02 | PROVE | Protect 16-bit source values\n# TASK: Subtract data.background from data.pixels without unsigned wraparound; result={'values':nonnegative float nested list,'native_dtype':'uint16'}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A01-G02 | PROVE | Protect 16-bit source values\n# TASK: Subtract data.background from data.pixels without unsigned wraparound;\n#   result={'values':nonnegative float nested list,'native_dtype':'uint16'}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "pixels": [
@@ -437,7 +437,7 @@
         "apply": {
           "title": "Apply to changing input data",
           "description": "Use data.area_px and data scale fields. Return result={'area_um2':float or None,'status':'verified' or 'unverified'}; never use unverified pixel size.",
-          "starter_code": "# A01-G03 | APPLY | Treat scale as an unverified declaration\n# TASK: Use data.area_px and data scale fields. Return result={'area_um2':float or None,'status':'verified' or 'unverified'}; never use unverified pixel size.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A01-G03 | APPLY | Treat scale as an unverified declaration\n# TASK: Use data.area_px and data scale fields. Return result={'area_um2':float or\n#   None,'status':'verified' or 'unverified'}; never use unverified pixel size.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "area_px": 180,
@@ -485,7 +485,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Independently solve changed input without consulting the worked example: Use data.area_px and data scale fields. Return result={'area_um2':float or None,'status':'verified' or 'unverified'}; never use unverified pixel size.",
-          "starter_code": "# A01-G03 | PROVE | Treat scale as an unverified declaration\n# TASK: Use data.area_px and data scale fields. Return result={'area_um2':float or None,'status':'verified' or 'unverified'}; never use unverified pixel size.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A01-G03 | PROVE | Treat scale as an unverified declaration\n# TASK: Use data.area_px and data scale fields. Return result={'area_um2':float or\n#   None,'status':'verified' or 'unverified'}; never use unverified pixel size.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "area_px": 300,
@@ -581,7 +581,7 @@
         "apply": {
           "title": "Apply to changing input data",
           "description": "Compute SHA-256 of data.bytes (small synthetic byte list), returning result={'sha256':digest,'byte_count':int}.",
-          "starter_code": "# A01-G04 | APPLY | Fingerprint original source bytes\n# TASK: Compute SHA-256 of data.bytes (small synthetic byte list), returning result={'sha256':digest,'byte_count':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A01-G04 | APPLY | Fingerprint original source bytes\n# TASK: Compute SHA-256 of data.bytes (small synthetic byte list), returning\n#   result={'sha256':digest,'byte_count':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "bytes": [
@@ -637,7 +637,7 @@
         "prove": {
           "title": "Independent transfer",
           "description": "Independently solve changed input without consulting the worked example: Compute SHA-256 of data.bytes (small synthetic byte list), returning result={'sha256':digest,'byte_count':int}.",
-          "starter_code": "# A01-G04 | PROVE | Fingerprint original source bytes\n# TASK: Compute SHA-256 of data.bytes (small synthetic byte list), returning result={'sha256':digest,'byte_count':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "starter_code": "# A01-G04 | PROVE | Fingerprint original source bytes\n# TASK: Compute SHA-256 of data.bytes (small synthetic byte list), returning\n#   result={'sha256':digest,'byte_count':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "bytes": [
@@ -746,7 +746,7 @@
       "apply": {
         "title": "Apply to changing input data",
         "description": "From data.axes/shape/pixels select the requested Z/C plane; count pixels > data.threshold and return result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.",
-        "starter_code": "# A01-CAPSTONE | APPLY | Source-aware plane audit\n# TASK: From data.axes/shape/pixels select the requested Z/C plane; count pixels > data.threshold and return result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A01-CAPSTONE | APPLY | Source-aware plane audit\n# TASK: From data.axes/shape/pixels select the requested Z/C plane; count pixels >\n#   data.threshold and return\n#   result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "axes": "ZCYX",
@@ -895,7 +895,7 @@
       "prove": {
         "title": "Independent transfer",
         "description": "Independently solve changed input without consulting the worked example: From data.axes/shape/pixels select the requested Z/C plane; count pixels > data.threshold and return result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.",
-        "starter_code": "# A01-CAPSTONE | PROVE | Source-aware plane audit\n# TASK: From data.axes/shape/pixels select the requested Z/C plane; count pixels > data.threshold and return result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A01-CAPSTONE | PROVE | Source-aware plane audit\n# TASK: From data.axes/shape/pixels select the requested Z/C plane; count pixels >\n#   data.threshold and return\n#   result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "axes": "ZCYX",
@@ -1127,7 +1127,7 @@
       "apply": {
         "title": "Apply to changing input data",
         "description": "From data.axes/shape/pixels select Z/C and return result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved steps.",
-        "starter_code": "# A01-REVIEW | APPLY | Return later: independent native source audit\n# TASK: From data.axes/shape/pixels select Z/C and return result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved steps.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A01-REVIEW | APPLY | Return later: independent native source audit\n# TASK: From data.axes/shape/pixels select Z/C and return\n#   result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved\n#   steps.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "axes": "ZCYX",
@@ -1258,7 +1258,7 @@
       "prove": {
         "title": "Independent transfer",
         "description": "Independently solve changed input without consulting the worked example: From data.axes/shape/pixels select Z/C and return result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved steps.",
-        "starter_code": "# A01-REVIEW | PROVE | Return later: independent native source audit\n# TASK: From data.axes/shape/pixels select Z/C and return result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved steps.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A01-REVIEW | PROVE | Return later: independent native source audit\n# TASK: From data.axes/shape/pixels select Z/C and return\n#   result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved\n#   steps.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "axes": "CZYX",
