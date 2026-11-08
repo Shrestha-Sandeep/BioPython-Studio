@@ -84,6 +84,29 @@ jobs:
           cp "$OUT_ROOT/calibration_selection.json" artifacts/bbbc038/
           cp "$OUT_ROOT/frozen_parameters.json" artifacts/bbbc038/
           cp "$OUT_ROOT/official_test/benchmark_report.json" artifacts/bbbc038/
+          python - "$OUT_ROOT" <<'PY'
+          import json, shutil, sys
+          from pathlib import Path
+          out = Path(sys.argv[1])
+          results = json.loads((out / "REAL_BBBC038_RESULTS.json").read_text())
+          details = json.loads((out / "official_test" / "benchmark_report.json").read_text())
+          lookup = {r["sample_id"]: r for r in details["image_results"]}
+          worst = results["lowest_object_f1_images"][:6]
+          best = sorted(results["per_image"], key=lambda r: (-r["object_f1"], r["image_id"]))[:2]
+          targets = Path("artifacts/bbbc038/qc-overlays")
+          targets.mkdir(parents=True, exist_ok=True)
+          index = []
+          for kind, entries in (("worst", worst), ("best", best)):
+              for i, r in enumerate(entries, 1):
+                  source = out / "official_test" / lookup[r["image_id"]]["overlay"]
+                  dest = f"{kind}_{i}_{r['image_id'][:18]}.png"
+                  shutil.copy2(source, targets / dest)
+                  index.append({"group": kind, "rank": i,
+                                "image_id": r["image_id"], "object_f1": r["object_f1"],
+                                "pixel_iou": r["pixel_iou"], "truth": r["objects_reference"],
+                                "predicted": r["objects_predicted"], "overlay_file": dest})
+          (targets / "index.json").write_text(json.dumps(index, indent=2) + "\\n")
+          PY
           echo "## Real BBBC038 benchmark" >> "$GITHUB_STEP_SUMMARY"
           cat "$OUT_ROOT/REAL_BBBC038_RESULTS.md" >> "$GITHUB_STEP_SUMMARY"
       - name: Retain data provenance and real results, not proprietary images
