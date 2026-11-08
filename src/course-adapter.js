@@ -3,9 +3,9 @@
 (() => {
 const el=id=>document.getElementById(id);
 const P_IDS=["P01","P02","P03","P04","P05","P06"];
-const I_IDS=["I01"];
+const I_IDS=["I01","I02","I03","I04","I07","I08"];
 const IDS=[...P_IDS,...I_IDS];
-const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8};
+const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I07:7,I08:8};
 const KEYS=Object.fromEntries(IDS.map(id=>[id,"biopython."+id.toLowerCase()+".v1"]));
 const SELECT_KEY="biopython.course-selected.v1";
 const chapters={},states={};
