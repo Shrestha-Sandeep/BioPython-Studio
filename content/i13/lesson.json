@@ -3439,7 +3439,7 @@
   ],
   "capstone": {
     "id": "I13-CAPSTONE",
-    "title": "Integrate a real-image, source-aware analysis and visual overlay",
+    "title": "Integrate real-image analysis and overlay",
     "competencies": [],
     "why": "Make a complete reproducible source-aware numerical analysis, real figure and explicitly unverified candidate measurements.",
     "explain": [
@@ -3469,13 +3469,13 @@
       "learn": {
         "title": "Predict, run, investigate",
         "description": "Predict the observable output before running this independent demonstration.",
-        "starter_code": "# I13-CAPSTONE | LEARN | Integrate a real-image, source-aware analysis and visual overlay\n# TASK: Predict output and recall why a Boolean region is not biological\n#   proof.\n\n\nimport numpy as np\nprint(np.array([[0,1],[1,0]],bool).sum())\n",
+        "starter_code": "# I13-CAPSTONE | LEARN | Integrate real-image analysis and overlay\n# TASK: Predict output and recall why a Boolean region is not biological\n#   proof.\n\n\nimport numpy as np\nprint(np.array([[0,1],[1,0]],bool).sum())\n",
         "preview_inputs": {}
       },
       "apply": {
         "title": "Apply to changed inputs",
         "description": "Load image_path real RGB, crop 48×48 source component; segment by threshold, label 4-connected objects, filter by min_size, report candidate area, count, raw_calibrated=False and overlay using real Matplotlib.",
-        "starter_code": "# I13-CAPSTONE | APPLY | Integrate a real-image, source-aware analysis and visual overlay\n# TASK: Load image_path real RGB, crop 48×48 source component; segment by\n#   threshold, label 4-connected objects, filter by min_size, report\n#   candidate area, count, raw_calibrated=False and overlay using real\n#   Matplotlib.\n# INPUTS: image_path, y0, x0, component, threshold, min_size\n\n\n",
+        "starter_code": "# I13-CAPSTONE | APPLY | Integrate real-image analysis and overlay\n# TASK: Load image_path real RGB, crop 48×48 source component; segment by\n#   threshold, label 4-connected objects, filter by min_size, report\n#   candidate area, count, raw_calibrated=False and overlay using real\n#   Matplotlib.\n# INPUTS: image_path, y0, x0, component, threshold, min_size\n\n\n",
         "preview_inputs": {
           "image_path": "/home/pyodide/witz_published_figure.png",
           "y0": 0,
@@ -3543,7 +3543,7 @@
       "prove": {
         "title": "Independent transfer",
         "description": "Independently process the credited image from a new top/left/channel ROI with cutoff: report two candidate counts for cutoff and cutoff+15, n_pixels, source and verified=False.",
-        "starter_code": "# I13-CAPSTONE | PROVE | Integrate a real-image, source-aware analysis and visual overlay\n# TASK: Independently process the credited image from a new top/left/channel\n#   ROI with cutoff: report two candidate counts for cutoff and\n#   cutoff+15, n_pixels, source and verified=False.\n# INPUTS: image_path, top, left, band, cutoff, min_area\n\n\n",
+        "starter_code": "# I13-CAPSTONE | PROVE | Integrate real-image analysis and overlay\n# TASK: Independently process the credited image from a new top/left/channel\n#   ROI with cutoff: report two candidate counts for cutoff and\n#   cutoff+15, n_pixels, source and verified=False.\n# INPUTS: image_path, top, left, band, cutoff, min_area\n\n\n",
         "preview_inputs": {
           "image_path": "/home/pyodide/witz_published_figure.png",
           "top": 10,
@@ -3782,7 +3782,7 @@
   },
   "final_project": {
     "name": "i13_witz_rendered_roi_pipeline.py",
-    "brief": "Integrate a real-image, source-aware analysis and visual overlay",
+    "brief": "Integrate real-image analysis and overlay",
     "status": "INTEGRATED_LEARNER_PILOT"
   }
 }

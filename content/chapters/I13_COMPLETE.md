@@ -120,7 +120,7 @@ print(np.array([[0,100],[255,120]],dtype=np.uint8).shape)
 
 **Scientific limitation:** The bundled Witz/HPA PNG is rendered notebook artwork, not raw calibrated biological microscopy data; no validated nuclear or nuclear-edge localization measurement can be claimed.
 
-## I13-CAPSTONE — Integrate a real-image, source-aware analysis and visual overlay
+## I13-CAPSTONE — Integrate real-image analysis and overlay
 
 Make a complete reproducible source-aware numerical analysis, real figure and explicitly unverified candidate measurements.
 
