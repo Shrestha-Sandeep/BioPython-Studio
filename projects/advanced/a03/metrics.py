@@ -71,8 +71,13 @@ def evaluate_instances(truth: np.ndarray, prediction: np.ndarray, *,
             pred_lut[np.searchsorted(p_ids, v)] = i
         hits = np.bincount(true_lut[t_positions] * npred + pred_lut[p_positions],
                            minlength=nt * npred).reshape(nt, npred)
-        t_sizes = np.array([np.count_nonzero(t == v) for v in true_object_ids], dtype=np.float64)
-        p_sizes = np.array([np.count_nonzero(p == v) for v in pred_object_ids], dtype=np.float64)
+        # Count once over pixels: O(n_pixels + n_objects), not O(n_pixels*n_objects).
+        t_counts = np.bincount(t_idx.ravel(), minlength=len(t_ids))
+        p_counts = np.bincount(p_idx.ravel(), minlength=len(p_ids))
+        t_sizes = np.array([t_counts[np.searchsorted(t_ids, v)]
+                            for v in true_object_ids], dtype=np.float64)
+        p_sizes = np.array([p_counts[np.searchsorted(p_ids, v)]
+                            for v in pred_object_ids], dtype=np.float64)
         unions = t_sizes[:, None] + p_sizes[None, :] - hits
         overlap = np.divide(hits, unions, out=np.zeros_like(unions), where=unions > 0)
         valid = (overlap >= min_iou) & (hits > 0)
