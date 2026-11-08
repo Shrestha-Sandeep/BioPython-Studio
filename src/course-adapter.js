@@ -416,7 +416,7 @@ async function start(){
   chapter=chapters[activeId];state=states[activeId];
   rememberLast(activeId);
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
-  bridge()?.selectStage?.(stageOf(activeId));
+  if(stageOf(activeId)!=="Python")bridge()?.selectStage?.(stageOf(activeId));
   mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
   if(isImaging(activeId))bridge()?.ensureExampleImage?.();
   render();syncActivity();
