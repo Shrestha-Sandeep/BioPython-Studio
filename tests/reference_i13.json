@@ -1,0 +1,30 @@
+{
+  "I13-G01": {
+    "apply": "import numpy as np\na=np.asarray(data['image'],dtype=float)\nresult=np.maximum(a-data['background'],0)\nprint(str(result)[:500])",
+    "prove": "import numpy as np\na=np.asarray(sample['image'],float);y0,y1,x0,x1=sample['roi'];roi=a[y0:y1,x0:x1]\nresult={'shape':roi.shape,'mean':float(roi.mean()) if roi.size else None}\nprint(str(result)[:500])"
+  },
+  "I13-G02": {
+    "apply": "from collections import Counter\nids=[r['image_id'] for r in data['metadata']];cnt=Counter(ids)\nresult={'unique':all(v==1 for v in cnt.values()),'duplicates':sorted(k for k,v in cnt.items() if v>1)}\nprint(str(result)[:500])",
+    "prove": "from collections import Counter\nids=[r['image_id'] for r in sample['metadata']];duplicates=[k for k,v in Counter(ids).items() if v>1]\nif duplicates:result={'error':'duplicate_metadata','ids':sorted(duplicates)}\nelse:\n    lookup={r['image_id']:r for r in sample['metadata']}\n    rows=[{'image_id':m['image_id'],'animal':lookup[m['image_id']]['animal'],'value':m['value']} for m in sample['measurements'] if m['image_id'] in lookup]\n    missing=sorted(m['image_id'] for m in sample['measurements'] if m['image_id'] not in lookup)\n    result={'rows':rows,'unmatched':missing}\nprint(str(result)[:500])"
+  },
+  "I13-G03": {
+    "apply": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nfor r in data['records']:ax.scatter(0 if r['condition']=='control' else 1,r['value'])\nax.set(xlabel='Condition',ylabel='Per-animal synthetic observation (a.u.)')\nresult={'n':len(data['records'])}\nprint(str(result)[:500])",
+    "prove": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nfor j,c in enumerate(('control','treated')):\n    vals=[r['value'] for r in sample['records'] if r['condition']==c]\n    ax.scatter([j]*len(vals),vals,label=c)\nax.set(xlabel='Condition',ylabel='Biological units (a.u.)');ax.legend()\nresult={'n':len(sample['records']),'method':'replicate_points'}\nprint(str(result)[:500])"
+  },
+  "I13-G04": {
+    "apply": "result={'source':data['source'],'calibrated':False,'segmentation_validated':False,'area_unit':'pixel²' if data['scale_um'] is None else 'synthetic µm²'}\nprint(str(result)[:500])",
+    "prove": "import numpy as np\na=np.asarray(sample['image'],float)\nresult={'counts':[int((a>sample['threshold']-10).sum()),int((a>sample['threshold']+10).sum())],'scale_note':'unverified'}\nprint(str(result)[:500])"
+  },
+  "I13-G05": {
+    "apply": "from PIL import Image\nimport numpy as np\nfrom skimage.measure import label,regionprops\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[y0:y0+48,x0:x0+48,component]\nlab=label(roi>threshold,connectivity=1)\nareas=sorted(int(r.area) for r in regionprops(lab) if r.area>=min_size)\nresult={'count':len(areas),'areas':areas,'calibrated':False,'source':'Witz/HPA rendered PNG'}\nprint(str(result)[:500])",
+    "prove": "from PIL import Image\nimport numpy as np\nfrom skimage.measure import label,regionprops\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[top:top+48,left:left+48,band]\nmask=roi>cutoff\nlab=label(mask,connectivity=1)\nresult={'fraction':float(mask.mean()),'count':sum(r.area>=min_area for r in regionprops(lab)),'raw':False}\nprint(str(result)[:500])"
+  },
+  "I13-CAPSTONE": {
+    "apply": "from PIL import Image\nimport numpy as np\nfrom skimage.measure import label,regionprops\nimport matplotlib.pyplot as plt\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[y0:y0+48,x0:x0+48,component].astype(float)\nmask=roi>threshold;lab=label(mask,connectivity=1)\nareas=sorted(int(r.area) for r in regionprops(lab) if r.area>=min_size)\nresult={'source':'Witz/HPA published RGB','raw_calibrated':False,'candidate_count':len(areas),'areas_px':areas,'roi_shape':roi.shape,'threshold':threshold}\nfig,ax=plt.subplots();ax.imshow(roi,cmap='gray');ax.imshow(np.ma.masked_where(~mask,mask),cmap='Reds',alpha=.25);ax.set_title('Algorithmic candidates — not verified nuclei');ax.set_axis_off()\nprint(result)",
+    "prove": "from PIL import Image\nimport numpy as np\nfrom skimage.measure import label,regionprops\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[top:top+48,left:left+48,band]\ndef count(t):\n    return sum(r.area>=min_area for r in regionprops(label(roi>t,connectivity=1)))\nresult={'candidate_counts':[count(cutoff),count(cutoff+15)],'n_pixels':roi.size,'source':'credited rendered RGB','verified':False}\nprint(result)"
+  },
+  "I13-REVIEW": {
+    "apply": "",
+    "prove": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[top:top+48,left:left+48,band]\nresult={'fractions':[float((roi>cutoff-15).mean()),float((roi>cutoff+15).mean())],'verified':False}\nprint(result)"
+  }
+}

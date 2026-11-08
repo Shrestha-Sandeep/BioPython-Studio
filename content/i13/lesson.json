@@ -1,0 +1,3788 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I13",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_REAL_SCIENTIFIC_PYTHON",
+  "title": "Build the complete image-analysis pipeline",
+  "competencies": [
+    "150",
+    "151",
+    "152",
+    "153",
+    "154"
+  ],
+  "intro": "Integrate Python debugging, metadata integrity, interpretable figures, source provenance and genuine credited image-pixel processing. A faithful *method exercise*, not a reproduced raw-data biological claim.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "REAL_CREDITED_PUBLISHED_RENDERED_RGB_WITH_SYNTHETIC_METADATA",
+    "caution": "The bundled Witz/HPA PNG is rendered notebook artwork, not raw calibrated biological microscopy data; no validated nuclear or nuclear-edge localization measurement can be claimed."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review.",
+  "goals": [
+    {
+      "id": "I13-G01",
+      "title": "Debug an unfamiliar scientific image script",
+      "competencies": [
+        "150"
+      ],
+      "why": "Fix numeric overflow and axis mistakes rather than hiding wrong output.",
+      "explain": [
+        "uint8 arithmetic can wrap or clip; explicitly cast to float before subtraction.",
+        "Rows are y and columns are x; swapping them silently shifts the ROI.",
+        "Technical outputs are inspected using changed source records and parameters; scientific interpretations remain conditional on raw images, acquisition metadata and manual validation."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nprint((np.array([250],np.uint8)+np.array([20],np.uint8)).tolist())",
+        "predict": "Predict the numerical result and state why it does not establish an experimental finding."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Locate an error in source dimensions, identity matching, thresholding or denominator selection.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "The bundled Witz/HPA PNG is rendered notebook artwork, not raw calibrated biological microscopy data; no validated nuclear or nuclear-edge localization measurement can be claimed.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I13-G01 | LEARN | Debug an unfamiliar scientific image script\n# TASK: Predict, run and inspect this worked example.\n\n\nimport numpy as np\nprint((np.array([250],np.uint8)+np.array([20],np.uint8)).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Convert data.image to float before background subtraction; return nonnegative corrected NumPy array result.",
+          "starter_code": "# I13-G01 | APPLY | Debug an unfamiliar scientific image script\n# TASK: Convert data.image to float before background subtraction; return\n#   nonnegative corrected NumPy array result.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  5,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  2,
+                  250,
+                  240,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  220,
+                  250,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "background": 12,
+              "threshold": 40,
+              "min_size": 2,
+              "roi": [
+                0,
+                3,
+                0,
+                4
+              ],
+              "scale_um": 0.25,
+              "source": "rendered_RGB",
+              "metadata": [
+                {
+                  "image_id": "imgA",
+                  "animal": "A",
+                  "condition": "control"
+                },
+                {
+                  "image_id": "imgB",
+                  "animal": "B",
+                  "condition": "treated"
+                }
+              ],
+              "measurements": [
+                {
+                  "image_id": "imgA",
+                  "value": 2
+                },
+                {
+                  "image_id": "imgB",
+                  "value": 4
+                }
+              ],
+              "records": [
+                {
+                  "animal": "A",
+                  "condition": "control",
+                  "value": 2
+                },
+                {
+                  "animal": "B",
+                  "condition": "treated",
+                  "value": 4
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      5,
+                      3,
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      250,
+                      240,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      220,
+                      250,
+                      0,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 12,
+                  "threshold": 40,
+                  "min_size": 2,
+                  "roi": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "scale_um": 0.25,
+                  "source": "rendered_RGB",
+                  "metadata": [
+                    {
+                      "image_id": "imgA",
+                      "animal": "A",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgB",
+                      "animal": "B",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgA",
+                      "value": 2
+                    },
+                    {
+                      "image_id": "imgB",
+                      "value": 4
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "A",
+                      "condition": "control",
+                      "value": 2
+                    },
+                    {
+                      "animal": "B",
+                      "condition": "treated",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result.dtype.kind=='f'",
+                "np.allclose(result,np.maximum(np.asarray(data['image'],float)-data['background'],0))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      70,
+                      75,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      75,
+                      95,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      40,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      2
+                    ]
+                  ],
+                  "background": 5,
+                  "threshold": 60,
+                  "min_size": 2,
+                  "roi": [
+                    1,
+                    4,
+                    0,
+                    5
+                  ],
+                  "scale_um": null,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgC",
+                      "animal": "C",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgD",
+                      "animal": "D",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgC",
+                      "value": 3
+                    },
+                    {
+                      "image_id": "imgD",
+                      "value": 6
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "C",
+                      "condition": "control",
+                      "value": 3
+                    },
+                    {
+                      "animal": "D",
+                      "condition": "treated",
+                      "value": 6
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result.dtype.kind=='f'",
+                "np.allclose(result,np.maximum(np.asarray(data['image'],float)-data['background'],0))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      150,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 90,
+                  "min_size": 3,
+                  "roi": [
+                    0,
+                    5,
+                    0,
+                    5
+                  ],
+                  "scale_um": 0.3,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgE",
+                      "animal": "E",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgE",
+                      "animal": "F",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgE",
+                      "value": 4
+                    },
+                    {
+                      "image_id": "missing",
+                      "value": 8
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "E",
+                      "condition": "control",
+                      "value": 4
+                    },
+                    {
+                      "animal": "F",
+                      "condition": "treated",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result.dtype.kind=='f'",
+                "np.allclose(result,np.maximum(np.asarray(data['image'],float)-data['background'],0))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "uint8 arithmetic can wrap or clip; explicitly cast to float before subtraction.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Correctly crop sample.image using sample.roi=[y0,y1,x0,x1]; return result with crop shape and mean (None if empty).",
+          "starter_code": "# I13-G01 | PROVE | Debug an unfamiliar scientific image script\n# TASK: Correctly crop sample.image using sample.roi=[y0,y1,x0,x1]; return\n#   result with crop shape and mean (None if empty).\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  5,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  2,
+                  250,
+                  240,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  220,
+                  250,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "background": 12,
+              "threshold": 40,
+              "min_size": 2,
+              "roi": [
+                0,
+                3,
+                0,
+                4
+              ],
+              "scale_um": 0.25,
+              "source": "rendered_RGB",
+              "metadata": [
+                {
+                  "image_id": "imgA",
+                  "animal": "A",
+                  "condition": "control"
+                },
+                {
+                  "image_id": "imgB",
+                  "animal": "B",
+                  "condition": "treated"
+                }
+              ],
+              "measurements": [
+                {
+                  "image_id": "imgA",
+                  "value": 2
+                },
+                {
+                  "image_id": "imgB",
+                  "value": 4
+                }
+              ],
+              "records": [
+                {
+                  "animal": "A",
+                  "condition": "control",
+                  "value": 2
+                },
+                {
+                  "animal": "B",
+                  "condition": "treated",
+                  "value": 4
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      5,
+                      3,
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      250,
+                      240,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      220,
+                      250,
+                      0,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 12,
+                  "threshold": 40,
+                  "min_size": 2,
+                  "roi": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "scale_um": 0.25,
+                  "source": "rendered_RGB",
+                  "metadata": [
+                    {
+                      "image_id": "imgA",
+                      "animal": "A",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgB",
+                      "animal": "B",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgA",
+                      "value": 2
+                    },
+                    {
+                      "image_id": "imgB",
+                      "value": 4
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "A",
+                      "condition": "control",
+                      "value": 2
+                    },
+                    {
+                      "animal": "B",
+                      "condition": "treated",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['shape']==np.asarray(sample['image'])[sample['roi'][0]:sample['roi'][1],sample['roi'][2]:sample['roi'][3]].shape"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      70,
+                      75,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      75,
+                      95,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      40,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      2
+                    ]
+                  ],
+                  "background": 5,
+                  "threshold": 60,
+                  "min_size": 2,
+                  "roi": [
+                    1,
+                    4,
+                    0,
+                    5
+                  ],
+                  "scale_um": null,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgC",
+                      "animal": "C",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgD",
+                      "animal": "D",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgC",
+                      "value": 3
+                    },
+                    {
+                      "image_id": "imgD",
+                      "value": 6
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "C",
+                      "condition": "control",
+                      "value": 3
+                    },
+                    {
+                      "animal": "D",
+                      "condition": "treated",
+                      "value": 6
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['shape']==np.asarray(sample['image'])[sample['roi'][0]:sample['roi'][1],sample['roi'][2]:sample['roi'][3]].shape"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      150,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 90,
+                  "min_size": 3,
+                  "roi": [
+                    0,
+                    5,
+                    0,
+                    5
+                  ],
+                  "scale_um": 0.3,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgE",
+                      "animal": "E",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgE",
+                      "animal": "F",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgE",
+                      "value": 4
+                    },
+                    {
+                      "image_id": "missing",
+                      "value": 8
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "E",
+                      "condition": "control",
+                      "value": 4
+                    },
+                    {
+                      "animal": "F",
+                      "condition": "treated",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['shape']==np.asarray(sample['image'])[sample['roi'][0]:sample['roi'][1],sample['roi'][2]:sample['roi'][3]].shape"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "uint8 arithmetic can wrap or clip; explicitly cast to float before subtraction.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I13-G02",
+      "title": "Clean unfamiliar specimen metadata",
+      "competencies": [
+        "151"
+      ],
+      "why": "A many-to-one join cannot be trusted with conflicting source identifiers.",
+      "explain": [
+        "Audit duplicate metadata IDs before using them as unique keys.",
+        "Do not silently keep a random duplicate that changes animal or condition assignments.",
+        "Technical outputs are inspected using changed source records and parameters; scientific interpretations remain conditional on raw images, acquisition metadata and manual validation."
+      ],
+      "worked_example": {
+        "code": "from collections import Counter\nprint(Counter(['img1','img1','img2']))",
+        "predict": "Predict the numerical result and state why it does not establish an experimental finding."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Locate an error in source dimensions, identity matching, thresholding or denominator selection.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "The bundled Witz/HPA PNG is rendered notebook artwork, not raw calibrated biological microscopy data; no validated nuclear or nuclear-edge localization measurement can be claimed.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I13-G02 | LEARN | Clean unfamiliar specimen metadata\n# TASK: Predict, run and inspect this worked example.\n\n\nfrom collections import Counter\nprint(Counter(['img1','img1','img2']))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Audit data.metadata by image_id; return result={'unique':bool,'duplicates':sorted list of repeated IDs}.",
+          "starter_code": "# I13-G02 | APPLY | Clean unfamiliar specimen metadata\n# TASK: Audit data.metadata by image_id; return\n#   result={'unique':bool,'duplicates':sorted list of repeated IDs}.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  5,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  2,
+                  250,
+                  240,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  220,
+                  250,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "background": 12,
+              "threshold": 40,
+              "min_size": 2,
+              "roi": [
+                0,
+                3,
+                0,
+                4
+              ],
+              "scale_um": 0.25,
+              "source": "rendered_RGB",
+              "metadata": [
+                {
+                  "image_id": "imgA",
+                  "animal": "A",
+                  "condition": "control"
+                },
+                {
+                  "image_id": "imgB",
+                  "animal": "B",
+                  "condition": "treated"
+                }
+              ],
+              "measurements": [
+                {
+                  "image_id": "imgA",
+                  "value": 2
+                },
+                {
+                  "image_id": "imgB",
+                  "value": 4
+                }
+              ],
+              "records": [
+                {
+                  "animal": "A",
+                  "condition": "control",
+                  "value": 2
+                },
+                {
+                  "animal": "B",
+                  "condition": "treated",
+                  "value": 4
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      5,
+                      3,
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      250,
+                      240,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      220,
+                      250,
+                      0,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 12,
+                  "threshold": 40,
+                  "min_size": 2,
+                  "roi": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "scale_um": 0.25,
+                  "source": "rendered_RGB",
+                  "metadata": [
+                    {
+                      "image_id": "imgA",
+                      "animal": "A",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgB",
+                      "animal": "B",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgA",
+                      "value": 2
+                    },
+                    {
+                      "image_id": "imgB",
+                      "value": 4
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "A",
+                      "condition": "control",
+                      "value": 2
+                    },
+                    {
+                      "animal": "B",
+                      "condition": "treated",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['unique']==(len({r['image_id'] for r in data['metadata']})==len(data['metadata']))",
+                "result['duplicates']==sorted(k for k in {r['image_id'] for r in data['metadata']} if sum(x['image_id']==k for x in data['metadata'])>1)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      70,
+                      75,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      75,
+                      95,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      40,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      2
+                    ]
+                  ],
+                  "background": 5,
+                  "threshold": 60,
+                  "min_size": 2,
+                  "roi": [
+                    1,
+                    4,
+                    0,
+                    5
+                  ],
+                  "scale_um": null,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgC",
+                      "animal": "C",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgD",
+                      "animal": "D",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgC",
+                      "value": 3
+                    },
+                    {
+                      "image_id": "imgD",
+                      "value": 6
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "C",
+                      "condition": "control",
+                      "value": 3
+                    },
+                    {
+                      "animal": "D",
+                      "condition": "treated",
+                      "value": 6
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['unique']==(len({r['image_id'] for r in data['metadata']})==len(data['metadata']))",
+                "result['duplicates']==sorted(k for k in {r['image_id'] for r in data['metadata']} if sum(x['image_id']==k for x in data['metadata'])>1)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      150,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 90,
+                  "min_size": 3,
+                  "roi": [
+                    0,
+                    5,
+                    0,
+                    5
+                  ],
+                  "scale_um": 0.3,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgE",
+                      "animal": "E",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgE",
+                      "animal": "F",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgE",
+                      "value": 4
+                    },
+                    {
+                      "image_id": "missing",
+                      "value": 8
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "E",
+                      "condition": "control",
+                      "value": 4
+                    },
+                    {
+                      "animal": "F",
+                      "condition": "treated",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['unique']==(len({r['image_id'] for r in data['metadata']})==len(data['metadata']))",
+                "result['duplicates']==sorted(k for k in {r['image_id'] for r in data['metadata']} if sum(x['image_id']==k for x in data['metadata'])>1)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Audit duplicate metadata IDs before using them as unique keys.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "On sample.metadata and sample.measurements, reject duplicate source IDs; else return joined rows and unmatched measurement IDs.",
+          "starter_code": "# I13-G02 | PROVE | Clean unfamiliar specimen metadata\n# TASK: On sample.metadata and sample.measurements, reject duplicate source\n#   IDs; else return joined rows and unmatched measurement IDs.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  5,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  2,
+                  250,
+                  240,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  220,
+                  250,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "background": 12,
+              "threshold": 40,
+              "min_size": 2,
+              "roi": [
+                0,
+                3,
+                0,
+                4
+              ],
+              "scale_um": 0.25,
+              "source": "rendered_RGB",
+              "metadata": [
+                {
+                  "image_id": "imgA",
+                  "animal": "A",
+                  "condition": "control"
+                },
+                {
+                  "image_id": "imgB",
+                  "animal": "B",
+                  "condition": "treated"
+                }
+              ],
+              "measurements": [
+                {
+                  "image_id": "imgA",
+                  "value": 2
+                },
+                {
+                  "image_id": "imgB",
+                  "value": 4
+                }
+              ],
+              "records": [
+                {
+                  "animal": "A",
+                  "condition": "control",
+                  "value": 2
+                },
+                {
+                  "animal": "B",
+                  "condition": "treated",
+                  "value": 4
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      5,
+                      3,
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      250,
+                      240,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      220,
+                      250,
+                      0,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 12,
+                  "threshold": 40,
+                  "min_size": 2,
+                  "roi": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "scale_um": 0.25,
+                  "source": "rendered_RGB",
+                  "metadata": [
+                    {
+                      "image_id": "imgA",
+                      "animal": "A",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgB",
+                      "animal": "B",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgA",
+                      "value": 2
+                    },
+                    {
+                      "image_id": "imgB",
+                      "value": 4
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "A",
+                      "condition": "control",
+                      "value": 2
+                    },
+                    {
+                      "animal": "B",
+                      "condition": "treated",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result.get('error')=='duplicate_metadata' if len({r['image_id'] for r in sample['metadata']})<len(sample['metadata']) else len(result['rows'])+len(result['unmatched'])==len(sample['measurements'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      70,
+                      75,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      75,
+                      95,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      40,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      2
+                    ]
+                  ],
+                  "background": 5,
+                  "threshold": 60,
+                  "min_size": 2,
+                  "roi": [
+                    1,
+                    4,
+                    0,
+                    5
+                  ],
+                  "scale_um": null,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgC",
+                      "animal": "C",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgD",
+                      "animal": "D",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgC",
+                      "value": 3
+                    },
+                    {
+                      "image_id": "imgD",
+                      "value": 6
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "C",
+                      "condition": "control",
+                      "value": 3
+                    },
+                    {
+                      "animal": "D",
+                      "condition": "treated",
+                      "value": 6
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result.get('error')=='duplicate_metadata' if len({r['image_id'] for r in sample['metadata']})<len(sample['metadata']) else len(result['rows'])+len(result['unmatched'])==len(sample['measurements'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      150,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 90,
+                  "min_size": 3,
+                  "roi": [
+                    0,
+                    5,
+                    0,
+                    5
+                  ],
+                  "scale_um": 0.3,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgE",
+                      "animal": "E",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgE",
+                      "animal": "F",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgE",
+                      "value": 4
+                    },
+                    {
+                      "image_id": "missing",
+                      "value": 8
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "E",
+                      "condition": "control",
+                      "value": 4
+                    },
+                    {
+                      "animal": "F",
+                      "condition": "treated",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result.get('error')=='duplicate_metadata' if len({r['image_id'] for r in sample['metadata']})<len(sample['metadata']) else len(result['rows'])+len(result['unmatched'])==len(sample['measurements'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Audit duplicate metadata IDs before using them as unique keys.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I13-G03",
+      "title": "Create an interpretable figure from new observations",
+      "competencies": [
+        "152"
+      ],
+      "why": "Avoid hiding biological replicate identity in one summary bar.",
+      "explain": [
+        "Plot individual experimental-unit values and use explicit axis labels.",
+        "A synthetic figure cannot establish a biological effect without genuine source records and design controls.",
+        "Technical outputs are inspected using changed source records and parameters; scientific interpretations remain conditional on raw images, acquisition metadata and manual validation."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots();ax.scatter([0,1],[3,5]);ax.set(xlabel='Group',ylabel='Value');print(len(ax.collections))",
+        "predict": "Predict the numerical result and state why it does not establish an experimental finding."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Locate an error in source dimensions, identity matching, thresholding or denominator selection.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "The bundled Witz/HPA PNG is rendered notebook artwork, not raw calibrated biological microscopy data; no validated nuclear or nuclear-edge localization measurement can be claimed.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I13-G03 | LEARN | Create an interpretable figure from new observations\n# TASK: Predict, run and inspect this worked example.\n\n\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots();ax.scatter([0,1],[3,5]);ax.set(xlabel='Group',ylabel='Value');print(len(ax.collections))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Plot each data.records value by condition with Matplotlib scatter; set axis labels and return result={'n':record_count}.",
+          "starter_code": "# I13-G03 | APPLY | Create an interpretable figure from new observations\n# TASK: Plot each data.records value by condition with Matplotlib scatter;\n#   set axis labels and return result={'n':record_count}.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  5,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  2,
+                  250,
+                  240,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  220,
+                  250,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "background": 12,
+              "threshold": 40,
+              "min_size": 2,
+              "roi": [
+                0,
+                3,
+                0,
+                4
+              ],
+              "scale_um": 0.25,
+              "source": "rendered_RGB",
+              "metadata": [
+                {
+                  "image_id": "imgA",
+                  "animal": "A",
+                  "condition": "control"
+                },
+                {
+                  "image_id": "imgB",
+                  "animal": "B",
+                  "condition": "treated"
+                }
+              ],
+              "measurements": [
+                {
+                  "image_id": "imgA",
+                  "value": 2
+                },
+                {
+                  "image_id": "imgB",
+                  "value": 4
+                }
+              ],
+              "records": [
+                {
+                  "animal": "A",
+                  "condition": "control",
+                  "value": 2
+                },
+                {
+                  "animal": "B",
+                  "condition": "treated",
+                  "value": 4
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      5,
+                      3,
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      250,
+                      240,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      220,
+                      250,
+                      0,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 12,
+                  "threshold": 40,
+                  "min_size": 2,
+                  "roi": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "scale_um": 0.25,
+                  "source": "rendered_RGB",
+                  "metadata": [
+                    {
+                      "image_id": "imgA",
+                      "animal": "A",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgB",
+                      "animal": "B",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgA",
+                      "value": 2
+                    },
+                    {
+                      "image_id": "imgB",
+                      "value": 4
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "A",
+                      "condition": "control",
+                      "value": 2
+                    },
+                    {
+                      "animal": "B",
+                      "condition": "treated",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n']==len(data['records'])",
+                "len(ax.collections)==len(data['records'])",
+                "ax.get_ylabel()!=''"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      70,
+                      75,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      75,
+                      95,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      40,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      2
+                    ]
+                  ],
+                  "background": 5,
+                  "threshold": 60,
+                  "min_size": 2,
+                  "roi": [
+                    1,
+                    4,
+                    0,
+                    5
+                  ],
+                  "scale_um": null,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgC",
+                      "animal": "C",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgD",
+                      "animal": "D",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgC",
+                      "value": 3
+                    },
+                    {
+                      "image_id": "imgD",
+                      "value": 6
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "C",
+                      "condition": "control",
+                      "value": 3
+                    },
+                    {
+                      "animal": "D",
+                      "condition": "treated",
+                      "value": 6
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n']==len(data['records'])",
+                "len(ax.collections)==len(data['records'])",
+                "ax.get_ylabel()!=''"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      150,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 90,
+                  "min_size": 3,
+                  "roi": [
+                    0,
+                    5,
+                    0,
+                    5
+                  ],
+                  "scale_um": 0.3,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgE",
+                      "animal": "E",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgE",
+                      "animal": "F",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgE",
+                      "value": 4
+                    },
+                    {
+                      "image_id": "missing",
+                      "value": 8
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "E",
+                      "condition": "control",
+                      "value": 4
+                    },
+                    {
+                      "animal": "F",
+                      "condition": "treated",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n']==len(data['records'])",
+                "len(ax.collections)==len(data['records'])",
+                "ax.get_ylabel()!=''"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Plot individual experimental-unit values and use explicit axis labels.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Make a new two-condition replicate-level plot of sample.records using one scatter series per condition; return count and method='replicate_points'.",
+          "starter_code": "# I13-G03 | PROVE | Create an interpretable figure from new observations\n# TASK: Make a new two-condition replicate-level plot of sample.records using\n#   one scatter series per condition; return count and\n#   method='replicate_points'.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  5,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  2,
+                  250,
+                  240,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  220,
+                  250,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "background": 12,
+              "threshold": 40,
+              "min_size": 2,
+              "roi": [
+                0,
+                3,
+                0,
+                4
+              ],
+              "scale_um": 0.25,
+              "source": "rendered_RGB",
+              "metadata": [
+                {
+                  "image_id": "imgA",
+                  "animal": "A",
+                  "condition": "control"
+                },
+                {
+                  "image_id": "imgB",
+                  "animal": "B",
+                  "condition": "treated"
+                }
+              ],
+              "measurements": [
+                {
+                  "image_id": "imgA",
+                  "value": 2
+                },
+                {
+                  "image_id": "imgB",
+                  "value": 4
+                }
+              ],
+              "records": [
+                {
+                  "animal": "A",
+                  "condition": "control",
+                  "value": 2
+                },
+                {
+                  "animal": "B",
+                  "condition": "treated",
+                  "value": 4
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      5,
+                      3,
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      250,
+                      240,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      220,
+                      250,
+                      0,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 12,
+                  "threshold": 40,
+                  "min_size": 2,
+                  "roi": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "scale_um": 0.25,
+                  "source": "rendered_RGB",
+                  "metadata": [
+                    {
+                      "image_id": "imgA",
+                      "animal": "A",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgB",
+                      "animal": "B",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgA",
+                      "value": 2
+                    },
+                    {
+                      "image_id": "imgB",
+                      "value": 4
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "A",
+                      "condition": "control",
+                      "value": 2
+                    },
+                    {
+                      "animal": "B",
+                      "condition": "treated",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['method']=='replicate_points'",
+                "result['n']==len(sample['records'])",
+                "len(ax.collections)==2"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      70,
+                      75,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      75,
+                      95,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      40,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      2
+                    ]
+                  ],
+                  "background": 5,
+                  "threshold": 60,
+                  "min_size": 2,
+                  "roi": [
+                    1,
+                    4,
+                    0,
+                    5
+                  ],
+                  "scale_um": null,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgC",
+                      "animal": "C",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgD",
+                      "animal": "D",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgC",
+                      "value": 3
+                    },
+                    {
+                      "image_id": "imgD",
+                      "value": 6
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "C",
+                      "condition": "control",
+                      "value": 3
+                    },
+                    {
+                      "animal": "D",
+                      "condition": "treated",
+                      "value": 6
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['method']=='replicate_points'",
+                "result['n']==len(sample['records'])",
+                "len(ax.collections)==2"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      150,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 90,
+                  "min_size": 3,
+                  "roi": [
+                    0,
+                    5,
+                    0,
+                    5
+                  ],
+                  "scale_um": 0.3,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgE",
+                      "animal": "E",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgE",
+                      "animal": "F",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgE",
+                      "value": 4
+                    },
+                    {
+                      "image_id": "missing",
+                      "value": 8
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "E",
+                      "condition": "control",
+                      "value": 4
+                    },
+                    {
+                      "animal": "F",
+                      "condition": "treated",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['method']=='replicate_points'",
+                "result['n']==len(sample['records'])",
+                "len(ax.collections)==2"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Plot individual experimental-unit values and use explicit axis labels.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I13-G04",
+      "title": "Audit image provenance, thresholds and calibration",
+      "competencies": [
+        "153"
+      ],
+      "why": "Separate computational reproducibility from source-image validity.",
+      "explain": [
+        "A declared image source and scale are essential before reporting physical area.",
+        "Rendered RGB, synthetic masks and unvalidated objects cannot support nuclear localization claims.",
+        "Technical outputs are inspected using changed source records and parameters; scientific interpretations remain conditional on raw images, acquisition metadata and manual validation."
+      ],
+      "worked_example": {
+        "code": "print({'raw_calibrated':False,'segmentation_validated':False})",
+        "predict": "Predict the numerical result and state why it does not establish an experimental finding."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Locate an error in source dimensions, identity matching, thresholding or denominator selection.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "The bundled Witz/HPA PNG is rendered notebook artwork, not raw calibrated biological microscopy data; no validated nuclear or nuclear-edge localization measurement can be claimed.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I13-G04 | LEARN | Audit image provenance, thresholds and calibration\n# TASK: Predict, run and inspect this worked example.\n\n\nprint({'raw_calibrated':False,'segmentation_validated':False})\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Inspect data.source and scale_um; return result with source, calibrated=False, area_unit='pixel²' if scale absent else 'synthetic µm²'.",
+          "starter_code": "# I13-G04 | APPLY | Audit image provenance, thresholds and calibration\n# TASK: Inspect data.source and scale_um; return result with source,\n#   calibrated=False, area_unit='pixel²' if scale absent else 'synthetic\n#   µm²'.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  5,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  2,
+                  250,
+                  240,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  220,
+                  250,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "background": 12,
+              "threshold": 40,
+              "min_size": 2,
+              "roi": [
+                0,
+                3,
+                0,
+                4
+              ],
+              "scale_um": 0.25,
+              "source": "rendered_RGB",
+              "metadata": [
+                {
+                  "image_id": "imgA",
+                  "animal": "A",
+                  "condition": "control"
+                },
+                {
+                  "image_id": "imgB",
+                  "animal": "B",
+                  "condition": "treated"
+                }
+              ],
+              "measurements": [
+                {
+                  "image_id": "imgA",
+                  "value": 2
+                },
+                {
+                  "image_id": "imgB",
+                  "value": 4
+                }
+              ],
+              "records": [
+                {
+                  "animal": "A",
+                  "condition": "control",
+                  "value": 2
+                },
+                {
+                  "animal": "B",
+                  "condition": "treated",
+                  "value": 4
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      5,
+                      3,
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      250,
+                      240,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      220,
+                      250,
+                      0,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 12,
+                  "threshold": 40,
+                  "min_size": 2,
+                  "roi": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "scale_um": 0.25,
+                  "source": "rendered_RGB",
+                  "metadata": [
+                    {
+                      "image_id": "imgA",
+                      "animal": "A",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgB",
+                      "animal": "B",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgA",
+                      "value": 2
+                    },
+                    {
+                      "image_id": "imgB",
+                      "value": 4
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "A",
+                      "condition": "control",
+                      "value": 2
+                    },
+                    {
+                      "animal": "B",
+                      "condition": "treated",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['calibrated'] is False",
+                "result['segmentation_validated'] is False",
+                "result['source']==data['source']"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      70,
+                      75,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      75,
+                      95,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      40,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      2
+                    ]
+                  ],
+                  "background": 5,
+                  "threshold": 60,
+                  "min_size": 2,
+                  "roi": [
+                    1,
+                    4,
+                    0,
+                    5
+                  ],
+                  "scale_um": null,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgC",
+                      "animal": "C",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgD",
+                      "animal": "D",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgC",
+                      "value": 3
+                    },
+                    {
+                      "image_id": "imgD",
+                      "value": 6
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "C",
+                      "condition": "control",
+                      "value": 3
+                    },
+                    {
+                      "animal": "D",
+                      "condition": "treated",
+                      "value": 6
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['calibrated'] is False",
+                "result['segmentation_validated'] is False",
+                "result['source']==data['source']"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      150,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 90,
+                  "min_size": 3,
+                  "roi": [
+                    0,
+                    5,
+                    0,
+                    5
+                  ],
+                  "scale_um": 0.3,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgE",
+                      "animal": "E",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgE",
+                      "animal": "F",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgE",
+                      "value": 4
+                    },
+                    {
+                      "image_id": "missing",
+                      "value": 8
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "E",
+                      "condition": "control",
+                      "value": 4
+                    },
+                    {
+                      "animal": "F",
+                      "condition": "treated",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['calibrated'] is False",
+                "result['segmentation_validated'] is False",
+                "result['source']==data['source']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A declared image source and scale are essential before reporting physical area.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Quantify mask-count sensitivity on sample.image at cutoff−10 and cutoff+10 and report scale_note as unverified; return dict result.",
+          "starter_code": "# I13-G04 | PROVE | Audit image provenance, thresholds and calibration\n# TASK: Quantify mask-count sensitivity on sample.image at cutoff−10 and\n#   cutoff+10 and report scale_note as unverified; return dict result.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  5,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  2,
+                  250,
+                  240,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  220,
+                  250,
+                  0,
+                  2
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "background": 12,
+              "threshold": 40,
+              "min_size": 2,
+              "roi": [
+                0,
+                3,
+                0,
+                4
+              ],
+              "scale_um": 0.25,
+              "source": "rendered_RGB",
+              "metadata": [
+                {
+                  "image_id": "imgA",
+                  "animal": "A",
+                  "condition": "control"
+                },
+                {
+                  "image_id": "imgB",
+                  "animal": "B",
+                  "condition": "treated"
+                }
+              ],
+              "measurements": [
+                {
+                  "image_id": "imgA",
+                  "value": 2
+                },
+                {
+                  "image_id": "imgB",
+                  "value": 4
+                }
+              ],
+              "records": [
+                {
+                  "animal": "A",
+                  "condition": "control",
+                  "value": 2
+                },
+                {
+                  "animal": "B",
+                  "condition": "treated",
+                  "value": 4
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      5,
+                      3,
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      250,
+                      240,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      220,
+                      250,
+                      0,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 12,
+                  "threshold": 40,
+                  "min_size": 2,
+                  "roi": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "scale_um": 0.25,
+                  "source": "rendered_RGB",
+                  "metadata": [
+                    {
+                      "image_id": "imgA",
+                      "animal": "A",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgB",
+                      "animal": "B",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgA",
+                      "value": 2
+                    },
+                    {
+                      "image_id": "imgB",
+                      "value": 4
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "A",
+                      "condition": "control",
+                      "value": 2
+                    },
+                    {
+                      "animal": "B",
+                      "condition": "treated",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['counts'][0]>=result['counts'][1]",
+                "result['scale_note']=='unverified'"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      0,
+                      0,
+                      5,
+                      0
+                    ],
+                    [
+                      0,
+                      70,
+                      75,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      75,
+                      95,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      40,
+                      2
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      2
+                    ]
+                  ],
+                  "background": 5,
+                  "threshold": 60,
+                  "min_size": 2,
+                  "roi": [
+                    1,
+                    4,
+                    0,
+                    5
+                  ],
+                  "scale_um": null,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgC",
+                      "animal": "C",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgD",
+                      "animal": "D",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgC",
+                      "value": 3
+                    },
+                    {
+                      "image_id": "imgD",
+                      "value": 6
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "C",
+                      "condition": "control",
+                      "value": 3
+                    },
+                    {
+                      "animal": "D",
+                      "condition": "treated",
+                      "value": 6
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['counts'][0]>=result['counts'][1]",
+                "result['scale_note']=='unverified'"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      150,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      90,
+                      90,
+                      90,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 90,
+                  "min_size": 3,
+                  "roi": [
+                    0,
+                    5,
+                    0,
+                    5
+                  ],
+                  "scale_um": 0.3,
+                  "source": "synthetic_image",
+                  "metadata": [
+                    {
+                      "image_id": "imgE",
+                      "animal": "E",
+                      "condition": "control"
+                    },
+                    {
+                      "image_id": "imgE",
+                      "animal": "F",
+                      "condition": "treated"
+                    }
+                  ],
+                  "measurements": [
+                    {
+                      "image_id": "imgE",
+                      "value": 4
+                    },
+                    {
+                      "image_id": "missing",
+                      "value": 8
+                    }
+                  ],
+                  "records": [
+                    {
+                      "animal": "E",
+                      "condition": "control",
+                      "value": 4
+                    },
+                    {
+                      "animal": "F",
+                      "condition": "treated",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['counts'][0]>=result['counts'][1]",
+                "result['scale_note']=='unverified'"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A declared image source and scale are essential before reporting physical area.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I13-G05",
+      "title": "Run a real-image ROI measurement project",
+      "competencies": [
+        "154"
+      ],
+      "why": "Measure genuine credited image bytes while explicitly declining raw biological calibration.",
+      "explain": [
+        "Read the Witz/HPA published RGB PNG through Pillow and convert its pixel component to NumPy.",
+        "The image is a rendered notebook figure; candidate components cannot be identified as nuclei or quantified as true raw fluorescence.",
+        "Technical outputs are inspected using changed source records and parameters; scientific interpretations remain conditional on raw images, acquisition metadata and manual validation."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nprint(np.array([[0,100],[255,120]],dtype=np.uint8).shape)",
+        "predict": "Predict the numerical result and state why it does not establish an experimental finding."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Locate an error in source dimensions, identity matching, thresholding or denominator selection.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "The bundled Witz/HPA PNG is rendered notebook artwork, not raw calibrated biological microscopy data; no validated nuclear or nuclear-edge localization measurement can be claimed.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I13-G05 | LEARN | Run a real-image ROI measurement project\n# TASK: Predict, run and inspect this worked example.\n\n\nimport numpy as np\nprint(np.array([[0,100],[255,120]],dtype=np.uint8).shape)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Load real image_path, take 48×48 pixels at y0,x0 in component; threshold strictly, label 4-connected regions, retain area>=min_size; return result with count, areas and calibrated=False.",
+          "starter_code": "# I13-G05 | APPLY | Run a real-image ROI measurement project\n# TASK: Load real image_path, take 48×48 pixels at y0,x0 in component;\n#   threshold strictly, label 4-connected regions, retain area>=min_size;\n#   return result with count, areas and calibrated=False.\n# INPUTS: image_path, y0, x0, component, threshold, min_size\n\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "y0": 0,
+            "x0": 0,
+            "component": 0,
+            "threshold": 100,
+            "min_size": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "y0": 0,
+                "x0": 0,
+                "component": 0,
+                "threshold": 100,
+                "min_size": 3
+              },
+              "assertions": [
+                "result['calibrated'] is False",
+                "result['count']==len(result['areas'])",
+                "result['areas']==sorted(int(r.area) for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[y0:y0+48,x0:x0+48,component]>threshold,connectivity=1)) if r.area>=min_size)"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "y0": 30,
+                "x0": 20,
+                "component": 1,
+                "threshold": 125,
+                "min_size": 5
+              },
+              "assertions": [
+                "result['calibrated'] is False",
+                "result['count']==len(result['areas'])",
+                "result['areas']==sorted(int(r.area) for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[y0:y0+48,x0:x0+48,component]>threshold,connectivity=1)) if r.area>=min_size)"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "y0": 60,
+                "x0": 50,
+                "component": 2,
+                "threshold": 175,
+                "min_size": 2
+              },
+              "assertions": [
+                "result['calibrated'] is False",
+                "result['count']==len(result['areas'])",
+                "result['areas']==sorted(int(r.area) for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[y0:y0+48,x0:x0+48,component]>threshold,connectivity=1)) if r.area>=min_size)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Read the Witz/HPA published RGB PNG through Pillow and convert its pixel component to NumPy.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Load a different 48×48 ROI from image_path using top,left,band; return fraction above cutoff and number of >=min_area components, raw=False.",
+          "starter_code": "# I13-G05 | PROVE | Run a real-image ROI measurement project\n# TASK: Load a different 48×48 ROI from image_path using top,left,band;\n#   return fraction above cutoff and number of >=min_area components,\n#   raw=False.\n# INPUTS: image_path, top, left, band, cutoff, min_area\n\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "top": 10,
+            "left": 8,
+            "band": 1,
+            "cutoff": 100,
+            "min_area": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "top": 10,
+                "left": 8,
+                "band": 1,
+                "cutoff": 100,
+                "min_area": 4
+              },
+              "assertions": [
+                "result['raw'] is False",
+                "0<=result['fraction']<=1",
+                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1))"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "top": 45,
+                "left": 65,
+                "band": 0,
+                "cutoff": 180,
+                "min_area": 2
+              },
+              "assertions": [
+                "result['raw'] is False",
+                "0<=result['fraction']<=1",
+                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1))"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "top": 80,
+                "left": 30,
+                "band": 2,
+                "cutoff": 225,
+                "min_area": 1
+              },
+              "assertions": [
+                "result['raw'] is False",
+                "0<=result['fraction']<=1",
+                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Read the Witz/HPA published RGB PNG through Pillow and convert its pixel component to NumPy.",
+            "probe": "What different conclusion would be justified if you changed the region definition or unit of replication?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I13-CAPSTONE",
+    "title": "Integrate a real-image, source-aware analysis and visual overlay",
+    "competencies": [],
+    "why": "Make a complete reproducible source-aware numerical analysis, real figure and explicitly unverified candidate measurements.",
+    "explain": [
+      "Read the attributed published figure from disk and preserve its pixels.",
+      "Produce actual segmentation, region tables and Matplotlib overlay with transparent parameters.",
+      "This is not validated nuclei detection or calibrated HPA fluorescence and does not reproduce an external raw dataset."
+    ],
+    "worked_example": {
+      "code": "import numpy as np\nprint(np.array([[0,1],[1,0]],bool).sum())",
+      "predict": "Predict the printed numerical result and one limitation before execution."
+    },
+    "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+    "walkthrough": [
+      "Identify the source arrays, parameters and expected output before changing code.",
+      "Run the worked example and record which choice alters a candidate measurement.",
+      "Inspect one boundary input and distinguish a mask from validated biological identity."
+    ],
+    "investigate": [
+      "Change one input value or ROI deliberately.",
+      "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+      "Record the scientific meaning of the output and its denominator."
+    ],
+    "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+    "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+    "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the observable output before running this independent demonstration.",
+        "starter_code": "# I13-CAPSTONE | LEARN | Integrate a real-image, source-aware analysis and visual overlay\n# TASK: Predict output and recall why a Boolean region is not biological\n#   proof.\n\n\nimport numpy as np\nprint(np.array([[0,1],[1,0]],bool).sum())\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed inputs",
+        "description": "Load image_path real RGB, crop 48×48 source component; segment by threshold, label 4-connected objects, filter by min_size, report candidate area, count, raw_calibrated=False and overlay using real Matplotlib.",
+        "starter_code": "# I13-CAPSTONE | APPLY | Integrate a real-image, source-aware analysis and visual overlay\n# TASK: Load image_path real RGB, crop 48×48 source component; segment by\n#   threshold, label 4-connected objects, filter by min_size, report\n#   candidate area, count, raw_calibrated=False and overlay using real\n#   Matplotlib.\n# INPUTS: image_path, y0, x0, component, threshold, min_size\n\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "y0": 0,
+          "x0": 0,
+          "component": 0,
+          "threshold": 100,
+          "min_size": 3
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 0,
+              "x0": 0,
+              "component": 0,
+              "threshold": 100,
+              "min_size": 3
+            },
+            "assertions": [
+              "result['raw_calibrated'] is False",
+              "result['candidate_count']==len(result['areas_px'])",
+              "result['roi_shape']==(48,48)",
+              "len(ax.images)==2"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 30,
+              "x0": 20,
+              "component": 1,
+              "threshold": 125,
+              "min_size": 5
+            },
+            "assertions": [
+              "result['raw_calibrated'] is False",
+              "result['candidate_count']==len(result['areas_px'])",
+              "result['roi_shape']==(48,48)",
+              "len(ax.images)==2"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 60,
+              "x0": 50,
+              "component": 2,
+              "threshold": 175,
+              "min_size": 2
+            },
+            "assertions": [
+              "result['raw_calibrated'] is False",
+              "result['candidate_count']==len(result['areas_px'])",
+              "result['roi_shape']==(48,48)",
+              "len(ax.images)==2"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This is not validated nuclei detection or calibrated HPA fluorescence and does not reproduce an external raw dataset.",
+          "probe": "What changes under a different input, threshold, sample or experiment?",
+          "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Independently process the credited image from a new top/left/channel ROI with cutoff: report two candidate counts for cutoff and cutoff+15, n_pixels, source and verified=False.",
+        "starter_code": "# I13-CAPSTONE | PROVE | Integrate a real-image, source-aware analysis and visual overlay\n# TASK: Independently process the credited image from a new top/left/channel\n#   ROI with cutoff: report two candidate counts for cutoff and\n#   cutoff+15, n_pixels, source and verified=False.\n# INPUTS: image_path, top, left, band, cutoff, min_area\n\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "top": 10,
+          "left": 8,
+          "band": 1,
+          "cutoff": 100,
+          "min_area": 4
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 10,
+              "left": 8,
+              "band": 1,
+              "cutoff": 100,
+              "min_area": 4
+            },
+            "assertions": [
+              "result['n_pixels']==2304",
+              "result['verified'] is False",
+              "result['candidate_counts'][0]>=0",
+              "result['candidate_counts'][1]>=0"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 45,
+              "left": 65,
+              "band": 0,
+              "cutoff": 180,
+              "min_area": 2
+            },
+            "assertions": [
+              "result['n_pixels']==2304",
+              "result['verified'] is False",
+              "result['candidate_counts'][0]>=0",
+              "result['candidate_counts'][1]>=0"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 80,
+              "left": 30,
+              "band": 2,
+              "cutoff": 225,
+              "min_area": 1
+            },
+            "assertions": [
+              "result['n_pixels']==2304",
+              "result['verified'] is False",
+              "result['candidate_counts'][0]>=0",
+              "result['candidate_counts'][1]>=0"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This is not validated nuclei detection or calibrated HPA fluorescence and does not reproduce an external raw dataset.",
+          "probe": "Which scientific caveat still applies after these tests pass?",
+          "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Identify the expected output variable result and the input contract.",
+        "Use the relevant numerical or segmentation operation with explicit parameters."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+      "TypeError": "Check numeric types and missing values.",
+      "IndexError": "Check row/column order and ROI bounds.",
+      "hardcoded": "Changing the input must change the output."
+    },
+    "reflection_prompts": [],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer practice, not retained-mastery certification"
+    },
+    "build_steps": [
+      "Verify credited image provenance and current calibration status.",
+      "Select a declared 48×48 ROI and channel without altering source pixels.",
+      "Segment parameterized candidates, inspect region areas and overlays.",
+      "Export a standalone Python script and preserve the source image beside it.",
+      "Document sensitivity and manual-validation requirements before any biological claim."
+    ],
+    "assessment": {
+      "code": "PUBLIC_REAL_PYTHON_REFERENCE_CASES",
+      "biology": "NOT_GROUND_TRUTH_VALIDATED",
+      "independent": "NOT_AUTO_CERTIFIED"
+    }
+  },
+  "review": {
+    "id": "I13-REVIEW",
+    "title": "Transfer the full source-image threshold audit to a new ROI",
+    "competencies": [],
+    "why": "Reconstruct the method after a delay on a fresh input.",
+    "explain": [
+      "Reproduce the key numerical decision from memory.",
+      "Check edge behavior and compare to a second input.",
+      "Do not equate remembered code with biological validation."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the printed numerical result and one limitation before execution."
+    },
+    "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+    "walkthrough": [
+      "Identify the source arrays, parameters and expected output before changing code.",
+      "Run the worked example and record which choice alters a candidate measurement.",
+      "Inspect one boundary input and distinguish a mask from validated biological identity."
+    ],
+    "investigate": [
+      "Change one input value or ROI deliberately.",
+      "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+      "Record the scientific meaning of the output and its denominator."
+    ],
+    "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+    "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+    "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the observable output before running this independent demonstration.",
+        "starter_code": "# I13-REVIEW | LEARN | Transfer the full source-image threshold audit to a new ROI\n# TASK: Recall the method after a delay; no solved code is supplied.\n\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed inputs",
+        "description": "Reflect on which source, calibration, annotation and replicates would be required for genuine measurement.",
+        "starter_code": "# I13-REVIEW | APPLY | Transfer the full source-image threshold audit to a new ROI\n# TASK: Record the scientific limitations before attempting independent\n#   Prove.\n\n\n",
+        "preview_inputs": {},
+        "public_checks": [],
+        "practice_feedback": {
+          "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+          "probe": "What changes under a different input, threshold, sample or experiment?",
+          "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Without a worked solution, load image_path; on a 48×48 crop compute foreground fractions at cutoff−15 and cutoff+15. Return two fractions and verified=False.",
+        "starter_code": "# I13-REVIEW | PROVE | Transfer the full source-image threshold audit to a new ROI\n# TASK: Without a worked solution, load image_path; on a 48×48 crop compute\n#   foreground fractions at cutoff−15 and cutoff+15. Return two fractions\n#   and verified=False.\n# INPUTS: image_path, top, left, band, cutoff, min_area\n\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "top": 10,
+          "left": 8,
+          "band": 1,
+          "cutoff": 100,
+          "min_area": 4
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 10,
+              "left": 8,
+              "band": 1,
+              "cutoff": 100,
+              "min_area": 4
+            },
+            "assertions": [
+              "result['verified'] is False",
+              "result['fractions'][0]>=result['fractions'][1]",
+              "all(0<=f<=1 for f in result['fractions'])"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 45,
+              "left": 65,
+              "band": 0,
+              "cutoff": 180,
+              "min_area": 2
+            },
+            "assertions": [
+              "result['verified'] is False",
+              "result['fractions'][0]>=result['fractions'][1]",
+              "all(0<=f<=1 for f in result['fractions'])"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 80,
+              "left": 30,
+              "band": 2,
+              "cutoff": 225,
+              "min_area": 1
+            },
+            "assertions": [
+              "result['verified'] is False",
+              "result['fractions'][0]>=result['fractions'][1]",
+              "all(0<=f<=1 for f in result['fractions'])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A new input tests transfer without supplying a ready-made final answer.",
+          "probe": "Which scientific caveat still applies after these tests pass?",
+          "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Identify the expected output variable result and the input contract.",
+        "Use the relevant numerical or segmentation operation with explicit parameters."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+      "TypeError": "Check numeric types and missing values.",
+      "IndexError": "Check row/column order and ROI bounds.",
+      "hardcoded": "Changing the input must change the output."
+    },
+    "reflection_prompts": [
+      "Which decision would you validate with manual annotation or experimental replicates?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer practice, not retained-mastery certification"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "i13_witz_rendered_roi_pipeline.py",
+    "brief": "Integrate a real-image, source-aware analysis and visual overlay",
+    "status": "INTEGRATED_LEARNER_PILOT"
+  }
+}
