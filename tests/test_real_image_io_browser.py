@@ -53,7 +53,8 @@ def main():
             page.locator("#bps-chapter-select").select_option("I13")
             page.locator("#p01-goal-select").select_option("4")
             page.locator("#tab-apply").click()
-            assert page.locator("#bps-real-data-project").is_visible()
+            assert page.locator("#bps-real-data-project").get_attribute("href")=="./projects/real-microscopy/START_HERE.md"
+            assert not page.locator("#bps-real-data-project").evaluate("a => a.hidden")
             page.locator("#image-upload").set_input_files([str(image),str(second)])
             assert "2 image file(s)" in page.locator("#analysis-dataset-status").inner_text()
             assert page.locator("#analysis-dataset-status").is_visible()

@@ -337,6 +337,7 @@ function switchChapter(next){
  bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
  if(isImaging(activeId))bridge()?.ensureExampleImage?.();
  render();save();
+ const projectLink=el("bps-real-data-project");if(projectLink)projectLink.hidden=activeId!=="I13";
 }
 function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
