@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install scientific libraries for reproducible original TIFFs
-        run: python -m pip install -r projects/real-microscopy/requirements.txt
+        run: python -m pip install -r projects/real-microscopy/requirements.txt pandas
       - name: JavaScript and frozen-shell checks
         run: |
           node --check src/ui-first.js
