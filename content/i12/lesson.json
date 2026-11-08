@@ -1,0 +1,3373 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I12",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_REAL_SCIENTIFIC_PYTHON",
+  "title": "Report uncertainty without misleading plots",
+  "competencies": [
+    "115",
+    "116",
+    "117",
+    "118",
+    "119",
+    "120",
+    "121",
+    "122",
+    "068"
+  ],
+  "intro": "Report uncertainty without misleading plots taught with explicit experimental units and real scientific Python.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "SYNTHETIC_INFERENCE_DATA_WITH_REAL_NUMPY_SCIPY_PANDAS_MATPLOTLIB",
+    "caution": "Synthetic per-animal records and intensity numbers are not measured biological outcomes. Inference depends on independent units and design assumptions."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review.",
+  "goals": [
+    {
+      "id": "I12-G01",
+      "title": "Distinguish SD from SEM at replicate level",
+      "competencies": [
+        "115"
+      ],
+      "why": "Compute uncertainty only after identifying the biological replicate values.",
+      "explain": [
+        "Sample SD measures between-replicate dispersion; SEM estimates uncertainty of the mean.",
+        "Increasing the number of imaging fields does not change biological n.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nx=np.array([1.,2.,3.]);print(x.std(ddof=1),x.std(ddof=1)/np.sqrt(len(x)))",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G01 | LEARN | Distinguish SD from SEM at replicate level\n# TASK: Predict the result, run the code and change one input.\n\n\nimport numpy as np\nx=np.array([1.,2.,3.]);print(x.std(ddof=1),x.std(ddof=1)/np.sqrt(len(x)))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "From biological-replicate data.treated, return result={'n','sd','sem'} using sample SD (ddof=1).",
+          "starter_code": "# I12-G01 | APPLY | Distinguish SD from SEM at replicate level\n# TASK: From biological-replicate data.treated, return\n#   result={'n','sd','sem'} using sample SD (ddof=1).\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n']==len(data['treated'])",
+                "np.isclose(result['sem']*np.sqrt(result['n']),result['sd'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n']==len(data['treated'])",
+                "np.isclose(result['sem']*np.sqrt(result['n']),result['sd'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n']==len(data['treated'])",
+                "np.isclose(result['sem']*np.sqrt(result['n']),result['sd'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Sample SD measures between-replicate dispersion; SEM estimates uncertainty of the mean.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Compute sample SEM of within-replicate treated−control changes in sample, not individual field values.",
+          "starter_code": "# I12-G01 | PROVE | Distinguish SD from SEM at replicate level\n# TASK: Compute sample SEM of within-replicate treated−control changes in\n#   sample, not individual field values.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result,(np.asarray(sample['treated'])-np.asarray(sample['control'])).std(ddof=1)/np.sqrt(len(sample['treated'])))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result,(np.asarray(sample['treated'])-np.asarray(sample['control'])).std(ddof=1)/np.sqrt(len(sample['treated'])))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result,(np.asarray(sample['treated'])-np.asarray(sample['control'])).std(ddof=1)/np.sqrt(len(sample['treated'])))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Sample SD measures between-replicate dispersion; SEM estimates uncertainty of the mean.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I12-G02",
+      "title": "Use robust summaries for skewed measurements",
+      "competencies": [
+        "116"
+      ],
+      "why": "Report median and IQR when outliers could dominate small samples.",
+      "explain": [
+        "Median and quartiles summarize a distribution without a normality assumption.",
+        "These descriptive statistics do not repair biased sampling or batch effects.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nprint(np.percentile([1,2,3,30],[25,50,75]))",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G02 | LEARN | Use robust summaries for skewed measurements\n# TASK: Predict the result, run the code and change one input.\n\n\nimport numpy as np\nprint(np.percentile([1,2,3,30],[25,50,75]))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Compute data.treated median and IQR (75th−25th percentile); return a dict result.",
+          "starter_code": "# I12-G02 | APPLY | Use robust summaries for skewed measurements\n# TASK: Compute data.treated median and IQR (75th−25th percentile); return a\n#   dict result.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['median'],np.median(data['treated']))",
+                "np.isclose(result['iqr'],np.percentile(data['treated'],75)-np.percentile(data['treated'],25))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['median'],np.median(data['treated']))",
+                "np.isclose(result['iqr'],np.percentile(data['treated'],75)-np.percentile(data['treated'],25))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['median'],np.median(data['treated']))",
+                "np.isclose(result['iqr'],np.percentile(data['treated'],75)-np.percentile(data['treated'],25))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Median and quartiles summarize a distribution without a normality assumption.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Return the median absolute deviation around median of sample.treated (unscaled) as a float.",
+          "starter_code": "# I12-G02 | PROVE | Use robust summaries for skewed measurements\n# TASK: Return the median absolute deviation around median of sample.treated\n#   (unscaled) as a float.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result,np.median(np.abs(np.asarray(sample['treated'])-np.median(sample['treated']))))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result,np.median(np.abs(np.asarray(sample['treated'])-np.median(sample['treated']))))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result,np.median(np.abs(np.asarray(sample['treated'])-np.median(sample['treated']))))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Median and quartiles summarize a distribution without a normality assumption.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I12-G03",
+      "title": "Build a transparent t confidence interval",
+      "competencies": [
+        "117"
+      ],
+      "why": "A confidence interval needs the effective n and stated distributional assumptions.",
+      "explain": [
+        "Use Student-t sampling uncertainty on independent replicate values with ddof=1.",
+        "A 95% CI does not imply 95% probability that a fixed parameter is inside this observed interval.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "from scipy.stats import t\nprint(t.ppf(.975,df=3))",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G03 | LEARN | Build a transparent t confidence interval\n# TASK: Predict the result, run the code and change one input.\n\n\nfrom scipy.stats import t\nprint(t.ppf(.975,df=3))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Calculate two-sided (1−data.alpha) Student-t CI for the mean of data.treated; return lower, upper and mean.",
+          "starter_code": "# I12-G03 | APPLY | Build a transparent t confidence interval\n# TASK: Calculate two-sided (1−data.alpha) Student-t CI for the mean of\n#   data.treated; return lower, upper and mean.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result['lower']<=result['mean']<=result['upper']",
+                "np.isclose(result['mean'],np.mean(data['treated']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result['lower']<=result['mean']<=result['upper']",
+                "np.isclose(result['mean'],np.mean(data['treated']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result['lower']<=result['mean']<=result['upper']",
+                "np.isclose(result['mean'],np.mean(data['treated']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use Student-t sampling uncertainty on independent replicate values with ddof=1.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Construct a paired-difference t interval on sample.treated−sample.control, return tuple(lower,upper).",
+          "starter_code": "# I12-G03 | PROVE | Build a transparent t confidence interval\n# TASK: Construct a paired-difference t interval on\n#   sample.treated−sample.control, return tuple(lower,upper).\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=np.mean(np.asarray(sample['treated'])-np.asarray(sample['control']))<=result[1]"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=np.mean(np.asarray(sample['treated'])-np.asarray(sample['control']))<=result[1]"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=np.mean(np.asarray(sample['treated'])-np.asarray(sample['control']))<=result[1]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use Student-t sampling uncertainty on independent replicate values with ddof=1.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I12-G04",
+      "title": "Bootstrap the correct experimental unit",
+      "competencies": [
+        "118"
+      ],
+      "why": "Resample independent biological replicates, not individual microscope fields.",
+      "explain": [
+        "A seeded nonparametric bootstrap makes variability reproducible for checking.",
+        "Small n, systematic bias and nonindependence are not fixed by thousands of resamples.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nrng=np.random.default_rng(2);print(rng.choice([1,2,3],size=(2,3),replace=True))",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G04 | LEARN | Bootstrap the correct experimental unit\n# TASK: Predict the result, run the code and change one input.\n\n\nimport numpy as np\nrng=np.random.default_rng(2);print(rng.choice([1,2,3],size=(2,3),replace=True))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Bootstrap the mean of data.treated with 300 replicate-level resamples using data.seed; return 2.5%/97.5% percentile bounds.",
+          "starter_code": "# I12-G04 | APPLY | Bootstrap the correct experimental unit\n# TASK: Bootstrap the mean of data.treated with 300 replicate-level resamples\n#   using data.seed; return 2.5%/97.5% percentile bounds.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=result[1]",
+                "all(np.isfinite(result))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=result[1]",
+                "all(np.isfinite(result))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=result[1]",
+                "all(np.isfinite(result))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A seeded nonparametric bootstrap makes variability reproducible for checking.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Bootstrap matched biological-replicate changes in sample (500 seeded resamples) and return the mean's 5% and 95% bounds.",
+          "starter_code": "# I12-G04 | PROVE | Bootstrap the correct experimental unit\n# TASK: Bootstrap matched biological-replicate changes in sample (500 seeded\n#   resamples) and return the mean's 5% and 95% bounds.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=result[1]",
+                "all(np.isfinite(result))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=result[1]",
+                "all(np.isfinite(result))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result[0]<=result[1]",
+                "all(np.isfinite(result))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A seeded nonparametric bootstrap makes variability reproducible for checking.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I12-G05",
+      "title": "Select paired versus independent comparisons before testing",
+      "competencies": [
+        "119"
+      ],
+      "why": "The experimental design determines a statistical test, not the observed p-value.",
+      "explain": [
+        "Paired t tests operate on matched biological replicate changes.",
+        "Welch's t test compares independent group means allowing unequal variances; assumptions must be checked.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "from scipy.stats import ttest_rel\nprint(ttest_rel([3,4,5],[2,3,4]).pvalue)",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G05 | LEARN | Select paired versus independent comparisons before testing\n# TASK: Predict the result, run the code and change one input.\n\n\nfrom scipy.stats import ttest_rel\nprint(ttest_rel([3,4,5],[2,3,4]).pvalue)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Use scipy.stats: if data.paired use ttest_rel; otherwise use unequal-variance ttest_ind. Return {'method','pvalue'}.",
+          "starter_code": "# I12-G05 | APPLY | Select paired versus independent comparisons before testing\n# TASK: Use scipy.stats: if data.paired use ttest_rel; otherwise use\n#   unequal-variance ttest_ind. Return {'method','pvalue'}.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result['method']==('paired' if data['paired'] else 'welch')",
+                "0<=result['pvalue']<=1"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result['method']==('paired' if data['paired'] else 'welch')",
+                "0<=result['pvalue']<=1"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result['method']==('paired' if data['paired'] else 'welch')",
+                "0<=result['pvalue']<=1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Paired t tests operate on matched biological replicate changes.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "On sample, report the paired mean change plus a test p-value if sample.paired, otherwise unpaired mean effect plus Welch p.",
+          "starter_code": "# I12-G05 | PROVE | Select paired versus independent comparisons before testing\n# TASK: On sample, report the paired mean change plus a test p-value if\n#   sample.paired, otherwise unpaired mean effect plus Welch p.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(sample['treated'])-np.mean(sample['control']))",
+                "0<=result['pvalue']<=1"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(sample['treated'])-np.mean(sample['control']))",
+                "0<=result['pvalue']<=1"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(sample['treated'])-np.mean(sample['control']))",
+                "0<=result['pvalue']<=1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Paired t tests operate on matched biological replicate changes.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I12-G06",
+      "title": "Report effect size and correct multiplicity",
+      "competencies": [
+        "120"
+      ],
+      "why": "Multiple comparisons and small samples require transparent effect reporting.",
+      "explain": [
+        "A raw mean change and adjusted p-values answer different questions.",
+        "Holm adjustment protects family-wise error under a declared comparison family.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nprint(np.clip([0.1,1.2],0,1))",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G06 | LEARN | Report effect size and correct multiplicity\n# TASK: Predict the result, run the code and change one input.\n\n\nimport numpy as np\nprint(np.clip([0.1,1.2],0,1))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Calculate mean treated−control effect and Holm-adjust the supplied data.pvalues; return {'effect','adjusted'} preserving original order.",
+          "starter_code": "# I12-G06 | APPLY | Report effect size and correct multiplicity\n# TASK: Calculate mean treated−control effect and Holm-adjust the supplied\n#   data.pvalues; return {'effect','adjusted'} preserving original order.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(data['treated'])-np.mean(data['control']))",
+                "len(result['adjusted'])==len(data['pvalues'])",
+                "all(a+1e-9>=p for a,p in zip(result['adjusted'],data['pvalues']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(data['treated'])-np.mean(data['control']))",
+                "len(result['adjusted'])==len(data['pvalues'])",
+                "all(a+1e-9>=p for a,p in zip(result['adjusted'],data['pvalues']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(data['treated'])-np.mean(data['control']))",
+                "len(result['adjusted'])==len(data['pvalues'])",
+                "all(a+1e-9>=p for a,p in zip(result['adjusted'],data['pvalues']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A raw mean change and adjusted p-values answer different questions.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Calculate Bonferroni-adjusted sample.pvalues (clamp at 1) with the same original ordering.",
+          "starter_code": "# I12-G06 | PROVE | Report effect size and correct multiplicity\n# TASK: Calculate Bonferroni-adjusted sample.pvalues (clamp at 1) with the\n#   same original ordering.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "np.allclose(result,np.minimum(1,np.asarray(sample['pvalues'])*len(sample['pvalues'])))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "np.allclose(result,np.minimum(1,np.asarray(sample['pvalues'])*len(sample['pvalues'])))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "np.allclose(result,np.minimum(1,np.asarray(sample['pvalues'])*len(sample['pvalues'])))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A raw mean change and adjusted p-values answer different questions.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I12-G07",
+      "title": "Visualize biological replicates, not all fields",
+      "competencies": [
+        "121"
+      ],
+      "why": "A figure should reveal the number of independent samples and the distribution.",
+      "explain": [
+        "Plot individual biological-replicate points for each condition using real Matplotlib.",
+        "Bar charts alone can conceal replicates, spread, missingness and outliers.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots();ax.scatter([1,1],[2,3]);ax.set(xlabel='Condition',ylabel='Value');print(len(ax.collections))",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G07 | LEARN | Visualize biological replicates, not all fields\n# TASK: Predict the result, run the code and change one input.\n\n\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots();ax.scatter([1,1],[2,3]);ax.set(xlabel='Condition',ylabel='Value');print(len(ax.collections))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Plot each data.control and data.treated replicate as scatter points at x=0 and x=1; set descriptive labels and result={'n_control','n_treated'}.",
+          "starter_code": "# I12-G07 | APPLY | Visualize biological replicates, not all fields\n# TASK: Plot each data.control and data.treated replicate as scatter points\n#   at x=0 and x=1; set descriptive labels and\n#   result={'n_control','n_treated'}.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n_control']==len(data['control'])",
+                "len(ax.collections)==2",
+                "ax.get_ylabel()!=''"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n_control']==len(data['control'])",
+                "len(ax.collections)==2",
+                "ax.get_ylabel()!=''"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result['n_control']==len(data['control'])",
+                "len(ax.collections)==2",
+                "ax.get_ylabel()!=''"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Plot individual biological-replicate points for each condition using real Matplotlib.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Plot sample paired trajectories as lines from x=0 to x=1 for every matched replicate; set axis labels and return n.",
+          "starter_code": "# I12-G07 | PROVE | Visualize biological replicates, not all fields\n# TASK: Plot sample paired trajectories as lines from x=0 to x=1 for every\n#   matched replicate; set axis labels and return n.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result==len(sample['control'])",
+                "len(ax.lines)==len(sample['control'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result==len(sample['control'])",
+                "len(ax.lines)==len(sample['control'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result==len(sample['control'])",
+                "len(ax.lines)==len(sample['control'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Plot individual biological-replicate points for each condition using real Matplotlib.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I12-G08",
+      "title": "Export a reproducible experiment summary",
+      "competencies": [
+        "122"
+      ],
+      "why": "Store sample counts, methods and source identity alongside effect estimates.",
+      "explain": [
+        "Machine-readable JSON or CSV preserves the analysis decisions.",
+        "Reproducibility does not imply causal validity or truthful original acquisition metadata.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "import json\nprint(json.dumps({'unit':'animal','n':3},sort_keys=True))",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G08 | LEARN | Export a reproducible experiment summary\n# TASK: Predict the result, run the code and change one input.\n\n\nimport json\nprint(json.dumps({'unit':'animal','n':3},sort_keys=True))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Set result to a JSON-ready dict with unit='biological replicate', n for each group, mean effect, seed and CI alpha; include sorted JSON text in report_json.",
+          "starter_code": "# I12-G08 | APPLY | Export a reproducible experiment summary\n# TASK: Set result to a JSON-ready dict with unit='biological replicate', n\n#   for each group, mean effect, seed and CI alpha; include sorted JSON\n#   text in report_json.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result['unit']=='biological replicate'",
+                "json.loads(report_json)==result",
+                "result['n_control']==len(data['control'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result['unit']=='biological replicate'",
+                "json.loads(report_json)==result",
+                "result['n_control']==len(data['control'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result['unit']=='biological replicate'",
+                "json.loads(report_json)==result",
+                "result['n_control']==len(data['control'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Machine-readable JSON or CSV preserves the analysis decisions.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Export one CSV row per biological replicate and condition from sample using csv.DictWriter; return CSV string result.",
+          "starter_code": "# I12-G08 | PROVE | Export a reproducible experiment summary\n# TASK: Export one CSV row per biological replicate and condition from sample\n#   using csv.DictWriter; return CSV string result.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "len(list(csv.DictReader(io.StringIO(result))))==len(sample['control'])+len(sample['treated'])",
+                "'condition' in result"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "len(list(csv.DictReader(io.StringIO(result))))==len(sample['control'])+len(sample['treated'])",
+                "'condition' in result"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "len(list(csv.DictReader(io.StringIO(result))))==len(sample['control'])+len(sample['treated'])",
+                "'condition' in result"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Machine-readable JSON or CSV preserves the analysis decisions.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I12-G09",
+      "title": "Show uncertainty with explicit intervals",
+      "competencies": [
+        "068"
+      ],
+      "why": "Error bars must state whether they represent SD, SEM or a confidence interval.",
+      "explain": [
+        "Plot group mean with SD labeled explicitly, not silently switching interval type.",
+        "A plot based on independent biological replicates must not inflate n with fields.",
+        "Reported measurements and experiment IDs here are synthetic. No biological significance is inferred from passing code exercises."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nx=np.array([2.,4.,6.]);print(x.mean(),x.std(ddof=1))",
+        "predict": "Predict the numerical result and explain which level of replication it represents."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Find and explain one pseudoreplication, pairing, batch or uncertainty error.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Input values represent synthetic biological replicates or fields, not independently verified experiments; review the design and missingness.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I12-G09 | LEARN | Show uncertainty with explicit intervals\n# TASK: Predict the result, run the code and change one input.\n\n\nimport numpy as np\nx=np.array([2.,4.,6.]);print(x.mean(),x.std(ddof=1))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Make a real Matplotlib errorbar graph for control/treated means ± sample SD and return {'kind':'SD','n':...}; label axes.",
+          "starter_code": "# I12-G09 | APPLY | Show uncertainty with explicit intervals\n# TASK: Make a real Matplotlib errorbar graph for control/treated means ±\n#   sample SD and return {'kind':'SD','n':...}; label axes.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result['kind']=='SD'",
+                "result['n']==[len(data['control']),len(data['treated'])]",
+                "len(ax.lines)>=1"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result['kind']=='SD'",
+                "result['n']==[len(data['control']),len(data['treated'])]",
+                "len(ax.lines)>=1"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result['kind']=='SD'",
+                "result['n']==[len(data['control']),len(data['treated'])]",
+                "len(ax.lines)>=1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Plot group mean with SD labeled explicitly, not silently switching interval type.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Plot paired-difference mean ± SEM with explicit title and y label; return {'kind':'SEM','n'}.",
+          "starter_code": "# I12-G09 | PROVE | Show uncertainty with explicit intervals\n# TASK: Plot paired-difference mean ± SEM with explicit title and y label;\n#   return {'kind':'SEM','n'}.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "control": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "treated": [
+                3,
+                5,
+                5,
+                7
+              ],
+              "paired": true,
+              "seed": 7,
+              "alpha": 0.05,
+              "pvalues": [
+                0.01,
+                0.07,
+                0.25
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "treated": [
+                    3,
+                    5,
+                    5,
+                    7
+                  ],
+                  "paired": true,
+                  "seed": 7,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.01,
+                    0.07,
+                    0.25
+                  ]
+                }
+              },
+              "assertions": [
+                "result['kind']=='SEM'",
+                "result['n']==len(sample['treated'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    5,
+                    6,
+                    8
+                  ],
+                  "treated": [
+                    5,
+                    7,
+                    11
+                  ],
+                  "paired": false,
+                  "seed": 17,
+                  "alpha": 0.1,
+                  "pvalues": [
+                    0.001,
+                    0.03,
+                    0.04,
+                    0.8
+                  ]
+                }
+              },
+              "assertions": [
+                "result['kind']=='SEM'",
+                "result['n']==len(sample['treated'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "control": [
+                    10,
+                    9,
+                    12,
+                    8,
+                    11
+                  ],
+                  "treated": [
+                    11,
+                    12,
+                    14,
+                    10,
+                    12
+                  ],
+                  "paired": true,
+                  "seed": 101,
+                  "alpha": 0.05,
+                  "pvalues": [
+                    0.3,
+                    0.9,
+                    0.08
+                  ]
+                }
+              },
+              "assertions": [
+                "result['kind']=='SEM'",
+                "result['n']==len(sample['treated'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Plot group mean with SD labeled explicitly, not silently switching interval type.",
+            "probe": "Which assumption of independence, missingness or batch structure remains unresolved?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I12-CAPSTONE",
+    "title": "Make a replication-aware effect and uncertainty report",
+    "competencies": [],
+    "why": "Combine learning goals into a transparent and assumption-aware experimental report.",
+    "explain": [
+      "Declare and preserve biological experimental units.",
+      "Keep exclusion and batch decisions visible alongside measured effects.",
+      "Simulation and statistical code cannot independently validate real source data."
+    ],
+    "worked_example": {
+      "code": "import numpy as np\nprint(np.mean([1,2,3]))",
+      "predict": "Predict the printed numerical result and one limitation before execution."
+    },
+    "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+    "walkthrough": [
+      "Identify the source arrays, parameters and expected output before changing code.",
+      "Run the worked example and record which choice alters a candidate measurement.",
+      "Inspect one boundary input and distinguish a mask from validated biological identity."
+    ],
+    "investigate": [
+      "Change one input value or ROI deliberately.",
+      "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+      "Record the scientific meaning of the output and its denominator."
+    ],
+    "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+    "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+    "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the observable output before running this independent demonstration.",
+        "starter_code": "# I12-CAPSTONE | LEARN | Make a replication-aware effect and uncertainty report\n# TASK: Predict this numerical summary and its missing study assumptions.\n\n\nimport numpy as np\nprint(np.mean([1,2,3]))\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed inputs",
+        "description": "Use biological replicate data; report treated−control mean effect, paired/independent design, replicate n and bootstrap interval resampled at unit level; plot replicate data.",
+        "starter_code": "# I12-CAPSTONE | APPLY | Make a replication-aware effect and uncertainty report\n# TASK: Use biological replicate data; report treated−control mean effect,\n#   paired/independent design, replicate n and bootstrap interval\n#   resampled at unit level; plot replicate data.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "control": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "treated": [
+              3,
+              5,
+              5,
+              7
+            ],
+            "paired": true,
+            "seed": 7,
+            "alpha": 0.05,
+            "pvalues": [
+              0.01,
+              0.07,
+              0.25
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "control": [
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "treated": [
+                  3,
+                  5,
+                  5,
+                  7
+                ],
+                "paired": true,
+                "seed": 7,
+                "alpha": 0.05,
+                "pvalues": [
+                  0.01,
+                  0.07,
+                  0.25
+                ]
+              }
+            },
+            "assertions": [
+              "result['n_bio']==[len(data['control']),len(data['treated'])]",
+              "result['interval'][0]<=result['interval'][1]",
+              "result['paired']==data['paired']",
+              "len(ax.collections)==2"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "control": [
+                  5,
+                  6,
+                  8
+                ],
+                "treated": [
+                  5,
+                  7,
+                  11
+                ],
+                "paired": false,
+                "seed": 17,
+                "alpha": 0.1,
+                "pvalues": [
+                  0.001,
+                  0.03,
+                  0.04,
+                  0.8
+                ]
+              }
+            },
+            "assertions": [
+              "result['n_bio']==[len(data['control']),len(data['treated'])]",
+              "result['interval'][0]<=result['interval'][1]",
+              "result['paired']==data['paired']",
+              "len(ax.collections)==2"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "control": [
+                  10,
+                  9,
+                  12,
+                  8,
+                  11
+                ],
+                "treated": [
+                  11,
+                  12,
+                  14,
+                  10,
+                  12
+                ],
+                "paired": true,
+                "seed": 101,
+                "alpha": 0.05,
+                "pvalues": [
+                  0.3,
+                  0.9,
+                  0.08
+                ]
+              }
+            },
+            "assertions": [
+              "result['n_bio']==[len(data['control']),len(data['treated'])]",
+              "result['interval'][0]<=result['interval'][1]",
+              "result['paired']==data['paired']",
+              "len(ax.collections)==2"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Quantitative summaries must distinguish computational candidates from manually validated measurements.",
+          "probe": "What changes under a different input, threshold, sample or experiment?",
+          "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Rebuild a 95% Student-t CI of matched replicate change on sample and report n_bio and effect; do not use number of microscope fields.",
+        "starter_code": "# I12-CAPSTONE | PROVE | Make a replication-aware effect and uncertainty report\n# TASK: Rebuild a 95% Student-t CI of matched replicate change on sample and\n#   report n_bio and effect; do not use number of microscope fields.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "control": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "treated": [
+              3,
+              5,
+              5,
+              7
+            ],
+            "paired": true,
+            "seed": 7,
+            "alpha": 0.05,
+            "pvalues": [
+              0.01,
+              0.07,
+              0.25
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "control": [
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "treated": [
+                  3,
+                  5,
+                  5,
+                  7
+                ],
+                "paired": true,
+                "seed": 7,
+                "alpha": 0.05,
+                "pvalues": [
+                  0.01,
+                  0.07,
+                  0.25
+                ]
+              }
+            },
+            "assertions": [
+              "result['ci95'][0]<=result['effect']<=result['ci95'][1]",
+              "result['n_bio']==len(sample['treated'])",
+              "result['calibrated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "control": [
+                  5,
+                  6,
+                  8
+                ],
+                "treated": [
+                  5,
+                  7,
+                  11
+                ],
+                "paired": false,
+                "seed": 17,
+                "alpha": 0.1,
+                "pvalues": [
+                  0.001,
+                  0.03,
+                  0.04,
+                  0.8
+                ]
+              }
+            },
+            "assertions": [
+              "result['ci95'][0]<=result['effect']<=result['ci95'][1]",
+              "result['n_bio']==len(sample['treated'])",
+              "result['calibrated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "control": [
+                  10,
+                  9,
+                  12,
+                  8,
+                  11
+                ],
+                "treated": [
+                  11,
+                  12,
+                  14,
+                  10,
+                  12
+                ],
+                "paired": true,
+                "seed": 101,
+                "alpha": 0.05,
+                "pvalues": [
+                  0.3,
+                  0.9,
+                  0.08
+                ]
+              }
+            },
+            "assertions": [
+              "result['ci95'][0]<=result['effect']<=result['ci95'][1]",
+              "result['n_bio']==len(sample['treated'])",
+              "result['calibrated'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Quantitative summaries must distinguish computational candidates from manually validated measurements.",
+          "probe": "Which scientific caveat still applies after these tests pass?",
+          "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Identify the expected output variable result and the input contract.",
+        "Use the relevant numerical or segmentation operation with explicit parameters."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+      "TypeError": "Check numeric types and missing values.",
+      "IndexError": "Check row/column order and ROI bounds.",
+      "hardcoded": "Changing the input must change the output."
+    },
+    "reflection_prompts": [],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer practice, not retained-mastery certification"
+    },
+    "build_steps": [
+      "Inspect the experiment hierarchy before calculating n.",
+      "Calculate one result per independent biological unit.",
+      "Separate descriptive summaries and inferential uncertainty.",
+      "Export code, record missingness, and declare limitations."
+    ],
+    "assessment": {
+      "code": "PUBLIC_CHANGED_INPUT_CHECKS",
+      "independent": "NOT_AUTO_CERTIFIED",
+      "biology": "NO_GROUND_TRUTH_VALIDATION"
+    }
+  },
+  "review": {
+    "id": "I12-REVIEW",
+    "title": "Independently bootstrap matched replicate changes",
+    "competencies": [],
+    "why": "Reconstruct the method after a delay on a fresh input.",
+    "explain": [
+      "Reproduce the key numerical decision from memory.",
+      "Check edge behavior and compare to a second input.",
+      "Do not equate remembered code with biological validation."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the printed numerical result and one limitation before execution."
+    },
+    "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+    "walkthrough": [
+      "Identify the source arrays, parameters and expected output before changing code.",
+      "Run the worked example and record which choice alters a candidate measurement.",
+      "Inspect one boundary input and distinguish a mask from validated biological identity."
+    ],
+    "investigate": [
+      "Change one input value or ROI deliberately.",
+      "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+      "Record the scientific meaning of the output and its denominator."
+    ],
+    "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+    "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+    "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the observable output before running this independent demonstration.",
+        "starter_code": "# I12-REVIEW | LEARN | Independently bootstrap matched replicate changes\n# TASK: Recall earlier methods without the worked answer.\n\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed inputs",
+        "description": "Recall the algorithm without feedback before independent Prove.",
+        "starter_code": "# I12-REVIEW | APPLY | Independently bootstrap matched replicate changes\n# TASK: Explain unit selection, then proceed to Prove.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {},
+        "public_checks": [],
+        "practice_feedback": {
+          "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+          "probe": "What changes under a different input, threshold, sample or experiment?",
+          "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "On fresh sample, use a seeded bootstrap resampling entire matched replicate changes 300 times; set result=(low2.5,high97.5).",
+        "starter_code": "# I12-REVIEW | PROVE | Independently bootstrap matched replicate changes\n# TASK: On fresh sample, use a seeded bootstrap resampling entire matched\n#   replicate changes 300 times; set result=(low2.5,high97.5).\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "control": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "treated": [
+              3,
+              5,
+              5,
+              7
+            ],
+            "paired": true,
+            "seed": 7,
+            "alpha": 0.05,
+            "pvalues": [
+              0.01,
+              0.07,
+              0.25
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "control": [
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "treated": [
+                  3,
+                  5,
+                  5,
+                  7
+                ],
+                "paired": true,
+                "seed": 7,
+                "alpha": 0.05,
+                "pvalues": [
+                  0.01,
+                  0.07,
+                  0.25
+                ]
+              }
+            },
+            "assertions": [
+              "result[0]<=result[1]",
+              "all(np.isfinite(result))"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "control": [
+                  5,
+                  6,
+                  8
+                ],
+                "treated": [
+                  5,
+                  7,
+                  11
+                ],
+                "paired": false,
+                "seed": 17,
+                "alpha": 0.1,
+                "pvalues": [
+                  0.001,
+                  0.03,
+                  0.04,
+                  0.8
+                ]
+              }
+            },
+            "assertions": [
+              "result[0]<=result[1]",
+              "all(np.isfinite(result))"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "control": [
+                  10,
+                  9,
+                  12,
+                  8,
+                  11
+                ],
+                "treated": [
+                  11,
+                  12,
+                  14,
+                  10,
+                  12
+                ],
+                "paired": true,
+                "seed": 101,
+                "alpha": 0.05,
+                "pvalues": [
+                  0.3,
+                  0.9,
+                  0.08
+                ]
+              }
+            },
+            "assertions": [
+              "result[0]<=result[1]",
+              "all(np.isfinite(result))"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A new input tests transfer without supplying a ready-made final answer.",
+          "probe": "Which scientific caveat still applies after these tests pass?",
+          "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Identify the expected output variable result and the input contract.",
+        "Use the relevant numerical or segmentation operation with explicit parameters."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+      "TypeError": "Check numeric types and missing values.",
+      "IndexError": "Check row/column order and ROI bounds.",
+      "hardcoded": "Changing the input must change the output."
+    },
+    "reflection_prompts": [
+      "Which decision would you validate with manual annotation or experimental replicates?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer practice, not retained-mastery certification"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "i12_replicate_report.py",
+    "brief": "Make a replication-aware effect and uncertainty report",
+    "status": "LEARNER_PILOT"
+  }
+}

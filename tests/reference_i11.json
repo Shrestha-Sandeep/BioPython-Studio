@@ -1,0 +1,38 @@
+{
+  "I11-G01": {
+    "apply": "rows=data['records'];result={'fields':len(rows),'animals':len({r['animal'] for r in rows})}\nprint(str(result)[:450])",
+    "prove": "result={condition:len({r['animal'] for r in sample['records'] if r['condition']==condition and r['qc']}) for condition in ('control','treated')}\nprint(str(result)[:450])"
+  },
+  "I11-G02": {
+    "apply": "from collections import defaultdict\nv=defaultdict(list)\nfor r in data['records']:\n    if r['qc']:v[(r['animal'],r['condition'])].append(r['value'])\nresult={a:sum(v[(a,'treated')])/len(v[(a,'treated')])-sum(v[(a,'control')])/len(v[(a,'control')]) for a in sorted({r['animal'] for r in data['records']}) if v[(a,'control')] and v[(a,'treated')]}\nprint(str(result)[:450])",
+    "prove": "from collections import defaultdict\nv=defaultdict(lambda:{'control':[],'treated':[]})\nfor r in sample['records']:\n    if r['qc']:v[r['animal']][r['condition']].append(float(r['value']))\nresult=sorted((a,sum(d['treated'])/len(d['treated'])-sum(d['control'])/len(d['control'])) for a,d in v.items() if d['control'] and d['treated'])\nprint(str(result)[:450])"
+  },
+  "I11-G03": {
+    "apply": "result={c:sum(int(not r['qc']) for r in data['records'] if r['condition']==c) for c in ('control','treated')}\nprint(str(result)[:450])",
+    "prove": "result={c:(sum(bool(r['qc']) for r in sample['records'] if r['condition']==c)/sum(r['condition']==c for r in sample['records']) if any(r['condition']==c for r in sample['records']) else None) for c in ('control','treated')}\nprint(str(result)[:450])"
+  },
+  "I11-G04": {
+    "apply": "from collections import defaultdict\nimport numpy as np\nv=defaultdict(list)\nfor r in data['records']:\n    if r['qc']:v[(r['animal'],r['condition'])].append(float(r['value']))\ndiffs=[np.mean(v[(a,'treated')])-np.mean(v[(a,'control')]) for a in sorted({r['animal'] for r in data['records']}) if v[(a,'treated')] and v[(a,'control')]]\nresult=float(np.mean(diffs)) if diffs else None\nprint(str(result)[:450])",
+    "prove": "from collections import defaultdict\nimport numpy as np\nv=defaultdict(list)\nfor r in sample['records']:\n    if r['qc']:v[(r['animal'],r['condition'])].append(float(r['value']))\nmean=lambda c:[np.mean(x) for (a,k),x in v.items() if k==c]\na=mean('treated');b=mean('control')\nresult={'effect':float(np.mean(a)-np.mean(b)) if a and b else None,'paired':False}\nprint(str(result)[:450])"
+  },
+  "I11-G05": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(data['records']);ok=df[df['qc']]\ns=ok.groupby(['animal','condition'],sort=True)['value'].agg(['mean','count']).reset_index()\nresult=[{'animal':r.animal,'condition':r.condition,'mean':float(r.mean),'n_fields':int(r.count)} for r in s.itertuples(index=False)]\nprint(str(result)[:450])",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(sample['records']);ok=df[df['qc']]\nresult={c:int(ok.loc[ok.condition==c,'animal'].nunique()) for c in ('control','treated')}\nprint(str(result)[:450])"
+  },
+  "I11-G06": {
+    "apply": "from collections import Counter\nresult=dict(Counter((r['batch'],r['condition']) for r in data['records'] if r['qc']))\nprint(str(result)[:450])",
+    "prove": "from collections import defaultdict\na=defaultdict(set)\nfor r in sample['records']:\n    if r['qc']:a[r['batch']].add(r['condition'])\nresult={'crossed':all(s=={'control','treated'} for s in a.values()),'batches':len(a)}\nprint(str(result)[:450])"
+  },
+  "I11-G07": {
+    "apply": "from collections import defaultdict\nimport numpy as np\nctrl=defaultdict(list)\nfor r in data['records']:\n    if r['qc'] and r['condition']=='control':ctrl[r['batch']].append(float(r['value']))\nbase={b:float(np.mean(v)) for b,v in ctrl.items()}\nresult=[{'field':r['field'],'normalized':float(r['value']/base[r['batch']]) if base.get(r['batch'],0) else None} for r in data['records'] if r['qc']]\nprint(str(result)[:450])",
+    "prove": "from collections import defaultdict\nimport numpy as np\nbase=defaultdict(list);v=defaultdict(list)\nfor r in sample['records']:\n    if r['qc']:\n        v[(r['animal'],r['condition'],r['batch'])].append(float(r['value']))\n        if r['condition']=='control':base[r['batch']].append(float(r['value']))\nbase={b:float(np.mean(x)) for b,x in base.items()}\nresult={k:(float(np.mean(x)/base[k[2]]) if base.get(k[2],0) else None) for k,x in v.items()}\nprint(str(result)[:450])"
+  },
+  "I11-CAPSTONE": {
+    "apply": "from collections import defaultdict\nimport numpy as np\nv=defaultdict(list)\nfor r in data['records']:\n    if r['qc']:v[(r['animal'],r['condition'])].append(float(r['value']))\nanimals=sorted({a for a,c in v})\nd=[float(np.mean(v[(a,'treated')])-np.mean(v[(a,'control')])) for a in animals if v[(a,'treated')] and v[(a,'control')]]\nresult={'n_animals':len(animals),'n_fields':sum(len(x) for x in v.values()),'paired_effect':float(np.mean(d)) if d else None,'unit':'animal'}\nprint(result)",
+    "prove": "from collections import defaultdict,Counter\ncounts=Counter((r['batch'],r['condition']) for r in sample['records'] if r['qc'])\nbatches={r['batch'] for r in sample['records'] if r['qc']}\nresult={'counts':dict(counts),'all_batches_crossed':all(counts[(b,'control')]>0 and counts[(b,'treated')]>0 for b in batches),'excluded':sum(not r['qc'] for r in sample['records'])}\nprint(result)"
+  },
+  "I11-REVIEW": {
+    "apply": "",
+    "prove": "from collections import Counter\nrows=[r for r in sample['records'] if r['qc']]\ncounts=Counter(r['animal'] for r in rows)\nresult={'n_fields':len(rows),'n_animals':len(counts),'per_animal':dict(counts)}\nprint(result)"
+  }
+}
