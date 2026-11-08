@@ -47,6 +47,14 @@ if not _bps_error:
             _bps_results.append({"expression": _bps_assertion, "passed": _bps_pass, "error": ""})
         except BaseException:
             _bps_results.append({"expression": _bps_assertion, "passed": False, "error": traceback.format_exc()})
+# Practice checks do not return figures; close their temporary Matplotlib objects
+# so repeated changed-input tests never accumulate dozens of hidden plots.
+if not __bps_render_figures and 'matplotlib.pyplot' in sys.modules:
+    try:
+        import matplotlib.pyplot as _bps_plt
+        _bps_plt.close('all')
+    except BaseException:
+        pass
 json.dumps({"stdout": _bps_out.getvalue(), "stderr": _bps_err.getvalue(), "traceback": _bps_error, "checks": _bps_results, "figures": _bps_figures})
 `;
 let publishedFigureReady = false;
