@@ -95,9 +95,13 @@ def test_invalid_dimensions_and_empty_or_nonnumeric_policies():
     with pytest.raises(audit.AuditError, match="no Z axis"):
         audit.select_yx_plane(np.zeros((5, 6)), "YX", z=1)
     with pytest.raises(audit.AuditError, match="Unsupported"):
-        audit.select_yx_plane(np.zeros((3, 5, 6)), "SYX", channel=0)
-    with pytest.raises(audit.AuditError, match="did not yield"):
-        audit.select_yx_plane(np.zeros((2, 5, 6)), "CYX", channel=0, time=0) if False else None
+        audit.select_yx_plane(np.zeros((2, 3, 5, 6)), "SCYX", channel=0)
+    plane, selection = audit.select_yx_plane(np.arange(6).reshape(2, 3), "XY")
+    assert plane.shape == (3, 2)
+    assert plane[1, 0] == 1
+    assert selection["yx_shape"] == [3, 2]
+    with pytest.raises(audit.AuditError, match="empty"):
+        audit.select_yx_plane(np.zeros((0, 0)), "YX")
 
 
 def test_memory_limit_checked_before_decoding_and_missing_inputs(tmp_path):
