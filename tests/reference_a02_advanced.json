@@ -4,8 +4,8 @@
     "prove": "import numpy as np\nraw=np.asarray(data[\"image\"],dtype=np.uint16)\ncorrected=np.maximum(raw.astype(float)-data[\"background\"],0)\nmask=corrected>data[\"threshold\"]\nresult={\"positive_pixels\":int(np.count_nonzero(mask)),\"corrected_max\":float(corrected.max())}\nprint(result)"
   },
   "A02-G02": {
-    "apply": "import numpy as np\nim=np.full((5,5),240,dtype=np.uint8);im[2,2]=20\nprint('border background:',np.median(im[0,:]),'dark center:',im[2,2])",
-    "prove": "import numpy as np\nim=np.full((5,5),240,dtype=np.uint8);im[2,2]=20\nprint('border background:',np.median(im[0,:]),'dark center:',im[2,2])"
+    "apply": "import numpy as np\nimg=np.asarray(data[\"image\"],dtype=float)\nborder=np.concatenate([img[0,:],img[-1,:],img[1:-1,0],img[1:-1,-1]])\npolarity=\"dark\" if float(np.median(border))>=0.55*data[\"max_possible\"] else \"bright\"\nresult={\"polarity\":polarity,\"pixels\":int(np.count_nonzero(img<data[\"threshold\"] if polarity==\"dark\" else img>data[\"threshold\"]))}\nprint(result)",
+    "prove": "import numpy as np\nimg=np.asarray(data[\"image\"],dtype=float)\nborder=np.concatenate([img[0,:],img[-1,:],img[1:-1,0],img[1:-1,-1]])\npolarity=\"dark\" if float(np.median(border))>=0.55*data[\"max_possible\"] else \"bright\"\nresult={\"polarity\":polarity,\"pixels\":int(np.count_nonzero(img<data[\"threshold\"] if polarity==\"dark\" else img>data[\"threshold\"]))}\nprint(result)"
   },
   "A02-G03": {
     "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,0,1],[1,0,0],[0,0,0]],bool)\nlabels,n=ndi.label(m)\nprint('objects:',n,'pixel counts:',np.bincount(labels.ravel())[1:].tolist())",
