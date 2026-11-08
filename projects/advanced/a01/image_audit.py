@@ -143,9 +143,6 @@ def audit_image(path: Path, *, channel: int | None = None,
             raise AuditError(f"Unsupported nonnumeric image dtype: {native_dtype}")
         axes = str(series.axes)
         # Check axes and requested selections *before* decoding the full array.
-        placeholder = np.empty((0,) * len(shape), dtype=native_dtype)
-        # Avoid allocating any large array here: stride-trick shape proxy.
-        del placeholder
         normalized = axes.upper().replace("S", "C")
         if (len(axes) != len(shape) or len(normalized) != len(set(normalized))
                 or set(normalized) - set("TCZYX") or "X" not in normalized or "Y" not in normalized):
