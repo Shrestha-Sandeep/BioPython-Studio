@@ -116,7 +116,7 @@
     const g=options.goal;if(!g)return;
     intro(root,g,options.phase);
     if(options.phase==="learn"&&["P01-G01","P01-CAPSTONE","P02-G01","P02-CAPSTONE","P03-G01","P03-CAPSTONE"].includes(g.id))fluorescence(root,g);
-    if(options.phase==="learn"&&g.id.startsWith("I01"))fluorescence(root,g);
+    if(options.phase==="learn"&&["I01","I02","I03","I04"].some(id=>g.id.startsWith(id))&&["G01","CAPSTONE"].some(part=>g.id.endsWith(part)))fluorescence(root,g);
     if(g.id.startsWith("P06")){
       const link=el("a","","Local Python and Git verification guide");
       link.href="./docs/P06_LOCAL_HANDOFF.md";link.target="_blank";link.rel="noopener noreferrer";
