@@ -223,3 +223,41 @@ def test_rgb_never_silently_collapsed(tmp_path):
     with pytest.raises(DatasetError, match="explicit"):
         load_sample_image(folder)
     assert load_sample_image(folder, channel=1).shape == (8, 8)
+
+def test_native_16bit_tiff_command_preserves_source_and_exports(tmp_path):
+    import tifffile
+    from projects.advanced.a02.run_tiff import main as tiff_main
+
+    source = tmp_path / "original.ome.tif"
+    image = np.zeros((40, 40), dtype=np.uint16)
+    image[_disc((40, 40), (19, 21), 7)] = 55000
+    tifffile.imwrite(source, image, ome=True, metadata={"axes": "YX"})
+    original_bytes = source.read_bytes()
+    config_path = Path(__file__).resolve().parents[1] / "projects/advanced/a02/segmentation-config.json"
+    out = tmp_path / "segmented"
+    assert tiff_main([
+        "--input", str(source), "--out", str(out), "--config", str(config_path)
+    ]) == 0
+    assert source.read_bytes() == original_bytes
+    native_labels = tifffile.imread(out / "candidate_labels.tif")
+    assert native_labels.dtype == np.uint32
+    assert native_labels.shape == image.shape
+    assert native_labels.max() >= 1
+    audit = json.loads((out / "analysis.json").read_text(encoding="utf-8"))
+    assert audit["source_audit"]["native_dtype"] == "uint16"
+    assert audit["source_audit"]["source_sha256"]
+    assert audit["segmentation_diagnostics"]["biological_identity_verified"] is False
+    assert (out / "candidate_regions.csv").is_file()
+    assert tiff_main([
+        "--input", str(source), "--out", str(source.parent), "--config", str(config_path)
+    ]) == 2
+    assert source.read_bytes() == original_bytes
+
+
+def test_benchmark_output_inside_dataset_root_refused(tmp_path):
+    from projects.advanced.a03.benchmark import evaluate_split, load_config
+
+    root, manifest, cfgpath = _make_dataset(tmp_path)
+    with pytest.raises(DatasetError, match="outside"):
+        evaluate_split(root=root, manifest=manifest, cfg=load_config(cfgpath),
+                       split="calibration", out=root / "results")
