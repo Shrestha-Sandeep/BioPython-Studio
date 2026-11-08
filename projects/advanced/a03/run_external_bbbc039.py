@@ -142,7 +142,7 @@ def run(root: Path, out: Path, *, split: str = "test") -> dict:
         "native_source_dtype": "uint16",
         "prespecified_segmentation": asdict(CONFIG),
         "baseline": collect("baseline"),
-        "intensity_polartity_router": collect("routed"),
+        "intensity_polarity_router": collect("routed"),
         "inferred_polarities": {
             "bright": sum(r["polarity"] == "bright" for r in rows),
             "dark": sum(r["polarity"] == "dark" for r in rows),
@@ -174,7 +174,7 @@ def run(root: Path, out: Path, *, split: str = "test") -> dict:
         for key in ("object_f1_micro", "object_f1_image_macro",
                     "pixel_iou_image_macro", "absolute_count_error_image_mean"):
             f.write(f"| {key} | {report['baseline'][key]:.4f} | "
-                    f"{report['intensity_polartity_router'][key]:.4f} |\n")
+                    f"{report['intensity_polarity_router'][key]:.4f} |\n")
         f.write("\n**Interpretation:** Public official test; some possible overlap with earlier BBBC038; "
                 "class-code-one nucleus interiors vs predictions; fixed heuristic not a learned image classifier. "
                 "These results do not certify general-purpose segmentation.\n")
