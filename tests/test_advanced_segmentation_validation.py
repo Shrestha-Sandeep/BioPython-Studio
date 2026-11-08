@@ -261,3 +261,40 @@ def test_benchmark_output_inside_dataset_root_refused(tmp_path):
     with pytest.raises(DatasetError, match="outside"):
         evaluate_split(root=root, manifest=manifest, cfg=load_config(cfgpath),
                        split="calibration", out=root / "results")
+
+def test_parameter_sensitivity_distinguishes_stability_from_accuracy(tmp_path):
+    import tifffile
+    from projects.advanced.a02.sensitivity import compare_variants, main as sensitivity_main
+
+    image = np.zeros((40, 40), dtype=np.uint16)
+    image[_disc((40, 40), (20, 20), 6)] = 30000
+    original = image.copy()
+    low = SegmentConfig(method="manual", manual_threshold=10000,
+                        gaussian_sigma=0, min_area=10, closing_radius=0)
+    high = SegmentConfig(method="manual", manual_threshold=35000,
+                         gaussian_sigma=0, min_area=10, closing_radius=0)
+    rows = compare_variants(image, [("low", low), ("high", high)])
+    assert rows[0]["candidate_count"] == 1
+    assert rows[1]["candidate_count"] == 0
+    assert rows[1]["foreground_iou_to_first"] == 0.0
+    assert rows[1]["changed_pixel_fraction_to_first"] > 0
+    assert np.array_equal(image, original)
+    with pytest.raises(ValueError, match="two"):
+        compare_variants(image, [("alone", low)])
+    with pytest.raises(ValueError, match="unique"):
+        compare_variants(image, [("same", low), ("same", high)])
+    source = tmp_path / "source.tif"
+    tifffile.imwrite(source, image)
+    low_path, high_path = tmp_path / "low.json", tmp_path / "high.json"
+    low_path.write_text(json.dumps(asdict(low)), encoding="utf-8")
+    high_path.write_text(json.dumps(asdict(high)), encoding="utf-8")
+    out = tmp_path / "sweep"
+    assert sensitivity_main([
+        "--input", str(source), "--out", str(out),
+        "--variant", f"low={low_path}", "--variant", f"high={high_path}"
+    ]) == 0
+    assert (out / "sensitivity.csv").is_file()
+    result = json.loads((out / "sensitivity.json").read_text(encoding="utf-8"))
+    assert len(result["variants"]) == 2
+    assert "not segmentation accuracy" in result["interpretation"]
+    assert source.read_bytes() == source.read_bytes()
