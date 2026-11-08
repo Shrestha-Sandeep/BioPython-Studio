@@ -2023,7 +2023,7 @@
                 }
               },
               "assertions": [
-                "result['safe']==not bool(set(sample['train_groups'])&set(sample['test_groups']))",
+                "result['safe']==(not bool(set(sample['train_groups'])&set(sample['test_groups'])))",
                 "result['only_test']==sorted(set(sample['test_groups'])-set(sample['train_groups']))"
               ]
             },
@@ -2158,7 +2158,7 @@
                 }
               },
               "assertions": [
-                "result['safe']==not bool(set(sample['train_groups'])&set(sample['test_groups']))",
+                "result['safe']==(not bool(set(sample['train_groups'])&set(sample['test_groups'])))",
                 "result['only_test']==sorted(set(sample['test_groups'])-set(sample['train_groups']))"
               ]
             },
@@ -2293,7 +2293,7 @@
                 }
               },
               "assertions": [
-                "result['safe']==not bool(set(sample['train_groups'])&set(sample['test_groups']))",
+                "result['safe']==(not bool(set(sample['train_groups'])&set(sample['test_groups'])))",
                 "result['only_test']==sorted(set(sample['test_groups'])-set(sample['train_groups']))"
               ]
             }
@@ -6231,7 +6231,7 @@
             },
             "assertions": [
               "result['leaked_groups']==sorted(set(sample['train_groups'])&set(sample['test_groups']))",
-              "result['safe']==not bool(result['leaked_groups'])",
+              "result['safe']==(not bool(result['leaked_groups']))",
               "result['n_independent_train']==len(set(sample['train_groups']))"
             ]
           },
@@ -6367,7 +6367,7 @@
             },
             "assertions": [
               "result['leaked_groups']==sorted(set(sample['train_groups'])&set(sample['test_groups']))",
-              "result['safe']==not bool(result['leaked_groups'])",
+              "result['safe']==(not bool(result['leaked_groups']))",
               "result['n_independent_train']==len(set(sample['train_groups']))"
             ]
           },
@@ -6503,7 +6503,7 @@
             },
             "assertions": [
               "result['leaked_groups']==sorted(set(sample['train_groups'])&set(sample['test_groups']))",
-              "result['safe']==not bool(result['leaked_groups'])",
+              "result['safe']==(not bool(result['leaked_groups']))",
               "result['n_independent_train']==len(set(sample['train_groups']))"
             ]
           }
