@@ -230,12 +230,12 @@
         "A02-G02"
       ],
       "why": "Bright nuclei and dark nuclei require opposite mask polarity.",
-      "explain": "A source-intensity heuristic is a testable hypothesis, not a universal modality classifier.",
+      "explain": [
+        "Bright nuclei and dark nuclei require opposite mask polarity.",
+        "A source-intensity heuristic is a testable hypothesis, not a universal modality classifier."
+      ],
       "worked_example": {
-        "code": [
-          "Use source intensity reference, not automatic percentile scaling.",
-          "Opposite polarity may segment brightfield background instead of dark nuclei."
-        ],
+        "code": "import numpy as np\nim=np.full((5,5),240,dtype=np.uint8);im[2,2]=20\nprint('border background:',np.median(im[0,:]),'dark center:',im[2,2])",
         "predict": "Predict the mask and candidate counts before running real Python."
       },
       "prediction_answer": "Counts depend on threshold, polarity and the chosen morphological operation; they do not independently prove biological identity.",
@@ -254,252 +254,8 @@
       "hints": {
         "learn": [],
         "apply": [
-          {
-            "image": [
-              [
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200
-              ],
-              [
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200
-              ],
-              [
-                200,
-                200,
-                40,
-                40,
-                40,
-                40,
-                40,
-                200,
-                200,
-                200,
-                200
-              ],
-              [
-                200,
-                200,
-                40,
-                40,
-                40,
-                40,
-                40,
-                200,
-                200,
-                200,
-                200
-              ],
-              [
-                200,
-                200,
-                40,
-                40,
-                40,
-                40,
-                40,
-                200,
-                200,
-                200,
-                200
-              ],
-              [
-                200,
-                200,
-                40,
-                40,
-                40,
-                40,
-                40,
-                200,
-                200,
-                200,
-                200
-              ],
-              [
-                200,
-                200,
-                40,
-                40,
-                40,
-                40,
-                40,
-                200,
-                200,
-                200,
-                200
-              ],
-              [
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200
-              ],
-              [
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200,
-                200
-              ]
-            ],
-            "max_possible": 255,
-            "threshold": 90
-          },
-          {
-            "image": [
-              [
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60
-              ],
-              [
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60
-              ],
-              [
-                60,
-                60,
-                60,
-                40000,
-                40000,
-                40000,
-                40000,
-                40000,
-                60,
-                60,
-                60
-              ],
-              [
-                60,
-                60,
-                60,
-                40000,
-                40000,
-                40000,
-                40000,
-                40000,
-                60,
-                60,
-                60
-              ],
-              [
-                60,
-                60,
-                60,
-                40000,
-                40000,
-                40000,
-                40000,
-                40000,
-                60,
-                60,
-                60
-              ],
-              [
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60
-              ],
-              [
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60
-              ],
-              [
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60
-              ],
-              [
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60,
-                60
-              ]
-            ],
-            "max_possible": 65535,
-            "threshold": 9000
-          }
+          "Calculate a border median from the first and last rows and columns.",
+          "Use < for dark foreground and > for bright foreground; neither certifies object identity."
         ],
         "prove": []
       },
@@ -510,40 +266,13 @@
         "learn": {
           "title": "Predict → Run → Investigate",
           "description": "Run the demonstration and predict effects of parameter changes.",
-          "starter_code": "# A02-G02 | LEARN | Choose the correct foreground polarity\n# TASK: Predict, run and inspect the example.\n\nUse source intensity reference, not automatic percentile scaling.,Opposite polarity may segment brightfield background instead of dark nuclei.\n",
+          "starter_code": "# A02-G02 | LEARN | Choose the correct foreground polarity\n# TASK: Predict, run and inspect the example.\n\nimport numpy as np\nim=np.full((5,5),240,dtype=np.uint8);im[2,2]=20\nprint('border background:',np.median(im[0,:]),'dark center:',im[2,2])\n",
           "preview_inputs": {}
         },
         "apply": {
           "title": "Apply with changed image inputs",
           "description": "Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.",
           "starter_code": "# A02-G02 | APPLY | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
-          "preview_inputs": {
-            "data": "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')"
-          },
-          "public_checks": [
-            {
-              "inputs": {
-                "data": "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')"
-              },
-              "assertions": "import numpy as np\nimg=np.asarray(data[\"image\"],dtype=float)\nborder=np.concatenate([img[0,:],img[-1,:],img[1:-1,0],img[1:-1,-1]])\npolarity=\"dark\" if float(np.median(border))>=0.55*data[\"max_possible\"] else \"bright\"\nresult={\"polarity\":polarity,\"pixels\":int(np.count_nonzero(img<data[\"threshold\"] if polarity==\"dark\" else img>data[\"threshold\"]))}\nprint(result)"
-            },
-            {
-              "inputs": {
-                "data": "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
-              },
-              "assertions": "import numpy as np\nimg=np.asarray(data[\"image\"],dtype=float)\nborder=np.concatenate([img[0,:],img[-1,:],img[1:-1,0],img[1:-1,-1]])\npolarity=\"dark\" if float(np.median(border))>=0.55*data[\"max_possible\"] else \"bright\"\nresult={\"polarity\":polarity,\"pixels\":int(np.count_nonzero(img<data[\"threshold\"] if polarity==\"dark\" else img>data[\"threshold\"]))}\nprint(result)"
-            }
-          ],
-          "practice_feedback": {
-            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
-            "probe": "Where would this algorithm merge, split or miss biological objects?",
-            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
-          }
-        },
-        "prove": {
-          "title": "Independent changed-image transfer",
-          "description": "Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.",
-          "starter_code": "# A02-G02 | PROVE | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
             "data": {
               "image": [
@@ -796,7 +525,10 @@
                   "threshold": 120
                 }
               },
-              "assertions": "import numpy as np\nimg=np.asarray(data[\"image\"],dtype=float)\nborder=np.concatenate([img[0,:],img[-1,:],img[1:-1,0],img[1:-1,-1]])\npolarity=\"dark\" if float(np.median(border))>=0.55*data[\"max_possible\"] else \"bright\"\nresult={\"polarity\":polarity,\"pixels\":int(np.count_nonzero(img<data[\"threshold\"] if polarity==\"dark\" else img>data[\"threshold\"]))}\nprint(result)"
+              "assertions": [
+                "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')",
+                "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
+              ]
             },
             {
               "inputs": {
@@ -924,7 +656,409 @@
                   "threshold": 10000
                 }
               },
-              "assertions": "import numpy as np\nimg=np.asarray(data[\"image\"],dtype=float)\nborder=np.concatenate([img[0,:],img[-1,:],img[1:-1,0],img[1:-1,-1]])\npolarity=\"dark\" if float(np.median(border))>=0.55*data[\"max_possible\"] else \"bright\"\nresult={\"polarity\":polarity,\"pixels\":int(np.count_nonzero(img<data[\"threshold\"] if polarity==\"dark\" else img>data[\"threshold\"]))}\nprint(result)"
+              "assertions": [
+                "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')",
+                "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The result is a traceable image-computation check, not annotation-based accuracy.",
+            "probe": "Where would this algorithm merge, split or miss biological objects?",
+            "check": "Inspect polarity, thresholds and boundary behavior; do not hardcode practice values."
+          }
+        },
+        "prove": {
+          "title": "Independent changed-image transfer",
+          "description": "Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.",
+          "starter_code": "# A02-G02 | PROVE | Choose the correct foreground polarity\n# TASK: Inspect border median versus data.max_possible (uint8=255 or uint16=65535). Choose 'dark' if border median >=55% of maximum, else 'bright'; count pixels above/below data.threshold as result={'polarity':str,'pixels':int}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  40,
+                  40,
+                  40,
+                  40,
+                  40,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200
+                ],
+                [
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200,
+                  200
+                ]
+              ],
+              "max_possible": 255,
+              "threshold": 90
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      40,
+                      40,
+                      40,
+                      40,
+                      40,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200
+                    ],
+                    [
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200,
+                      200
+                    ]
+                  ],
+                  "max_possible": 255,
+                  "threshold": 90
+                }
+              },
+              "assertions": [
+                "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')",
+                "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      40000,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ],
+                    [
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60,
+                      60
+                    ]
+                  ],
+                  "max_possible": 65535,
+                  "threshold": 9000
+                }
+              },
+              "assertions": [
+                "result['polarity']==('dark' if float(np.median(np.concatenate([np.asarray(data['image'])[0,:],np.asarray(data['image'])[-1,:],np.asarray(data['image'])[1:-1,0],np.asarray(data['image'])[1:-1,-1]])))>=0.55*data['max_possible'] else 'bright')",
+                "result['pixels']==int(np.count_nonzero(np.asarray(data['image'])<data['threshold'] if result['polarity']=='dark' else np.asarray(data['image'])>data['threshold']))"
+              ]
             }
           ],
           "practice_feedback": {
