@@ -16,8 +16,8 @@
     "prove": "import pandas as pd\ndf=pd.DataFrame(row_data)\nmissing=[k for k in must_have if k not in df.columns]\nreport={'ok':not bool(missing),'missing':missing}\nprint(report)"
   },
   "I07-G05": {
-    "apply": "import pandas as pd\ndf=pd.DataFrame({'raw_id':raw_ids})\ndf['clean_id']=df['raw_id'].str.strip()\nclean_ids=df['clean_id'].tolist()\nchanged_count=sum(a!=b for a,b in zip(raw_ids,clean_ids))",
-    "prove": "import pandas as pd\ntable=pd.DataFrame({'original_id':acquisition_ids})\ntable['normalized_id']=table['original_id'].str.strip()\nids=table['normalized_id']\ncollisions=ids[ids.duplicated()].drop_duplicates().tolist()"
+    "apply": "import pandas as pd\ndf=pd.DataFrame({'raw_id':pd.Series(raw_ids,dtype='string')})\ndf['clean_id']=df['raw_id'].str.strip()\nclean_ids=df['clean_id'].tolist()\nchanged_count=sum(a!=b for a,b in zip(raw_ids,clean_ids))",
+    "prove": "import pandas as pd\ntable=pd.DataFrame({'original_id':pd.Series(acquisition_ids,dtype='string')})\ntable['normalized_id']=table['original_id'].str.strip()\nids=table['normalized_id']\ncollisions=ids[ids.duplicated()].drop_duplicates().tolist()"
   },
   "I07-G06": {
     "apply": "import pandas as pd\ndf=pd.DataFrame(records,columns=['id','condition'])\nduplicate_ids=df.loc[df['id'].duplicated(),'id'].drop_duplicates().tolist()\nconflicting_ids=[sid for sid,part in df.groupby('id',sort=False) if part['condition'].nunique(dropna=False)>1]",
