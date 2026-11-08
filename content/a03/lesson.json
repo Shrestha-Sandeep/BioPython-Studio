@@ -762,9 +762,9 @@
                 }
               },
               "assertions": [
-                "np.isclose(result['precision'],data['tp']/(data['tp']+data['fp']) if data['tp']+data['fp'] else (1.0 if data['fn']==0 else 0.0))",
-                "np.isclose(result['recall'],data['tp']/(data['tp']+data['fn']) if data['tp']+data['fn'] else 1.0)",
-                "np.isclose(result['f1'],2*result['precision']*result['recall']/(result['precision']+result['recall']) if result['precision']+result['recall'] else 0.0)",
+                "__import__('math').isclose(result['precision'],data['tp']/(data['tp']+data['fp']) if data['tp']+data['fp'] else (1.0 if data['fn']==0 else 0.0))",
+                "__import__('math').isclose(result['recall'],data['tp']/(data['tp']+data['fn']) if data['tp']+data['fn'] else 1.0)",
+                "__import__('math').isclose(result['f1'],2*result['precision']*result['recall']/(result['precision']+result['recall']) if result['precision']+result['recall'] else 0.0)",
                 "result['biological_n']==len(set(data['animal_ids']))"
               ]
             },
@@ -782,9 +782,9 @@
                 }
               },
               "assertions": [
-                "np.isclose(result['precision'],data['tp']/(data['tp']+data['fp']) if data['tp']+data['fp'] else (1.0 if data['fn']==0 else 0.0))",
-                "np.isclose(result['recall'],data['tp']/(data['tp']+data['fn']) if data['tp']+data['fn'] else 1.0)",
-                "np.isclose(result['f1'],2*result['precision']*result['recall']/(result['precision']+result['recall']) if result['precision']+result['recall'] else 0.0)",
+                "__import__('math').isclose(result['precision'],data['tp']/(data['tp']+data['fp']) if data['tp']+data['fp'] else (1.0 if data['fn']==0 else 0.0))",
+                "__import__('math').isclose(result['recall'],data['tp']/(data['tp']+data['fn']) if data['tp']+data['fn'] else 1.0)",
+                "__import__('math').isclose(result['f1'],2*result['precision']*result['recall']/(result['precision']+result['recall']) if result['precision']+result['recall'] else 0.0)",
                 "result['biological_n']==len(set(data['animal_ids']))"
               ]
             }
@@ -826,9 +826,9 @@
                 }
               },
               "assertions": [
-                "np.isclose(result['precision'],data['tp']/(data['tp']+data['fp']) if data['tp']+data['fp'] else (1.0 if data['fn']==0 else 0.0))",
-                "np.isclose(result['recall'],data['tp']/(data['tp']+data['fn']) if data['tp']+data['fn'] else 1.0)",
-                "np.isclose(result['f1'],2*result['precision']*result['recall']/(result['precision']+result['recall']) if result['precision']+result['recall'] else 0.0)",
+                "__import__('math').isclose(result['precision'],data['tp']/(data['tp']+data['fp']) if data['tp']+data['fp'] else (1.0 if data['fn']==0 else 0.0))",
+                "__import__('math').isclose(result['recall'],data['tp']/(data['tp']+data['fn']) if data['tp']+data['fn'] else 1.0)",
+                "__import__('math').isclose(result['f1'],2*result['precision']*result['recall']/(result['precision']+result['recall']) if result['precision']+result['recall'] else 0.0)",
                 "result['biological_n']==len(set(data['animal_ids']))"
               ]
             },
@@ -845,9 +845,9 @@
                 }
               },
               "assertions": [
-                "np.isclose(result['precision'],data['tp']/(data['tp']+data['fp']) if data['tp']+data['fp'] else (1.0 if data['fn']==0 else 0.0))",
-                "np.isclose(result['recall'],data['tp']/(data['tp']+data['fn']) if data['tp']+data['fn'] else 1.0)",
-                "np.isclose(result['f1'],2*result['precision']*result['recall']/(result['precision']+result['recall']) if result['precision']+result['recall'] else 0.0)",
+                "__import__('math').isclose(result['precision'],data['tp']/(data['tp']+data['fp']) if data['tp']+data['fp'] else (1.0 if data['fn']==0 else 0.0))",
+                "__import__('math').isclose(result['recall'],data['tp']/(data['tp']+data['fn']) if data['tp']+data['fn'] else 1.0)",
+                "__import__('math').isclose(result['f1'],2*result['precision']*result['recall']/(result['precision']+result['recall']) if result['precision']+result['recall'] else 0.0)",
                 "result['biological_n']==len(set(data['animal_ids']))"
               ]
             }
@@ -3007,7 +3007,7 @@
           },
           {
             "inputs": {
-              "data": "np.isclose(result['f1'],2*result['tp']/(2*result['tp']+result['fp']+result['fn']) if (2*result['tp']+result['fp']+result['fn']) else 1.0)"
+              "data": "__import__('math').isclose(result['f1'],2*result['tp']/(2*result['tp']+result['fp']+result['fn']) if (2*result['tp']+result['fp']+result['fn']) else 1.0)"
             },
             "assertions": [
               "i",
@@ -7910,7 +7910,7 @@
               }
             },
             "assertions": [
-              "np.isclose(result['object_f1'],2*data['tp']/(2*data['tp']+data['fp']+data['fn']) if 2*data['tp']+data['fp']+data['fn'] else 1.0)",
+              "__import__('math').isclose(result['object_f1'],2*data['tp']/(2*data['tp']+data['fp']+data['fn']) if 2*data['tp']+data['fp']+data['fn'] else 1.0)",
               "result['biological_n']==len(set(data['animals']))",
               "result['valid_holdout']==not bool({r['group_id'] for r in data['records'] if r['split']=='calibration'}&{r['group_id'] for r in data['records'] if r['split']=='holdout'})"
             ]
@@ -7938,7 +7938,7 @@
               }
             },
             "assertions": [
-              "np.isclose(result['object_f1'],2*data['tp']/(2*data['tp']+data['fp']+data['fn']) if 2*data['tp']+data['fp']+data['fn'] else 1.0)",
+              "__import__('math').isclose(result['object_f1'],2*data['tp']/(2*data['tp']+data['fp']+data['fn']) if 2*data['tp']+data['fp']+data['fn'] else 1.0)",
               "result['biological_n']==len(set(data['animals']))",
               "result['valid_holdout']==not bool({r['group_id'] for r in data['records'] if r['split']=='calibration'}&{r['group_id'] for r in data['records'] if r['split']=='holdout'})"
             ]
@@ -8003,7 +8003,7 @@
               }
             },
             "assertions": [
-              "np.isclose(result['object_f1'],2*data['tp']/(2*data['tp']+data['fp']+data['fn']) if 2*data['tp']+data['fp']+data['fn'] else 1.0)",
+              "__import__('math').isclose(result['object_f1'],2*data['tp']/(2*data['tp']+data['fp']+data['fn']) if 2*data['tp']+data['fp']+data['fn'] else 1.0)",
               "result['biological_n']==len(set(data['animals']))",
               "result['valid_holdout']==not bool({r['group_id'] for r in data['records'] if r['split']=='calibration'}&{r['group_id'] for r in data['records'] if r['split']=='holdout'})"
             ]
@@ -8030,7 +8030,7 @@
               }
             },
             "assertions": [
-              "np.isclose(result['object_f1'],2*data['tp']/(2*data['tp']+data['fp']+data['fn']) if 2*data['tp']+data['fp']+data['fn'] else 1.0)",
+              "__import__('math').isclose(result['object_f1'],2*data['tp']/(2*data['tp']+data['fp']+data['fn']) if 2*data['tp']+data['fp']+data['fn'] else 1.0)",
               "result['biological_n']==len(set(data['animals']))",
               "result['valid_holdout']==not bool({r['group_id'] for r in data['records'] if r['split']=='calibration'}&{r['group_id'] for r in data['records'] if r['split']=='holdout'})"
             ]
