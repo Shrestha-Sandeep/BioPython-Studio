@@ -792,7 +792,7 @@
       ],
       "why": "Silent case conversion can create false matches or merge distinct genotypes.",
       "explain": [
-        "Specimen names may be case-sensitive. `.str.strip()` removes external accidental whitespace without inventing an ID change policy.",
+        "Specimen names may be case-sensitive. `.str.strip()` removes external accidental whitespace without inventing an ID change policy. Explicitly set `dtype='string'` for an initially empty ID column; otherwise Pandas may infer float and `.str.strip()` will fail.",
         "Preserve original ID in a `raw_id` column for auditing and create a separate `clean_id` field.",
         "A normalized text match does not verify that the physical specimen was labeled correctly during acquisition."
       ],
@@ -872,7 +872,7 @@
           "practice_feedback": {
             "why": "Preserve original ID in a `raw_id` column for auditing and create a separate `clean_id` field.",
             "probe": "Which source identity, missing value or duplicate would change the result of normalize only allowed sample-id whitespace?",
-            "check": "Preserve original rows and dtypes, check exact input names and output columns for normalize only allowed sample-id whitespace."
+            "check": "Create an explicit string-typed ID Series (also when input is empty). Preserve raw IDs and case, then strip exterior spaces only."
           }
         },
         "prove": {
