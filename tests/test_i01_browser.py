@@ -55,6 +55,8 @@ def main():
             assert page.locator("#bps-chapter-select option").count()==6
             assert page.locator("#lesson-summary").inner_text().startswith("I01")
             assert not page.locator("#image-panel").is_hidden()
+            page.wait_for_function("document.querySelector(\'#image-meta\')?.textContent.includes(\'Witz-HPA-rendered-RGB-example.png\')",timeout=20000)
+            assert page.locator("#image-empty").is_hidden()
             # G05 really opens the credited image file, not a fabricated array.
             page.locator("#p01-goal-select").select_option("4")
             assert "# TASK:" in page.evaluate("document.querySelector('.CodeMirror').CodeMirror.getValue()")
