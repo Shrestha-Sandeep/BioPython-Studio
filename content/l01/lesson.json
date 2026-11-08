@@ -3786,7 +3786,7 @@
               "assertions": [
                 "len(result['train_medians'])==len(data['train_X'][0])",
                 "result['test_shape']==(len(data['test_X']),len(data['train_X'][0]))",
-                "result['train_medians'][0]==sorted(r[0] for r in data['train_X'])[len(data['train_X'])//2-1:len(data['train_X'])//2+1][0] if len(data['train_X'])==3 else result['train_medians'][0]==__import__('numpy').median([r[0] for r in data['train_X'])"
+                "abs(result['train_medians'][0]-__import__('numpy').median([r[0] for r in data['train_X']]))<1e-9"
               ]
             },
             {
@@ -3922,7 +3922,7 @@
               "assertions": [
                 "len(result['train_medians'])==len(data['train_X'][0])",
                 "result['test_shape']==(len(data['test_X']),len(data['train_X'][0]))",
-                "result['train_medians'][0]==sorted(r[0] for r in data['train_X'])[len(data['train_X'])//2-1:len(data['train_X'])//2+1][0] if len(data['train_X'])==3 else result['train_medians'][0]==__import__('numpy').median([r[0] for r in data['train_X'])"
+                "abs(result['train_medians'][0]-__import__('numpy').median([r[0] for r in data['train_X']]))<1e-9"
               ]
             },
             {
@@ -4058,7 +4058,7 @@
               "assertions": [
                 "len(result['train_medians'])==len(data['train_X'][0])",
                 "result['test_shape']==(len(data['test_X']),len(data['train_X'][0]))",
-                "result['train_medians'][0]==sorted(r[0] for r in data['train_X'])[len(data['train_X'])//2-1:len(data['train_X'])//2+1][0] if len(data['train_X'])==3 else result['train_medians'][0]==__import__('numpy').median([r[0] for r in data['train_X'])"
+                "abs(result['train_medians'][0]-__import__('numpy').median([r[0] for r in data['train_X']]))<1e-9"
               ]
             }
           ],
