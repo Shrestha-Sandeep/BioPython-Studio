@@ -1,0 +1,50 @@
+{
+  "I03-G01": {
+    "apply": "import numpy as np\narr=np.asarray(values,dtype=float)\ntransformed=arr*factor+offset\nroot=np.sqrt(np.clip(arr,0,None))",
+    "prove": "import numpy as np\nmeasured=np.asarray(counts,dtype=float)\ncorrected=np.maximum(measured-background,0)\nratio=corrected/reference if reference>0 else np.full_like(corrected,np.nan)"
+  },
+  "I03-G02": {
+    "apply": "import numpy as np\narr=np.asarray(data,dtype=float)\ncorrected=np.maximum(arr-np.asarray(channel_background),0)\ncorrected_shape=corrected.shape",
+    "prove": "import numpy as np\narr=np.asarray(table,dtype=float)\nnormalized=arr/np.asarray(row_factors,dtype=float)[:,None]\nsource_shape=arr.shape"
+  },
+  "I03-G03": {
+    "apply": "import numpy as np\narr=np.asarray(scores,dtype=float)\nvalid=np.isfinite(arr)\nmask=valid & (arr>=minimum)\nselected_indices=np.flatnonzero(mask).tolist()",
+    "prove": "import numpy as np\nimage=np.asarray(intensity_rows)\nmask=image>cutoff\nforeground_count=int(mask.sum())\nforeground_fraction=float(mask.mean()) if mask.size else 0"
+  },
+  "I03-G04": {
+    "apply": "import numpy as np\noriginal=np.asarray(values)\ncleaned=original.copy()\ncleaned[cleaned<threshold]=0\noriginal_untouched=bool(original.tolist()==values)",
+    "prove": "import numpy as np\noriginal=np.asarray(readings,dtype=float)\nrepaired=original.copy()\ninvalid=~np.isfinite(original)|(original<0)|(original>1)\nrepaired[invalid]=np.nan\ninvalid_count=int(invalid.sum())\npreserved=bool(np.allclose(original,np.asarray(readings,dtype=float),equal_nan=True))"
+  },
+  "I03-G05": {
+    "apply": "import numpy as np\narr=np.asarray(matrix,dtype=float)\ncolumn_means=arr.mean(axis=0)\nrow_means=arr.mean(axis=1)\noverall_mean=float(arr.mean())",
+    "prove": "import numpy as np\narr=np.asarray(stack_data,dtype=float)\nmean_image=arr.mean(axis=0)\nfield_means=arr.mean(axis=(1,2))\nfield_count=arr.shape[0]"
+  },
+  "I03-G06": {
+    "apply": "import numpy as np\narr=np.asarray(values,dtype=float)\nvalid=arr[np.isfinite(arr)]\nobserved_count=int(valid.size)\nmissing_count=int(arr.size-valid.size)\nfinite_mean=float(valid.mean()) if valid.size else None",
+    "prove": "import numpy as np\naccepted_ids=[];rejected_ids=[];valid=[]\nfor sid,value in observations:\n    if value is not None and np.isfinite(value):\n        accepted_ids.append(sid);valid.append(value)\n    else:\n        rejected_ids.append(sid)\nmean_value=float(np.asarray(valid,dtype=float).mean()) if valid else None"
+  },
+  "I03-G07": {
+    "apply": "import numpy as np\narr=np.asarray(values,dtype=float)\nsorted_values=np.sort(arr).tolist()\npercentile_value=float(np.percentile(arr,percentile))\nabove_count=int((arr>percentile_value).sum())",
+    "prove": "import numpy as np\narr=np.asarray(intensities,dtype=float)\nthreshold_value=float(np.percentile(arr,q))\ncandidate_indices=np.flatnonzero(arr>threshold_value).tolist()\nsorted_indices=np.argsort(arr).tolist"
+  },
+  "I03-G08": {
+    "apply": "import numpy as np\nrng=np.random.default_rng(seed)\nsimulations=rng.poisson(mean_count,size=n)\nreproducible=bool(np.array_equal(simulations,np.random.default_rng(seed).poisson(mean_count,size=n)))",
+    "prove": "import numpy as np\ndraws=np.random.default_rng(seed).integers(low,high,size=n)\nsame_seed_equal=bool(np.array_equal(draws,np.random.default_rng(seed).integers(low,high,size=n)))\nmin_bound_ok=bool(((draws>=low)&(draws<high)).all())"
+  },
+  "I03-G09": {
+    "apply": "import numpy as np\nraw=np.asarray(values,dtype=np.uint8)\nsafe_sum=raw.astype(np.int64)+added\nwrapped=raw+np.uint8(added)\noverflow_detected=bool(np.any(safe_sum!=wrapped))",
+    "prove": "import numpy as np\narr=np.asarray(counts,dtype=np.uint8)\nsafe_total=int(arr.astype(np.int64).sum())\nunsafe_total=int(arr.sum(dtype=np.uint8))\noverflow=unsafe_total!=safe_total"
+  },
+  "I03-G10": {
+    "apply": "import numpy as np\narr=np.asarray(pixels,dtype=float)\nmask=np.asarray(region_mask,dtype=bool)\nselected=arr[mask]\nselected_count=int(mask.sum())\nselected_mean=float(selected.mean()) if selected.size else None\nselected_sum=float(selected.sum())",
+    "prove": "import numpy as np\narr=np.asarray(field,dtype=float)\nmask=arr>=cutoff\nchosen=arr[mask]\narea_pixels=int(mask.sum())\nmean_selected=float(chosen.mean()) if chosen.size else None\nfraction_selected=float(mask.mean()) if mask.size else 0"
+  },
+  "I03-CAPSTONE": {
+    "apply": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nplane=rgb[y0:y1,x0:x1,channel_index]\nmask=plane>=threshold\nselected=plane[mask]\nreport={'area_pixels':int(mask.sum()),'selected_mean':float(selected.mean()) if selected.size else None,'raw_calibrated':False}\nprint(report)",
+    "prove": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[top:bottom,left:right,component]\npassed=roi>limit\nsummary={'n':int(passed.sum()),'fraction':float(passed.mean()) if passed.size else 0,'raw':False}\nprint(summary)"
+  },
+  "I03-REVIEW": {
+    "apply": "",
+    "prove": "import numpy as np\narr=np.asarray(matrix,dtype=float)\nselected=arr[arr>cutoff]\nreport={'selected_count':int(selected.size),'selected_sum':float(selected.sum()),'selected_mean':float(selected.mean()) if selected.size else None}\nprint(report)"
+  }
+}
