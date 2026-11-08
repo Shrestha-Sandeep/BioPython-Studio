@@ -273,12 +273,13 @@ function pyLiteral(value){
 }
 function exportPython(){
  if(!active()||!(goal()?.id.endsWith("-CAPSTONE")||goal()?.id.endsWith("-REVIEW")))return;
- const vars=task().preview_inputs||{};
+ const vars={...(task().preview_inputs||{})};
+ if(isImaging(activeId)&&vars.image_path==="/home/pyodide/witz_published_figure.png")vars.image_path="./assets/witz/fluorescence-single.png";
  const preamble=Object.entries(vars).map(([name,value])=>name+" = "+pyLiteral(value)).join("\n");
  const code=bridge()?.readCode()||"";
  if(!hasExecutableCode(code)){output("Write your Python program before exporting.");return;}
  const source=["# BioPython Studio "+activeId+" · original learner code",
- "# Synthetic microscopy records and example calibration, not real image measurements.",
+ (isImaging(activeId)?"# Witz/HPA published RGB notebook figure, not calibrated raw intensity. Keep source image beside this exported script.":"# Synthetic microscopy records and example calibration, not real image measurements."),
  "# The assignments below reproduce one supplied practice input.",preamble,"",code,""].join("\n");
  const blob=new Blob([source],{type:"text/x-python;charset=utf-8"});
  const url=URL.createObjectURL(blob);
