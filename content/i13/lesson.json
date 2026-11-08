@@ -3375,7 +3375,7 @@
               "assertions": [
                 "result['raw'] is False",
                 "0<=result['fraction']<=1",
-                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1))"
+                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1)))"
               ]
             },
             {
@@ -3390,7 +3390,7 @@
               "assertions": [
                 "result['raw'] is False",
                 "0<=result['fraction']<=1",
-                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1))"
+                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1)))"
               ]
             },
             {
@@ -3405,7 +3405,7 @@
               "assertions": [
                 "result['raw'] is False",
                 "0<=result['fraction']<=1",
-                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1))"
+                "result['count']==sum(r.area>=min_area for r in regionprops(label(np.asarray(Image.open(image_path).convert('RGB'))[top:top+48,left:left+48,band]>cutoff,connectivity=1)))"
               ]
             }
           ],
