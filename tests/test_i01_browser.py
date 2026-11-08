@@ -47,12 +47,12 @@ def main():
             page.on("pageerror",lambda exc:errors.append(str(exc)))
             page.goto(URL,wait_until="domcontentloaded")
             page.locator("#bps-chapter-select").wait_for(timeout=20000)
-            assert page.locator("#bps-chapter-select option").count()==6
+            assert page.locator("#bps-chapter-select option").count()==13
             # Save a P01 draft and verify stage switching never replaces it.
             set_code(page,"# P01-G01 | LEARN | Run a scientific Python script\n# kept old P01 draft\nprint('P01 saved')")
             page.locator('[data-stage="Microscopy"]').click()
             assert page.locator("#bps-chapter-select").input_value()=="I01"
-            assert page.locator("#bps-chapter-select option").count()==6
+            assert page.locator("#bps-chapter-select option").count()==13
             assert page.locator("#lesson-summary").inner_text().startswith("I01")
             assert not page.locator("#image-panel").is_hidden()
             page.wait_for_function("document.querySelector(\'#image-meta\')?.textContent.includes(\'Witz-HPA-rendered-RGB-example.png\')",timeout=20000)

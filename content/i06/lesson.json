@@ -15,7 +15,7 @@
   ],
   "intro": "Clean a mask and label candidate nuclei. Authentic Witz-led method; teach parameter sensitivity and source integrity before biological interpretation.",
   "scientific_context": {
-    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/05-Segmentation.ipynb",
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/05-Filtering.ipynb",
     "asset": "assets/witz/fluorescence-single.png",
     "credited_in": "assets/witz/CREDITS.md",
     "use": "SYNTHETIC_NUMERICAL_EXERCISES_WITH_CREDITED_IMAGE_CONTEXT",

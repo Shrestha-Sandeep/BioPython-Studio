@@ -2,7 +2,7 @@
 
 **Status:** independent learner trial required. Public checks do not certify object detection, biology or retention.
 
-Witz source: https://github.com/guiwitz/PyImageCourse_beginner/blob/master/05-Segmentation.ipynb. Credited HPA figure: [provenance](../../assets/witz/CREDITS.md).
+Witz source: https://github.com/guiwitz/PyImageCourse_beginner/blob/master/05-Filtering.ipynb. Credited HPA figure: [provenance](../../assets/witz/CREDITS.md).
 
 ## Teaching sequence
 

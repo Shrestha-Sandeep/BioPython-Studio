@@ -14,7 +14,7 @@
   ],
   "intro": "Validate tracking and segmentation through real numerical libraries and synthetic controlled examples; source figures are rendered/uncalibrated.",
   "scientific_context": {
-    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/09-Tracking.ipynb",
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/09-Advanced.ipynb",
     "asset": "assets/witz/fluorescence-single.png",
     "credited_in": "assets/witz/CREDITS.md",
     "use": "SYNTHETIC_GROUND_TRUTH_EXERCISES_AND_ATTRIBUTED_RENDERED_RGB_CONTEXT",

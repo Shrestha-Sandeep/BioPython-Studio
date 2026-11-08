@@ -2,7 +2,7 @@
 
 **Status:** Technical learner pilot, not independently validated mastery.
 
-Source: https://github.com/guiwitz/PyImageCourse_beginner/blob/master/09-Tracking.ipynb
+Source: https://github.com/guiwitz/PyImageCourse_beginner/blob/master/09-Advanced.ipynb
 
 Credited rendered image: [Witz/HPA provenance](../../assets/witz/CREDITS.md). Exercises are synthetic and do not establish real biological segmentation accuracy.
 

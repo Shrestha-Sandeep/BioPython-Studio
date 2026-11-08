@@ -2,7 +2,7 @@
 
 **Status:** independent learner trial required. Public checks do not certify object detection, biology or retention.
 
-Witz source: https://github.com/guiwitz/PyImageCourse_beginner/blob/master/04-Image_processing.ipynb. Credited HPA figure: [provenance](../../assets/witz/CREDITS.md).
+Witz source: https://github.com/guiwitz/PyImageCourse_beginner/blob/master/04-Thresholding.ipynb. Credited HPA figure: [provenance](../../assets/witz/CREDITS.md).
 
 ## Teaching sequence
 
