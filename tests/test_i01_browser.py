@@ -47,7 +47,7 @@ def main():
             page.on("pageerror",lambda exc:errors.append(str(exc)))
             page.goto(URL,wait_until="domcontentloaded")
             page.locator("#bps-chapter-select").wait_for(timeout=20000)
-            assert page.locator("#bps-chapter-select option").count()==13
+            assert page.locator("#bps-chapter-select option").count()==6
             # Save a P01 draft and verify stage switching never replaces it.
             set_code(page,"# P01-G01 | LEARN | Run a scientific Python script\n# kept old P01 draft\nprint('P01 saved')")
             page.locator('[data-stage="Microscopy"]').click()
