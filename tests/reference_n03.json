@@ -1,0 +1,26 @@
+{
+  "N03-G01": {
+    "apply": "qs=[r['q'] for r in data['reads']];width=max(map(len,qs),default=0);means=[sum(q[i] for q in qs if i<len(q))/sum(i<len(q) for q in qs) for i in range(width)];result={'cycle_mean':means,'cycle_n':[sum(i<len(q) for q in qs) for i in range(width)]}\nprint(result)",
+    "prove": "qs=[r['q'] for r in sample['reads']];width=max(map(len,qs),default=0);means=[sum(q[i] for q in qs if i<len(q))/sum(i<len(q) for q in qs) for i in range(width)];result=min(range(width),key=lambda i:means[i]) if means else None\nprint(result)"
+  },
+  "N03-G02": {
+    "apply": "result=[]\nfor r in data['reads']:\n n=len(r['q'])\n while n and r['q'][n-1]<data['threshold']:n-=1\n if n>=data['min_len']:result.append((r['id'],r['seq'][:n]))\nprint(result)",
+    "prove": "kept=[];bad=[]\nfor r in sample['reads']:\n n=len(r['q'])\n while n and r['q'][n-1]<sample['threshold']:n-=1\n if n>=sample['min_len']:kept.append(n)\n else:bad.append(r['id'])\nresult={'retained':len(kept),'discarded_ids':bad,'retained_bases':sum(kept)}\nprint(result)"
+  },
+  "N03-G03": {
+    "apply": "from collections import Counter\nk=data['k'];result=Counter(chunk for r in data['reads'] for i in range(len(r['seq'])-k+1) if set(chunk:=r['seq'][i:i+k].upper())<=set('ACGT'))\nprint(dict(result))",
+    "prove": "from collections import Counter\nk=sample['k'];counts=Counter(chunk for r in sample['reads'] for i in range(len(r['seq'])-k+1) if set(chunk:=r['seq'][i:i+k].upper())<=set('ACGT'));result={'valid_windows':sum(counts.values()),'distinct_motifs':len(counts)}\nprint(result)"
+  },
+  "N03-G04": {
+    "apply": "from Bio.Align import PairwiseAligner\nal=PairwiseAligner();al.match_score=2;al.mismatch_score=-1;al.open_gap_score=-2;al.extend_gap_score=-0.5;result=float(al.score(data['reference'],data['query']))\nprint(result)",
+    "prove": "from Bio.Align import PairwiseAligner\nal=PairwiseAligner();al.match_score=2;al.mismatch_score=-1;al.open_gap_score=-2;al.extend_gap_score=-0.5;s=float(al.score(sample['reference'],sample['query']));result={'score':s,'perfect_reference':s==2*len(sample['reference'])}\nprint(result)"
+  },
+  "N03-CAPSTONE": {
+    "apply": "from collections import Counter\nkept=[]\nfor r in data['reads']:\n n=len(r['q'])\n while n and r['q'][n-1]<data['threshold']:n-=1\n if n>=data['min_len']:kept.append((r['id'],r['seq'][:n].upper()))\nk=data['k'];counts=Counter(seq[i:i+k] for _,seq in kept for i in range(len(seq)-k+1) if set(seq[i:i+k])<=set('ACGT'));result={'ids':[x[0] for x in kept],'kmer_counts':dict(counts)}\nprint(result)",
+    "prove": "total=sum(len(r['seq']) for r in sample['reads']);kept=[]\nfor r in sample['reads']:\n n=len(r['q'])\n while n and r['q'][n-1]<sample['threshold']:n-=1\n if n>=sample['min_len']:kept.append(n)\nresult={'input_bases':total,'retained_bases':sum(kept),'retained_count':len(kept)}\nprint(result)"
+  },
+  "N03-REVIEW": {
+    "apply": "",
+    "prove": "result=[]\nfor r in sample['reads']:\n n=len(r['q'])\n while n and r['q'][n-1]<sample['threshold']:n-=1\n result.append((r['id'],n))\nprint(result)"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "L01-G01": {
+    "apply": "by={}\nfor r in data['records']:\n if r['animal'] in by and by[r['animal']]!=r['label']:raise ValueError('conflicting animal label')\n by[r['animal']]=r['label']\nresult={'fields':len(data['records']),'animals':len(by),'labels_by_animal':by}\nprint(result)",
+    "prove": "by={}\nfor r in sample['records']:\n if r['animal'] in by and by[r['animal']]!=r['label']:raise ValueError('conflicting animal labels')\n by[r['animal']]=r['label']\nresult={'n_subjects':len(by),'class_counts':{label:sum(v==label for v in by.values()) for label in set(by.values())}}\nprint(result)"
+  },
+  "L01-G02": {
+    "apply": "overlap=sorted(set(data['train_groups']) & set(data['test_groups']));result={'leak':bool(overlap),'overlap':overlap}\nprint(result)",
+    "prove": "a=set(sample['train_groups']);b=set(sample['test_groups']);result={'safe':not bool(a&b),'only_train':sorted(a-b),'only_test':sorted(b-a)}\nprint(result)"
+  },
+  "L01-G03": {
+    "apply": "from sklearn.model_selection import GroupShuffleSplit\ngroups=[r['animal'] for r in data['records']];a,b=next(GroupShuffleSplit(n_splits=1,test_size=.34,random_state=data['seed']).split(data['records'],groups=groups));result={'train_idx':a.tolist(),'test_idx':b.tolist()}\nprint(result)",
+    "prove": "from sklearn.model_selection import GroupShuffleSplit\ngroups=[r['animal'] for r in sample['records']];a,b=next(GroupShuffleSplit(n_splits=1,test_size=.34,random_state=sample['seed']).split(sample['records'],groups=groups));result={'train_subjects':sorted({groups[i] for i in a}),'test_subjects':sorted({groups[i] for i in b}),'all_rows_accounted':len(a)+len(b)==len(groups)}\nprint(result)"
+  },
+  "L01-G04": {
+    "apply": "import numpy as np\nfrom sklearn.impute import SimpleImputer\nimp=SimpleImputer(strategy='median').fit(np.asarray(data['train_X'],float));t=imp.transform(np.asarray(data['test_X'],float));result={'train_medians':imp.statistics_.tolist(),'test_shape':tuple(t.shape)}\nprint(result)",
+    "prove": "import numpy as np\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\npipe=Pipeline([('impute',SimpleImputer(strategy='median')),('scale',StandardScaler())]).fit(np.asarray(sample['train_X'],float));train=pipe.transform(np.asarray(sample['train_X'],float));test=pipe.transform(np.asarray(sample['test_X'],float));result={'mean_after_scaling':np.round(train.mean(axis=0),7).tolist(),'test_rows':int(test.shape[0])}\nprint(result)"
+  },
+  "L01-CAPSTONE": {
+    "apply": "import numpy as np\nfrom sklearn.model_selection import GroupShuffleSplit\nfrom sklearn.preprocessing import StandardScaler\nrows=data['records'];groups=[r['animal'] for r in rows];x=np.asarray([r['signal'] for r in rows]).reshape(-1,1);tr,te=next(GroupShuffleSplit(n_splits=1,test_size=.34,random_state=data['seed']).split(x,groups=groups));sc=StandardScaler().fit(x[tr]);sc.transform(x[te]);result={'train_animals':sorted({groups[i] for i in tr}),'test_animals':sorted({groups[i] for i in te}),'train_mean_raw':float(x[tr].mean())}\nprint(result)",
+    "prove": "from sklearn.model_selection import GroupShuffleSplit\nrows=sample['records'];groups=[r['animal'] for r in rows];tr,te=next(GroupShuffleSplit(n_splits=1,test_size=.34,random_state=sample['seed']).split(rows,groups=groups));result={'train_count':len(tr),'test_count':len(te),'overlap':sorted({groups[i] for i in tr}&{groups[i] for i in te})}\nprint(result)"
+  },
+  "L01-REVIEW": {
+    "apply": "",
+    "prove": "train=set(sample['train_groups']);test=set(sample['test_groups']);overlap=sorted(train&test);result={'leaked_groups':overlap,'safe':not bool(overlap),'n_independent_train':len(train)}\nprint(result)"
+  }
+}

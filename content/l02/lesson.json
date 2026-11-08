@@ -1,0 +1,5063 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "L02",
+  "version": "1.0.0",
+  "status": "INTEGRATED_LEARNER_PILOT",
+  "title": "Build interpretable ML baselines",
+  "competencies": [
+    "143",
+    "144",
+    "145",
+    "146"
+  ],
+  "intro": "Fit simple, transparent scikit-learn models on prepartitioned synthetic measurements and always compare them with a dummy predictor.",
+  "scientific_context": {
+    "source": "https://scikit-learn.org/stable/supervised_learning.html",
+    "asset": null,
+    "credited_in": "docs/SOURCE_LEDGER.md",
+    "use": "SYNTHETIC_BIOLOGICAL_UNITS_WITH_REAL_SKLEARN",
+    "caution": "The train/test sets are separate synthetic inputs. This chapter tests coding mechanics, not independent biological model deployment; use group-safe provenance for real microscopy or omics data."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review.",
+  "goals": [
+    {
+      "id": "L02-G01",
+      "title": "Fit a dummy classifier before a real model",
+      "competencies": [
+        "143"
+      ],
+      "why": "A classifier should not be celebrated for merely predicting the majority class.",
+      "explain": [
+        "DummyClassifier(strategy='most_frequent') provides the majority-class baseline based on training labels only.",
+        "Reporting accuracy without class counts can conceal useless predictions on an imbalanced dataset.",
+        "All numerical examples are synthetic. Cross-validation outputs alone do not validate prediction on new biological preparations."
+      ],
+      "worked_example": {
+        "code": "from sklearn.dummy import DummyClassifier\nm=DummyClassifier(strategy='most_frequent').fit([[0],[1],[2]],[0,0,1])\nprint(m.predict([[10],[20]]).tolist())",
+        "predict": "Predict the output, including what is missing from its scientific interpretation."
+      },
+      "prediction_answer": "Derive the result from the declared split or metric, not from a biological assumption.",
+      "walkthrough": [
+        "DummyClassifier(strategy='most_frequent') provides the majority-class baseline based on training labels only.",
+        "Train on training labels; predict test features without using test labels during fit.",
+        "Which clinical or scientific decisions make majority-class prediction particularly dangerous?"
+      ],
+      "investigate": [
+        "Modify one numerical input while holding experimental-group identities fixed.",
+        "Check a boundary case, a missing value or a class-imbalance scenario.",
+        "Explain whether the result is a descriptive measurement or unseen-data evidence."
+      ],
+      "debug_task": "Identify leakage, inappropriate scaling, an incorrect group split or a metric denominator error.",
+      "misconception": "Reporting accuracy without class counts can conceal useless predictions on an imbalanced dataset.",
+      "scientific_boundary": "The train/test sets are separate synthetic inputs. This chapter tests coding mechanics, not independent biological model deployment; use group-safe provenance for real microscopy or omics data.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Run the real scikit-learn example after predicting its output.",
+          "starter_code": "# L02-G01 | LEARN | Fit a dummy classifier before a real model\n# TASK: Predict this program output then change a meaningful input.\n\nfrom sklearn.dummy import DummyClassifier\nm=DummyClassifier(strategy='most_frequent').fit([[0],[1],[2]],[0,0,1])\nprint(m.predict([[10],[20]]).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Guided changed-input practice",
+          "description": "Fit sklearn DummyClassifier(most_frequent) on data.train_X/train_y and predict data.test_X. Return result as a list of predicted integer classes.",
+          "starter_code": "# L02-G01 | APPLY | Fit a dummy classifier before a real model\n# TASK: Fit sklearn DummyClassifier(most_frequent) on data.train_X/train_y and\n# predict data.test_X. Return result as a list of predicted integer classes.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "train_X": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "train_y": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "test_X": [
+                [
+                  0.5,
+                  0.2
+                ],
+                [
+                  2.5,
+                  0.5
+                ],
+                [
+                  1.5,
+                  0.1
+                ]
+              ],
+              "test_y": [
+                0,
+                1,
+                0
+              ],
+              "reg_X": [
+                [
+                  0
+                ],
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ],
+              "reg_y": [
+                1,
+                3,
+                5,
+                7
+              ],
+              "reg_test": [
+                [
+                  4
+                ],
+                [
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      0
+                    ],
+                    [
+                      3,
+                      1
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0.5,
+                      0.2
+                    ],
+                    [
+                      2.5,
+                      0.5
+                    ],
+                    [
+                      1.5,
+                      0.1
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ]
+                  ],
+                  "reg_y": [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  "reg_test": [
+                    [
+                      4
+                    ],
+                    [
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(data['test_X'])",
+                "result==[min(set(data['train_y']),key=lambda c:(-data['train_y'].count(c),c))]*len(data['test_X'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      1
+                    ],
+                    [
+                      6,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      5,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "reg_test": [
+                    [
+                      6
+                    ],
+                    [
+                      7
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(data['test_X'])",
+                "result==[min(set(data['train_y']),key=lambda c:(-data['train_y'].count(c),c))]*len(data['test_X'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      1.2,
+                      0.4
+                    ],
+                    [
+                      4.1,
+                      1.1
+                    ],
+                    [
+                      2.1,
+                      1.2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    10,
+                    8,
+                    6,
+                    4
+                  ],
+                  "reg_test": [
+                    [
+                      5
+                    ],
+                    [
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(data['test_X'])",
+                "result==[min(set(data['train_y']),key=lambda c:(-data['train_y'].count(c),c))]*len(data['test_X'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "DummyClassifier(strategy='most_frequent') provides the majority-class baseline based on training labels only.",
+            "probe": "Which clinical or scientific decisions make majority-class prediction particularly dangerous?",
+            "check": "Inspect the exact split boundary, training-only transformations and realistic metrics."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Use a training-only DummyClassifier and return result={'majority':integer class,'accuracy':fraction matching sample.test_y} on the held-out sample.test_X.",
+          "starter_code": "# L02-G01 | PROVE | Fit a dummy classifier before a real model\n# TASK: Use a training-only DummyClassifier and return result={'majority':integer\n# class,'accuracy':fraction matching sample.test_y} on the held-out sample.test_X.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "train_X": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "train_y": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "test_X": [
+                [
+                  0.5,
+                  0.2
+                ],
+                [
+                  2.5,
+                  0.5
+                ],
+                [
+                  1.5,
+                  0.1
+                ]
+              ],
+              "test_y": [
+                0,
+                1,
+                0
+              ],
+              "reg_X": [
+                [
+                  0
+                ],
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ],
+              "reg_y": [
+                1,
+                3,
+                5,
+                7
+              ],
+              "reg_test": [
+                [
+                  4
+                ],
+                [
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      0
+                    ],
+                    [
+                      3,
+                      1
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0.5,
+                      0.2
+                    ],
+                    [
+                      2.5,
+                      0.5
+                    ],
+                    [
+                      1.5,
+                      0.1
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ]
+                  ],
+                  "reg_y": [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  "reg_test": [
+                    [
+                      4
+                    ],
+                    [
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
+                "0<=result['accuracy']<=1"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      1
+                    ],
+                    [
+                      6,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      5,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "reg_test": [
+                    [
+                      6
+                    ],
+                    [
+                      7
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
+                "0<=result['accuracy']<=1"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      1.2,
+                      0.4
+                    ],
+                    [
+                      4.1,
+                      1.1
+                    ],
+                    [
+                      2.1,
+                      1.2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    10,
+                    8,
+                    6,
+                    4
+                  ],
+                  "reg_test": [
+                    [
+                      5
+                    ],
+                    [
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
+                "0<=result['accuracy']<=1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "DummyClassifier(strategy='most_frequent') provides the majority-class baseline based on training labels only.",
+            "probe": "Which clinical or scientific decisions make majority-class prediction particularly dangerous?",
+            "check": "Use genuinely independent code and justify the sample grouping."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Train on training labels; predict test features without using test labels during fit.",
+          "Fit transformers only on training data."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check that both classes appear in training, shapes are compatible, and groups are independent.",
+        "TypeError": "Check numeric values and explicit missing-value treatment.",
+        "IndexError": "Verify train/test indexing and length alignment.",
+        "hardcoded": "Solutions must respond to all changed input datasets."
+      },
+      "reflection_prompts": [
+        "Which clinical or scientific decisions make majority-class prediction particularly dangerous?"
+      ],
+      "learning_evidence": {
+        "learn": "Demonstration and prediction only",
+        "apply": "Three public changed-input checks",
+        "prove": "Independent transfer practice, not certified generalization"
+      }
+    },
+    {
+      "id": "L02-G02",
+      "title": "Fit and interpret a linear regression baseline",
+      "competencies": [
+        "144"
+      ],
+      "why": "Predicting a numerical assay response requires knowing slope, residuals and out-of-sample uncertainty.",
+      "explain": [
+        "LinearRegression fits a least-squares line; report the coefficient and predictions on new X, not a causal effect.",
+        "A fitted slope does not imply that the feature causes the biological response.",
+        "All numerical examples are synthetic. Cross-validation outputs alone do not validate prediction on new biological preparations."
+      ],
+      "worked_example": {
+        "code": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit([[0],[1],[2]],[1,3,5]);print(round(float(m.coef_[0]),3))",
+        "predict": "Predict the output, including what is missing from its scientific interpretation."
+      },
+      "prediction_answer": "Derive the result from the declared split or metric, not from a biological assumption.",
+      "walkthrough": [
+        "LinearRegression fits a least-squares line; report the coefficient and predictions on new X, not a causal effect.",
+        "Use sklearn.linear_model.LinearRegression and inspect coef_ and predict().",
+        "What happens if a fitted model is extrapolated beyond the observed range?"
+      ],
+      "investigate": [
+        "Modify one numerical input while holding experimental-group identities fixed.",
+        "Check a boundary case, a missing value or a class-imbalance scenario.",
+        "Explain whether the result is a descriptive measurement or unseen-data evidence."
+      ],
+      "debug_task": "Identify leakage, inappropriate scaling, an incorrect group split or a metric denominator error.",
+      "misconception": "A fitted slope does not imply that the feature causes the biological response.",
+      "scientific_boundary": "The train/test sets are separate synthetic inputs. This chapter tests coding mechanics, not independent biological model deployment; use group-safe provenance for real microscopy or omics data.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Run the real scikit-learn example after predicting its output.",
+          "starter_code": "# L02-G02 | LEARN | Fit and interpret a linear regression baseline\n# TASK: Predict this program output then change a meaningful input.\n\nfrom sklearn.linear_model import LinearRegression\nm=LinearRegression().fit([[0],[1],[2]],[1,3,5]);print(round(float(m.coef_[0]),3))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Guided changed-input practice",
+          "description": "Fit LinearRegression on data.reg_X/reg_y and return result={'slope':float,'predictions':list of floats} for data.reg_test.",
+          "starter_code": "# L02-G02 | APPLY | Fit and interpret a linear regression baseline\n# TASK: Fit LinearRegression on data.reg_X/reg_y and return\n# result={'slope':float,'predictions':list of floats} for data.reg_test.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "train_X": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "train_y": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "test_X": [
+                [
+                  0.5,
+                  0.2
+                ],
+                [
+                  2.5,
+                  0.5
+                ],
+                [
+                  1.5,
+                  0.1
+                ]
+              ],
+              "test_y": [
+                0,
+                1,
+                0
+              ],
+              "reg_X": [
+                [
+                  0
+                ],
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ],
+              "reg_y": [
+                1,
+                3,
+                5,
+                7
+              ],
+              "reg_test": [
+                [
+                  4
+                ],
+                [
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      0
+                    ],
+                    [
+                      3,
+                      1
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0.5,
+                      0.2
+                    ],
+                    [
+                      2.5,
+                      0.5
+                    ],
+                    [
+                      1.5,
+                      0.1
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ]
+                  ],
+                  "reg_y": [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  "reg_test": [
+                    [
+                      4
+                    ],
+                    [
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "abs(result['slope']-(data['reg_y'][-1]-data['reg_y'][0])/(data['reg_X'][-1][0]-data['reg_X'][0][0]))<1e-6",
+                "len(result['predictions'])==len(data['reg_test'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      1
+                    ],
+                    [
+                      6,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      5,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "reg_test": [
+                    [
+                      6
+                    ],
+                    [
+                      7
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "abs(result['slope']-(data['reg_y'][-1]-data['reg_y'][0])/(data['reg_X'][-1][0]-data['reg_X'][0][0]))<1e-6",
+                "len(result['predictions'])==len(data['reg_test'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      1.2,
+                      0.4
+                    ],
+                    [
+                      4.1,
+                      1.1
+                    ],
+                    [
+                      2.1,
+                      1.2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    10,
+                    8,
+                    6,
+                    4
+                  ],
+                  "reg_test": [
+                    [
+                      5
+                    ],
+                    [
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "abs(result['slope']-(data['reg_y'][-1]-data['reg_y'][0])/(data['reg_X'][-1][0]-data['reg_X'][0][0]))<1e-6",
+                "len(result['predictions'])==len(data['reg_test'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "LinearRegression fits a least-squares line; report the coefficient and predictions on new X, not a causal effect.",
+            "probe": "What happens if a fitted model is extrapolated beyond the observed range?",
+            "check": "Inspect the exact split boundary, training-only transformations and realistic metrics."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Fit LinearRegression only on sample.reg_X and y; return result as predictions rounded to 6 decimals for sample.reg_test.",
+          "starter_code": "# L02-G02 | PROVE | Fit and interpret a linear regression baseline\n# TASK: Fit LinearRegression only on sample.reg_X and y; return result as\n# predictions rounded to 6 decimals for sample.reg_test.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "train_X": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "train_y": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "test_X": [
+                [
+                  0.5,
+                  0.2
+                ],
+                [
+                  2.5,
+                  0.5
+                ],
+                [
+                  1.5,
+                  0.1
+                ]
+              ],
+              "test_y": [
+                0,
+                1,
+                0
+              ],
+              "reg_X": [
+                [
+                  0
+                ],
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ],
+              "reg_y": [
+                1,
+                3,
+                5,
+                7
+              ],
+              "reg_test": [
+                [
+                  4
+                ],
+                [
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      0
+                    ],
+                    [
+                      3,
+                      1
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0.5,
+                      0.2
+                    ],
+                    [
+                      2.5,
+                      0.5
+                    ],
+                    [
+                      1.5,
+                      0.1
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ]
+                  ],
+                  "reg_y": [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  "reg_test": [
+                    [
+                      4
+                    ],
+                    [
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(sample['reg_test'])",
+                "all(isinstance(x,float) for x in result)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      1
+                    ],
+                    [
+                      6,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      5,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "reg_test": [
+                    [
+                      6
+                    ],
+                    [
+                      7
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(sample['reg_test'])",
+                "all(isinstance(x,float) for x in result)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      1.2,
+                      0.4
+                    ],
+                    [
+                      4.1,
+                      1.1
+                    ],
+                    [
+                      2.1,
+                      1.2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    10,
+                    8,
+                    6,
+                    4
+                  ],
+                  "reg_test": [
+                    [
+                      5
+                    ],
+                    [
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(sample['reg_test'])",
+                "all(isinstance(x,float) for x in result)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "LinearRegression fits a least-squares line; report the coefficient and predictions on new X, not a causal effect.",
+            "probe": "What happens if a fitted model is extrapolated beyond the observed range?",
+            "check": "Use genuinely independent code and justify the sample grouping."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use sklearn.linear_model.LinearRegression and inspect coef_ and predict().",
+          "Fit transformers only on training data."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check that both classes appear in training, shapes are compatible, and groups are independent.",
+        "TypeError": "Check numeric values and explicit missing-value treatment.",
+        "IndexError": "Verify train/test indexing and length alignment.",
+        "hardcoded": "Solutions must respond to all changed input datasets."
+      },
+      "reflection_prompts": [
+        "What happens if a fitted model is extrapolated beyond the observed range?"
+      ],
+      "learning_evidence": {
+        "learn": "Demonstration and prediction only",
+        "apply": "Three public changed-input checks",
+        "prove": "Independent transfer practice, not certified generalization"
+      }
+    },
+    {
+      "id": "L02-G03",
+      "title": "Fit a regularized logistic classifier",
+      "competencies": [
+        "145"
+      ],
+      "why": "Simple fluorescence features can support probabilistic classification but require regularization and honest validation.",
+      "explain": [
+        "LogisticRegression(C=1,random_state=0,max_iter=300) with StandardScaler is a transparent classification baseline.",
+        "A training probability is not an experimentally calibrated probability for an unseen biological preparation.",
+        "All numerical examples are synthetic. Cross-validation outputs alone do not validate prediction on new biological preparations."
+      ],
+      "worked_example": {
+        "code": "from sklearn.linear_model import LogisticRegression\nm=LogisticRegression().fit([[0],[1],[2],[3]],[0,0,1,1]);print(m.predict([[2.5]]).tolist())",
+        "predict": "Predict the output, including what is missing from its scientific interpretation."
+      },
+      "prediction_answer": "Derive the result from the declared split or metric, not from a biological assumption.",
+      "walkthrough": [
+        "LogisticRegression(C=1,random_state=0,max_iter=300) with StandardScaler is a transparent classification baseline.",
+        "Use a Pipeline so test data are scaled by training-only statistics.",
+        "What additional data and methods are needed to claim the output probabilities are well calibrated?"
+      ],
+      "investigate": [
+        "Modify one numerical input while holding experimental-group identities fixed.",
+        "Check a boundary case, a missing value or a class-imbalance scenario.",
+        "Explain whether the result is a descriptive measurement or unseen-data evidence."
+      ],
+      "debug_task": "Identify leakage, inappropriate scaling, an incorrect group split or a metric denominator error.",
+      "misconception": "A training probability is not an experimentally calibrated probability for an unseen biological preparation.",
+      "scientific_boundary": "The train/test sets are separate synthetic inputs. This chapter tests coding mechanics, not independent biological model deployment; use group-safe provenance for real microscopy or omics data.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Run the real scikit-learn example after predicting its output.",
+          "starter_code": "# L02-G03 | LEARN | Fit a regularized logistic classifier\n# TASK: Predict this program output then change a meaningful input.\n\nfrom sklearn.linear_model import LogisticRegression\nm=LogisticRegression().fit([[0],[1],[2],[3]],[0,0,1,1]);print(m.predict([[2.5]]).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Guided changed-input practice",
+          "description": "Fit Pipeline(StandardScaler, LogisticRegression(C=1,max_iter=300,random_state=0)) on data.train_X/y. Return result as list of positive-class probabilities for data.test_X.",
+          "starter_code": "# L02-G03 | APPLY | Fit a regularized logistic classifier\n# TASK: Fit Pipeline(StandardScaler,\n# LogisticRegression(C=1,max_iter=300,random_state=0)) on data.train_X/y. Return\n# result as list of positive-class probabilities for data.test_X.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "train_X": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "train_y": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "test_X": [
+                [
+                  0.5,
+                  0.2
+                ],
+                [
+                  2.5,
+                  0.5
+                ],
+                [
+                  1.5,
+                  0.1
+                ]
+              ],
+              "test_y": [
+                0,
+                1,
+                0
+              ],
+              "reg_X": [
+                [
+                  0
+                ],
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ],
+              "reg_y": [
+                1,
+                3,
+                5,
+                7
+              ],
+              "reg_test": [
+                [
+                  4
+                ],
+                [
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      0
+                    ],
+                    [
+                      3,
+                      1
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0.5,
+                      0.2
+                    ],
+                    [
+                      2.5,
+                      0.5
+                    ],
+                    [
+                      1.5,
+                      0.1
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ]
+                  ],
+                  "reg_y": [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  "reg_test": [
+                    [
+                      4
+                    ],
+                    [
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(data['test_X'])",
+                "all(0<=x<=1 for x in result)",
+                "result[0]<result[1]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      1
+                    ],
+                    [
+                      6,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      5,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "reg_test": [
+                    [
+                      6
+                    ],
+                    [
+                      7
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(data['test_X'])",
+                "all(0<=x<=1 for x in result)",
+                "result[0]<result[1]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      1.2,
+                      0.4
+                    ],
+                    [
+                      4.1,
+                      1.1
+                    ],
+                    [
+                      2.1,
+                      1.2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    10,
+                    8,
+                    6,
+                    4
+                  ],
+                  "reg_test": [
+                    [
+                      5
+                    ],
+                    [
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result)==len(data['test_X'])",
+                "all(0<=x<=1 for x in result)",
+                "result[0]<result[1]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "LogisticRegression(C=1,random_state=0,max_iter=300) with StandardScaler is a transparent classification baseline.",
+            "probe": "What additional data and methods are needed to claim the output probabilities are well calibrated?",
+            "check": "Inspect the exact split boundary, training-only transformations and realistic metrics."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Fit the same train-only regularized pipeline; return result={'predictions':integer classes on sample.test_X,'n_features':feature count}.",
+          "starter_code": "# L02-G03 | PROVE | Fit a regularized logistic classifier\n# TASK: Fit the same train-only regularized pipeline; return\n# result={'predictions':integer classes on sample.test_X,'n_features':feature\n# count}.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "train_X": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "train_y": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "test_X": [
+                [
+                  0.5,
+                  0.2
+                ],
+                [
+                  2.5,
+                  0.5
+                ],
+                [
+                  1.5,
+                  0.1
+                ]
+              ],
+              "test_y": [
+                0,
+                1,
+                0
+              ],
+              "reg_X": [
+                [
+                  0
+                ],
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ],
+              "reg_y": [
+                1,
+                3,
+                5,
+                7
+              ],
+              "reg_test": [
+                [
+                  4
+                ],
+                [
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      0
+                    ],
+                    [
+                      3,
+                      1
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0.5,
+                      0.2
+                    ],
+                    [
+                      2.5,
+                      0.5
+                    ],
+                    [
+                      1.5,
+                      0.1
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ]
+                  ],
+                  "reg_y": [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  "reg_test": [
+                    [
+                      4
+                    ],
+                    [
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result['predictions'])==len(sample['test_X'])",
+                "result['n_features']==len(sample['train_X'][0])",
+                "set(result['predictions'])<={0,1}"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      1
+                    ],
+                    [
+                      6,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      5,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "reg_test": [
+                    [
+                      6
+                    ],
+                    [
+                      7
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result['predictions'])==len(sample['test_X'])",
+                "result['n_features']==len(sample['train_X'][0])",
+                "set(result['predictions'])<={0,1}"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      1.2,
+                      0.4
+                    ],
+                    [
+                      4.1,
+                      1.1
+                    ],
+                    [
+                      2.1,
+                      1.2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    10,
+                    8,
+                    6,
+                    4
+                  ],
+                  "reg_test": [
+                    [
+                      5
+                    ],
+                    [
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "len(result['predictions'])==len(sample['test_X'])",
+                "result['n_features']==len(sample['train_X'][0])",
+                "set(result['predictions'])<={0,1}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "LogisticRegression(C=1,random_state=0,max_iter=300) with StandardScaler is a transparent classification baseline.",
+            "probe": "What additional data and methods are needed to claim the output probabilities are well calibrated?",
+            "check": "Use genuinely independent code and justify the sample grouping."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use a Pipeline so test data are scaled by training-only statistics.",
+          "Fit transformers only on training data."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check that both classes appear in training, shapes are compatible, and groups are independent.",
+        "TypeError": "Check numeric values and explicit missing-value treatment.",
+        "IndexError": "Verify train/test indexing and length alignment.",
+        "hardcoded": "Solutions must respond to all changed input datasets."
+      },
+      "reflection_prompts": [
+        "What additional data and methods are needed to claim the output probabilities are well calibrated?"
+      ],
+      "learning_evidence": {
+        "learn": "Demonstration and prediction only",
+        "apply": "Three public changed-input checks",
+        "prove": "Independent transfer practice, not certified generalization"
+      }
+    },
+    {
+      "id": "L02-G04",
+      "title": "Compare a shallow decision tree on held-out data",
+      "competencies": [
+        "146"
+      ],
+      "why": "A visually interpretable tree still overfits when its decisions are tuned to tiny data.",
+      "explain": [
+        "DecisionTreeClassifier(max_depth=2,random_state=0) limits depth; compare test performance against a DummyClassifier.",
+        "Choosing the best tree depth using test labels turns that test into training.",
+        "All numerical examples are synthetic. Cross-validation outputs alone do not validate prediction on new biological preparations."
+      ],
+      "worked_example": {
+        "code": "from sklearn.tree import DecisionTreeClassifier\nm=DecisionTreeClassifier(max_depth=1,random_state=0).fit([[0],[1],[2],[3]],[0,0,1,1]);print(m.get_depth())",
+        "predict": "Predict the output, including what is missing from its scientific interpretation."
+      },
+      "prediction_answer": "Derive the result from the declared split or metric, not from a biological assumption.",
+      "walkthrough": [
+        "DecisionTreeClassifier(max_depth=2,random_state=0) limits depth; compare test performance against a DummyClassifier.",
+        "Use train-only fit for both models and a single fixed held-out test for comparison.",
+        "Why is a tree decision boundary not a mechanistic explanation of fluorescence biology?"
+      ],
+      "investigate": [
+        "Modify one numerical input while holding experimental-group identities fixed.",
+        "Check a boundary case, a missing value or a class-imbalance scenario.",
+        "Explain whether the result is a descriptive measurement or unseen-data evidence."
+      ],
+      "debug_task": "Identify leakage, inappropriate scaling, an incorrect group split or a metric denominator error.",
+      "misconception": "Choosing the best tree depth using test labels turns that test into training.",
+      "scientific_boundary": "The train/test sets are separate synthetic inputs. This chapter tests coding mechanics, not independent biological model deployment; use group-safe provenance for real microscopy or omics data.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Run the real scikit-learn example after predicting its output.",
+          "starter_code": "# L02-G04 | LEARN | Compare a shallow decision tree on held-out data\n# TASK: Predict this program output then change a meaningful input.\n\nfrom sklearn.tree import DecisionTreeClassifier\nm=DecisionTreeClassifier(max_depth=1,random_state=0).fit([[0],[1],[2],[3]],[0,0,1,1]);print(m.get_depth())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Guided changed-input practice",
+          "description": "Fit DecisionTreeClassifier(max_depth=2,random_state=0) on data.train_X/y. Return result={'depth':int,'test_accuracy':float} using data.test_X/y.",
+          "starter_code": "# L02-G04 | APPLY | Compare a shallow decision tree on held-out data\n# TASK: Fit DecisionTreeClassifier(max_depth=2,random_state=0) on data.train_X/y.\n# Return result={'depth':int,'test_accuracy':float} using data.test_X/y.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "train_X": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "train_y": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "test_X": [
+                [
+                  0.5,
+                  0.2
+                ],
+                [
+                  2.5,
+                  0.5
+                ],
+                [
+                  1.5,
+                  0.1
+                ]
+              ],
+              "test_y": [
+                0,
+                1,
+                0
+              ],
+              "reg_X": [
+                [
+                  0
+                ],
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ],
+              "reg_y": [
+                1,
+                3,
+                5,
+                7
+              ],
+              "reg_test": [
+                [
+                  4
+                ],
+                [
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      0
+                    ],
+                    [
+                      3,
+                      1
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0.5,
+                      0.2
+                    ],
+                    [
+                      2.5,
+                      0.5
+                    ],
+                    [
+                      1.5,
+                      0.1
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ]
+                  ],
+                  "reg_y": [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  "reg_test": [
+                    [
+                      4
+                    ],
+                    [
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "0<=result['depth']<=2",
+                "0<=result['test_accuracy']<=1"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      1
+                    ],
+                    [
+                      6,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      5,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "reg_test": [
+                    [
+                      6
+                    ],
+                    [
+                      7
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "0<=result['depth']<=2",
+                "0<=result['test_accuracy']<=1"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "train_X": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      1.2,
+                      0.4
+                    ],
+                    [
+                      4.1,
+                      1.1
+                    ],
+                    [
+                      2.1,
+                      1.2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    10,
+                    8,
+                    6,
+                    4
+                  ],
+                  "reg_test": [
+                    [
+                      5
+                    ],
+                    [
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "0<=result['depth']<=2",
+                "0<=result['test_accuracy']<=1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "DecisionTreeClassifier(max_depth=2,random_state=0) limits depth; compare test performance against a DummyClassifier.",
+            "probe": "Why is a tree decision boundary not a mechanistic explanation of fluorescence biology?",
+            "check": "Inspect the exact split boundary, training-only transformations and realistic metrics."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Compare depth-2 tree and DummyClassifier on sample.test_X/y; return result={'tree_accuracy':float,'dummy_accuracy':float} without tuning on test.",
+          "starter_code": "# L02-G04 | PROVE | Compare a shallow decision tree on held-out data\n# TASK: Compare depth-2 tree and DummyClassifier on sample.test_X/y; return\n# result={'tree_accuracy':float,'dummy_accuracy':float} without tuning on test.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "train_X": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "train_y": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "test_X": [
+                [
+                  0.5,
+                  0.2
+                ],
+                [
+                  2.5,
+                  0.5
+                ],
+                [
+                  1.5,
+                  0.1
+                ]
+              ],
+              "test_y": [
+                0,
+                1,
+                0
+              ],
+              "reg_X": [
+                [
+                  0
+                ],
+                [
+                  1
+                ],
+                [
+                  2
+                ],
+                [
+                  3
+                ]
+              ],
+              "reg_y": [
+                1,
+                3,
+                5,
+                7
+              ],
+              "reg_test": [
+                [
+                  4
+                ],
+                [
+                  5
+                ]
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      0
+                    ],
+                    [
+                      3,
+                      1
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0.5,
+                      0.2
+                    ],
+                    [
+                      2.5,
+                      0.5
+                    ],
+                    [
+                      1.5,
+                      0.1
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ]
+                  ],
+                  "reg_y": [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  "reg_test": [
+                    [
+                      4
+                    ],
+                    [
+                      5
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "0<=result['tree_accuracy']<=1",
+                "0<=result['dummy_accuracy']<=1",
+                "result['dummy_accuracy']==sum(y==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c)) for y in sample['test_y'])/len(sample['test_y'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      1
+                    ],
+                    [
+                      6,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      0,
+                      2
+                    ],
+                    [
+                      5,
+                      2
+                    ],
+                    [
+                      3,
+                      2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      0
+                    ],
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "reg_test": [
+                    [
+                      6
+                    ],
+                    [
+                      7
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "0<=result['tree_accuracy']<=1",
+                "0<=result['dummy_accuracy']<=1",
+                "result['dummy_accuracy']==sum(y==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c)) for y in sample['test_y'])/len(sample['test_y'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "train_X": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      2,
+                      0
+                    ],
+                    [
+                      2,
+                      1
+                    ],
+                    [
+                      3,
+                      2
+                    ],
+                    [
+                      4,
+                      1
+                    ],
+                    [
+                      5,
+                      2
+                    ]
+                  ],
+                  "train_y": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "test_X": [
+                    [
+                      1.2,
+                      0.4
+                    ],
+                    [
+                      4.1,
+                      1.1
+                    ],
+                    [
+                      2.1,
+                      1.2
+                    ]
+                  ],
+                  "test_y": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "reg_X": [
+                    [
+                      1
+                    ],
+                    [
+                      2
+                    ],
+                    [
+                      3
+                    ],
+                    [
+                      4
+                    ]
+                  ],
+                  "reg_y": [
+                    10,
+                    8,
+                    6,
+                    4
+                  ],
+                  "reg_test": [
+                    [
+                      5
+                    ],
+                    [
+                      0
+                    ]
+                  ]
+                }
+              },
+              "assertions": [
+                "0<=result['tree_accuracy']<=1",
+                "0<=result['dummy_accuracy']<=1",
+                "result['dummy_accuracy']==sum(y==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c)) for y in sample['test_y'])/len(sample['test_y'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "DecisionTreeClassifier(max_depth=2,random_state=0) limits depth; compare test performance against a DummyClassifier.",
+            "probe": "Why is a tree decision boundary not a mechanistic explanation of fluorescence biology?",
+            "check": "Use genuinely independent code and justify the sample grouping."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use train-only fit for both models and a single fixed held-out test for comparison.",
+          "Fit transformers only on training data."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check that both classes appear in training, shapes are compatible, and groups are independent.",
+        "TypeError": "Check numeric values and explicit missing-value treatment.",
+        "IndexError": "Verify train/test indexing and length alignment.",
+        "hardcoded": "Solutions must respond to all changed input datasets."
+      },
+      "reflection_prompts": [
+        "Why is a tree decision boundary not a mechanistic explanation of fluorescence biology?"
+      ],
+      "learning_evidence": {
+        "learn": "Demonstration and prediction only",
+        "apply": "Three public changed-input checks",
+        "prove": "Independent transfer practice, not certified generalization"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "L02-CAPSTONE",
+    "title": "Compare baseline classifiers on a reserved holdout",
+    "competencies": [],
+    "why": "One pipeline should report a baseline and a real model using an untouched test set.",
+    "explain": [
+      "Compare dummy, scaled logistic and a depth-limited tree on the same held-out observations and report the test denominator.",
+      "Three test rows are not enough for a reliable biological generalization estimate.",
+      "All numerical examples are synthetic. Cross-validation outputs alone do not validate prediction on new biological preparations."
+    ],
+    "worked_example": {
+      "code": "from sklearn.dummy import DummyClassifier\nprint(DummyClassifier(strategy='most_frequent').fit([[1],[2]],[1,1]).predict([[3]]).tolist())",
+      "predict": "Predict the output, including what is missing from its scientific interpretation."
+    },
+    "prediction_answer": "Derive the result from the declared split or metric, not from a biological assumption.",
+    "walkthrough": [
+      "Compare dummy, scaled logistic and a depth-limited tree on the same held-out observations and report the test denominator.",
+      "Fit and evaluate models independently; keep the same holdout labels for both.",
+      "What changes when samples from the same animal appear in both splits?"
+    ],
+    "investigate": [
+      "Modify one numerical input while holding experimental-group identities fixed.",
+      "Check a boundary case, a missing value or a class-imbalance scenario.",
+      "Explain whether the result is a descriptive measurement or unseen-data evidence."
+    ],
+    "debug_task": "Identify leakage, inappropriate scaling, an incorrect group split or a metric denominator error.",
+    "misconception": "Three test rows are not enough for a reliable biological generalization estimate.",
+    "scientific_boundary": "The train/test sets are separate synthetic inputs. This chapter tests coding mechanics, not independent biological model deployment; use group-safe provenance for real microscopy or omics data.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Run the real scikit-learn example after predicting its output.",
+        "starter_code": "# L02-CAPSTONE | LEARN | Compare baseline classifiers on a reserved holdout\n# TASK: Predict this program output then change a meaningful input.\n\nfrom sklearn.dummy import DummyClassifier\nprint(DummyClassifier(strategy='most_frequent').fit([[1],[2]],[1,1]).predict([[3]]).tolist())\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Guided changed-input practice",
+        "description": "Train DummyClassifier and StandardScaler+LogisticRegression on data.train_X/y only; return result={'dummy':heldout accuracy,'logistic':heldout accuracy,'n_test':number}.",
+        "starter_code": "# L02-CAPSTONE | APPLY | Compare baseline classifiers on a reserved holdout\n# TASK: Train DummyClassifier and StandardScaler+LogisticRegression on\n# data.train_X/y only; return result={'dummy':heldout accuracy,'logistic':heldout\n# accuracy,'n_test':number}.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "train_X": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                3,
+                1
+              ]
+            ],
+            "train_y": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "test_X": [
+              [
+                0.5,
+                0.2
+              ],
+              [
+                2.5,
+                0.5
+              ],
+              [
+                1.5,
+                0.1
+              ]
+            ],
+            "test_y": [
+              0,
+              1,
+              0
+            ],
+            "reg_X": [
+              [
+                0
+              ],
+              [
+                1
+              ],
+              [
+                2
+              ],
+              [
+                3
+              ]
+            ],
+            "reg_y": [
+              1,
+              3,
+              5,
+              7
+            ],
+            "reg_test": [
+              [
+                4
+              ],
+              [
+                5
+              ]
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "train_X": [
+                  [
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    1
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    2,
+                    1
+                  ],
+                  [
+                    3,
+                    0
+                  ],
+                  [
+                    3,
+                    1
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    0.5,
+                    0.2
+                  ],
+                  [
+                    2.5,
+                    0.5
+                  ],
+                  [
+                    1.5,
+                    0.1
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ],
+                "reg_y": [
+                  1,
+                  3,
+                  5,
+                  7
+                ],
+                "reg_test": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['n_test']==len(data['test_y'])",
+              "0<=result['dummy']<=1",
+              "0<=result['logistic']<=1"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "train_X": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    2
+                  ],
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    2
+                  ],
+                  [
+                    3,
+                    2
+                  ],
+                  [
+                    4,
+                    1
+                  ],
+                  [
+                    5,
+                    1
+                  ],
+                  [
+                    6,
+                    2
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    0,
+                    2
+                  ],
+                  [
+                    5,
+                    2
+                  ],
+                  [
+                    3,
+                    2
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ],
+                "reg_y": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6
+                ],
+                "reg_test": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['n_test']==len(data['test_y'])",
+              "0<=result['dummy']<=1",
+              "0<=result['logistic']<=1"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "train_X": [
+                  [
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    2,
+                    1
+                  ],
+                  [
+                    3,
+                    2
+                  ],
+                  [
+                    4,
+                    1
+                  ],
+                  [
+                    5,
+                    2
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    1.2,
+                    0.4
+                  ],
+                  [
+                    4.1,
+                    1.1
+                  ],
+                  [
+                    2.1,
+                    1.2
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ],
+                "reg_y": [
+                  10,
+                  8,
+                  6,
+                  4
+                ],
+                "reg_test": [
+                  [
+                    5
+                  ],
+                  [
+                    0
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['n_test']==len(data['test_y'])",
+              "0<=result['dummy']<=1",
+              "0<=result['logistic']<=1"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Compare dummy, scaled logistic and a depth-limited tree on the same held-out observations and report the test denominator.",
+          "probe": "Which grouping rule protects against optimistic validation?",
+          "check": "Inspect the exact split boundary, training-only transformations and realistic metrics."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "From sample report result={'dummy_preds':list ints,'tree_preds':list ints,'test_labels':original sample.test_y list} using a fixed depth-2 tree and dummy classifier; fit no model on test.",
+        "starter_code": "# L02-CAPSTONE | PROVE | Compare baseline classifiers on a reserved holdout\n# TASK: From sample report result={'dummy_preds':list ints,'tree_preds':list\n# ints,'test_labels':original sample.test_y list} using a fixed depth-2 tree and\n# dummy classifier; fit no model on test.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "train_X": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                3,
+                1
+              ]
+            ],
+            "train_y": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "test_X": [
+              [
+                0.5,
+                0.2
+              ],
+              [
+                2.5,
+                0.5
+              ],
+              [
+                1.5,
+                0.1
+              ]
+            ],
+            "test_y": [
+              0,
+              1,
+              0
+            ],
+            "reg_X": [
+              [
+                0
+              ],
+              [
+                1
+              ],
+              [
+                2
+              ],
+              [
+                3
+              ]
+            ],
+            "reg_y": [
+              1,
+              3,
+              5,
+              7
+            ],
+            "reg_test": [
+              [
+                4
+              ],
+              [
+                5
+              ]
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "train_X": [
+                  [
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    1
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    2,
+                    1
+                  ],
+                  [
+                    3,
+                    0
+                  ],
+                  [
+                    3,
+                    1
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    0.5,
+                    0.2
+                  ],
+                  [
+                    2.5,
+                    0.5
+                  ],
+                  [
+                    1.5,
+                    0.1
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ],
+                "reg_y": [
+                  1,
+                  3,
+                  5,
+                  7
+                ],
+                "reg_test": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['test_labels']==sample['test_y']",
+              "len(result['dummy_preds'])==len(sample['test_y'])",
+              "len(result['tree_preds'])==len(sample['test_y'])"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "train_X": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    2
+                  ],
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    2
+                  ],
+                  [
+                    3,
+                    2
+                  ],
+                  [
+                    4,
+                    1
+                  ],
+                  [
+                    5,
+                    1
+                  ],
+                  [
+                    6,
+                    2
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    0,
+                    2
+                  ],
+                  [
+                    5,
+                    2
+                  ],
+                  [
+                    3,
+                    2
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ],
+                "reg_y": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6
+                ],
+                "reg_test": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['test_labels']==sample['test_y']",
+              "len(result['dummy_preds'])==len(sample['test_y'])",
+              "len(result['tree_preds'])==len(sample['test_y'])"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "train_X": [
+                  [
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    2,
+                    1
+                  ],
+                  [
+                    3,
+                    2
+                  ],
+                  [
+                    4,
+                    1
+                  ],
+                  [
+                    5,
+                    2
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    1.2,
+                    0.4
+                  ],
+                  [
+                    4.1,
+                    1.1
+                  ],
+                  [
+                    2.1,
+                    1.2
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ],
+                "reg_y": [
+                  10,
+                  8,
+                  6,
+                  4
+                ],
+                "reg_test": [
+                  [
+                    5
+                  ],
+                  [
+                    0
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['test_labels']==sample['test_y']",
+              "len(result['dummy_preds'])==len(sample['test_y'])",
+              "len(result['tree_preds'])==len(sample['test_y'])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Compare dummy, scaled logistic and a depth-limited tree on the same held-out observations and report the test denominator.",
+          "probe": "What would be a legitimate biological unit on unfamiliar data?",
+          "check": "Use genuinely independent code and justify the sample grouping."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Fit and evaluate models independently; keep the same holdout labels for both.",
+        "Fit transformers only on training data."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check that both classes appear in training, shapes are compatible, and groups are independent.",
+      "TypeError": "Check numeric values and explicit missing-value treatment.",
+      "IndexError": "Verify train/test indexing and length alignment.",
+      "hardcoded": "Solutions must respond to all changed input datasets."
+    },
+    "reflection_prompts": [
+      "Which validation claim is appropriate for this experiment?"
+    ],
+    "learning_evidence": {
+      "learn": "Demonstration and prediction only",
+      "apply": "Three public changed-input checks",
+      "prove": "Independent transfer practice, not certified generalization"
+    }
+  },
+  "review": {
+    "id": "L02-REVIEW",
+    "title": "Delayed baseline and test-set distinction",
+    "competencies": [],
+    "why": "Recall a dummy predictor and heldout score without guided code.",
+    "explain": [
+      "Only training labels determine the dummy majority class; test labels evaluate it afterward.",
+      "Using held-out labels to select the model inflates apparent performance.",
+      "All numerical examples are synthetic. Cross-validation outputs alone do not validate prediction on new biological preparations."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Recall the split and metric semantics before attempting Prove."
+    },
+    "prediction_answer": "Derive the result from the declared split or metric, not from a biological assumption.",
+    "walkthrough": [
+      "Only training labels determine the dummy majority class; test labels evaluate it afterward.",
+      "Find the biological experimental unit before fitting or scoring.",
+      "What changes when samples from the same animal appear in both splits?"
+    ],
+    "investigate": [
+      "Modify one numerical input while holding experimental-group identities fixed.",
+      "Check a boundary case, a missing value or a class-imbalance scenario.",
+      "Explain whether the result is a descriptive measurement or unseen-data evidence."
+    ],
+    "debug_task": "Identify leakage, inappropriate scaling, an incorrect group split or a metric denominator error.",
+    "misconception": "Using held-out labels to select the model inflates apparent performance.",
+    "scientific_boundary": "The train/test sets are separate synthetic inputs. This chapter tests coding mechanics, not independent biological model deployment; use group-safe provenance for real microscopy or omics data.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Recall and reconstruct; no worked solution is shown.",
+        "starter_code": "# L02-REVIEW | LEARN | Delayed baseline and test-set distinction\n# TASK: Recall earlier ideas independently.\n\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Review your reasoning",
+        "description": "Recall the majority-class baseline before Prove.",
+        "starter_code": "# L02-REVIEW | APPLY | Delayed baseline and test-set distinction\n# TASK: Recall the majority-class baseline before Prove.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "train_X": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                3,
+                1
+              ]
+            ],
+            "train_y": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "test_X": [
+              [
+                0.5,
+                0.2
+              ],
+              [
+                2.5,
+                0.5
+              ],
+              [
+                1.5,
+                0.1
+              ]
+            ],
+            "test_y": [
+              0,
+              1,
+              0
+            ],
+            "reg_X": [
+              [
+                0
+              ],
+              [
+                1
+              ],
+              [
+                2
+              ],
+              [
+                3
+              ]
+            ],
+            "reg_y": [
+              1,
+              3,
+              5,
+              7
+            ],
+            "reg_test": [
+              [
+                4
+              ],
+              [
+                5
+              ]
+            ]
+          }
+        },
+        "practice_feedback": {
+          "why": "Only training labels determine the dummy majority class; test labels evaluate it afterward.",
+          "probe": "Which grouping rule protects against optimistic validation?",
+          "check": "Inspect the exact split boundary, training-only transformations and realistic metrics."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Fit majority-only DummyClassifier on sample.train_X/y and return result={'majority':int,'test_errors':number incorrect predictions on sample.test_X/y}.",
+        "starter_code": "# L02-REVIEW | PROVE | Delayed baseline and test-set distinction\n# TASK: Fit majority-only DummyClassifier on sample.train_X/y and return\n# result={'majority':int,'test_errors':number incorrect predictions on\n# sample.test_X/y}.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "train_X": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                3,
+                1
+              ]
+            ],
+            "train_y": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "test_X": [
+              [
+                0.5,
+                0.2
+              ],
+              [
+                2.5,
+                0.5
+              ],
+              [
+                1.5,
+                0.1
+              ]
+            ],
+            "test_y": [
+              0,
+              1,
+              0
+            ],
+            "reg_X": [
+              [
+                0
+              ],
+              [
+                1
+              ],
+              [
+                2
+              ],
+              [
+                3
+              ]
+            ],
+            "reg_y": [
+              1,
+              3,
+              5,
+              7
+            ],
+            "reg_test": [
+              [
+                4
+              ],
+              [
+                5
+              ]
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "train_X": [
+                  [
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    1
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    2,
+                    1
+                  ],
+                  [
+                    3,
+                    0
+                  ],
+                  [
+                    3,
+                    1
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    0.5,
+                    0.2
+                  ],
+                  [
+                    2.5,
+                    0.5
+                  ],
+                  [
+                    1.5,
+                    0.1
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ],
+                "reg_y": [
+                  1,
+                  3,
+                  5,
+                  7
+                ],
+                "reg_test": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
+              "result['test_errors']==sum(y!=result['majority'] for y in sample['test_y'])"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "train_X": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    2
+                  ],
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    2
+                  ],
+                  [
+                    3,
+                    2
+                  ],
+                  [
+                    4,
+                    1
+                  ],
+                  [
+                    5,
+                    1
+                  ],
+                  [
+                    6,
+                    2
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    0,
+                    2
+                  ],
+                  [
+                    5,
+                    2
+                  ],
+                  [
+                    3,
+                    2
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ],
+                "reg_y": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6
+                ],
+                "reg_test": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
+              "result['test_errors']==sum(y!=result['majority'] for y in sample['test_y'])"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "train_X": [
+                  [
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    2,
+                    1
+                  ],
+                  [
+                    3,
+                    2
+                  ],
+                  [
+                    4,
+                    1
+                  ],
+                  [
+                    5,
+                    2
+                  ]
+                ],
+                "train_y": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "test_X": [
+                  [
+                    1.2,
+                    0.4
+                  ],
+                  [
+                    4.1,
+                    1.1
+                  ],
+                  [
+                    2.1,
+                    1.2
+                  ]
+                ],
+                "test_y": [
+                  0,
+                  1,
+                  0
+                ],
+                "reg_X": [
+                  [
+                    1
+                  ],
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ],
+                "reg_y": [
+                  10,
+                  8,
+                  6,
+                  4
+                ],
+                "reg_test": [
+                  [
+                    5
+                  ],
+                  [
+                    0
+                  ]
+                ]
+              }
+            },
+            "assertions": [
+              "result['majority']==min(set(sample['train_y']),key=lambda c:(-sample['train_y'].count(c),c))",
+              "result['test_errors']==sum(y!=result['majority'] for y in sample['test_y'])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Only training labels determine the dummy majority class; test labels evaluate it afterward.",
+          "probe": "What would be a legitimate biological unit on unfamiliar data?",
+          "check": "Use genuinely independent code and justify the sample grouping."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start with the biological group IDs and expected shape.",
+        "Fit transformers only on training data."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check that both classes appear in training, shapes are compatible, and groups are independent.",
+      "TypeError": "Check numeric values and explicit missing-value treatment.",
+      "IndexError": "Verify train/test indexing and length alignment.",
+      "hardcoded": "Solutions must respond to all changed input datasets."
+    },
+    "reflection_prompts": [
+      "Which validation claim is appropriate for this experiment?"
+    ],
+    "learning_evidence": {
+      "learn": "Demonstration and prediction only",
+      "apply": "Three public changed-input checks",
+      "prove": "Independent transfer practice, not certified generalization"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "l02_group_safe_ml.py",
+    "brief": "Compare baseline classifiers on a reserved holdout",
+    "status": "INTEGRATED_LEARNER_PILOT"
+  }
+}

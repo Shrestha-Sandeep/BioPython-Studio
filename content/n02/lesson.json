@@ -1,0 +1,1266 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "N02",
+  "version": "1.0.0",
+  "status": "INTEGRATED_LEARNER_PILOT",
+  "title": "Read real FASTA and FASTQ records",
+  "competencies": [
+    "127",
+    "128",
+    "129",
+    "130"
+  ],
+  "intro": "Use Biopython sequence objects and standard in-memory file formats. Learn to preserve identifiers and per-base quality metadata.",
+  "scientific_context": {
+    "source": "https://biopython.org/docs/latest/Tutorial/chapter_seqio.html",
+    "asset": null,
+    "credited_in": "docs/SOURCE_LEDGER.md",
+    "use": "ORIGINAL_SYNTHETIC_SEQUENCE_RECORDS",
+    "caution": "FASTA/FASTQ records are synthetic and short. No external sequencing run, base caller or verified reference assembly is implied."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review.",
+  "goals": [
+    {
+      "id": "N02-G01",
+      "title": "Construct Seq and SeqRecord with identifiers",
+      "competencies": [
+        "127"
+      ],
+      "why": "A sequence without its specimen identifier loses crucial provenance.",
+      "explain": [
+        "Seq stores nucleotide operations; SeqRecord connects the sequence to an ID and optional description.",
+        "The object description is metadata, not a measurement or a claim that the sequence is from a named gene.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "from Bio.Seq import Seq\nfrom Bio.SeqRecord import SeqRecord\nr=SeqRecord(Seq('ATGN'),id='read01',description='synthetic')\nprint(r.id,len(r.seq))",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Seq stores nucleotide operations; SeqRecord connects the sequence to an ID and optional description.",
+        "Import Seq and SeqRecord; do not convert metadata to a single anonymous string.",
+        "Which identifiers must stay connected when data enter a larger analysis?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "The object description is metadata, not a measurement or a claim that the sequence is from a named gene.",
+      "scientific_boundary": "FASTA/FASTQ records are synthetic and short. No external sequencing run, base caller or verified reference assembly is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N02-G01 | LEARN | Construct Seq and SeqRecord with identifiers\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom Bio.Seq import Seq\nfrom Bio.SeqRecord import SeqRecord\nr=SeqRecord(Seq('ATGN'),id='read01',description='synthetic')\nprint(r.id,len(r.seq))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Create a Bio.SeqRecord.SeqRecord from data.seq and data.id; return result={'id','length','reverse_complement'} using real Biopython methods.",
+          "starter_code": "# N02-G01 | APPLY | Construct Seq and SeqRecord with identifiers\n# TASK: Create a Bio.SeqRecord.SeqRecord from data.seq and data.id; return\n# result={'id','length','reverse_complement'} using real Biopython methods.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "seq": "ATGCG",
+              "id": "amplicon_A",
+              "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+              "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+              "start": 1,
+              "end": 4,
+              "strand": "+",
+              "min_q": 30
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ATGCG",
+                  "id": "amplicon_A",
+                  "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                  "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                  "start": 1,
+                  "end": 4,
+                  "strand": "+",
+                  "min_q": 30
+                }
+              },
+              "assertions": [
+                "result['id']==data['id']",
+                "result['length']==len(data['seq'])",
+                "result['reverse_complement']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['seq'].upper()).reverse_complement())"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "NNGCA",
+                  "id": "amplicon_B",
+                  "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                  "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                  "start": 0,
+                  "end": 3,
+                  "strand": "-",
+                  "min_q": 20
+                }
+              },
+              "assertions": [
+                "result['id']==data['id']",
+                "result['length']==len(data['seq'])",
+                "result['reverse_complement']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['seq'].upper()).reverse_complement())"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ACGTAC",
+                  "id": "amplicon_C",
+                  "fasta": ">longid desc\nACGTAC\n",
+                  "fastq": "@single\nATGN\n+\n5555\n",
+                  "start": 2,
+                  "end": 6,
+                  "strand": "+",
+                  "min_q": 15
+                }
+              },
+              "assertions": [
+                "result['id']==data['id']",
+                "result['length']==len(data['seq'])",
+                "result['reverse_complement']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['seq'].upper()).reverse_complement())"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Seq stores nucleotide operations; SeqRecord connects the sequence to an ID and optional description.",
+            "probe": "Which identifiers must stay connected when data enter a larger analysis?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Return result={'id','sequence','length'} from a Biopython SeqRecord for sample.seq/sample.id; sequence must be uppercase and original source unmodified.",
+          "starter_code": "# N02-G01 | PROVE | Construct Seq and SeqRecord with identifiers\n# TASK: Return result={'id','sequence','length'} from a Biopython SeqRecord for\n# sample.seq/sample.id; sequence must be uppercase and original source unmodified.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "seq": "ATGCG",
+              "id": "amplicon_A",
+              "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+              "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+              "start": 1,
+              "end": 4,
+              "strand": "+",
+              "min_q": 30
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ATGCG",
+                  "id": "amplicon_A",
+                  "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                  "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                  "start": 1,
+                  "end": 4,
+                  "strand": "+",
+                  "min_q": 30
+                }
+              },
+              "assertions": [
+                "result['id']==sample['id']",
+                "result['sequence']==sample['seq'].upper()",
+                "result['length']==len(sample['seq'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "NNGCA",
+                  "id": "amplicon_B",
+                  "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                  "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                  "start": 0,
+                  "end": 3,
+                  "strand": "-",
+                  "min_q": 20
+                }
+              },
+              "assertions": [
+                "result['id']==sample['id']",
+                "result['sequence']==sample['seq'].upper()",
+                "result['length']==len(sample['seq'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ACGTAC",
+                  "id": "amplicon_C",
+                  "fasta": ">longid desc\nACGTAC\n",
+                  "fastq": "@single\nATGN\n+\n5555\n",
+                  "start": 2,
+                  "end": 6,
+                  "strand": "+",
+                  "min_q": 15
+                }
+              },
+              "assertions": [
+                "result['id']==sample['id']",
+                "result['sequence']==sample['seq'].upper()",
+                "result['length']==len(sample['seq'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Seq stores nucleotide operations; SeqRecord connects the sequence to an ID and optional description.",
+            "probe": "Which identifiers must stay connected when data enter a larger analysis?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Import Seq and SeqRecord; do not convert metadata to a single anonymous string.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Which identifiers must stay connected when data enter a larger analysis?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N02-G02",
+      "title": "Parse and write FASTA without losing IDs",
+      "competencies": [
+        "128"
+      ],
+      "why": "Biological reference files can contain many records, not one long anonymous sequence.",
+      "explain": [
+        "SeqIO.parse(handle,'fasta') preserves record boundaries; SeqIO.write can serialize records back to FASTA.",
+        "Joining all FASTA lines without respecting '>' headers merges distinct sources and invalidates coordinate positions.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "from Bio import SeqIO\nfrom io import StringIO\nprint([(r.id,len(r)) for r in SeqIO.parse(StringIO('>a\\nACG\\n>b\\nTT\\n'),'fasta')])",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "SeqIO.parse(handle,'fasta') preserves record boundaries; SeqIO.write can serialize records back to FASTA.",
+        "Use StringIO as the file handle and SeqIO.parse(handle,'fasta').",
+        "Why are duplicate FASTA identifiers risky in sequence-to-metadata joins?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Joining all FASTA lines without respecting '>' headers merges distinct sources and invalidates coordinate positions.",
+      "scientific_boundary": "FASTA/FASTQ records are synthetic and short. No external sequencing run, base caller or verified reference assembly is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N02-G02 | LEARN | Parse and write FASTA without losing IDs\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom Bio import SeqIO\nfrom io import StringIO\nprint([(r.id,len(r)) for r in SeqIO.parse(StringIO('>a\\nACG\\n>b\\nTT\\n'),'fasta')])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Parse data.fasta using Bio.SeqIO and io.StringIO. Return result as list of (record ID, sequence length) in file order.",
+          "starter_code": "# N02-G02 | APPLY | Parse and write FASTA without losing IDs\n# TASK: Parse data.fasta using Bio.SeqIO and io.StringIO. Return result as list of\n# (record ID, sequence length) in file order.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "seq": "ATGCG",
+              "id": "amplicon_A",
+              "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+              "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+              "start": 1,
+              "end": 4,
+              "strand": "+",
+              "min_q": 30
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ATGCG",
+                  "id": "amplicon_A",
+                  "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                  "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                  "start": 1,
+                  "end": 4,
+                  "strand": "+",
+                  "min_q": 30
+                }
+              },
+              "assertions": [
+                "result==[(r.id,len(r)) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "NNGCA",
+                  "id": "amplicon_B",
+                  "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                  "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                  "start": 0,
+                  "end": 3,
+                  "strand": "-",
+                  "min_q": 20
+                }
+              },
+              "assertions": [
+                "result==[(r.id,len(r)) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ACGTAC",
+                  "id": "amplicon_C",
+                  "fasta": ">longid desc\nACGTAC\n",
+                  "fastq": "@single\nATGN\n+\n5555\n",
+                  "start": 2,
+                  "end": 6,
+                  "strand": "+",
+                  "min_q": 15
+                }
+              },
+              "assertions": [
+                "result==[(r.id,len(r)) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "SeqIO.parse(handle,'fasta') preserves record boundaries; SeqIO.write can serialize records back to FASTA.",
+            "probe": "Why are duplicate FASTA identifiers risky in sequence-to-metadata joins?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Parse sample.fasta with Bio.SeqIO; serialize back to FASTA in memory and return result={'count':int,'ids':[...],'roundtrip':bool} comparing IDs and sequences.",
+          "starter_code": "# N02-G02 | PROVE | Parse and write FASTA without losing IDs\n# TASK: Parse sample.fasta with Bio.SeqIO; serialize back to FASTA in memory and\n# return result={'count':int,'ids':[...],'roundtrip':bool} comparing IDs and\n# sequences.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "seq": "ATGCG",
+              "id": "amplicon_A",
+              "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+              "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+              "start": 1,
+              "end": 4,
+              "strand": "+",
+              "min_q": 30
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ATGCG",
+                  "id": "amplicon_A",
+                  "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                  "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                  "start": 1,
+                  "end": 4,
+                  "strand": "+",
+                  "min_q": 30
+                }
+              },
+              "assertions": [
+                "result['count']==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fasta']),'fasta')))",
+                "result['roundtrip'] is True"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "NNGCA",
+                  "id": "amplicon_B",
+                  "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                  "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                  "start": 0,
+                  "end": 3,
+                  "strand": "-",
+                  "min_q": 20
+                }
+              },
+              "assertions": [
+                "result['count']==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fasta']),'fasta')))",
+                "result['roundtrip'] is True"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ACGTAC",
+                  "id": "amplicon_C",
+                  "fasta": ">longid desc\nACGTAC\n",
+                  "fastq": "@single\nATGN\n+\n5555\n",
+                  "start": 2,
+                  "end": 6,
+                  "strand": "+",
+                  "min_q": 15
+                }
+              },
+              "assertions": [
+                "result['count']==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fasta']),'fasta')))",
+                "result['roundtrip'] is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "SeqIO.parse(handle,'fasta') preserves record boundaries; SeqIO.write can serialize records back to FASTA.",
+            "probe": "Why are duplicate FASTA identifiers risky in sequence-to-metadata joins?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use StringIO as the file handle and SeqIO.parse(handle,'fasta').",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Why are duplicate FASTA identifiers risky in sequence-to-metadata joins?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N02-G03",
+      "title": "Extract genomic intervals with strand awareness",
+      "competencies": [
+        "129"
+      ],
+      "why": "Off-by-one coordinates create biological interpretation errors in amplicon and gene analysis.",
+      "explain": [
+        "Python slices are zero-based half-open [start:end]; reverse-complement only when the requested strand is '-'.",
+        "An end coordinate is excluded in Python and must not be treated as a one-based inclusive reference coordinate.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "from Bio.Seq import Seq\ns=Seq('AACCGG');print(str(s[1:4]),str(s[1:4].reverse_complement()))",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Python slices are zero-based half-open [start:end]; reverse-complement only when the requested strand is '-'.",
+        "Verify 0 <= start <= end <= len(record) before slicing.",
+        "How will an interval annotation differ if the source uses 1-based inclusive coordinates?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "An end coordinate is excluded in Python and must not be treated as a one-based inclusive reference coordinate.",
+      "scientific_boundary": "FASTA/FASTQ records are synthetic and short. No external sequencing run, base caller or verified reference assembly is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N02-G03 | LEARN | Extract genomic intervals with strand awareness\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom Bio.Seq import Seq\ns=Seq('AACCGG');print(str(s[1:4]),str(s[1:4].reverse_complement()))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Take first FASTA record in data.fasta; return result={'id','interval'} from data.start:data.end, reverse-complement only for strand '-', or None for invalid bounds.",
+          "starter_code": "# N02-G03 | APPLY | Extract genomic intervals with strand awareness\n# TASK: Take first FASTA record in data.fasta; return result={'id','interval'} from\n# data.start:data.end, reverse-complement only for strand '-', or None for invalid\n# bounds.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "seq": "ATGCG",
+              "id": "amplicon_A",
+              "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+              "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+              "start": 1,
+              "end": 4,
+              "strand": "+",
+              "min_q": 30
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ATGCG",
+                  "id": "amplicon_A",
+                  "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                  "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                  "start": 1,
+                  "end": 4,
+                  "strand": "+",
+                  "min_q": 30
+                }
+              },
+              "assertions": [
+                "result['id']==next(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')).id",
+                "result['interval'] is None or len(result['interval'])==data['end']-data['start']"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "NNGCA",
+                  "id": "amplicon_B",
+                  "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                  "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                  "start": 0,
+                  "end": 3,
+                  "strand": "-",
+                  "min_q": 20
+                }
+              },
+              "assertions": [
+                "result['id']==next(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')).id",
+                "result['interval'] is None or len(result['interval'])==data['end']-data['start']"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ACGTAC",
+                  "id": "amplicon_C",
+                  "fasta": ">longid desc\nACGTAC\n",
+                  "fastq": "@single\nATGN\n+\n5555\n",
+                  "start": 2,
+                  "end": 6,
+                  "strand": "+",
+                  "min_q": 15
+                }
+              },
+              "assertions": [
+                "result['id']==next(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')).id",
+                "result['interval'] is None or len(result['interval'])==data['end']-data['start']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Python slices are zero-based half-open [start:end]; reverse-complement only when the requested strand is '-'.",
+            "probe": "How will an interval annotation differ if the source uses 1-based inclusive coordinates?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From sample.fasta first record return result={'zero_based_start','length','sequence'} using sample.start:end and sample.strand; reject out-of-bounds as sequence=None.",
+          "starter_code": "# N02-G03 | PROVE | Extract genomic intervals with strand awareness\n# TASK: From sample.fasta first record return\n# result={'zero_based_start','length','sequence'} using sample.start:end and\n# sample.strand; reject out-of-bounds as sequence=None.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "seq": "ATGCG",
+              "id": "amplicon_A",
+              "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+              "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+              "start": 1,
+              "end": 4,
+              "strand": "+",
+              "min_q": 30
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ATGCG",
+                  "id": "amplicon_A",
+                  "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                  "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                  "start": 1,
+                  "end": 4,
+                  "strand": "+",
+                  "min_q": 30
+                }
+              },
+              "assertions": [
+                "result['zero_based_start']==sample['start']",
+                "result['length']==(sample['end']-sample['start'] if sample['end']<=len(next(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fasta']),'fasta'))) else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "NNGCA",
+                  "id": "amplicon_B",
+                  "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                  "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                  "start": 0,
+                  "end": 3,
+                  "strand": "-",
+                  "min_q": 20
+                }
+              },
+              "assertions": [
+                "result['zero_based_start']==sample['start']",
+                "result['length']==(sample['end']-sample['start'] if sample['end']<=len(next(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fasta']),'fasta'))) else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ACGTAC",
+                  "id": "amplicon_C",
+                  "fasta": ">longid desc\nACGTAC\n",
+                  "fastq": "@single\nATGN\n+\n5555\n",
+                  "start": 2,
+                  "end": 6,
+                  "strand": "+",
+                  "min_q": 15
+                }
+              },
+              "assertions": [
+                "result['zero_based_start']==sample['start']",
+                "result['length']==(sample['end']-sample['start'] if sample['end']<=len(next(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fasta']),'fasta'))) else None)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Python slices are zero-based half-open [start:end]; reverse-complement only when the requested strand is '-'.",
+            "probe": "How will an interval annotation differ if the source uses 1-based inclusive coordinates?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Verify 0 <= start <= end <= len(record) before slicing.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "How will an interval annotation differ if the source uses 1-based inclusive coordinates?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N02-G04",
+      "title": "Read FASTQ and Phred quality arrays",
+      "competencies": [
+        "130"
+      ],
+      "why": "Sequence reads and their quality scores must stay linked by base and read ID.",
+      "explain": [
+        "Biopython SeqIO.parse('fastq') decodes ASCII quality encoding into numeric phred_quality values.",
+        "Quality scores are not base-call truth probabilities and must not be confused with fluorescence intensities.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "from Bio import SeqIO\nfrom io import StringIO\nr=next(SeqIO.parse(StringIO('@a\\nAC\\n+\\nII\\n'),'fastq'));print(r.id,r.letter_annotations['phred_quality'])",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Biopython SeqIO.parse('fastq') decodes ASCII quality encoding into numeric phred_quality values.",
+        "Read r.letter_annotations['phred_quality'] instead of manually subtracting ASCII offsets.",
+        "Why must read identity and quality remain paired after filtering?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Quality scores are not base-call truth probabilities and must not be confused with fluorescence intensities.",
+      "scientific_boundary": "FASTA/FASTQ records are synthetic and short. No external sequencing run, base caller or verified reference assembly is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N02-G04 | LEARN | Read FASTQ and Phred quality arrays\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom Bio import SeqIO\nfrom io import StringIO\nr=next(SeqIO.parse(StringIO('@a\\nAC\\n+\\nII\\n'),'fastq'));print(r.id,r.letter_annotations['phred_quality'])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Parse data.fastq with SeqIO; return result list of (read_id, read_length, integer minimum Phred Q) preserving original record order.",
+          "starter_code": "# N02-G04 | APPLY | Read FASTQ and Phred quality arrays\n# TASK: Parse data.fastq with SeqIO; return result list of (read_id, read_length,\n# integer minimum Phred Q) preserving original record order.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "seq": "ATGCG",
+              "id": "amplicon_A",
+              "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+              "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+              "start": 1,
+              "end": 4,
+              "strand": "+",
+              "min_q": 30
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ATGCG",
+                  "id": "amplicon_A",
+                  "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                  "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                  "start": 1,
+                  "end": 4,
+                  "strand": "+",
+                  "min_q": 30
+                }
+              },
+              "assertions": [
+                "result==[(r.id,len(r),min(r.letter_annotations['phred_quality'])) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fastq']),'fastq')]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "NNGCA",
+                  "id": "amplicon_B",
+                  "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                  "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                  "start": 0,
+                  "end": 3,
+                  "strand": "-",
+                  "min_q": 20
+                }
+              },
+              "assertions": [
+                "result==[(r.id,len(r),min(r.letter_annotations['phred_quality'])) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fastq']),'fastq')]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ACGTAC",
+                  "id": "amplicon_C",
+                  "fasta": ">longid desc\nACGTAC\n",
+                  "fastq": "@single\nATGN\n+\n5555\n",
+                  "start": 2,
+                  "end": 6,
+                  "strand": "+",
+                  "min_q": 15
+                }
+              },
+              "assertions": [
+                "result==[(r.id,len(r),min(r.letter_annotations['phred_quality'])) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fastq']),'fastq')]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Biopython SeqIO.parse('fastq') decodes ASCII quality encoding into numeric phred_quality values.",
+            "probe": "Why must read identity and quality remain paired after filtering?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Parse sample.fastq; return result={'reads':number,'total_bases':sum of read lengths,'low_quality_bases':number of per-base Phred Q below sample.min_q}.",
+          "starter_code": "# N02-G04 | PROVE | Read FASTQ and Phred quality arrays\n# TASK: Parse sample.fastq; return result={'reads':number,'total_bases':sum of read\n# lengths,'low_quality_bases':number of per-base Phred Q below sample.min_q}.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "seq": "ATGCG",
+              "id": "amplicon_A",
+              "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+              "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+              "start": 1,
+              "end": 4,
+              "strand": "+",
+              "min_q": 30
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ATGCG",
+                  "id": "amplicon_A",
+                  "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                  "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                  "start": 1,
+                  "end": 4,
+                  "strand": "+",
+                  "min_q": 30
+                }
+              },
+              "assertions": [
+                "result['reads']==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fastq']),'fastq')))",
+                "result['total_bases']>=result['low_quality_bases']>=0"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "NNGCA",
+                  "id": "amplicon_B",
+                  "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                  "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                  "start": 0,
+                  "end": 3,
+                  "strand": "-",
+                  "min_q": 20
+                }
+              },
+              "assertions": [
+                "result['reads']==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fastq']),'fastq')))",
+                "result['total_bases']>=result['low_quality_bases']>=0"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ACGTAC",
+                  "id": "amplicon_C",
+                  "fasta": ">longid desc\nACGTAC\n",
+                  "fastq": "@single\nATGN\n+\n5555\n",
+                  "start": 2,
+                  "end": 6,
+                  "strand": "+",
+                  "min_q": 15
+                }
+              },
+              "assertions": [
+                "result['reads']==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fastq']),'fastq')))",
+                "result['total_bases']>=result['low_quality_bases']>=0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Biopython SeqIO.parse('fastq') decodes ASCII quality encoding into numeric phred_quality values.",
+            "probe": "Why must read identity and quality remain paired after filtering?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Read r.letter_annotations['phred_quality'] instead of manually subtracting ASCII offsets.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Why must read identity and quality remain paired after filtering?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "N02-CAPSTONE",
+    "title": "Create a FASTA/FASTQ source audit",
+    "competencies": [],
+    "why": "Create a reproducible file-format and read-quality report using actual Bio.SeqIO rather than simulated parsing.",
+    "explain": [
+      "A source audit preserves FASTA IDs and reports FASTQ read Q summaries without assuming a reference match.",
+      "FASTA records and FASTQ reads in this synthetic exercise are not necessarily mapped to each other.",
+      "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+    ],
+    "worked_example": {
+      "code": "from Bio import SeqIO\nfrom io import StringIO\nprint(len(list(SeqIO.parse(StringIO('>a\\nAC\\n'),'fasta'))))",
+      "predict": "Predict the printed output before running."
+    },
+    "prediction_answer": "Explain the output using the source data and the declared denominator.",
+    "walkthrough": [
+      "A source audit preserves FASTA IDs and reports FASTQ read Q summaries without assuming a reference match.",
+      "Parse each format independently and compare only explicitly declared metadata links.",
+      "Which assumption could fail with unfamiliar samples?"
+    ],
+    "investigate": [
+      "Change one input and compare the predicted and observed output.",
+      "Try an empty, ambiguous or boundary-valued input.",
+      "Explain why a correct Python result is not evidence of a biological effect."
+    ],
+    "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+    "misconception": "FASTA records and FASTQ reads in this synthetic exercise are not necessarily mapped to each other.",
+    "scientific_boundary": "FASTA/FASTQ records are synthetic and short. No external sequencing run, base caller or verified reference assembly is implied.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+        "starter_code": "# N02-CAPSTONE | LEARN | Create a FASTA/FASTQ source audit\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom Bio import SeqIO\nfrom io import StringIO\nprint(len(list(SeqIO.parse(StringIO('>a\\nAC\\n'),'fasta'))))\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Integrated practice",
+        "description": "Parse data.fasta and data.fastq; report result={'fasta_ids':list,'fastq_ids':list,'low_quality_reads':read IDs with minimum Phred < data.min_q}.",
+        "starter_code": "# N02-CAPSTONE | APPLY | Create a FASTA/FASTQ source audit\n# TASK: Parse data.fasta and data.fastq; report\n# result={'fasta_ids':list,'fastq_ids':list,'low_quality_reads':read IDs with\n# minimum Phred < data.min_q}.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "seq": "ATGCG",
+            "id": "amplicon_A",
+            "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+            "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+            "start": 1,
+            "end": 4,
+            "strand": "+",
+            "min_q": 30
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "seq": "ATGCG",
+                "id": "amplicon_A",
+                "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                "start": 1,
+                "end": 4,
+                "strand": "+",
+                "min_q": 30
+              }
+            },
+            "assertions": [
+              "len(result['fasta_ids'])==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')))",
+              "len(result['fastq_ids'])==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fastq']),'fastq')))"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "seq": "NNGCA",
+                "id": "amplicon_B",
+                "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                "start": 0,
+                "end": 3,
+                "strand": "-",
+                "min_q": 20
+              }
+            },
+            "assertions": [
+              "len(result['fasta_ids'])==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')))",
+              "len(result['fastq_ids'])==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fastq']),'fastq')))"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "seq": "ACGTAC",
+                "id": "amplicon_C",
+                "fasta": ">longid desc\nACGTAC\n",
+                "fastq": "@single\nATGN\n+\n5555\n",
+                "start": 2,
+                "end": 6,
+                "strand": "+",
+                "min_q": 15
+              }
+            },
+            "assertions": [
+              "len(result['fasta_ids'])==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fasta']),'fasta')))",
+              "len(result['fastq_ids'])==len(list(__import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(data['fastq']),'fastq')))"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A source audit preserves FASTA IDs and reports FASTQ read Q summaries without assuming a reference match.",
+          "probe": "What assumption would break this analysis on a real experiment?",
+          "check": "Check changed inputs, missing cases and source provenance."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Parse sample.fastq and return result={'unique_ids':bool,'read_count':int,'mean_qualities':{id:rounded mean Q}}. Keep raw strings unchanged.",
+        "starter_code": "# N02-CAPSTONE | PROVE | Create a FASTA/FASTQ source audit\n# TASK: Parse sample.fastq and return\n# result={'unique_ids':bool,'read_count':int,'mean_qualities':{id:rounded mean Q}}.\n# Keep raw strings unchanged.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "seq": "ATGCG",
+            "id": "amplicon_A",
+            "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+            "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+            "start": 1,
+            "end": 4,
+            "strand": "+",
+            "min_q": 30
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "seq": "ATGCG",
+                "id": "amplicon_A",
+                "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                "start": 1,
+                "end": 4,
+                "strand": "+",
+                "min_q": 30
+              }
+            },
+            "assertions": [
+              "result['read_count']==len(result['mean_qualities'])",
+              "all(isinstance(v,float) for v in result['mean_qualities'].values())"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "seq": "NNGCA",
+                "id": "amplicon_B",
+                "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                "start": 0,
+                "end": 3,
+                "strand": "-",
+                "min_q": 20
+              }
+            },
+            "assertions": [
+              "result['read_count']==len(result['mean_qualities'])",
+              "all(isinstance(v,float) for v in result['mean_qualities'].values())"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "seq": "ACGTAC",
+                "id": "amplicon_C",
+                "fasta": ">longid desc\nACGTAC\n",
+                "fastq": "@single\nATGN\n+\n5555\n",
+                "start": 2,
+                "end": 6,
+                "strand": "+",
+                "min_q": 15
+              }
+            },
+            "assertions": [
+              "result['read_count']==len(result['mean_qualities'])",
+              "all(isinstance(v,float) for v in result['mean_qualities'].values())"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A source audit preserves FASTA IDs and reports FASTQ read Q summaries without assuming a reference match.",
+          "probe": "Which decision must be verified against actual biological sources?",
+          "check": "Solve with a different operation or data representation than Apply."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Parse each format independently and compare only explicitly declared metadata links.",
+        "Use explicit checks and preserve source identity."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Inspect declared data format, dimensionality and missing values.",
+      "TypeError": "Check string versus numeric values; avoid silent coercion.",
+      "KeyError": "Read each input contract and preserve source identifiers.",
+      "hardcoded": "A solution must work on all three changed-input scenarios."
+    },
+    "reflection_prompts": [
+      "What would you check before using this method on a real dataset?"
+    ],
+    "learning_evidence": {
+      "learn": "Prediction and investigation only",
+      "apply": "Public changed-input practice checks",
+      "prove": "Independent transfer practice, not retained-mastery certification"
+    }
+  },
+  "review": {
+    "id": "N02-REVIEW",
+    "title": "Delayed FASTQ quality and provenance transfer",
+    "competencies": [],
+    "why": "Recall how to extract per-read Q without a worked example.",
+    "explain": [
+      "Use records instead of unstructured line splitting; preserve order and IDs.",
+      "ASCII quality strings are not numeric Q until the format is decoded.",
+      "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Recall the earlier scientific reasoning before opening the code."
+    },
+    "prediction_answer": "Explain the output using the source data and the declared denominator.",
+    "walkthrough": [
+      "Use records instead of unstructured line splitting; preserve order and IDs.",
+      "Check data types and source order explicitly.",
+      "Which assumption could fail with unfamiliar samples?"
+    ],
+    "investigate": [
+      "Change one input and compare the predicted and observed output.",
+      "Try an empty, ambiguous or boundary-valued input.",
+      "Explain why a correct Python result is not evidence of a biological effect."
+    ],
+    "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+    "misconception": "ASCII quality strings are not numeric Q until the format is decoded.",
+    "scientific_boundary": "FASTA/FASTQ records are synthetic and short. No external sequencing run, base caller or verified reference assembly is implied.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Recall an earlier technique from memory; no worked answer is supplied.",
+        "starter_code": "# N02-REVIEW | LEARN | Delayed FASTQ quality and provenance transfer\n# TASK: Recall the method independently before trying Prove.\n\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Review without a worked key",
+        "description": "Recall FASTQ parsing independently before attempting Prove.",
+        "starter_code": "# N02-REVIEW | APPLY | Delayed FASTQ quality and provenance transfer\n# TASK: Recall FASTQ parsing independently before attempting Prove.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "seq": "ATGCG",
+            "id": "amplicon_A",
+            "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+            "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+            "start": 1,
+            "end": 4,
+            "strand": "+",
+            "min_q": 30
+          }
+        },
+        "practice_feedback": {
+          "why": "Use records instead of unstructured line splitting; preserve order and IDs.",
+          "probe": "What assumption would break this analysis on a real experiment?",
+          "check": "Check changed inputs, missing cases and source provenance."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Using sample.fastq, return result as list of (record ID, sequence length, number of bases below sample.min_q), with genuine Biopython SeqIO.",
+        "starter_code": "# N02-REVIEW | PROVE | Delayed FASTQ quality and provenance transfer\n# TASK: Using sample.fastq, return result as list of (record ID, sequence length,\n# number of bases below sample.min_q), with genuine Biopython SeqIO.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "seq": "ATGCG",
+            "id": "amplicon_A",
+            "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+            "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+            "start": 1,
+            "end": 4,
+            "strand": "+",
+            "min_q": 30
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "seq": "ATGCG",
+                "id": "amplicon_A",
+                "fasta": ">geneA reference\nATGCG\n>geneB alternate\nTTANN\n",
+                "fastq": "@r1\nACGT\n+\nIIII\n@r2\nTTAA\n+\n!III\n",
+                "start": 1,
+                "end": 4,
+                "strand": "+",
+                "min_q": 30
+              }
+            },
+            "assertions": [
+              "result==[(r.id,len(r),sum(q<sample['min_q'] for q in r.letter_annotations['phred_quality'])) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fastq']),'fastq')]"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "seq": "NNGCA",
+                "id": "amplicon_B",
+                "fasta": ">chr1\nAAACCCGGG\n>chr2\nATN\n",
+                "fastq": "@x01\nGGGA\n+\n####\n@y02\nCCTA\n+\nIIII\n",
+                "start": 0,
+                "end": 3,
+                "strand": "-",
+                "min_q": 20
+              }
+            },
+            "assertions": [
+              "result==[(r.id,len(r),sum(q<sample['min_q'] for q in r.letter_annotations['phred_quality'])) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fastq']),'fastq')]"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "seq": "ACGTAC",
+                "id": "amplicon_C",
+                "fasta": ">longid desc\nACGTAC\n",
+                "fastq": "@single\nATGN\n+\n5555\n",
+                "start": 2,
+                "end": 6,
+                "strand": "+",
+                "min_q": 15
+              }
+            },
+            "assertions": [
+              "result==[(r.id,len(r),sum(q<sample['min_q'] for q in r.letter_annotations['phred_quality'])) for r in __import__('Bio.SeqIO',fromlist=['SeqIO']).parse(__import__('io').StringIO(sample['fastq']),'fastq')]"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Use records instead of unstructured line splitting; preserve order and IDs.",
+          "probe": "Which decision must be verified against actual biological sources?",
+          "check": "Solve with a different operation or data representation than Apply."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start by checking the input keys and expected result type.",
+        "Use explicit checks and preserve source identity."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Inspect declared data format, dimensionality and missing values.",
+      "TypeError": "Check string versus numeric values; avoid silent coercion.",
+      "KeyError": "Read each input contract and preserve source identifiers.",
+      "hardcoded": "A solution must work on all three changed-input scenarios."
+    },
+    "reflection_prompts": [
+      "What would you check before using this method on a real dataset?"
+    ],
+    "learning_evidence": {
+      "learn": "Prediction and investigation only",
+      "apply": "Public changed-input practice checks",
+      "prove": "Independent transfer practice, not retained-mastery certification"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "n02_sequence_project.py",
+    "brief": "Create a FASTA/FASTQ source audit",
+    "status": "INTEGRATED_LEARNER_PILOT"
+  }
+}

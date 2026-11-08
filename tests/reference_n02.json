@@ -1,0 +1,26 @@
+{
+  "N02-G01": {
+    "apply": "from Bio.Seq import Seq\nfrom Bio.SeqRecord import SeqRecord\nr=SeqRecord(Seq(data['seq'].upper()),id=data['id'],description='synthetic');result={'id':r.id,'length':len(r.seq),'reverse_complement':str(r.seq.reverse_complement())}\nprint(result)",
+    "prove": "from Bio.Seq import Seq\nfrom Bio.SeqRecord import SeqRecord\nr=SeqRecord(Seq(sample['seq'].upper()),id=sample['id'],description='synthetic');result={'id':r.id,'sequence':str(r.seq),'length':len(r)}\nprint(result)"
+  },
+  "N02-G02": {
+    "apply": "from Bio import SeqIO\nfrom io import StringIO\nresult=[(r.id,len(r.seq)) for r in SeqIO.parse(StringIO(data['fasta']),'fasta')]\nprint(result)",
+    "prove": "from Bio import SeqIO\nfrom io import StringIO\nrows=list(SeqIO.parse(StringIO(sample['fasta']),'fasta'));out=StringIO();SeqIO.write(rows,out,'fasta');again=list(SeqIO.parse(StringIO(out.getvalue()),'fasta'));result={'count':len(rows),'ids':[r.id for r in rows],'roundtrip':[(r.id,str(r.seq)) for r in rows]==[(r.id,str(r.seq)) for r in again]}\nprint(result)"
+  },
+  "N02-G03": {
+    "apply": "from Bio import SeqIO\nfrom io import StringIO\nr=next(SeqIO.parse(StringIO(data['fasta']),'fasta'));ok=0<=data['start']<=data['end']<=len(r);part=r.seq[data['start']:data['end']] if ok else None;result={'id':r.id,'interval':str(part.reverse_complement() if data['strand']=='-' else part) if ok else None}\nprint(result)",
+    "prove": "from Bio import SeqIO\nfrom io import StringIO\nr=next(SeqIO.parse(StringIO(sample['fasta']),'fasta'));a,b=sample['start'],sample['end'];ok=0<=a<=b<=len(r);part=r.seq[a:b] if ok else None;result={'zero_based_start':a,'length':b-a if ok else None,'sequence':str(part.reverse_complement() if sample['strand']=='-' else part) if ok else None}\nprint(result)"
+  },
+  "N02-G04": {
+    "apply": "from Bio import SeqIO\nfrom io import StringIO\nresult=[(r.id,len(r),min(r.letter_annotations['phred_quality'])) for r in SeqIO.parse(StringIO(data['fastq']),'fastq')]\nprint(result)",
+    "prove": "from Bio import SeqIO\nfrom io import StringIO\nrows=list(SeqIO.parse(StringIO(sample['fastq']),'fastq'));result={'reads':len(rows),'total_bases':sum(len(r) for r in rows),'low_quality_bases':sum(q<sample['min_q'] for r in rows for q in r.letter_annotations['phred_quality'])}\nprint(result)"
+  },
+  "N02-CAPSTONE": {
+    "apply": "from Bio import SeqIO\nfrom io import StringIO\nrefs=list(SeqIO.parse(StringIO(data['fasta']),'fasta'));reads=list(SeqIO.parse(StringIO(data['fastq']),'fastq'));result={'fasta_ids':[r.id for r in refs],'fastq_ids':[r.id for r in reads],'low_quality_reads':[r.id for r in reads if min(r.letter_annotations['phred_quality'])<data['min_q']]}\nprint(result)",
+    "prove": "from Bio import SeqIO\nfrom io import StringIO\nreads=list(SeqIO.parse(StringIO(sample['fastq']),'fastq'));names=[r.id for r in reads];result={'unique_ids':len(set(names))==len(names),'read_count':len(reads),'mean_qualities':{r.id:round(sum(r.letter_annotations['phred_quality'])/len(r),2) for r in reads}}\nprint(result)"
+  },
+  "N02-REVIEW": {
+    "apply": "",
+    "prove": "from Bio import SeqIO\nfrom io import StringIO\nresult=[(r.id,len(r),sum(q<sample['min_q'] for q in r.letter_annotations['phred_quality'])) for r in SeqIO.parse(StringIO(sample['fastq']),'fastq')]\nprint(result)"
+  }
+}

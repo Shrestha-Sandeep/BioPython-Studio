@@ -4,8 +4,10 @@
 const el=id=>document.getElementById(id);
 const P_IDS=["P01","P02","P03","P04","P05","P06"];
 const I_IDS=["I01","I02","I03","I04","I05","I06","I07","I08","I09","I10","I11","I12","I13"];
-const IDS=[...P_IDS,...I_IDS];
-const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I05:6,I06:7,I07:7,I08:8,I09:6,I10:6,I11:7,I12:9,I13:5};
+const N_IDS=["N01","N02","N03","N04"];
+const L_IDS=["L01","L02","L03"];
+const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS];
+const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I05:6,I06:7,I07:7,I08:8,I09:6,I10:6,I11:7,I12:9,I13:5,N01:4,N02:4,N03:4,N04:5,L01:4,L02:4,L03:4};
 const KEYS=Object.fromEntries(IDS.map(id=>[id,"biopython."+id.toLowerCase()+".v1"]));
 const SELECT_KEY="biopython.course-selected.v1";
 const chapters={},states={};
@@ -29,19 +31,25 @@ function loadState(id){
 }
 let activeId="P01",chapter=null,state=fresh(),worker=null,pending=null,busy=false,seq=0;
 try{const selected=localStorage.getItem(SELECT_KEY);if(KEYS[selected])activeId=selected;}catch{}
-const pythonSelected=()=>document.querySelector('[data-stage="Python"]')?.getAttribute("aria-current")==="page";
-const microscopySelected=()=>document.querySelector('[data-stage="Microscopy"]')?.getAttribute("aria-current")==="page";
+const selectedStage=()=>document.querySelector('[data-stage][aria-current="page"]')?.dataset.stage||"Python";
+const stageOf=id=>P_IDS.includes(id)?"Python":I_IDS.includes(id)?"Microscopy":N_IDS.includes(id)?"NGS":"ML";
 const isImaging=id=>I_IDS.includes(id);
-const stageIds=()=>microscopySelected()?I_IDS:P_IDS;
-let lastP="P01",lastI="I01";
+const stageIds=()=>({Python:P_IDS,Microscopy:I_IDS,NGS:N_IDS,ML:L_IDS})[selectedStage()]||P_IDS;
+let lastP="P01",lastI="I01",lastN="N01",lastL="L01";
+function rememberLast(id){
+ if(P_IDS.includes(id))lastP=id;
+ else if(I_IDS.includes(id))lastI=id;
+ else if(N_IDS.includes(id))lastN=id;
+ else lastL=id;
+}
 const codeSelected=()=>document.querySelector('[data-mode="python"]')?.getAttribute("aria-pressed")==="true";
 const bridge=()=>window.BioPythonStudioBridge;
 const goals=()=>chapter?[...chapter.goals,chapter.capstone,chapter.review].filter(Boolean):[];
 const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
-const active=()=>!!chapter&&(isImaging(activeId)?microscopySelected():pythonSelected()&&codeSelected());
-const newerChapter=()=>["P04","P05","P06"].includes(activeId)||isImaging(activeId);
+const active=()=>!!chapter && stageOf(activeId)===selectedStage() && (isImaging(activeId)||codeSelected());
+const newerChapter=()=>["P04","P05","P06"].includes(activeId)||!P_IDS.includes(activeId);
 function preferEditorWhenCoding(){if(newerChapter())bridge()?.expandLesson?.(state.phase==="learn");}
 // Task comments are not an attempt. Keep actual Python separate from the prompt.
 const hasExecutableCode=code=>String(code||"").split(/\r?\n/).some(line=>{
@@ -144,8 +152,8 @@ function render(){
     }
   }
   bridge()?.writeCode?.(value);
- el("crumb").textContent=(isImaging(activeId)?"Microscopy":"Python foundations")+" · "+activeId;
- el("page-title").textContent=isImaging(activeId)?"Image analysis workspace":"Python workspace";
+ el("crumb").textContent=({Python:"Python foundations",Microscopy:"Microscopy",NGS:"Sequence analysis",ML:"Machine learning"})[stageOf(activeId)]+" · "+activeId;
+ el("page-title").textContent=({Python:"Python workspace",Microscopy:"Image analysis workspace",NGS:"Sequence analysis workspace",ML:"Machine learning workspace"})[stageOf(activeId)];
  el("page-subtitle").textContent=g.why;
  save();
 }
@@ -298,7 +306,7 @@ function exportPython(){
  const code=bridge()?.readCode()||"";
  if(!hasExecutableCode(code)){output("Write your Python program before exporting.");return;}
  const source=["# BioPython Studio "+activeId+" · original learner code",
- (isImaging(activeId)?"# Witz/HPA published RGB notebook figure, not calibrated raw intensity. Keep source image beside this exported script.":"# Synthetic microscopy records and example calibration, not real image measurements."),
+ ({Python:"# Synthetic microscopy records and example calibration, not real image measurements.",Microscopy:"# Witz/HPA published RGB figure; image analysis requires independently validated raw data.",NGS:"# Synthetic sequence reads unless separately attributed. Not real biological sequencing.",ML:"# Synthetic biological samples; no external predictive accuracy or clinical validation."})[stageOf(activeId)],
  "# The assignments below reproduce one supplied practice input.",preamble,"",localPrelude,code,""].join("\n");
  const blob=new Blob([source],{type:"text/x-python;charset=utf-8"});
  const url=URL.createObjectURL(blob);
@@ -330,7 +338,7 @@ function switchChapter(next){
  if(!chapters[next]||next===activeId||busy)return;
  remember();
  activeId=next;chapter=chapters[next];state=states[next];
- if(isImaging(next))lastI=next;else lastP=next;
+ rememberLast(next);
  state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
  refreshGoalOptions();refreshChapterOptions();
  bridge()?.selectPhase?.(state.phase);
@@ -384,8 +392,8 @@ function mount(){
   b.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight"].includes(e.key))queueMicrotask(()=>choosePhase(document.querySelector('[data-phase][aria-selected="true"]')?.dataset.phase||"learn"));});
  });
  document.querySelectorAll("[data-stage]").forEach(b=>b.addEventListener("click",()=>{
-  if(b.dataset.stage==="Microscopy"&&!isImaging(activeId))switchChapter(lastI);
-   if(b.dataset.stage==="Python"&&isImaging(activeId))switchChapter(lastP);
+  const target=({Python:lastP,Microscopy:lastI,NGS:lastN,ML:lastL})[b.dataset.stage];
+   if(target && stageOf(activeId)!==b.dataset.stage)switchChapter(target);
    syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
  }));
  document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
@@ -406,9 +414,9 @@ async function start(){
   }
   if(!chapters[activeId])activeId="P01";
   chapter=chapters[activeId];state=states[activeId];
-  if(isImaging(activeId))lastI=activeId;else lastP=activeId;
+  rememberLast(activeId);
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
-  if(isImaging(activeId))bridge()?.selectStage?.("Microscopy");
+  if(stageOf(activeId)!=="Python")bridge()?.selectStage?.(stageOf(activeId));
   mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
   if(isImaging(activeId))bridge()?.ensureExampleImage?.();
   render();syncActivity();

@@ -1,0 +1,68 @@
+name: Full sequence and ML curriculum implementation
+on:
+  push:
+    branches: ['integration/sequence-ml-v3-complete']
+  pull_request:
+    paths:
+      - 'content/n0*/**'
+      - 'content/l0*/**'
+      - 'content/chapters/N0*'
+      - 'content/chapters/L0*'
+      - 'tests/test_sequence_ml_*'
+      - 'tests/reference_n0*'
+      - 'tests/reference_l0*'
+      - 'src/course-adapter.js'
+      - '.github/workflows/sequence-ml-complete.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-sequence-ml:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Scientific libraries including actual Biopython and scikit-learn
+        run: python -m pip install "biopython>=1.87,<2" "numpy>=2,<3" "pandas>=2.2,<4" "scikit-learn>=1.7,<2" scipy matplotlib scikit-image Pillow tifffile
+      - name: Original frozen UI smoke tests
+        run: |
+          node --check src/course-adapter.js
+          node --test tests/preview.test.mjs tests/witz_sources.test.mjs
+      - name: Seven new stage authoring contract
+        run: python tests/test_sequence_ml_import.py
+      - name: All 237 original-input-preserving reference scenarios in CPython
+        run: python tests/test_sequence_ml_reference.py
+      - name: Existing Python and microscopy content regressions
+        run: |
+          python tests/test_microscopy_complete_import.py
+          python tests/test_microscopy_complete_reference.py
+          python tests/test_scientific_foundation_import.py
+          python tests/test_p04_p06_import.py
+  pyodide-sequence-ml:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.13'
+      - name: Install actual browser and local package dependencies
+        run: |
+          python -m pip install "biopython>=1.87,<2" "numpy>=2,<3" "pandas>=2.2,<4" "scikit-learn>=1.7,<2" scipy matplotlib playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: All 237 real browser Pyodide scenarios and local exported capstones
+        run: python tests/test_sequence_ml_browser.py
+      - name: Save NGS and ML mobile screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sequence-ml-browser-evidence
+          path: artifacts/sequence-ml/viewport-*.png
+          retention-days: 14
+          if-no-files-found: ignore

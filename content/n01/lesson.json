@@ -1,0 +1,1134 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "N01",
+  "version": "1.0.0",
+  "status": "INTEGRATED_LEARNER_PILOT",
+  "title": "Validate and transform DNA sequences",
+  "competencies": [
+    "123",
+    "124",
+    "125",
+    "126"
+  ],
+  "intro": "Begin sequence analysis by making ambiguity and reading-frame policies explicit before calculating molecular summaries.",
+  "scientific_context": {
+    "source": "https://biopython.org/docs/latest/Tutorial/chapter_seq_objects.html",
+    "asset": null,
+    "credited_in": "docs/SOURCE_LEDGER.md",
+    "use": "ORIGINAL_SYNTHETIC_SEQUENCE_RECORDS",
+    "caution": "Short DNA strings are synthetic. A valid string is not a verified molecule, and translation does not establish biological expression."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review.",
+  "goals": [
+    {
+      "id": "N01-G01",
+      "title": "Validate bases and ambiguous N",
+      "competencies": [
+        "123"
+      ],
+      "why": "Ambiguous sequencing calls must not be silently counted as definitive nucleotides.",
+      "explain": [
+        "Declare the alphabet before measuring. Treat N as unknown; do not replace it with A or delete the original sequence.",
+        "A string containing N may satisfy a permissive sequence policy but still have zero callable A/C/G/T bases.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "seq='ACGNT'\nallowed=set('ACGTN')\nprint(all(base in allowed for base in seq),seq.count('N'))",
+        "predict": "Does ACGNT satisfy the declared alphabet, and how many unknown calls remain?"
+      },
+      "prediction_answer": "True, one N; the permissive alphabet is not evidence of an A/C/G/T call.",
+      "walkthrough": [
+        "Declare the alphabet before measuring. Treat N as unknown; do not replace it with A or delete the original sequence.",
+        "Build a set of accepted bases; enumerate the sequence instead of discarding unexpected positions.",
+        "Should invalid reads be rejected or retained with an explicit QC flag?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "A string containing N may satisfy a permissive sequence policy but still have zero callable A/C/G/T bases.",
+      "scientific_boundary": "Short DNA strings are synthetic. A valid string is not a verified molecule, and translation does not establish biological expression.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N01-G01 | LEARN | Validate bases and ambiguous N\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nseq='ACGNT'\nallowed=set('ACGTN')\nprint(all(base in allowed for base in seq),seq.count('N'))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Read data.seq and data.allow_n. Return result={'valid':bool,'bad_indices':[0-based indices]}; permit ACGT and optionally N, case-insensitively, without modifying data.",
+          "starter_code": "# N01-G01 | APPLY | Validate bases and ambiguous N\n# TASK: Read data.seq and data.allow_n. Return\n# result={'valid':bool,'bad_indices':[0-based indices]}; permit ACGT and optionally\n# N, case-insensitively, without modifying data.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "seq": "ATGCCNTAA",
+              "allow_n": true,
+              "cds": "ATGGCCTAA",
+              "strand": "-",
+              "sample_id": "geneA"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ATGCCNTAA",
+                  "allow_n": true,
+                  "cds": "ATGGCCTAA",
+                  "strand": "-",
+                  "sample_id": "geneA"
+                }
+              },
+              "assertions": [
+                "result['bad_indices']==[i for i,c in enumerate(data['seq'].upper()) if c not in ('ACGTN' if data['allow_n'] else 'ACGT')]",
+                "result['valid']==(len(result['bad_indices'])==0)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "GGCC",
+                  "allow_n": false,
+                  "cds": "ATGAAATAG",
+                  "strand": "+",
+                  "sample_id": "geneB"
+                }
+              },
+              "assertions": [
+                "result['bad_indices']==[i for i,c in enumerate(data['seq'].upper()) if c not in ('ACGTN' if data['allow_n'] else 'ACGT')]",
+                "result['valid']==(len(result['bad_indices'])==0)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "NNNN",
+                  "allow_n": false,
+                  "cds": "ATGNNNTAA",
+                  "strand": "-",
+                  "sample_id": "geneC"
+                }
+              },
+              "assertions": [
+                "result['bad_indices']==[i for i,c in enumerate(data['seq'].upper()) if c not in ('ACGTN' if data['allow_n'] else 'ACGT')]",
+                "result['valid']==(len(result['bad_indices'])==0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Declare the alphabet before measuring. Treat N as unknown; do not replace it with A or delete the original sequence.",
+            "probe": "Should invalid reads be rejected or retained with an explicit QC flag?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For sample.seq, report result={'ambiguous':count of N,'invalid':count of characters outside ACGTN,'callable':count of A/C/G/T}, regardless of sample.allow_n.",
+          "starter_code": "# N01-G01 | PROVE | Validate bases and ambiguous N\n# TASK: For sample.seq, report result={'ambiguous':count of N,'invalid':count of\n# characters outside ACGTN,'callable':count of A/C/G/T}, regardless of\n# sample.allow_n.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "seq": "ATGCCNTAA",
+              "allow_n": true,
+              "cds": "ATGGCCTAA",
+              "strand": "-",
+              "sample_id": "geneA"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ATGCCNTAA",
+                  "allow_n": true,
+                  "cds": "ATGGCCTAA",
+                  "strand": "-",
+                  "sample_id": "geneA"
+                }
+              },
+              "assertions": [
+                "result['ambiguous']==sample['seq'].upper().count('N')",
+                "result['callable']==sum(x in 'ACGT' for x in sample['seq'].upper())"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "GGCC",
+                  "allow_n": false,
+                  "cds": "ATGAAATAG",
+                  "strand": "+",
+                  "sample_id": "geneB"
+                }
+              },
+              "assertions": [
+                "result['ambiguous']==sample['seq'].upper().count('N')",
+                "result['callable']==sum(x in 'ACGT' for x in sample['seq'].upper())"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "NNNN",
+                  "allow_n": false,
+                  "cds": "ATGNNNTAA",
+                  "strand": "-",
+                  "sample_id": "geneC"
+                }
+              },
+              "assertions": [
+                "result['ambiguous']==sample['seq'].upper().count('N')",
+                "result['callable']==sum(x in 'ACGT' for x in sample['seq'].upper())"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Declare the alphabet before measuring. Treat N as unknown; do not replace it with A or delete the original sequence.",
+            "probe": "Should invalid reads be rejected or retained with an explicit QC flag?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Build a set of accepted bases; enumerate the sequence instead of discarding unexpected positions.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Should invalid reads be rejected or retained with an explicit QC flag?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N01-G02",
+      "title": "Calculate GC fraction with a declared denominator",
+      "competencies": [
+        "124"
+      ],
+      "why": "A GC percentage is misleading if N calls silently enlarge or shrink the denominator.",
+      "explain": [
+        "Calculate GC/(A+C+G+T) among called bases; report None if none are called. A separate all-position fraction answers a different question.",
+        "Dividing by full read length silently treats unknown N bases as biologically known AT-like positions.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "s='GCNNAA';called=[b for b in s if b in 'ACGT'];print(sum(b in 'GC' for b in called)/len(called))",
+        "predict": "For GCNNAA, do the two Ns affect the denominator?"
+      },
+      "prediction_answer": "0.5; the called-bases denominator is four.",
+      "walkthrough": [
+        "Calculate GC/(A+C+G+T) among called bases; report None if none are called. A separate all-position fraction answers a different question.",
+        "Count called A/C/G/T positions first; an all-N read has no defined called-base GC fraction.",
+        "Which denominator is scientifically defensible for a heavily ambiguous sample?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Dividing by full read length silently treats unknown N bases as biologically known AT-like positions.",
+      "scientific_boundary": "Short DNA strings are synthetic. A valid string is not a verified molecule, and translation does not establish biological expression.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N01-G02 | LEARN | Calculate GC fraction with a declared denominator\n# TASK: Predict the demonstration output. Change a meaningful input.\n\ns='GCNNAA';called=[b for b in s if b in 'ACGT'];print(sum(b in 'GC' for b in called)/len(called))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Calculate result as the GC fraction among callable A/C/G/T bases in data.seq; return None when there are none.",
+          "starter_code": "# N01-G02 | APPLY | Calculate GC fraction with a declared denominator\n# TASK: Calculate result as the GC fraction among callable A/C/G/T bases in\n# data.seq; return None when there are none.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "seq": "ATGCCNTAA",
+              "allow_n": true,
+              "cds": "ATGGCCTAA",
+              "strand": "-",
+              "sample_id": "geneA"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ATGCCNTAA",
+                  "allow_n": true,
+                  "cds": "ATGGCCTAA",
+                  "strand": "-",
+                  "sample_id": "geneA"
+                }
+              },
+              "assertions": [
+                "result == (sum(c in 'GC' for c in data['seq'].upper())/sum(c in 'ACGT' for c in data['seq'].upper()) if any(c in 'ACGT' for c in data['seq'].upper()) else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "GGCC",
+                  "allow_n": false,
+                  "cds": "ATGAAATAG",
+                  "strand": "+",
+                  "sample_id": "geneB"
+                }
+              },
+              "assertions": [
+                "result == (sum(c in 'GC' for c in data['seq'].upper())/sum(c in 'ACGT' for c in data['seq'].upper()) if any(c in 'ACGT' for c in data['seq'].upper()) else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "NNNN",
+                  "allow_n": false,
+                  "cds": "ATGNNNTAA",
+                  "strand": "-",
+                  "sample_id": "geneC"
+                }
+              },
+              "assertions": [
+                "result == (sum(c in 'GC' for c in data['seq'].upper())/sum(c in 'ACGT' for c in data['seq'].upper()) if any(c in 'ACGT' for c in data['seq'].upper()) else None)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Calculate GC/(A+C+G+T) among called bases; report None if none are called. A separate all-position fraction answers a different question.",
+            "probe": "Which denominator is scientifically defensible for a heavily ambiguous sample?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Return result={'gc_called':GC/(ACGT) or None,'n_fraction':N/total or None} from sample.seq; exclude invalid characters from callable denominator.",
+          "starter_code": "# N01-G02 | PROVE | Calculate GC fraction with a declared denominator\n# TASK: Return result={'gc_called':GC/(ACGT) or None,'n_fraction':N/total or None}\n# from sample.seq; exclude invalid characters from callable denominator.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "seq": "ATGCCNTAA",
+              "allow_n": true,
+              "cds": "ATGGCCTAA",
+              "strand": "-",
+              "sample_id": "geneA"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ATGCCNTAA",
+                  "allow_n": true,
+                  "cds": "ATGGCCTAA",
+                  "strand": "-",
+                  "sample_id": "geneA"
+                }
+              },
+              "assertions": [
+                "result['gc_called'] == (sum(c in 'GC' for c in sample['seq'].upper())/sum(c in 'ACGT' for c in sample['seq'].upper()) if any(c in 'ACGT' for c in sample['seq'].upper()) else None)",
+                "result['n_fraction']==(sample['seq'].upper().count('N')/len(sample['seq']) if sample['seq'] else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "GGCC",
+                  "allow_n": false,
+                  "cds": "ATGAAATAG",
+                  "strand": "+",
+                  "sample_id": "geneB"
+                }
+              },
+              "assertions": [
+                "result['gc_called'] == (sum(c in 'GC' for c in sample['seq'].upper())/sum(c in 'ACGT' for c in sample['seq'].upper()) if any(c in 'ACGT' for c in sample['seq'].upper()) else None)",
+                "result['n_fraction']==(sample['seq'].upper().count('N')/len(sample['seq']) if sample['seq'] else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "NNNN",
+                  "allow_n": false,
+                  "cds": "ATGNNNTAA",
+                  "strand": "-",
+                  "sample_id": "geneC"
+                }
+              },
+              "assertions": [
+                "result['gc_called'] == (sum(c in 'GC' for c in sample['seq'].upper())/sum(c in 'ACGT' for c in sample['seq'].upper()) if any(c in 'ACGT' for c in sample['seq'].upper()) else None)",
+                "result['n_fraction']==(sample['seq'].upper().count('N')/len(sample['seq']) if sample['seq'] else None)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Calculate GC/(A+C+G+T) among called bases; report None if none are called. A separate all-position fraction answers a different question.",
+            "probe": "Which denominator is scientifically defensible for a heavily ambiguous sample?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Count called A/C/G/T positions first; an all-N read has no defined called-base GC fraction.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Which denominator is scientifically defensible for a heavily ambiguous sample?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N01-G03",
+      "title": "Reverse-complement a DNA strand",
+      "competencies": [
+        "125"
+      ],
+      "why": "Strand orientation changes how nucleotide sequences map to biological coordinates.",
+      "explain": [
+        "Complement A↔T and C↔G, preserve N, then reverse the order. Complement-only is not reverse-complement.",
+        "Reversing without complementing silently changes the biological sequence interpretation.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "seq='ATGCN';table=str.maketrans('ACGTN','TGCAN');print(seq.translate(table)[::-1])",
+        "predict": "Why does the result reverse the order as well as the letters?"
+      },
+      "prediction_answer": "The reverse-complement 5′→3′ representation requires both operations.",
+      "walkthrough": [
+        "Complement A↔T and C↔G, preserve N, then reverse the order. Complement-only is not reverse-complement.",
+        "Combine a 5-character translation table with slicing [::-1].",
+        "Why must strand orientation be recorded alongside a genomic interval?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Reversing without complementing silently changes the biological sequence interpretation.",
+      "scientific_boundary": "Short DNA strings are synthetic. A valid string is not a verified molecule, and translation does not establish biological expression.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N01-G03 | LEARN | Reverse-complement a DNA strand\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nseq='ATGCN';table=str.maketrans('ACGTN','TGCAN');print(seq.translate(table)[::-1])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "From data.seq, return uppercase DNA reverse-complement string result supporting A,C,G,T,N.",
+          "starter_code": "# N01-G03 | APPLY | Reverse-complement a DNA strand\n# TASK: From data.seq, return uppercase DNA reverse-complement string result\n# supporting A,C,G,T,N.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "seq": "ATGCCNTAA",
+              "allow_n": true,
+              "cds": "ATGGCCTAA",
+              "strand": "-",
+              "sample_id": "geneA"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ATGCCNTAA",
+                  "allow_n": true,
+                  "cds": "ATGGCCTAA",
+                  "strand": "-",
+                  "sample_id": "geneA"
+                }
+              },
+              "assertions": [
+                "result==data['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "GGCC",
+                  "allow_n": false,
+                  "cds": "ATGAAATAG",
+                  "strand": "+",
+                  "sample_id": "geneB"
+                }
+              },
+              "assertions": [
+                "result==data['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "NNNN",
+                  "allow_n": false,
+                  "cds": "ATGNNNTAA",
+                  "strand": "-",
+                  "sample_id": "geneC"
+                }
+              },
+              "assertions": [
+                "result==data['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Complement A↔T and C↔G, preserve N, then reverse the order. Complement-only is not reverse-complement.",
+            "probe": "Why must strand orientation be recorded alongside a genomic interval?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Use sample.strand: return the original uppercase sequence when '+', otherwise the reverse-complement, in result.",
+          "starter_code": "# N01-G03 | PROVE | Reverse-complement a DNA strand\n# TASK: Use sample.strand: return the original uppercase sequence when '+',\n# otherwise the reverse-complement, in result.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "seq": "ATGCCNTAA",
+              "allow_n": true,
+              "cds": "ATGGCCTAA",
+              "strand": "-",
+              "sample_id": "geneA"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ATGCCNTAA",
+                  "allow_n": true,
+                  "cds": "ATGGCCTAA",
+                  "strand": "-",
+                  "sample_id": "geneA"
+                }
+              },
+              "assertions": [
+                "result==(sample['seq'].upper() if sample['strand']=='+' else sample['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "GGCC",
+                  "allow_n": false,
+                  "cds": "ATGAAATAG",
+                  "strand": "+",
+                  "sample_id": "geneB"
+                }
+              },
+              "assertions": [
+                "result==(sample['seq'].upper() if sample['strand']=='+' else sample['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "NNNN",
+                  "allow_n": false,
+                  "cds": "ATGNNNTAA",
+                  "strand": "-",
+                  "sample_id": "geneC"
+                }
+              },
+              "assertions": [
+                "result==(sample['seq'].upper() if sample['strand']=='+' else sample['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Complement A↔T and C↔G, preserve N, then reverse the order. Complement-only is not reverse-complement.",
+            "probe": "Why must strand orientation be recorded alongside a genomic interval?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Combine a 5-character translation table with slicing [::-1].",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Why must strand orientation be recorded alongside a genomic interval?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N01-G04",
+      "title": "Translate a coding sequence explicitly",
+      "competencies": [
+        "126"
+      ],
+      "why": "Coding-frame errors can produce a plausible-looking but incorrect protein.",
+      "explain": [
+        "Biopython Seq.translate() uses a genetic code. State the reading frame and expose incomplete codons rather than silently truncating.",
+        "A stop codon and an ambiguous codon are not equivalent: '*' denotes stop; 'X' may represent unknown amino acid.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "from Bio.Seq import Seq\nprint(str(Seq('ATGGCTTAA').translate()))",
+        "predict": "Predict the sequence including the terminal stop symbol."
+      },
+      "prediction_answer": "MA*; the stop codon is represented by '*'.",
+      "walkthrough": [
+        "Biopython Seq.translate() uses a genetic code. State the reading frame and expose incomplete codons rather than silently truncating.",
+        "Use from Bio.Seq import Seq and check reading-frame length before translating.",
+        "Why is a translated string not evidence that the coding sequence is expressed?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "A stop codon and an ambiguous codon are not equivalent: '*' denotes stop; 'X' may represent unknown amino acid.",
+      "scientific_boundary": "Short DNA strings are synthetic. A valid string is not a verified molecule, and translation does not establish biological expression.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N01-G04 | LEARN | Translate a coding sequence explicitly\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom Bio.Seq import Seq\nprint(str(Seq('ATGGCTTAA').translate()))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Translate data.cds with Bio.Seq.Seq; return result={'protein':str or None,'frame_ok':bool}. Refuse non-multiple-of-3 length by returning None.",
+          "starter_code": "# N01-G04 | APPLY | Translate a coding sequence explicitly\n# TASK: Translate data.cds with Bio.Seq.Seq; return result={'protein':str or\n# None,'frame_ok':bool}. Refuse non-multiple-of-3 length by returning None.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "seq": "ATGCCNTAA",
+              "allow_n": true,
+              "cds": "ATGGCCTAA",
+              "strand": "-",
+              "sample_id": "geneA"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "seq": "ATGCCNTAA",
+                  "allow_n": true,
+                  "cds": "ATGGCCTAA",
+                  "strand": "-",
+                  "sample_id": "geneA"
+                }
+              },
+              "assertions": [
+                "result['frame_ok']==(len(data['cds'])%3==0)",
+                "result['protein']==(str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['cds'].upper()).translate()) if len(data['cds'])%3==0 else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "GGCC",
+                  "allow_n": false,
+                  "cds": "ATGAAATAG",
+                  "strand": "+",
+                  "sample_id": "geneB"
+                }
+              },
+              "assertions": [
+                "result['frame_ok']==(len(data['cds'])%3==0)",
+                "result['protein']==(str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['cds'].upper()).translate()) if len(data['cds'])%3==0 else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "seq": "NNNN",
+                  "allow_n": false,
+                  "cds": "ATGNNNTAA",
+                  "strand": "-",
+                  "sample_id": "geneC"
+                }
+              },
+              "assertions": [
+                "result['frame_ok']==(len(data['cds'])%3==0)",
+                "result['protein']==(str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['cds'].upper()).translate()) if len(data['cds'])%3==0 else None)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Biopython Seq.translate() uses a genetic code. State the reading frame and expose incomplete codons rather than silently truncating.",
+            "probe": "Why is a translated string not evidence that the coding sequence is expressed?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From sample.cds translate the full coding frame to uppercase, return result={'start':first codon equals ATG,'stop':protein ends with '*','protein':string} using Biopython.",
+          "starter_code": "# N01-G04 | PROVE | Translate a coding sequence explicitly\n# TASK: From sample.cds translate the full coding frame to uppercase, return\n# result={'start':first codon equals ATG,'stop':protein ends with\n# '*','protein':string} using Biopython.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "seq": "ATGCCNTAA",
+              "allow_n": true,
+              "cds": "ATGGCCTAA",
+              "strand": "-",
+              "sample_id": "geneA"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "ATGCCNTAA",
+                  "allow_n": true,
+                  "cds": "ATGGCCTAA",
+                  "strand": "-",
+                  "sample_id": "geneA"
+                }
+              },
+              "assertions": [
+                "result['protein']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(sample['cds'].upper()).translate())",
+                "result['start']==sample['cds'].upper().startswith('ATG')",
+                "result['stop']==result['protein'].endswith('*')"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "GGCC",
+                  "allow_n": false,
+                  "cds": "ATGAAATAG",
+                  "strand": "+",
+                  "sample_id": "geneB"
+                }
+              },
+              "assertions": [
+                "result['protein']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(sample['cds'].upper()).translate())",
+                "result['start']==sample['cds'].upper().startswith('ATG')",
+                "result['stop']==result['protein'].endswith('*')"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "seq": "NNNN",
+                  "allow_n": false,
+                  "cds": "ATGNNNTAA",
+                  "strand": "-",
+                  "sample_id": "geneC"
+                }
+              },
+              "assertions": [
+                "result['protein']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(sample['cds'].upper()).translate())",
+                "result['start']==sample['cds'].upper().startswith('ATG')",
+                "result['stop']==result['protein'].endswith('*')"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Biopython Seq.translate() uses a genetic code. State the reading frame and expose incomplete codons rather than silently truncating.",
+            "probe": "Why is a translated string not evidence that the coding sequence is expressed?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use from Bio.Seq import Seq and check reading-frame length before translating.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Why is a translated string not evidence that the coding sequence is expressed?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "N01-CAPSTONE",
+    "title": "Build a source-preserving DNA intake report",
+    "competencies": [],
+    "why": "Combine ambiguity, strand and protein checks without pretending that synthetic sequences are real genes.",
+    "explain": [
+      "One report should retain the original identifier, ambiguous count, called-base GC and encoded translation.",
+      "Never claim that an N-containing CDS yields an experimentally established protein.",
+      "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+    ],
+    "worked_example": {
+      "code": "from Bio.Seq import Seq\nprint(Seq('ATGGCTTAA').translate(),Seq('ATGGCTTAA').reverse_complement())",
+      "predict": "Predict the printed output before running."
+    },
+    "prediction_answer": "Explain the output using the source data and the declared denominator.",
+    "walkthrough": [
+      "One report should retain the original identifier, ambiguous count, called-base GC and encoded translation.",
+      "Keep source identity, ambiguity counts and molecular interpretations in separate fields.",
+      "Which assumption could fail with unfamiliar samples?"
+    ],
+    "investigate": [
+      "Change one input and compare the predicted and observed output.",
+      "Try an empty, ambiguous or boundary-valued input.",
+      "Explain why a correct Python result is not evidence of a biological effect."
+    ],
+    "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+    "misconception": "Never claim that an N-containing CDS yields an experimentally established protein.",
+    "scientific_boundary": "Short DNA strings are synthetic. A valid string is not a verified molecule, and translation does not establish biological expression.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+        "starter_code": "# N01-CAPSTONE | LEARN | Build a source-preserving DNA intake report\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nfrom Bio.Seq import Seq\nprint(Seq('ATGGCTTAA').translate(),Seq('ATGGCTTAA').reverse_complement())\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Integrated practice",
+        "description": "Return result with keys id, gc_called, reverse_complement, protein, unknown for data.seq/data.cds using Biopython and a callable-base denominator.",
+        "starter_code": "# N01-CAPSTONE | APPLY | Build a source-preserving DNA intake report\n# TASK: Return result with keys id, gc_called, reverse_complement, protein, unknown\n# for data.seq/data.cds using Biopython and a callable-base denominator.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "seq": "ATGCCNTAA",
+            "allow_n": true,
+            "cds": "ATGGCCTAA",
+            "strand": "-",
+            "sample_id": "geneA"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "seq": "ATGCCNTAA",
+                "allow_n": true,
+                "cds": "ATGGCCTAA",
+                "strand": "-",
+                "sample_id": "geneA"
+              }
+            },
+            "assertions": [
+              "result['id']==data['sample_id']",
+              "result['unknown']==data['seq'].upper().count('N')",
+              "result['reverse_complement']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['seq'].upper()).reverse_complement())"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "seq": "GGCC",
+                "allow_n": false,
+                "cds": "ATGAAATAG",
+                "strand": "+",
+                "sample_id": "geneB"
+              }
+            },
+            "assertions": [
+              "result['id']==data['sample_id']",
+              "result['unknown']==data['seq'].upper().count('N')",
+              "result['reverse_complement']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['seq'].upper()).reverse_complement())"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "seq": "NNNN",
+                "allow_n": false,
+                "cds": "ATGNNNTAA",
+                "strand": "-",
+                "sample_id": "geneC"
+              }
+            },
+            "assertions": [
+              "result['id']==data['sample_id']",
+              "result['unknown']==data['seq'].upper().count('N')",
+              "result['reverse_complement']==str(__import__('Bio.Seq',fromlist=['Seq']).Seq(data['seq'].upper()).reverse_complement())"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "One report should retain the original identifier, ambiguous count, called-base GC and encoded translation.",
+          "probe": "What assumption would break this analysis on a real experiment?",
+          "check": "Check changed inputs, missing cases and source provenance."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "For sample.cds, return result with frame_ok, translated protein or None, and exact count of '*' stops; handle absent complete frames.",
+        "starter_code": "# N01-CAPSTONE | PROVE | Build a source-preserving DNA intake report\n# TASK: For sample.cds, return result with frame_ok, translated protein or None,\n# and exact count of '*' stops; handle absent complete frames.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "seq": "ATGCCNTAA",
+            "allow_n": true,
+            "cds": "ATGGCCTAA",
+            "strand": "-",
+            "sample_id": "geneA"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "seq": "ATGCCNTAA",
+                "allow_n": true,
+                "cds": "ATGGCCTAA",
+                "strand": "-",
+                "sample_id": "geneA"
+              }
+            },
+            "assertions": [
+              "result['frame_ok']==(len(sample['cds'])%3==0)",
+              "result['stop_count']==(result['protein'].count('*') if result['protein'] is not None else None)"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "seq": "GGCC",
+                "allow_n": false,
+                "cds": "ATGAAATAG",
+                "strand": "+",
+                "sample_id": "geneB"
+              }
+            },
+            "assertions": [
+              "result['frame_ok']==(len(sample['cds'])%3==0)",
+              "result['stop_count']==(result['protein'].count('*') if result['protein'] is not None else None)"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "seq": "NNNN",
+                "allow_n": false,
+                "cds": "ATGNNNTAA",
+                "strand": "-",
+                "sample_id": "geneC"
+              }
+            },
+            "assertions": [
+              "result['frame_ok']==(len(sample['cds'])%3==0)",
+              "result['stop_count']==(result['protein'].count('*') if result['protein'] is not None else None)"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "One report should retain the original identifier, ambiguous count, called-base GC and encoded translation.",
+          "probe": "Which decision must be verified against actual biological sources?",
+          "check": "Solve with a different operation or data representation than Apply."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Keep source identity, ambiguity counts and molecular interpretations in separate fields.",
+        "Use explicit checks and preserve source identity."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Inspect declared data format, dimensionality and missing values.",
+      "TypeError": "Check string versus numeric values; avoid silent coercion.",
+      "KeyError": "Read each input contract and preserve source identifiers.",
+      "hardcoded": "A solution must work on all three changed-input scenarios."
+    },
+    "reflection_prompts": [
+      "What would you check before using this method on a real dataset?"
+    ],
+    "learning_evidence": {
+      "learn": "Prediction and investigation only",
+      "apply": "Public changed-input practice checks",
+      "prove": "Independent transfer practice, not retained-mastery certification"
+    }
+  },
+  "review": {
+    "id": "N01-REVIEW",
+    "title": "Delayed DNA orientation and callable-base audit",
+    "competencies": [],
+    "why": "Recall sequence orientation and GC denominator without a worked example.",
+    "explain": [
+      "A correct reverse complement and callable GC summary must agree with the declared alphabet.",
+      "A plausible output can hide a denominator or orientation error.",
+      "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Recall the earlier scientific reasoning before opening the code."
+    },
+    "prediction_answer": "Explain the output using the source data and the declared denominator.",
+    "walkthrough": [
+      "A correct reverse complement and callable GC summary must agree with the declared alphabet.",
+      "Check data types and source order explicitly.",
+      "Which assumption could fail with unfamiliar samples?"
+    ],
+    "investigate": [
+      "Change one input and compare the predicted and observed output.",
+      "Try an empty, ambiguous or boundary-valued input.",
+      "Explain why a correct Python result is not evidence of a biological effect."
+    ],
+    "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+    "misconception": "A plausible output can hide a denominator or orientation error.",
+    "scientific_boundary": "Short DNA strings are synthetic. A valid string is not a verified molecule, and translation does not establish biological expression.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Recall an earlier technique from memory; no worked answer is supplied.",
+        "starter_code": "# N01-REVIEW | LEARN | Delayed DNA orientation and callable-base audit\n# TASK: Recall the method independently before trying Prove.\n\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Review without a worked key",
+        "description": "Recall the methods before attempting Prove; no automatic assessment in Apply.",
+        "starter_code": "# N01-REVIEW | APPLY | Delayed DNA orientation and callable-base audit\n# TASK: Recall the methods before attempting Prove; no automatic assessment in\n# Apply.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "seq": "ATGCCNTAA",
+            "allow_n": true,
+            "cds": "ATGGCCTAA",
+            "strand": "-",
+            "sample_id": "geneA"
+          }
+        },
+        "practice_feedback": {
+          "why": "A correct reverse complement and callable GC summary must agree with the declared alphabet.",
+          "probe": "What assumption would break this analysis on a real experiment?",
+          "check": "Check changed inputs, missing cases and source provenance."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "From sample.seq return result={'rc':reverse-complement,'called_gc':GC fraction or None,'n':N count}; do not mutate the input.",
+        "starter_code": "# N01-REVIEW | PROVE | Delayed DNA orientation and callable-base audit\n# TASK: From sample.seq return result={'rc':reverse-complement,'called_gc':GC\n# fraction or None,'n':N count}; do not mutate the input.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "seq": "ATGCCNTAA",
+            "allow_n": true,
+            "cds": "ATGGCCTAA",
+            "strand": "-",
+            "sample_id": "geneA"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "seq": "ATGCCNTAA",
+                "allow_n": true,
+                "cds": "ATGGCCTAA",
+                "strand": "-",
+                "sample_id": "geneA"
+              }
+            },
+            "assertions": [
+              "result['rc']==sample['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1]",
+              "result['n']==sample['seq'].upper().count('N')",
+              "result['called_gc']==(sum(c in 'GC' for c in sample['seq'].upper())/sum(c in 'ACGT' for c in sample['seq'].upper()) if any(c in 'ACGT' for c in sample['seq'].upper()) else None)"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "seq": "GGCC",
+                "allow_n": false,
+                "cds": "ATGAAATAG",
+                "strand": "+",
+                "sample_id": "geneB"
+              }
+            },
+            "assertions": [
+              "result['rc']==sample['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1]",
+              "result['n']==sample['seq'].upper().count('N')",
+              "result['called_gc']==(sum(c in 'GC' for c in sample['seq'].upper())/sum(c in 'ACGT' for c in sample['seq'].upper()) if any(c in 'ACGT' for c in sample['seq'].upper()) else None)"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "seq": "NNNN",
+                "allow_n": false,
+                "cds": "ATGNNNTAA",
+                "strand": "-",
+                "sample_id": "geneC"
+              }
+            },
+            "assertions": [
+              "result['rc']==sample['seq'].upper().translate(str.maketrans('ACGTN','TGCAN'))[::-1]",
+              "result['n']==sample['seq'].upper().count('N')",
+              "result['called_gc']==(sum(c in 'GC' for c in sample['seq'].upper())/sum(c in 'ACGT' for c in sample['seq'].upper()) if any(c in 'ACGT' for c in sample['seq'].upper()) else None)"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A correct reverse complement and callable GC summary must agree with the declared alphabet.",
+          "probe": "Which decision must be verified against actual biological sources?",
+          "check": "Solve with a different operation or data representation than Apply."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start by checking the input keys and expected result type.",
+        "Use explicit checks and preserve source identity."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Inspect declared data format, dimensionality and missing values.",
+      "TypeError": "Check string versus numeric values; avoid silent coercion.",
+      "KeyError": "Read each input contract and preserve source identifiers.",
+      "hardcoded": "A solution must work on all three changed-input scenarios."
+    },
+    "reflection_prompts": [
+      "What would you check before using this method on a real dataset?"
+    ],
+    "learning_evidence": {
+      "learn": "Prediction and investigation only",
+      "apply": "Public changed-input practice checks",
+      "prove": "Independent transfer practice, not retained-mastery certification"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "n01_sequence_project.py",
+    "brief": "Build a source-preserving DNA intake report",
+    "status": "INTEGRATED_LEARNER_PILOT"
+  }
+}

@@ -33,7 +33,7 @@ For every selected source element record: repository and pinned commit/blob SHA,
 ## Do not confuse source availability with course completion
 
 Witz and Carpentries contain ready-made problems, not a fully tested browser learning engine. Most require adapting notebook state, data URLs, packages, tests, feedback and learning scaffolds. Witz is the primary sequential source; supporting references should fill gaps without a second curriculum competing for attention.
-## Current Witz ingestion (source-first preview)
+## Historical Witz ingestion (early source-first preview; not current implementation status)
 
 - Indexed **12** Witz main/appendix/demo notebooks with **90** headings and **7** exercise notebooks with **54** numbered source tasks. Full source-cell provenance and original texts reside in [`curriculum/witz_exercise_inventory.json`](../curriculum/witz_exercise_inventory.json).
 - **12** original worked-code excerpts from Witz's lesson notebooks are available in the Learn interface with their original notebook paths and cell indices. They may require preceding notebook setup and are not claimed to be ready-to-run standalone code.
@@ -42,3 +42,10 @@ Witz and Carpentries contain ready-made problems, not a fully tested browser lea
 - Added targeted support from VanderPlas, Martin Jones, Carpentries, Bankhead, BioImageAnalysisNotebooks and scikit-image to address meaningful gaps without establishing a competing syllabus.
 
 **Distinction:** Martin Jones's *Python for Biologists* books and exercise files are at `pythonforbiologists.com`; `pythonforbiologists.org` is a separate online genomics-oriented course, useful as an additional reference but not the same book.
+
+## Frozen v3 optional sequence/NGS and ML curriculum (November 2026)
+
+- **Biopython chapters N01–N04:** Original author-created synthetic records, explicit FASTA/FASTQ/Phred quality examples, DNA ambiguity policies, 0-based genomic intervals, k-mer counting, transparent small alignments, source-linked mapping summaries, coverage and CPM. Main API reference: [Biopython Tutorial](https://biopython.org/docs/latest/Tutorial/) and [Biopython library](https://biopython.org/). Pyodide 314.0.7 includes Biopython 1.87, while separately installed desktop Python may use a different version. No external biological sequence is silently attributed to a database or real specimen.
+- **ML chapters L01–L03:** Original author-created synthetic image-feature records with explicit animal grouping, train-only preprocessing, DummyClassifier, LinearRegression, LogisticRegression, DecisionTreeClassifier, GroupShuffleSplit/GroupKFold, balanced metrics and Brier score. Library reference: [scikit-learn User Guide](https://scikit-learn.org/stable/user_guide.html), [common pitfalls and data leakage](https://scikit-learn.org/stable/common_pitfalls.html). The Pyodide 314.0.7 package list includes scikit-learn 1.8.0. No claims of external generalization or calibrated clinical/biological probabilities.
+- **Assessment:** All new chapter starter scripts are independent from author-side reference programs in tests/reference_n*.json and tests/reference_l*.json. Three changed-input scenarios per Apply/Prove (except ungraded Review Apply) and distinct test sets are intended for technical verification, not a published claim of learner retention.
+- **Data and licensing:** All new input strings, record IDs, animal labels, numeric features and quality arrays are synthetic material written for this app. No Witz/HPA figures or real sequence reads are redistributed as part of these new chapters. Existing Witz credits and licensing remain unchanged.
