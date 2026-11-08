@@ -59,6 +59,7 @@ if not __bps_render_figures and 'matplotlib.pyplot' in sys.modules:
 json.dumps({"stdout": _bps_out.getvalue(), "stderr": _bps_err.getvalue(), "traceback": _bps_error, "checks": _bps_results, "figures": _bps_figures})
 `;
 let publishedFigureReady = false;
+let tifffileReady = false;
 let uploadedPaths = [];
 const ANALYSIS_DIR = "/home/pyodide/learner_images";
 function stageUploadedFiles(py, files) {
@@ -89,6 +90,13 @@ async function preparePython(py, code, cases = []) {
   // Load only packages requested by learner code; never predownload large
   // scientific wheels for P01-P06 standard-library lessons.
   await py.loadPackagesFromImports(code);
+  // tifffile is a pure-Python wheel not bundled in the Pyodide package index.
+  // Install it on first actual use; do not change pinned runtime or load it for P01.
+  if (/\btifffile\b/.test(code) && !tifffileReady) {
+    await py.loadPackage("micropip");
+    await py.runPythonAsync("import micropip\nawait micropip.install('tifffile')");
+    tifffileReady = true;
+  }
   const wantsFigure = /\\bimage_path\\b/.test(code) ||
     cases.some(item=>Object.prototype.hasOwnProperty.call(item.inputs||{},'image_path'));
   if (wantsFigure && !publishedFigureReady) {
