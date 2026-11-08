@@ -138,7 +138,7 @@
           }
         },
         "prove": {
-          "title": "Apply with changed data",
+          "title": "Independent transfer",
           "description": "Plot positions vs distance_um using Matplotlib. Set plot_title as ID + ' displacement', x_label='Frame', y_label='Distance (µm)'; assign those to ax, and line_count=len(ax.lines).",
           "starter_code": "# I04-G01 | PROVE | Build a labeled Matplotlib figure\n# TASK: Plot positions vs distance_um using Matplotlib. Set plot_title as ID + '\n#   displacement', x_label='Frame', y_label='Distance (µm)'; assign those to ax,\n#   and line_count=len(ax.lines).\n# INPUTS: positions, distance_um, sample_id\n\n",
           "preview_inputs": {
@@ -345,7 +345,7 @@
           }
         },
         "prove": {
-          "title": "Apply with changed data",
+          "title": "Independent transfer",
           "description": "Display numeric batch_index and observed as scatter only (no connected line); set scatter_points=count, connected=False, xlabel='Batch index', ylabel='Observed value'.",
           "starter_code": "# I04-G02 | PROVE | Compare line and scatter representations\n# TASK: Display numeric batch_index and observed as scatter only (no connected\n#   line); set scatter_points=count, connected=False, xlabel='Batch index',\n#   ylabel='Observed value'.\n# INPUTS: batch_index, observed\n\n",
           "preview_inputs": {
@@ -540,7 +540,7 @@
           }
         },
         "prove": {
-          "title": "Apply with changed data",
+          "title": "Independent transfer",
           "description": "Build histogram for sample_values using bins=bin_number, set total=int(heights.sum()), rightmost=float(edges[-1]), and label y='Measurement count'.",
           "starter_code": "# I04-G03 | PROVE | Show a numerical distribution honestly\n# TASK: Build histogram for sample_values using bins=bin_number, set\n#   total=int(heights.sum()), rightmost=float(edges[-1]), and label y='Measurement\n#   count'.\n# INPUTS: sample_values, bin_number\n\n",
           "preview_inputs": {
@@ -738,7 +738,7 @@
           }
         },
         "prove": {
-          "title": "Apply with changed data",
+          "title": "Independent transfer",
           "description": "Make two panels: scatter of coordinates and observations, then histogram of observations with bin_count. Set panel_count and labels='Coordinate','Observed value' for first axes.",
           "starter_code": "# I04-G04 | PROVE | Arrange comparable scientific panels\n# TASK: Make two panels: scatter of coordinates and observations, then histogram\n#   of observations with bin_count. Set panel_count and\n#   labels='Coordinate','Observed value' for first axes.\n# INPUTS: coordinates, observations, bin_count\n\n",
           "preview_inputs": {
@@ -956,7 +956,7 @@
           }
         },
         "prove": {
-          "title": "Apply with changed data",
+          "title": "Independent transfer",
           "description": "Decode credited RGB figure, select component to 2D, display with vmin/vmax set by low/high; set unchanged, display_limits and data_range from original pixels. No raw fluorescence claim.",
           "starter_code": "# I04-G05 | PROVE | Change display contrast without changing pixels\n# TASK: Decode credited RGB figure, select component to 2D, display with vmin/vmax\n#   set by low/high; set unchanged, display_limits and data_range from original\n#   pixels. No raw fluorescence claim.\n# INPUTS: image_path, component, low, high\n\n",
           "preview_inputs": {
@@ -1122,7 +1122,7 @@
           }
         },
         "prove": {
-          "title": "Apply with changed data",
+          "title": "Independent transfer",
           "description": "Read credited RGB figure, compute histogram for component with bins=bin_count. Set pixel_count, first_bin=int(counts[0]) and has_raw_calibration=False. Draw the bar plot.",
           "starter_code": "# I04-G06 | PROVE | Inspect a real image's display-pixel histogram\n# TASK: Read credited RGB figure, compute histogram for component with\n#   bins=bin_count. Set pixel_count, first_bin=int(counts[0]) and\n#   has_raw_calibration=False. Draw the bar plot.\n# INPUTS: image_path, component, bin_count\n\n",
           "preview_inputs": {
@@ -1234,7 +1234,7 @@
       "apply": {
         "title": "Apply with changed data",
         "description": "Decode image_path, choose color_index; make fig,axes with imshow plane and histogram (n_bins, range=(0,256)). Set report={'pixels':plane.size,'hist_total':int(counts.sum()),'raw':False,'panels':2}; label axes[1].x as 'RGB display code'.",
-        "starter_code": "# I04-CAPSTONE | APPLY | Produce a traceable two-panel RGB display report\n# TASK: Decode image_path, choose color_index; make fig,axes with imshow plane and\n#   histogram (n_bins, range=(0,256)). Set\n#   report={'pixels':plane.size,'hist_total':int(counts.sum()),'raw':False,'panels':2};\n#   label axes[1].x as 'RGB display code'.\n# INPUTS: image_path, color_index, n_bins\n\n",
+        "starter_code": "# I04-CAPSTONE | APPLY | Produce a traceable two-panel RGB display report\n# TASK: Decode image_path, choose color_index; make fig,axes with imshow plane and\n#   histogram (n_bins, range=(0,256)). Set\n#   Report source pixel count, histogram count, raw False and two figure panels.\n#   label axes[1].x as 'RGB display code'.\n# INPUTS: image_path, color_index, n_bins\n\n",
         "preview_inputs": {
           "image_path": "/home/pyodide/witz_published_figure.png",
           "color_index": 1,
@@ -1284,7 +1284,7 @@
         }
       },
       "prove": {
-        "title": "Apply with changed data",
+        "title": "Independent transfer",
         "description": "Build new figure from credited RGB image for different component. Set fig,axes two panels, a grayscale image and a histogram; summary={'n':int(hist.sum()),'n_pixels':int(plane.size),'calibrated':False}. Plot titles 'Display component' and 'Display histogram'.",
         "starter_code": "# I04-CAPSTONE | PROVE | Produce a traceable two-panel RGB display report\n# TASK: Build new figure from credited RGB image for different component. Set\n#   fig,axes two panels, a grayscale image and a histogram;\n#   summary={'n':int(hist.sum()),'n_pixels':int(plane.size),'calibrated':False}.\n#   Plot titles 'Display component' and 'Display histogram'.\n# INPUTS: image_path, component, bins\n\n",
         "preview_inputs": {
@@ -1418,7 +1418,7 @@
         }
       },
       "prove": {
-        "title": "Apply with changed data",
+        "title": "Independent transfer",
         "description": "Create a Matplotlib histogram from data and n_bins; set total=int(heights.sum()), title=label, x='Score (a.u.)', y='Observations'; print total.",
         "starter_code": "# I04-REVIEW | PROVE | Rebuild a defensible figure without guidance\n# TASK: Create a Matplotlib histogram from data and n_bins; set\n#   total=int(heights.sum()), title=label, x='Score (a.u.)', y='Observations';\n#   print total.\n# INPUTS: data, n_bins, label\n\n",
         "preview_inputs": {
