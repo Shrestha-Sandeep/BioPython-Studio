@@ -1,0 +1,30 @@
+{
+  "A02-G01": {
+    "apply": "import numpy as np\nraw=np.asarray(data[\"image\"],dtype=np.uint16)\ncorrected=np.maximum(raw.astype(float)-data[\"background\"],0)\nmask=corrected>data[\"threshold\"]\nresult={\"positive_pixels\":int(np.count_nonzero(mask)),\"corrected_max\":float(corrected.max())}\nprint(result)",
+    "prove": "import numpy as np\nraw=np.asarray(data[\"image\"],dtype=np.uint16)\ncorrected=np.maximum(raw.astype(float)-data[\"background\"],0)\nmask=corrected>data[\"threshold\"]\nresult={\"positive_pixels\":int(np.count_nonzero(mask)),\"corrected_max\":float(corrected.max())}\nprint(result)"
+  },
+  "A02-G02": {
+    "apply": "import numpy as np\nim=np.full((5,5),240,dtype=np.uint8);im[2,2]=20\nprint('border background:',np.median(im[0,:]),'dark center:',im[2,2])",
+    "prove": "import numpy as np\nim=np.full((5,5),240,dtype=np.uint8);im[2,2]=20\nprint('border background:',np.median(im[0,:]),'dark center:',im[2,2])"
+  },
+  "A02-G03": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,0,1],[1,0,0],[0,0,0]],bool)\nlabels,n=ndi.label(m)\nprint('objects:',n,'pixel counts:',np.bincount(labels.ravel())[1:].tolist())",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,0,1],[1,0,0],[0,0,0]],bool)\nlabels,n=ndi.label(m)\nprint('objects:',n,'pixel counts:',np.bincount(labels.ravel())[1:].tolist())"
+  },
+  "A02-G04": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[0,1,1,1,0],[0,1,1,1,0]],bool)\nprint('distances:',ndi.distance_transform_edt(m).round(1).tolist())",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[0,1,1,1,0],[0,1,1,1,0]],bool)\nprint('distances:',ndi.distance_transform_edt(m).round(1).tolist())"
+  },
+  "A02-G05": {
+    "apply": "a={1,2,3};b={2,3,4}\nprint('set overlap:',len(a&b)/len(a|b))",
+    "prove": "a={1,2,3};b={2,3,4}\nprint('set overlap:',len(a&b)/len(a|b))"
+  },
+  "A02-CAPSTONE": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,1,0],[0,0,0],[0,1,1]],bool)\nprint('connected candidates:',ndi.label(m)[1])",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nm=np.array([[1,1,0],[0,0,0],[0,1,1]],bool)\nprint('connected candidates:',ndi.label(m)[1])"
+  },
+  "A02-REVIEW": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nimage=np.asarray(data[\"image\"])\nforeground=image>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else image<data[\"threshold\"]\nlabels,n=ndi.label(foreground)\nresult={\"candidate_count\":int(n),\"foreground_pixels\":int(np.count_nonzero(foreground)),\"validated\":False}\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nimage=np.asarray(data[\"image\"])\nforeground=image>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else image<data[\"threshold\"]\nlabels,n=ndi.label(foreground)\nresult={\"candidate_count\":int(n),\"foreground_pixels\":int(np.count_nonzero(foreground)),\"validated\":False}\nprint(result)"
+  }
+}
