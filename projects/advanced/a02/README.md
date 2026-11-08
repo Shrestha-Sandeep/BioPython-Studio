@@ -33,6 +33,20 @@ Outputs:
 
 The input image is never intentionally overwritten. A02 does not export precision, recall or biological effects without A03 reference annotations.
 
+### Parameter sensitivity — compare three algorithms on identical source bytes
+
+```sh
+python -m projects.advanced.a02.sensitivity \
+  --input /path/to/native.ome.tif \
+  --channel 0 --z 0 --time 0 \
+  --variant otsu=projects/advanced/a02/segmentation-config.json \
+  --variant local=projects/advanced/a02/local-variant.json \
+  --variant watershed=projects/advanced/a02/watershed-variant.json \
+  --out outputs/advanced/a02-sensitivity
+```
+
+The output contains a CSV/JSON report of candidate counts, foreground-mask IoU relative to the first configuration, changed-pixel fraction and three native label TIFFs. These quantify **parameter sensitivity only**, not accuracy against annotation. Correct-looking counts can arise from merged or incorrectly segmented objects.
+
 ### Exercise
 
 1. Predict the effect of increasing `min_area` and `closing_radius` on a cluttered sample.
