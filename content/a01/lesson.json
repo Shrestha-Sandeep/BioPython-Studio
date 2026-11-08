@@ -1,0 +1,1413 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "A01",
+  "version": "1.0.0",
+  "status": "OPTIONAL_ADVANCED_PILOT_NOT_LEARNER_VALIDATED",
+  "title": "Native-image source audit",
+  "competencies": [
+    "A01-G01",
+    "A01-G02",
+    "A01-G03",
+    "A01-G04",
+    "A01-CAPSTONE",
+    "A01-REVIEW"
+  ],
+  "intro": "A01 teaches source-preserving image measurements with honest pixel/metadata limitations. Browser checks use synthetic numbers, and the local A01 CLI handles genuine TIFF/OME-TIFF.",
+  "scientific_context": {
+    "source": "https://bbbc.broadinstitute.org/BBBC039",
+    "use": "SYNTHETIC_PRACTICE_PLUS_NATIVE_TIFF_PROJECT",
+    "caution": "These checks do not certify original acquisition or physical calibration."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review. Complete original TIFF verification in local Python.",
+  "goals": [
+    {
+      "id": "A01-G01",
+      "title": "Select channel and Z by named axes",
+      "competencies": [
+        "A01-G01"
+      ],
+      "why": "A wrong axis silently changes which biological plane is measured.",
+      "explain": [
+        "Explicitly index named channel and Z axes, never guess from dimension positions.",
+        "Return a real 2-D YX plane; do not silently collapse ambiguous dimensions."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nx=np.arange(2*3*4*5).reshape(2,3,4,5)\nprint('ZCYX',x.shape,'one YX plane',x[1,2].shape)",
+        "predict": "Predict the output, including axes/dtype assumptions, before Run."
+      },
+      "prediction_answer": "Use the actual input and retain original pixel/metadata assumptions; a file extension does not certify native or calibrated acquisition.",
+      "walkthrough": [
+        "Identify what each input represents and which dimension or unit is being used.",
+        "Run the short example and change one value to reveal a failure case.",
+        "Explain which biological claim remains unsupported by these training values."
+      ],
+      "investigate": [
+        "Try a boundary value and predict the result.",
+        "Compare numerical correctness with scientific validity."
+      ],
+      "debug_task": "Explain a plausible output that would be scientifically misleading.",
+      "misconception": "Numerically plausible pixels imply calibrated, validated biological measurements.",
+      "scientific_boundary": "Browser examples use synthetic values. Native acquisition, calibrated scale and cell identity are not verified.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Map each axis letter to the requested index.",
+          "Keep Y and X as slices while choosing Z and C."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Use the supplied data rather than copying one expected result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict output before running, then change a parameter.",
+          "starter_code": "# A01-G01 | LEARN | Select channel and Z by named axes\n# TASK: Predict, run and modify the short example.\n\nimport numpy as np\nx=np.arange(2*3*4*5).reshape(2,3,4,5)\nprint('ZCYX',x.shape,'one YX plane',x[1,2].shape)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing input data",
+          "description": "Build a synthetic array from data.shape and data.axes. Select data.channel and data.z, return result={'shape':[Y,X],'first':int,'last':int}.",
+          "starter_code": "# A01-G01 | APPLY | Select channel and Z by named axes\n# TASK: Build a synthetic array from data.shape and data.axes. Select data.channel and data.z, return result={'shape':[Y,X],'first':int,'last':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "axes": "ZCYX",
+              "shape": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "z": 1,
+              "channel": 2
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "axes": "ZCYX",
+                  "shape": [
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "z": 1,
+                  "channel": 2
+                }
+              },
+              "assertions": [
+                "result['shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['first']==int(np.arange(int(np.prod(data['shape']))).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])][0,0])",
+                "result['last']==int(np.arange(int(np.prod(data['shape']))).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])][-1,-1])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "axes": "CZYX",
+                  "shape": [
+                    3,
+                    2,
+                    4,
+                    3
+                  ],
+                  "z": 0,
+                  "channel": 1
+                }
+              },
+              "assertions": [
+                "result['shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['first']==int(np.arange(int(np.prod(data['shape']))).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])][0,0])",
+                "result['last']==int(np.arange(int(np.prod(data['shape']))).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])][-1,-1])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Explicit axes, numeric source values and reproducible decisions make a computational result auditable.",
+            "probe": "What source metadata or biological ground truth is still missing?",
+            "check": "Compare shape and dtype carefully, and use the supplied input instead of fixed results."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Independently solve changed input without consulting the worked example: Build a synthetic array from data.shape and data.axes. Select data.channel and data.z, return result={'shape':[Y,X],'first':int,'last':int}.",
+          "starter_code": "# A01-G01 | PROVE | Select channel and Z by named axes\n# TASK: Build a synthetic array from data.shape and data.axes. Select data.channel and data.z, return result={'shape':[Y,X],'first':int,'last':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "axes": "CZYX",
+              "shape": [
+                2,
+                3,
+                5,
+                6
+              ],
+              "z": 2,
+              "channel": 0
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "axes": "CZYX",
+                  "shape": [
+                    2,
+                    3,
+                    5,
+                    6
+                  ],
+                  "z": 2,
+                  "channel": 0
+                }
+              },
+              "assertions": [
+                "result['shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['first']==int(np.arange(int(np.prod(data['shape']))).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])][0,0])",
+                "result['last']==int(np.arange(int(np.prod(data['shape']))).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])][-1,-1])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "axes": "ZCYX",
+                  "shape": [
+                    3,
+                    2,
+                    2,
+                    7
+                  ],
+                  "z": 1,
+                  "channel": 1
+                }
+              },
+              "assertions": [
+                "result['shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['first']==int(np.arange(int(np.prod(data['shape']))).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])][0,0])",
+                "result['last']==int(np.arange(int(np.prod(data['shape']))).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])][-1,-1])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Passing changed inputs establishes only computational practice, not an independently validated measurement.",
+            "probe": "What would you verify before using this method on microscope data?",
+            "check": "Reconsider axes, integer arithmetic, declared versus verified scale and original source identity."
+          }
+        }
+      }
+    },
+    {
+      "id": "A01-G02",
+      "title": "Protect 16-bit source values",
+      "competencies": [
+        "A01-G02"
+      ],
+      "why": "Intensities must not be altered by hidden 8-bit conversions or wrapped subtraction.",
+      "explain": [
+        "Convert 16-bit values to float before subtracting.",
+        "Preserve original array bytes and report source dtype."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nraw=np.array([1,65500],dtype=np.uint16)\nprint(np.maximum(raw.astype(float)-100,0))",
+        "predict": "Predict the output, including axes/dtype assumptions, before Run."
+      },
+      "prediction_answer": "Use the actual input and retain original pixel/metadata assumptions; a file extension does not certify native or calibrated acquisition.",
+      "walkthrough": [
+        "Identify what each input represents and which dimension or unit is being used.",
+        "Run the short example and change one value to reveal a failure case.",
+        "Explain which biological claim remains unsupported by these training values."
+      ],
+      "investigate": [
+        "Try a boundary value and predict the result.",
+        "Compare numerical correctness with scientific validity."
+      ],
+      "debug_task": "Explain a plausible output that would be scientifically misleading.",
+      "misconception": "Numerically plausible pixels imply calibrated, validated biological measurements.",
+      "scientific_boundary": "Browser examples use synthetic values. Native acquisition, calibrated scale and cell identity are not verified.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Import NumPy and convert the source array explicitly to uint16.",
+          "Subtract only after astype(float), then clamp negative values."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Use the supplied data rather than copying one expected result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict output before running, then change a parameter.",
+          "starter_code": "# A01-G02 | LEARN | Protect 16-bit source values\n# TASK: Predict, run and modify the short example.\n\nimport numpy as np\nraw=np.array([1,65500],dtype=np.uint16)\nprint(np.maximum(raw.astype(float)-100,0))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing input data",
+          "description": "Subtract data.background from data.pixels without unsigned wraparound; result={'values':nonnegative float nested list,'native_dtype':'uint16'}.",
+          "starter_code": "# A01-G02 | APPLY | Protect 16-bit source values\n# TASK: Subtract data.background from data.pixels without unsigned wraparound; result={'values':nonnegative float nested list,'native_dtype':'uint16'}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "pixels": [
+                [
+                  1,
+                  65000
+                ],
+                [
+                  100,
+                  255
+                ]
+              ],
+              "background": 95
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "pixels": [
+                    [
+                      1,
+                      65000
+                    ],
+                    [
+                      100,
+                      255
+                    ]
+                  ],
+                  "background": 95
+                }
+              },
+              "assertions": [
+                "result['native_dtype']=='uint16'",
+                "np.allclose(result['values'],np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "pixels": [
+                    [
+                      0,
+                      65535
+                    ],
+                    [
+                      500,
+                      1200
+                    ]
+                  ],
+                  "background": 350
+                }
+              },
+              "assertions": [
+                "result['native_dtype']=='uint16'",
+                "np.allclose(result['values'],np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Explicit axes, numeric source values and reproducible decisions make a computational result auditable.",
+            "probe": "What source metadata or biological ground truth is still missing?",
+            "check": "Compare shape and dtype carefully, and use the supplied input instead of fixed results."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Independently solve changed input without consulting the worked example: Subtract data.background from data.pixels without unsigned wraparound; result={'values':nonnegative float nested list,'native_dtype':'uint16'}.",
+          "starter_code": "# A01-G02 | PROVE | Protect 16-bit source values\n# TASK: Subtract data.background from data.pixels without unsigned wraparound; result={'values':nonnegative float nested list,'native_dtype':'uint16'}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "pixels": [
+                [
+                  0,
+                  5,
+                  150
+                ],
+                [
+                  400,
+                  30000,
+                  65000
+                ]
+              ],
+              "background": 420
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "pixels": [
+                    [
+                      0,
+                      5,
+                      150
+                    ],
+                    [
+                      400,
+                      30000,
+                      65000
+                    ]
+                  ],
+                  "background": 420
+                }
+              },
+              "assertions": [
+                "result['native_dtype']=='uint16'",
+                "np.allclose(result['values'],np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "pixels": [
+                    [
+                      10,
+                      20
+                    ],
+                    [
+                      65530,
+                      980
+                    ]
+                  ],
+                  "background": 1000
+                }
+              },
+              "assertions": [
+                "result['native_dtype']=='uint16'",
+                "np.allclose(result['values'],np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Passing changed inputs establishes only computational practice, not an independently validated measurement.",
+            "probe": "What would you verify before using this method on microscope data?",
+            "check": "Reconsider axes, integer arithmetic, declared versus verified scale and original source identity."
+          }
+        }
+      }
+    },
+    {
+      "id": "A01-G03",
+      "title": "Treat scale as an unverified declaration",
+      "competencies": [
+        "A01-G03"
+      ],
+      "why": "OME physical-size metadata may be declared but not independently calibrated.",
+      "explain": [
+        "Pixel area and calibrated physical area are different claims.",
+        "Both pixel axes and an independent verification flag are required."
+      ],
+      "worked_example": {
+        "code": "area=120;sx=0.25;sy=0.40\nprint('conditional area um2:',area*sx*sy,'(scale not verified)')",
+        "predict": "Predict the output, including axes/dtype assumptions, before Run."
+      },
+      "prediction_answer": "Use the actual input and retain original pixel/metadata assumptions; a file extension does not certify native or calibrated acquisition.",
+      "walkthrough": [
+        "Identify what each input represents and which dimension or unit is being used.",
+        "Run the short example and change one value to reveal a failure case.",
+        "Explain which biological claim remains unsupported by these training values."
+      ],
+      "investigate": [
+        "Try a boundary value and predict the result.",
+        "Compare numerical correctness with scientific validity."
+      ],
+      "debug_task": "Explain a plausible output that would be scientifically misleading.",
+      "misconception": "Numerically plausible pixels imply calibrated, validated biological measurements.",
+      "scientific_boundary": "Browser examples use synthetic values. Native acquisition, calibrated scale and cell identity are not verified.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Check the verified boolean and both positive scales.",
+          "When scale is unverified, return None for the physical area."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Use the supplied data rather than copying one expected result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict output before running, then change a parameter.",
+          "starter_code": "# A01-G03 | LEARN | Treat scale as an unverified declaration\n# TASK: Predict, run and modify the short example.\n\narea=120;sx=0.25;sy=0.40\nprint('conditional area um2:',area*sx*sy,'(scale not verified)')\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing input data",
+          "description": "Use data.area_px and data scale fields. Return result={'area_um2':float or None,'status':'verified' or 'unverified'}; never use unverified pixel size.",
+          "starter_code": "# A01-G03 | APPLY | Treat scale as an unverified declaration\n# TASK: Use data.area_px and data scale fields. Return result={'area_um2':float or None,'status':'verified' or 'unverified'}; never use unverified pixel size.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "area_px": 180,
+              "pixel_x_um": 0.2,
+              "pixel_y_um": 0.3,
+              "verified": false
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "area_px": 180,
+                  "pixel_x_um": 0.2,
+                  "pixel_y_um": 0.3,
+                  "verified": false
+                }
+              },
+              "assertions": [
+                "result['status']==('verified' if data['verified'] and data['pixel_x_um'] is not None and data['pixel_y_um'] is not None and data['pixel_x_um']>0 and data['pixel_y_um']>0 else 'unverified')",
+                "result['area_um2']==(float(data['area_px']*data['pixel_x_um']*data['pixel_y_um']) if result['status']=='verified' else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "area_px": 140,
+                  "pixel_x_um": 0.25,
+                  "pixel_y_um": 0.5,
+                  "verified": true
+                }
+              },
+              "assertions": [
+                "result['status']==('verified' if data['verified'] and data['pixel_x_um'] is not None and data['pixel_y_um'] is not None and data['pixel_x_um']>0 and data['pixel_y_um']>0 else 'unverified')",
+                "result['area_um2']==(float(data['area_px']*data['pixel_x_um']*data['pixel_y_um']) if result['status']=='verified' else None)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Explicit axes, numeric source values and reproducible decisions make a computational result auditable.",
+            "probe": "What source metadata or biological ground truth is still missing?",
+            "check": "Compare shape and dtype carefully, and use the supplied input instead of fixed results."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Independently solve changed input without consulting the worked example: Use data.area_px and data scale fields. Return result={'area_um2':float or None,'status':'verified' or 'unverified'}; never use unverified pixel size.",
+          "starter_code": "# A01-G03 | PROVE | Treat scale as an unverified declaration\n# TASK: Use data.area_px and data scale fields. Return result={'area_um2':float or None,'status':'verified' or 'unverified'}; never use unverified pixel size.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "area_px": 300,
+              "pixel_x_um": 0.12,
+              "pixel_y_um": 0.16,
+              "verified": false
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "area_px": 300,
+                  "pixel_x_um": 0.12,
+                  "pixel_y_um": 0.16,
+                  "verified": false
+                }
+              },
+              "assertions": [
+                "result['status']==('verified' if data['verified'] and data['pixel_x_um'] is not None and data['pixel_y_um'] is not None and data['pixel_x_um']>0 and data['pixel_y_um']>0 else 'unverified')",
+                "result['area_um2']==(float(data['area_px']*data['pixel_x_um']*data['pixel_y_um']) if result['status']=='verified' else None)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "area_px": 480,
+                  "pixel_x_um": 0.1,
+                  "pixel_y_um": 0.2,
+                  "verified": true
+                }
+              },
+              "assertions": [
+                "result['status']==('verified' if data['verified'] and data['pixel_x_um'] is not None and data['pixel_y_um'] is not None and data['pixel_x_um']>0 and data['pixel_y_um']>0 else 'unverified')",
+                "result['area_um2']==(float(data['area_px']*data['pixel_x_um']*data['pixel_y_um']) if result['status']=='verified' else None)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Passing changed inputs establishes only computational practice, not an independently validated measurement.",
+            "probe": "What would you verify before using this method on microscope data?",
+            "check": "Reconsider axes, integer arithmetic, declared versus verified scale and original source identity."
+          }
+        }
+      }
+    },
+    {
+      "id": "A01-G04",
+      "title": "Fingerprint original source bytes",
+      "competencies": [
+        "A01-G04"
+      ],
+      "why": "A filename or image preview cannot identify exact original source bytes.",
+      "explain": [
+        "SHA-256 detects byte changes independent of display or filename.",
+        "These fixtures are synthetic bytes, not original microscope acquisitions."
+      ],
+      "worked_example": {
+        "code": "import hashlib\nprint(hashlib.sha256(bytes([0,1,255])).hexdigest()[:16])",
+        "predict": "Predict the output, including axes/dtype assumptions, before Run."
+      },
+      "prediction_answer": "Use the actual input and retain original pixel/metadata assumptions; a file extension does not certify native or calibrated acquisition.",
+      "walkthrough": [
+        "Identify what each input represents and which dimension or unit is being used.",
+        "Run the short example and change one value to reveal a failure case.",
+        "Explain which biological claim remains unsupported by these training values."
+      ],
+      "investigate": [
+        "Try a boundary value and predict the result.",
+        "Compare numerical correctness with scientific validity."
+      ],
+      "debug_task": "Explain a plausible output that would be scientifically misleading.",
+      "misconception": "Numerically plausible pixels imply calibrated, validated biological measurements.",
+      "scientific_boundary": "Browser examples use synthetic values. Native acquisition, calibrated scale and cell identity are not verified.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Build the original bytes without converting them to a formatted string.",
+          "Use hashlib.sha256(...).hexdigest() and record exact byte count."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Use the supplied data rather than copying one expected result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict output before running, then change a parameter.",
+          "starter_code": "# A01-G04 | LEARN | Fingerprint original source bytes\n# TASK: Predict, run and modify the short example.\n\nimport hashlib\nprint(hashlib.sha256(bytes([0,1,255])).hexdigest()[:16])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing input data",
+          "description": "Compute SHA-256 of data.bytes (small synthetic byte list), returning result={'sha256':digest,'byte_count':int}.",
+          "starter_code": "# A01-G04 | APPLY | Fingerprint original source bytes\n# TASK: Compute SHA-256 of data.bytes (small synthetic byte list), returning result={'sha256':digest,'byte_count':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "bytes": [
+                0,
+                1,
+                255,
+                48
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "bytes": [
+                    0,
+                    1,
+                    255,
+                    48
+                  ]
+                }
+              },
+              "assertions": [
+                "result['sha256']==__import__('hashlib').sha256(bytes(data['bytes'])).hexdigest()",
+                "result['byte_count']==len(data['bytes'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "bytes": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    80,
+                    12
+                  ]
+                }
+              },
+              "assertions": [
+                "result['sha256']==__import__('hashlib').sha256(bytes(data['bytes'])).hexdigest()",
+                "result['byte_count']==len(data['bytes'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Explicit axes, numeric source values and reproducible decisions make a computational result auditable.",
+            "probe": "What source metadata or biological ground truth is still missing?",
+            "check": "Compare shape and dtype carefully, and use the supplied input instead of fixed results."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Independently solve changed input without consulting the worked example: Compute SHA-256 of data.bytes (small synthetic byte list), returning result={'sha256':digest,'byte_count':int}.",
+          "starter_code": "# A01-G04 | PROVE | Fingerprint original source bytes\n# TASK: Compute SHA-256 of data.bytes (small synthetic byte list), returning result={'sha256':digest,'byte_count':int}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "bytes": [
+                45,
+                0,
+                17,
+                255,
+                200,
+                1,
+                33
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "bytes": [
+                    45,
+                    0,
+                    17,
+                    255,
+                    200,
+                    1,
+                    33
+                  ]
+                }
+              },
+              "assertions": [
+                "result['sha256']==__import__('hashlib').sha256(bytes(data['bytes'])).hexdigest()",
+                "result['byte_count']==len(data['bytes'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "bytes": [
+                    255,
+                    254,
+                    253,
+                    252
+                  ]
+                }
+              },
+              "assertions": [
+                "result['sha256']==__import__('hashlib').sha256(bytes(data['bytes'])).hexdigest()",
+                "result['byte_count']==len(data['bytes'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Passing changed inputs establishes only computational practice, not an independently validated measurement.",
+            "probe": "What would you verify before using this method on microscope data?",
+            "check": "Reconsider axes, integer arithmetic, declared versus verified scale and original source identity."
+          }
+        }
+      }
+    }
+  ],
+  "capstone": {
+    "id": "A01-CAPSTONE",
+    "title": "Source-aware plane audit",
+    "competencies": [
+      "A01-CAPSTONE"
+    ],
+    "why": "Integrate axis selection, native range and non-biological candidate labeling.",
+    "explain": [
+      "An image threshold produces candidate pixels, not established cells.",
+      "Declared scale does not imply verified calibration."
+    ],
+    "worked_example": {
+      "code": "import numpy as np\nx=np.arange(24).reshape(1,2,3,4)\nprint('YX plane:',x[0,1].shape,'threshold count:',int((x[0,1]>12).sum()))",
+      "predict": "Predict the output, including axes/dtype assumptions, before Run."
+    },
+    "prediction_answer": "Use the actual input and retain original pixel/metadata assumptions; a file extension does not certify native or calibrated acquisition.",
+    "walkthrough": [
+      "Identify what each input represents and which dimension or unit is being used.",
+      "Run the short example and change one value to reveal a failure case.",
+      "Explain which biological claim remains unsupported by these training values."
+    ],
+    "investigate": [
+      "Try a boundary value and predict the result.",
+      "Compare numerical correctness with scientific validity."
+    ],
+    "debug_task": "Explain a plausible output that would be scientifically misleading.",
+    "misconception": "Numerically plausible pixels imply calibrated, validated biological measurements.",
+    "scientific_boundary": "Browser examples use synthetic values. Native acquisition, calibrated scale and cell identity are not verified.",
+    "hints": {
+      "learn": [],
+      "apply": [
+        "Select exactly one plane from the declared axes.",
+        "Return pixel count and calibration status separately."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Use the supplied data rather than copying one expected result."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict output before running, then change a parameter.",
+        "starter_code": "# A01-CAPSTONE | LEARN | Source-aware plane audit\n# TASK: Predict, run and modify the short example.\n\nimport numpy as np\nx=np.arange(24).reshape(1,2,3,4)\nprint('YX plane:',x[0,1].shape,'threshold count:',int((x[0,1]>12).sum()))\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changing input data",
+        "description": "From data.axes/shape/pixels select the requested Z/C plane; count pixels > data.threshold and return result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.",
+        "starter_code": "# A01-CAPSTONE | APPLY | Source-aware plane audit\n# TASK: From data.axes/shape/pixels select the requested Z/C plane; count pixels > data.threshold and return result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "axes": "ZCYX",
+            "shape": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "z": 0,
+            "channel": 1,
+            "pixels": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21,
+              24,
+              27,
+              30,
+              33,
+              36,
+              39,
+              42,
+              45,
+              48,
+              51,
+              54,
+              57,
+              60,
+              63,
+              66,
+              69
+            ],
+            "threshold": 38,
+            "verified": false
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "axes": "ZCYX",
+                "shape": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "z": 0,
+                "channel": 1,
+                "pixels": [
+                  0,
+                  3,
+                  6,
+                  9,
+                  12,
+                  15,
+                  18,
+                  21,
+                  24,
+                  27,
+                  30,
+                  33,
+                  36,
+                  39,
+                  42,
+                  45,
+                  48,
+                  51,
+                  54,
+                  57,
+                  60,
+                  63,
+                  66,
+                  69
+                ],
+                "threshold": 38,
+                "verified": false
+              }
+            },
+            "assertions": [
+              "result['plane_shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+              "result['candidate_pixels']==int(np.count_nonzero(np.asarray(data['pixels'],dtype=np.uint16).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])]>data['threshold']))",
+              "result['calibration_status']==('verified' if data['verified'] else 'unverified')"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "axes": "CZYX",
+                "shape": [
+                  2,
+                  1,
+                  3,
+                  4
+                ],
+                "z": 0,
+                "channel": 0,
+                "pixels": [
+                  0,
+                  5,
+                  10,
+                  15,
+                  20,
+                  25,
+                  30,
+                  35,
+                  40,
+                  45,
+                  50,
+                  55,
+                  60,
+                  65,
+                  70,
+                  75,
+                  80,
+                  85,
+                  90,
+                  95,
+                  100,
+                  105,
+                  110,
+                  115
+                ],
+                "threshold": 18,
+                "verified": true
+              }
+            },
+            "assertions": [
+              "result['plane_shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+              "result['candidate_pixels']==int(np.count_nonzero(np.asarray(data['pixels'],dtype=np.uint16).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])]>data['threshold']))",
+              "result['calibration_status']==('verified' if data['verified'] else 'unverified')"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Explicit axes, numeric source values and reproducible decisions make a computational result auditable.",
+          "probe": "What source metadata or biological ground truth is still missing?",
+          "check": "Compare shape and dtype carefully, and use the supplied input instead of fixed results."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Independently solve changed input without consulting the worked example: From data.axes/shape/pixels select the requested Z/C plane; count pixels > data.threshold and return result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.",
+        "starter_code": "# A01-CAPSTONE | PROVE | Source-aware plane audit\n# TASK: From data.axes/shape/pixels select the requested Z/C plane; count pixels > data.threshold and return result={'plane_shape':[Y,X],'candidate_pixels':int,'calibration_status':string}.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "axes": "ZCYX",
+            "shape": [
+              2,
+              2,
+              3,
+              3
+            ],
+            "z": 1,
+            "channel": 0,
+            "pixels": [
+              0,
+              4,
+              8,
+              12,
+              16,
+              20,
+              24,
+              28,
+              32,
+              36,
+              40,
+              44,
+              48,
+              52,
+              56,
+              60,
+              64,
+              68,
+              72,
+              76,
+              80,
+              84,
+              88,
+              92,
+              96,
+              100,
+              104,
+              108,
+              112,
+              116,
+              120,
+              124,
+              128,
+              132,
+              136,
+              140
+            ],
+            "threshold": 85,
+            "verified": false
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "axes": "ZCYX",
+                "shape": [
+                  2,
+                  2,
+                  3,
+                  3
+                ],
+                "z": 1,
+                "channel": 0,
+                "pixels": [
+                  0,
+                  4,
+                  8,
+                  12,
+                  16,
+                  20,
+                  24,
+                  28,
+                  32,
+                  36,
+                  40,
+                  44,
+                  48,
+                  52,
+                  56,
+                  60,
+                  64,
+                  68,
+                  72,
+                  76,
+                  80,
+                  84,
+                  88,
+                  92,
+                  96,
+                  100,
+                  104,
+                  108,
+                  112,
+                  116,
+                  120,
+                  124,
+                  128,
+                  132,
+                  136,
+                  140
+                ],
+                "threshold": 85,
+                "verified": false
+              }
+            },
+            "assertions": [
+              "result['plane_shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+              "result['candidate_pixels']==int(np.count_nonzero(np.asarray(data['pixels'],dtype=np.uint16).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])]>data['threshold']))",
+              "result['calibration_status']==('verified' if data['verified'] else 'unverified')"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "axes": "CZYX",
+                "shape": [
+                  2,
+                  2,
+                  2,
+                  4
+                ],
+                "z": 1,
+                "channel": 1,
+                "pixels": [
+                  0,
+                  10,
+                  20,
+                  30,
+                  40,
+                  50,
+                  60,
+                  70,
+                  80,
+                  90,
+                  100,
+                  110,
+                  120,
+                  130,
+                  140,
+                  150,
+                  160,
+                  170,
+                  180,
+                  190,
+                  200,
+                  210,
+                  220,
+                  230,
+                  240,
+                  250,
+                  260,
+                  270,
+                  280,
+                  290,
+                  300,
+                  310
+                ],
+                "threshold": 260,
+                "verified": true
+              }
+            },
+            "assertions": [
+              "result['plane_shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+              "result['candidate_pixels']==int(np.count_nonzero(np.asarray(data['pixels'],dtype=np.uint16).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])]>data['threshold']))",
+              "result['calibration_status']==('verified' if data['verified'] else 'unverified')"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Passing changed inputs establishes only computational practice, not an independently validated measurement.",
+          "probe": "What would you verify before using this method on microscope data?",
+          "check": "Reconsider axes, integer arithmetic, declared versus verified scale and original source identity."
+        }
+      }
+    },
+    "build_steps": [
+      "Select explicit axes and inspect the original numeric range before processing.",
+      "Write reusable source-safe calculations that work on changed dimensions or values.",
+      "Record the method and distinguish candidate measurements from biological identities.",
+      "Transfer the program to a new case and reproduce its output in a local Python environment."
+    ]
+  },
+  "review": {
+    "id": "A01-REVIEW",
+    "title": "Return later: independent native source audit",
+    "competencies": [
+      "A01-REVIEW"
+    ],
+    "why": "A delayed review is only a credible retention check when performed on a later day unaided.",
+    "explain": [
+      "Use a different data shape and axis order from the capstone.",
+      "Explain remaining source and calibration limitations."
+    ],
+    "worked_example": {
+      "code": "print('Return later. Solve the image source audit without copying previous code.')",
+      "predict": "Predict the output, including axes/dtype assumptions, before Run."
+    },
+    "prediction_answer": "Use the actual input and retain original pixel/metadata assumptions; a file extension does not certify native or calibrated acquisition.",
+    "walkthrough": [
+      "Identify what each input represents and which dimension or unit is being used.",
+      "Run the short example and change one value to reveal a failure case.",
+      "Explain which biological claim remains unsupported by these training values."
+    ],
+    "investigate": [
+      "Try a boundary value and predict the result.",
+      "Compare numerical correctness with scientific validity."
+    ],
+    "debug_task": "Explain a plausible output that would be scientifically misleading.",
+    "misconception": "Numerically plausible pixels imply calibrated, validated biological measurements.",
+    "scientific_boundary": "Browser examples use synthetic values. Native acquisition, calibrated scale and cell identity are not verified.",
+    "hints": {
+      "learn": [],
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Use the supplied data rather than copying one expected result."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict output before running, then change a parameter.",
+        "starter_code": "# A01-REVIEW | LEARN | Return later: independent native source audit\n# TASK: Predict, run and modify the short example.\n\nprint('Return later. Solve the image source audit without copying previous code.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changing input data",
+        "description": "From data.axes/shape/pixels select Z/C and return result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved steps.",
+        "starter_code": "# A01-REVIEW | APPLY | Return later: independent native source audit\n# TASK: From data.axes/shape/pixels select Z/C and return result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved steps.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "axes": "ZCYX",
+            "shape": [
+              1,
+              2,
+              3,
+              3
+            ],
+            "z": 0,
+            "channel": 1,
+            "pixels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "threshold": 0,
+            "verified": false
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "axes": "ZCYX",
+                "shape": [
+                  1,
+                  2,
+                  3,
+                  3
+                ],
+                "z": 0,
+                "channel": 1,
+                "pixels": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17
+                ],
+                "threshold": 0,
+                "verified": false
+              }
+            },
+            "assertions": [
+              "result['shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+              "result['sum']==int(np.asarray(data['pixels']).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])].sum())",
+              "result['requires_calibration']==(not data['verified'])"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "axes": "CZYX",
+                "shape": [
+                  2,
+                  1,
+                  3,
+                  3
+                ],
+                "z": 0,
+                "channel": 0,
+                "pixels": [
+                  0,
+                  2,
+                  4,
+                  6,
+                  8,
+                  10,
+                  12,
+                  14,
+                  16,
+                  18,
+                  20,
+                  22,
+                  24,
+                  26,
+                  28,
+                  30,
+                  32,
+                  34
+                ],
+                "threshold": 0,
+                "verified": true
+              }
+            },
+            "assertions": [
+              "result['shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+              "result['sum']==int(np.asarray(data['pixels']).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])].sum())",
+              "result['requires_calibration']==(not data['verified'])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Explicit axes, numeric source values and reproducible decisions make a computational result auditable.",
+          "probe": "What source metadata or biological ground truth is still missing?",
+          "check": "Compare shape and dtype carefully, and use the supplied input instead of fixed results."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Independently solve changed input without consulting the worked example: From data.axes/shape/pixels select Z/C and return result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved steps.",
+        "starter_code": "# A01-REVIEW | PROVE | Return later: independent native source audit\n# TASK: From data.axes/shape/pixels select Z/C and return result={'shape':[Y,X],'sum':int,'requires_calibration':boolean} without solved steps.\n# INPUTS: data (see the lesson panel for example values)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "axes": "CZYX",
+            "shape": [
+              2,
+              2,
+              2,
+              3
+            ],
+            "z": 1,
+            "channel": 1,
+            "pixels": [
+              0,
+              3,
+              6,
+              9,
+              12,
+              15,
+              18,
+              21,
+              24,
+              27,
+              30,
+              33,
+              36,
+              39,
+              42,
+              45,
+              48,
+              51,
+              54,
+              57,
+              60,
+              63,
+              66,
+              69
+            ],
+            "threshold": 0,
+            "verified": false
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "axes": "CZYX",
+                "shape": [
+                  2,
+                  2,
+                  2,
+                  3
+                ],
+                "z": 1,
+                "channel": 1,
+                "pixels": [
+                  0,
+                  3,
+                  6,
+                  9,
+                  12,
+                  15,
+                  18,
+                  21,
+                  24,
+                  27,
+                  30,
+                  33,
+                  36,
+                  39,
+                  42,
+                  45,
+                  48,
+                  51,
+                  54,
+                  57,
+                  60,
+                  63,
+                  66,
+                  69
+                ],
+                "threshold": 0,
+                "verified": false
+              }
+            },
+            "assertions": [
+              "result['shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+              "result['sum']==int(np.asarray(data['pixels']).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])].sum())",
+              "result['requires_calibration']==(not data['verified'])"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "axes": "ZCYX",
+                "shape": [
+                  2,
+                  2,
+                  2,
+                  3
+                ],
+                "z": 1,
+                "channel": 0,
+                "pixels": [
+                  0,
+                  4,
+                  8,
+                  12,
+                  16,
+                  20,
+                  24,
+                  28,
+                  32,
+                  36,
+                  40,
+                  44,
+                  48,
+                  52,
+                  56,
+                  60,
+                  64,
+                  68,
+                  72,
+                  76,
+                  80,
+                  84,
+                  88,
+                  92
+                ],
+                "threshold": 0,
+                "verified": true
+              }
+            },
+            "assertions": [
+              "result['shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+              "result['sum']==int(np.asarray(data['pixels']).reshape(data['shape'])[tuple({'Z':data['z'],'C':data['channel']}.get(a,slice(None)) for a in data['axes'])].sum())",
+              "result['requires_calibration']==(not data['verified'])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Passing changed inputs establishes only computational practice, not an independently validated measurement.",
+          "probe": "What would you verify before using this method on microscope data?",
+          "check": "Reconsider axes, integer arithmetic, declared versus verified scale and original source identity."
+        }
+      }
+    }
+  },
+  "final_project": {
+    "name": "a01_source_audit.py",
+    "description": "Source-aware numerical audit; export and reproduce on original TIFF locally."
+  }
+}
