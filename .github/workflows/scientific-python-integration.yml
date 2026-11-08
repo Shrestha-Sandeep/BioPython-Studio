@@ -64,3 +64,13 @@ jobs:
         run: python tests/test_p04_p06_browser.py
       - name: Real I01 NumPy, Pillow, actual source image and Matplotlib browser QA
         run: python tests/test_i01_browser.py
+      - name: All remaining I02-I04 I07-I08 NumPy Pandas and Matplotlib browser scenarios
+        run: python tests/test_scientific_foundation_browser.py
+      - name: Retain scientific desktop and mobile QA screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: scientific-python-full-qa
+          path: artifacts/scientific-foundation/*.png
+          if-no-files-found: ignore
+          retention-days: 14
