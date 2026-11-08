@@ -25,7 +25,7 @@
   },
   "I03-G07": {
     "apply": "import numpy as np\narr=np.asarray(values,dtype=float)\nsorted_values=np.sort(arr).tolist()\npercentile_value=float(np.percentile(arr,percentile))\nabove_count=int((arr>percentile_value).sum())",
-    "prove": "import numpy as np\narr=np.asarray(intensities,dtype=float)\nthreshold_value=float(np.percentile(arr,q))\ncandidate_indices=np.flatnonzero(arr>threshold_value).tolist()\nsorted_indices=np.argsort(arr).tolist"
+    "prove": "import numpy as np\narr=np.asarray(intensities,dtype=float)\nthreshold_value=float(np.percentile(arr,q))\ncandidate_indices=np.flatnonzero(arr>threshold_value).tolist()\nsorted_indices=np.argsort(arr).tolist()"
   },
   "I03-G08": {
     "apply": "import numpy as np\nrng=np.random.default_rng(seed)\nsimulations=rng.poisson(mean_count,size=n)\nreproducible=bool(np.array_equal(simulations,np.random.default_rng(seed).poisson(mean_count,size=n)))",
