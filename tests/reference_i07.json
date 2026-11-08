@@ -1,0 +1,38 @@
+{
+  "I07-G01": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(records)\ncolumn_names=df.columns.tolist()\nn_rows=len(df)\nmean_fields=float(df['fields'].mean()) if n_rows else None",
+    "prove": "import pandas as pd\nmeasurements=pd.DataFrame({'field_id':field_ids,'score':scores})\nn_fields=len(measurements)\nmissing_scores=int(measurements['score'].isna().sum())\nvalid_ids=measurements.loc[measurements['score'].notna(),'field_id'].tolist()"
+  },
+  "I07-G02": {
+    "apply": "import pandas as pd,io\ndf=pd.read_csv(io.StringIO(csv_text),dtype={'sample_id':'string'})\nparsed_ids=df['sample_id'].tolist()\nnumeric_total=int(df['fields'].sum())\nleading_zero_preserved=all(x==x for x in parsed_ids)",
+    "prove": "import pandas as pd,io\ntable=pd.read_csv(io.StringIO(csv_text),dtype={'field_id':'string'})\ntable['score']=pd.to_numeric(table['score'],errors='coerce')\nmissing_count=int(table['score'].isna().sum())\npassing_ids=table.loc[table['score']>=minimum,'field_id'].tolist()"
+  },
+  "I07-G03": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(records)\nselected=df.loc[df['score']>=minimum,['field_id','score']].copy()\nselected_ids=selected['field_id'].tolist()\nretained_count=len(selected)",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(sample_records,columns=['id','channel'])\nfirst_record=df.iloc[0].to_dict() if len(df) else None\nmatching_ids=df.loc[df['channel']==wanted_channel,'id'].tolist()"
+  },
+  "I07-G04": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(records)\nmissing_columns=[k for k in required_columns if k not in df.columns]\nschema_ok=not missing_columns",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(row_data)\nmissing=[k for k in must_have if k not in df.columns]\nreport={'ok':not bool(missing),'missing':missing}\nprint(report)"
+  },
+  "I07-G05": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame({'raw_id':raw_ids})\ndf['clean_id']=df['raw_id'].str.strip()\nclean_ids=df['clean_id'].tolist()\nchanged_count=sum(a!=b for a,b in zip(raw_ids,clean_ids))",
+    "prove": "import pandas as pd\ntable=pd.DataFrame({'original_id':acquisition_ids})\ntable['normalized_id']=table['original_id'].str.strip()\nids=table['normalized_id']\ncollisions=ids[ids.duplicated()].drop_duplicates().tolist()"
+  },
+  "I07-G06": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(records,columns=['id','condition'])\nduplicate_ids=df.loc[df['id'].duplicated(),'id'].drop_duplicates().tolist()\nconflicting_ids=[sid for sid,part in df.groupby('id',sort=False) if part['condition'].nunique(dropna=False)>1]",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(field_rows,columns=['field_id','channel'])\nrepeated=df.loc[df['field_id'].duplicated(),'field_id'].drop_duplicates().tolist()\nambiguous=[sid for sid,part in df.groupby('field_id',sort=False) if part['channel'].nunique(dropna=False)>1]"
+  },
+  "I07-G07": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(records,columns=['id','score'])\nmissing_ids=df.loc[df['score'].isna(),'id'].tolist()\nobserved_ids=df.loc[df['score'].notna(),'id'].tolist()\nmissing_count=len(missing_ids)\npreserved_rows=len(df)",
+    "prove": "import pandas as pd\naudit=pd.DataFrame({'field_id':field_ids,'reading':readings})\nstatus_list=['MISSING' if pd.isna(v) else 'ZERO' if v==0 else 'OBSERVED' for v in audit['reading']]\ninvalid_fraction=status_list.count('MISSING')/len(status_list) if status_list else 0"
+  },
+  "I07-CAPSTONE": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(records,columns=['id','condition','score'])\nmissing=df.loc[df['score'].isna(),'id'].drop_duplicates().tolist()\nduplicates=df.loc[df['id'].duplicated(),'id'].drop_duplicates().tolist()\nconflicts=[sid for sid,g in df.groupby('id',sort=False) if g['condition'].nunique(dropna=False)>1]\nreport={'rows':len(df),'missing':missing,'duplicates':duplicates,'conflicts':conflicts}\nprint(report)",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(rows,columns=['specimen_id','field_id','value'])\nmissing_fields=df.loc[df['value'].isna(),'field_id'].drop_duplicates().tolist()\nduplicate_fields=df.loc[df['field_id'].duplicated(),'field_id'].drop_duplicates().tolist()\naudit={'n':len(df),'missing_fields':missing_fields,'duplicate_fields':duplicate_fields}\nprint(audit)"
+  },
+  "I07-REVIEW": {
+    "apply": "",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(readings,columns=['id','score'])\nreport={'kept':df.loc[df['score']>=minimum,'id'].tolist(),'missing':df.loc[df['score'].isna(),'id'].tolist(),'rows':len(df)}\nprint(report)"
+  }
+}
