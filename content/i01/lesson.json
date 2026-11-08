@@ -896,7 +896,9 @@
           "title": "Predict, run, investigate",
           "description": "Predict the worked example, run and modify it.",
           "starter_code": "# I01-G05 | LEARN | Decode the credited image into pixels\n# TASK: Predict the worked example, run and modify it.\n\nfrom PIL import Image\nimport numpy as np\nimg=np.asarray(Image.open(image_path).convert('RGB'))\nprint(img.shape,img.dtype)\nprint(img[0,0].tolist())\n",
-          "preview_inputs": {}
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png"
+          }
         },
         "apply": {
           "title": "Apply to changing records",
@@ -1064,7 +1066,9 @@
           "title": "Predict, run, investigate",
           "description": "Predict the worked example, run and modify it.",
           "starter_code": "# I01-G06 | LEARN | Inspect RGB components without inventing channels\n# TASK: Predict the worked example, run and modify it.\n\nfrom PIL import Image\nimport numpy as np\narr=np.asarray(Image.open(image_path).convert('RGB'))\nprint(arr.shape[-1])\nprint(int(arr[:,:,0].max()))\n",
-          "preview_inputs": {}
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png"
+          }
         },
         "apply": {
           "title": "Apply to changing records",
@@ -1582,7 +1586,9 @@
         "title": "Predict, run, investigate",
         "description": "Predict the worked example, run and modify it.",
         "starter_code": "# I01-CAPSTONE | LEARN | Create an honest Witz/HPA image-inspection report\n# TASK: Predict the worked example, run and modify it.\n\nfrom PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nprint('shape',rgb.shape,'dtype',rgb.dtype)\nprint('RGB preview only; not calibrated raw fluorescence')\n",
-        "preview_inputs": {}
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png"
+        }
       },
       "apply": {
         "title": "Apply to changing records",
