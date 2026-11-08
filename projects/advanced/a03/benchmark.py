@@ -73,8 +73,8 @@ def evaluate_split(*, root: Path, manifest: Path, cfg: SegmentConfig, split: str
     chosen = [r for r in rows if r["split"] == split]
     if not chosen:
         raise DatasetError(f"No {split} images in manifest")
-    if out.resolve() == root.resolve():
-        raise DatasetError("Never write results directly over the dataset root")
+    if out.resolve().is_relative_to(root.resolve()):
+        raise DatasetError("Keep benchmark outputs outside the original dataset root")
     out.mkdir(parents=True, exist_ok=True)
     image_results = []
     for row in chosen:
