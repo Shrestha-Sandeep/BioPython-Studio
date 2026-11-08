@@ -98,6 +98,15 @@ python tests/test_p04_p06_reference.py
 
 Browser tests additionally require Playwright and Chromium; see `.github/workflows/p04-p06-integration.yml` for Python foundations and `.github/workflows/scientific-python-integration.yml` for real NumPy/Pandas/Matplotlib microscopy missions. Scientific CPython QA runs `tests/test_scientific_foundation_import.py` and `tests/test_scientific_foundation_reference.py`; complete real Pyodide QA runs `tests/test_i01_browser.py` and `tests/test_scientific_foundation_browser.py`. They run the original frozen-shell regression and P01–P06 chapter flows, changed-input checks in genuine Pyodide, exported script execution in CPython, draft preservation and mobile/tablet/desktop layout tests.
 
+
+## Authentic microscopy file workflow — new draft feature
+
+For real image practice, use **Open images** in the microscopy viewer. Selected TIFF/OME-TIFF and RGB files (maximum eight, 32 MB each, 96 MB total) are copied into **local browser Pyodide memory** without scaling or conversion through the RGB viewer. The learner code receives them through the Python list `uploaded_image_paths`. Source bytes are never sent to the BioPython Studio server, and selecting **Clear files** then running again removes them from the worker filesystem. They are not saved across page reloads.
+
+Use the **Witz TIFF pair** button to fetch two original TIFF *files* on demand from the Witz course repository. These HPA-derived files were converted from JPEG, so they are **not original calibrated instrument data**. Their provenance and license are documented in [the real-data learning guide](projects/real-microscopy/START_HERE.md).
+
+The [I13 real-data project](projects/real-microscopy/START_HERE.md) adds a reproducible local TIFF batch-analysis script, documented QC outputs, source hashes and a [blind independent transfer challenge](projects/real-microscopy/INDEPENDENT_CHALLENGE.md) with a delayed learning rubric. Project tests exercise 16-bit OME-TIFF, preserved image pixel values, explicit channels/axes and live browser file transport. Desktop Bio-Formats and independently annotated raw experimental image datasets are still necessary for wider vendor formats and research-grade validation.
+
 ## Learning sources and scientific safeguards
 
 Witz [Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner) is the primary source spine. Supporting references include the [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/), [Python for Biologists](https://www.pythonforbiologists.org/), [Introduction to Bioimage Analysis](https://bioimagebook.github.io/) and [Bio-image Analysis Notebooks](https://haesleinhuepf.github.io/BioImageAnalysisNotebooks/).

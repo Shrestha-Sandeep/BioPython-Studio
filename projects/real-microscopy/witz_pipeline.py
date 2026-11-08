@@ -12,6 +12,8 @@ import argparse
 import csv
 import hashlib
 import json
+import sys
+from importlib.metadata import version
 from pathlib import Path
 
 import numpy as np
@@ -193,6 +195,10 @@ def analyze(inputs: list[Path], output: Path, *, nucleus_channel: int, signal_ch
             "exclude_border": exclude_border,
         },
         "images": [],
+        "runtime": {
+            "python": sys.version.split()[0],
+            **{lib: version(lib) for lib in ("numpy","scipy","scikit-image","tifffile","matplotlib")},
+        },
     }
     for path in inputs:
         if path.suffix.lower() not in (".tif", ".tiff"):

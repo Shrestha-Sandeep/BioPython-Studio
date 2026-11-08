@@ -91,7 +91,7 @@ print('REAL_TIFF_IMPORT_OK',len(uploaded_image_paths),int(a.max()))
             for w,h in [(390,844),(768,1024)]:
                 p=browser.new_page(viewport={"width":w,"height":h})
                 p.goto(URL,wait_until="domcontentloaded")
-                p.locator("#bps-chapter-select",state="attached").wait_for(timeout=25000)
+                p.locator("#bps-chapter-select").wait_for(state="attached",timeout=25000)
                 p.locator('[data-stage="Microscopy"]').click(force=True)
                 p.wait_for_timeout(400)
                 assert p.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),w
