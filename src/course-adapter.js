@@ -6,10 +6,13 @@ const P_IDS=["P01","P02","P03","P04","P05","P06"];
 const I_IDS=["I01","I02","I03","I04","I05","I06","I07","I08","I09","I10","I11","I12","I13"];
 const N_IDS=["N01","N02","N03","N04"];
 const L_IDS=["L01","L02","L03"];
-const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS];
-const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I05:6,I06:7,I07:7,I08:8,I09:6,I10:6,I11:7,I12:9,I13:5,N01:4,N02:4,N03:4,N04:5,L01:4,L02:4,L03:4};
+// Optional: the frozen 26-chapter course and its navigation remain unchanged by default.
+const A_IDS=["A01","A02","A03"];
+const advancedLab=new URLSearchParams(window.location.search).get("lab")==="advanced";
+const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...(advancedLab?A_IDS:[])];
+const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I05:6,I06:7,I07:7,I08:8,I09:6,I10:6,I11:7,I12:9,I13:5,N01:4,N02:4,N03:4,N04:5,L01:4,L02:4,L03:4,A01:4,A02:5,A03:5};
 const KEYS=Object.fromEntries(IDS.map(id=>[id,"biopython."+id.toLowerCase()+".v1"]));
-const SELECT_KEY="biopython.course-selected.v1";
+const SELECT_KEY=advancedLab?"biopython.advanced-selected.v1":"biopython.course-selected.v1";
 const chapters={},states={};
 const fresh=()=>({goal:0,phase:"learn",drafts:{},briefIntroduced:{},hints:{},progress:{},reflections:{},capstoneFirstPassAt:null});
 function loadState(id){
@@ -29,16 +32,16 @@ function loadState(id){
  }catch{}
  return next;
 }
-let activeId="P01",chapter=null,state=fresh(),worker=null,pending=null,busy=false,seq=0;
+let activeId=advancedLab?"A01":"P01",chapter=null,state=fresh(),worker=null,pending=null,busy=false,seq=0;
 try{const selected=localStorage.getItem(SELECT_KEY);if(KEYS[selected])activeId=selected;}catch{}
 const selectedStage=()=>document.querySelector('[data-stage][aria-current="page"]')?.dataset.stage||"Python";
-const stageOf=id=>P_IDS.includes(id)?"Python":I_IDS.includes(id)?"Microscopy":N_IDS.includes(id)?"NGS":"ML";
-const isImaging=id=>I_IDS.includes(id);
-const stageIds=()=>({Python:P_IDS,Microscopy:I_IDS,NGS:N_IDS,ML:L_IDS})[selectedStage()]||P_IDS;
-let lastP="P01",lastI="I01",lastN="N01",lastL="L01";
+const stageOf=id=>P_IDS.includes(id)?"Python":(I_IDS.includes(id)||A_IDS.includes(id))?"Microscopy":N_IDS.includes(id)?"NGS":"ML";
+const isImaging=id=>I_IDS.includes(id)||A_IDS.includes(id);
+const stageIds=()=>({Python:P_IDS,Microscopy:advancedLab?[...I_IDS,...A_IDS]:I_IDS,NGS:N_IDS,ML:L_IDS})[selectedStage()]||P_IDS;
+let lastP="P01",lastI=advancedLab?"A01":"I01",lastN="N01",lastL="L01";
 function rememberLast(id){
  if(P_IDS.includes(id))lastP=id;
- else if(I_IDS.includes(id))lastI=id;
+ else if(I_IDS.includes(id)||A_IDS.includes(id))lastI=id;
  else if(N_IDS.includes(id))lastN=id;
  else lastL=id;
 }
@@ -271,6 +274,9 @@ function syncActivity(){
  const navigation=el("p01-navigation");
  if(navigation)navigation.hidden=!visible;
  const realLink=el("bps-real-data-project");if(realLink)realLink.hidden=activeId!=="I13"||!visible;
+ const researchEntry=el("bps-advanced-entry");if(researchEntry)researchEntry.hidden=activeId!=="I13"||advancedLab||!visible;
+ const advancedDocs=el("bps-advanced-docs");if(advancedDocs)advancedDocs.hidden=!A_IDS.includes(activeId)||!visible;
+ const returnLink=el("bps-standard-return");if(returnLink)returnLink.hidden=!advancedLab||!visible;
  el("run-button").disabled=!visible||busy;
  const checkButton=el("p01-check");
  if(checkButton)checkButton.disabled=!visible||busy;
@@ -306,7 +312,7 @@ function exportPython(){
  const code=bridge()?.readCode()||"";
  if(!hasExecutableCode(code)){output("Write your Python program before exporting.");return;}
  const source=["# BioPython Studio "+activeId+" · original learner code",
- ({Python:"# Synthetic microscopy records and example calibration, not real image measurements.",Microscopy:"# Witz/HPA published RGB figure; image analysis requires independently validated raw data.",NGS:"# Synthetic sequence reads unless separately attributed. Not real biological sequencing.",ML:"# Synthetic biological samples; no external predictive accuracy or clinical validation."})[stageOf(activeId)],
+ (A_IDS.includes(activeId)?"# Synthetic practice inputs; independently verify original TIFF sources, annotations and biological study groups.":({Python:"# Synthetic microscopy records and example calibration, not real image measurements.",Microscopy:"# Witz/HPA published RGB figure; image analysis requires independently validated raw data.",NGS:"# Synthetic sequence reads unless separately attributed. Not real biological sequencing.",ML:"# Synthetic biological samples; no external predictive accuracy or clinical validation."})[stageOf(activeId)]),
  "# The assignments below reproduce one supplied practice input.",preamble,"",localPrelude,code,""].join("\n");
  const blob=new Blob([source],{type:"text/x-python;charset=utf-8"});
  const url=URL.createObjectURL(blob);
@@ -346,6 +352,9 @@ function switchChapter(next){
  if(isImaging(activeId))bridge()?.ensureExampleImage?.();
  render();save();
  const projectLink=el("bps-real-data-project");if(projectLink)projectLink.hidden=activeId!=="I13";
+ const advancedDocs=el("bps-advanced-docs");
+ if(advancedDocs){advancedDocs.hidden=!A_IDS.includes(activeId);advancedDocs.href="./projects/advanced/"+activeId.toLowerCase()+"/README.md";}
+ const researchEntry=el("bps-advanced-entry");if(researchEntry)researchEntry.hidden=activeId!=="I13"||advancedLab;
 }
 function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
@@ -379,6 +388,20 @@ function mount(){
  projectLink.textContent="I13 · Real-image project";
  projectLink.hidden=activeId!=="I13";
  pane.append(projectLink);
+ // Optional opt-in entry: no new sidebar stage or editor clutter in standard mode.
+ const advancedEntry=document.createElement("a");
+ advancedEntry.id="bps-advanced-entry";advancedEntry.href="./?lab=advanced";
+ advancedEntry.textContent="A01–A03 · Advanced research lab";
+ advancedEntry.title="Open optional applied research projects in the same Python IDE";
+ advancedEntry.hidden=activeId!=="I13"||advancedLab;
+ const advancedDocs=document.createElement("a");advancedDocs.id="bps-advanced-docs";
+ advancedDocs.href="./projects/advanced/a01/README.md";advancedDocs.target="_blank";
+ advancedDocs.rel="noopener noreferrer";advancedDocs.textContent="Advanced project · local data guide";
+ advancedDocs.hidden=!A_IDS.includes(activeId);
+ const standardReturn=document.createElement("a");standardReturn.id="bps-standard-return";
+ standardReturn.href="./";standardReturn.textContent="Return to standard course";
+ standardReturn.hidden=!advancedLab;
+ pane.append(advancedEntry,advancedDocs,standardReturn);
  const checker=document.createElement("button");checker.type="button";checker.id="p01-check";checker.className="subtle-button";checker.textContent="Check";
  const exportButton=document.createElement("button");
  exportButton.id="p01-export";exportButton.className="subtle-button";exportButton.type="button";
@@ -412,7 +435,7 @@ async function start(){
      throw Error(id+" chapter import contract failed");
    chapters[id]=data;states[id]=loadState(id);
   }
-  if(!chapters[activeId])activeId="P01";
+  if(!chapters[activeId])activeId=advancedLab?"A01":"P01";
   chapter=chapters[activeId];state=states[activeId];
   rememberLast(activeId);
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
