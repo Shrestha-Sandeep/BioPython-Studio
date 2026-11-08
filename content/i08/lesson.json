@@ -1,0 +1,2206 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I08",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_PANDAS_REPORTING",
+  "title": "Merge measurements and make a report",
+  "competencies": [
+    "058",
+    "059",
+    "060",
+    "061",
+    "062",
+    "066",
+    "069",
+    "070"
+  ],
+  "intro": "Join source metadata and microscope-field measurements without multiplying rows, summarize explicitly, reshape safely, preserve timestamps, export traceable CSVs and actual Matplotlib plots. Inference/uncertainty is reserved for I12.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb",
+    "asset": "assets/witz/fluorescence-examples.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "RENDERED_FIGURE_CONTEXT_SYNTHETIC_DATA_TABLES",
+    "caution": "Synthetic field data and plotting exercises do not justify a biological effect estimate, replication claim or publication-ready figure."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove, with genuine Pandas and Matplotlib execution and scientific audit.",
+  "goals": [
+    {
+      "id": "I08-G01",
+      "title": "Join imaging data to specimen metadata safely",
+      "competencies": [
+        "058"
+      ],
+      "why": "A nonunique specimen table can multiply imaging records during a merge and distort a reported experiment.",
+      "explain": [
+        "Use `pd.merge` with explicit join keys, `how='left'`, and `validate='many_to_one'` when many image fields may belong to a single specimen.",
+        "Before merging, inspect whether source metadata contain duplicated specimen IDs. Reject an ambiguous source rather than silently multiplying rows.",
+        "Unmatched image fields must be reported with their original IDs. A successful join cannot independently validate biological specimen identity."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\nfields=pd.DataFrame({'specimen':['A','A','B'],'field':['F1','F2','F3']})\nmeta=pd.DataFrame({'specimen':['A','B'],'condition':['ctrl','heat']})\nprint(fields.merge(meta,on='specimen',validate='many_to_one').shape)",
+        "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+      },
+      "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+      "walkthrough": [
+        "Check column names and whether keys can appear once or multiple times.",
+        "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+        "Explain the origin of the experimental unit and which inference is unsupported."
+      ],
+      "investigate": [
+        "Try missing rows, changed keys or an invalid metadata join.",
+        "Preserve source IDs and record the exact descriptive output.",
+        "Test whether plot axes or file exports maintain stated units and provenance."
+      ],
+      "debug_task": "Find an unsafe assumption in join imaging data to specimen metadata safely and demonstrate it with a new input.",
+      "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+      "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the data in the example.",
+          "starter_code": "# I08-G01 | LEARN | Join imaging data to specimen metadata safely\n# TASK: Predict, run and change the data in the example.\n\nimport pandas as pd\nfields=pd.DataFrame({'specimen':['A','A','B'],'field':['F1','F2','F3']})\nmeta=pd.DataFrame({'specimen':['A','B'],'condition':['ctrl','heat']})\nprint(fields.merge(meta,on='specimen',validate='many_to_one').shape)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Build fields DataFrame from field_rows and metadata DataFrame from sample_rows. Set metadata_unique; if true, left-merge on 'sample_id' with validate='many_to_one', else joined=None. Set unmatched_fields for missing condition, or [] when metadata invalid.",
+          "starter_code": "# I08-G01 | APPLY | Join imaging data to specimen metadata safely\n# TASK: Build fields DataFrame from field_rows and metadata DataFrame from\n#   sample_rows. Set metadata_unique; if true, left-merge on 'sample_id' with\n#   validate='many_to_one', else joined=None. Set unmatched_fields for missing\n#   condition, or [] when metadata invalid.\n# INPUTS: field_rows, sample_rows\n\n",
+          "preview_inputs": {
+            "field_rows": [
+              {
+                "sample_id": "A",
+                "field_id": "F1"
+              },
+              {
+                "sample_id": "A",
+                "field_id": "F2"
+              },
+              {
+                "sample_id": "B",
+                "field_id": "F3"
+              }
+            ],
+            "sample_rows": [
+              {
+                "sample_id": "A",
+                "condition": "ctrl"
+              },
+              {
+                "sample_id": "B",
+                "condition": "heat"
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_rows": [
+                  {
+                    "sample_id": "A",
+                    "field_id": "F1"
+                  },
+                  {
+                    "sample_id": "A",
+                    "field_id": "F2"
+                  },
+                  {
+                    "sample_id": "B",
+                    "field_id": "F3"
+                  }
+                ],
+                "sample_rows": [
+                  {
+                    "sample_id": "A",
+                    "condition": "ctrl"
+                  },
+                  {
+                    "sample_id": "B",
+                    "condition": "heat"
+                  }
+                ]
+              },
+              "assertions": [
+                "metadata_unique is True",
+                "len(joined)==3",
+                "unmatched_fields==[]",
+                "joined['condition'].tolist()==['ctrl','ctrl','heat']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_rows": [
+                  {
+                    "sample_id": "X",
+                    "field_id": "F1"
+                  }
+                ],
+                "sample_rows": [
+                  {
+                    "sample_id": "A",
+                    "condition": "ctrl"
+                  }
+                ]
+              },
+              "assertions": [
+                "metadata_unique is True",
+                "unmatched_fields==['F1']",
+                "len(joined)==1"
+              ]
+            },
+            {
+              "inputs": {
+                "field_rows": [
+                  {
+                    "sample_id": "A",
+                    "field_id": "F1"
+                  }
+                ],
+                "sample_rows": [
+                  {
+                    "sample_id": "A",
+                    "condition": "ctrl"
+                  },
+                  {
+                    "sample_id": "A",
+                    "condition": "heat"
+                  }
+                ]
+              },
+              "assertions": [
+                "metadata_unique is False",
+                "joined is None",
+                "unmatched_fields==[]"
+              ]
+            },
+            {
+              "inputs": {
+                "field_rows": [],
+                "sample_rows": []
+              },
+              "assertions": [
+                "metadata_unique is True",
+                "len(joined)==0",
+                "unmatched_fields==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Before merging, inspect whether source metadata contain duplicated specimen IDs. Reject an ambiguous source rather than silently multiplying rows.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed join imaging data to specimen metadata safely?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for join imaging data to specimen metadata safely."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Audit unfamiliar acquisition and treatment records keyed by specimen. When treatment keys repeat, refuse to join; otherwise keep all acquisition rows and count unmatched IDs. Return result_rows (records list or []) and unknown_ids.",
+          "starter_code": "# I08-G01 | PROVE | Join imaging data to specimen metadata safely\n# TASK: Audit unfamiliar acquisition and treatment records keyed by specimen.\n#   When treatment keys repeat, refuse to join; otherwise keep all acquisition\n#   rows and count unmatched IDs. Return result_rows (records list or []) and\n#   unknown_ids.\n# INPUTS: acquisitions, treatments\n\n",
+          "preview_inputs": {
+            "acquisitions": [
+              {
+                "specimen": "X",
+                "acq": "A1"
+              },
+              {
+                "specimen": "Y",
+                "acq": "A2"
+              }
+            ],
+            "treatments": [
+              {
+                "specimen": "X",
+                "treatment": "control"
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "acquisitions": [
+                  {
+                    "specimen": "X",
+                    "acq": "A1"
+                  },
+                  {
+                    "specimen": "Y",
+                    "acq": "A2"
+                  }
+                ],
+                "treatments": [
+                  {
+                    "specimen": "X",
+                    "treatment": "control"
+                  }
+                ]
+              },
+              "assertions": [
+                "join_safe is True",
+                "len(result_rows)==2",
+                "unknown_ids==['A2']"
+              ]
+            },
+            {
+              "inputs": {
+                "acquisitions": [
+                  {
+                    "specimen": "Z",
+                    "acq": "B1"
+                  }
+                ],
+                "treatments": [
+                  {
+                    "specimen": "Z",
+                    "treatment": "heat"
+                  },
+                  {
+                    "specimen": "Z",
+                    "treatment": "ctrl"
+                  }
+                ]
+              },
+              "assertions": [
+                "join_safe is False",
+                "result_rows==[]",
+                "unknown_ids==[]"
+              ]
+            },
+            {
+              "inputs": {
+                "acquisitions": [],
+                "treatments": []
+              },
+              "assertions": [
+                "join_safe is True",
+                "result_rows==[]",
+                "unknown_ids==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Before merging, inspect whether source metadata contain duplicated specimen IDs. Reject an ambiguous source rather than silently multiplying rows.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed join imaging data to specimen metadata safely?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for join imaging data to specimen metadata safely."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check key uniqueness, missing data and record order before transforming.",
+          "Run the supplied changed-input checks without copying a preview result."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+        "KeyError": "Required column missing; inspect schema before referencing values.",
+        "ValueError": "Review column dtypes, axes or savefig options.",
+        "hardcoded": "New specimen IDs, rows and conditions must change your results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Changed-input public practice",
+        "prove": "Independent-transfer practice, not retained mastery"
+      }
+    },
+    {
+      "id": "I08-G02",
+      "title": "Aggregate observations without pseudoreplication",
+      "competencies": [
+        "059"
+      ],
+      "why": "A mean across fields is descriptive; a mean across biological specimens addresses a different level of replication.",
+      "explain": [
+        "Group image-field rows by their `specimen_id` with Pandas `groupby`, retaining counts of observed fields and descriptive means.",
+        "Missing values should be excluded from numeric means with their absence recorded rather than treated as zero.",
+        "These summaries are not hypothesis tests or independent biological sample sizes. The correct experimental unit must be identified before inference."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\ndf=pd.DataFrame({'specimen':['A','A','B'],'value':[2,4,8]})\nprint(df.groupby('specimen',sort=False)['value'].mean().to_dict())",
+        "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+      },
+      "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+      "walkthrough": [
+        "Check column names and whether keys can appear once or multiple times.",
+        "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+        "Explain the origin of the experimental unit and which inference is unsupported."
+      ],
+      "investigate": [
+        "Try missing rows, changed keys or an invalid metadata join.",
+        "Preserve source IDs and record the exact descriptive output.",
+        "Test whether plot axes or file exports maintain stated units and provenance."
+      ],
+      "debug_task": "Find an unsafe assumption in aggregate observations without pseudoreplication and demonstrate it with a new input.",
+      "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+      "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the data in the example.",
+          "starter_code": "# I08-G02 | LEARN | Aggregate observations without pseudoreplication\n# TASK: Predict, run and change the data in the example.\n\nimport pandas as pd\ndf=pd.DataFrame({'specimen':['A','A','B'],'value':[2,4,8]})\nprint(df.groupby('specimen',sort=False)['value'].mean().to_dict())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "From records containing specimen_id and value, create specimen_summary per specimen preserving first appearance. Each row has specimen_id, field_count, observed and mean_value (None if entirely missing).",
+          "starter_code": "# I08-G02 | APPLY | Aggregate observations without pseudoreplication\n# TASK: From records containing specimen_id and value, create specimen_summary\n#   per specimen preserving first appearance. Each row has specimen_id,\n#   field_count, observed and mean_value (None if entirely missing).\n# INPUTS: records\n\n",
+          "preview_inputs": {
+            "records": [
+              {
+                "specimen_id": "A",
+                "value": 2
+              },
+              {
+                "specimen_id": "A",
+                "value": 4
+              },
+              {
+                "specimen_id": "B",
+                "value": null
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "specimen_id": "A",
+                    "value": 2
+                  },
+                  {
+                    "specimen_id": "A",
+                    "value": 4
+                  },
+                  {
+                    "specimen_id": "B",
+                    "value": null
+                  }
+                ]
+              },
+              "assertions": [
+                "specimen_summary[0]=={'specimen_id':'A','field_count':2,'observed':2,'mean_value':3.0}",
+                "specimen_summary[1]['field_count']==1",
+                "specimen_summary[1]['mean_value'] is None"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "specimen_id": "X",
+                    "value": 0
+                  },
+                  {
+                    "specimen_id": "X",
+                    "value": 10
+                  }
+                ]
+              },
+              "assertions": [
+                "specimen_summary[0]['mean_value']==5",
+                "specimen_summary[0]['observed']==2"
+              ]
+            },
+            {
+              "inputs": {
+                "records": []
+              },
+              "assertions": [
+                "specimen_summary==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Missing values should be excluded from numeric means with their absence recorded rather than treated as zero.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed aggregate observations without pseudoreplication?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for aggregate observations without pseudoreplication."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For independent batch_rows, group by replicate and return summaries containing replicate, n_observed and mean_signal, preserving input order. Missing-only replicates have None means.",
+          "starter_code": "# I08-G02 | PROVE | Aggregate observations without pseudoreplication\n# TASK: For independent batch_rows, group by replicate and return summaries\n#   containing replicate, n_observed and mean_signal, preserving input order.\n#   Missing-only replicates have None means.\n# INPUTS: batch_rows\n\n",
+          "preview_inputs": {
+            "batch_rows": [
+              {
+                "replicate": "R2",
+                "signal": 4
+              },
+              {
+                "replicate": "R1",
+                "signal": null
+              },
+              {
+                "replicate": "R2",
+                "signal": 8
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "batch_rows": [
+                  {
+                    "replicate": "R2",
+                    "signal": 4
+                  },
+                  {
+                    "replicate": "R1",
+                    "signal": null
+                  },
+                  {
+                    "replicate": "R2",
+                    "signal": 8
+                  }
+                ]
+              },
+              "assertions": [
+                "replicate_summary[0]=={'replicate':'R2','n_observed':2,'mean_signal':6.0}",
+                "replicate_summary[1]['mean_signal'] is None"
+              ]
+            },
+            {
+              "inputs": {
+                "batch_rows": [
+                  {
+                    "replicate": "A",
+                    "signal": 0
+                  }
+                ]
+              },
+              "assertions": [
+                "replicate_summary==[{'replicate':'A','n_observed':1,'mean_signal':0.0}]"
+              ]
+            },
+            {
+              "inputs": {
+                "batch_rows": []
+              },
+              "assertions": [
+                "replicate_summary==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Missing values should be excluded from numeric means with their absence recorded rather than treated as zero.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed aggregate observations without pseudoreplication?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for aggregate observations without pseudoreplication."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check key uniqueness, missing data and record order before transforming.",
+          "Run the supplied changed-input checks without copying a preview result."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+        "KeyError": "Required column missing; inspect schema before referencing values.",
+        "ValueError": "Review column dtypes, axes or savefig options.",
+        "hardcoded": "New specimen IDs, rows and conditions must change your results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Changed-input public practice",
+        "prove": "Independent-transfer practice, not retained mastery"
+      }
+    },
+    {
+      "id": "I08-G03",
+      "title": "Reshape wide and long measurement tables",
+      "competencies": [
+        "060"
+      ],
+      "why": "A convenient table layout must not change the identity or pairing of biological measurements.",
+      "explain": [
+        "`pd.melt` transforms wide channel columns into long rows while preserving specimen identifiers. Its inverse may need uniqueness checks.",
+        "`pivot` requires unique identifier-channel pairs. Repeated pairs must be reported, not silently averaged or overwritten.",
+        "A reshaped table changes representation, not observations, replicates or calibration."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\ndf=pd.DataFrame({'id':['A'],'GFP':[2],'DAPI':[5]})\nprint(df.melt(id_vars='id',var_name='channel',value_name='value').to_dict('records'))",
+        "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+      },
+      "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+      "walkthrough": [
+        "Check column names and whether keys can appear once or multiple times.",
+        "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+        "Explain the origin of the experimental unit and which inference is unsupported."
+      ],
+      "investigate": [
+        "Try missing rows, changed keys or an invalid metadata join.",
+        "Preserve source IDs and record the exact descriptive output.",
+        "Test whether plot axes or file exports maintain stated units and provenance."
+      ],
+      "debug_task": "Find an unsafe assumption in reshape wide and long measurement tables and demonstrate it with a new input.",
+      "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+      "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the data in the example.",
+          "starter_code": "# I08-G03 | LEARN | Reshape wide and long measurement tables\n# TASK: Predict, run and change the data in the example.\n\nimport pandas as pd\ndf=pd.DataFrame({'id':['A'],'GFP':[2],'DAPI':[5]})\nprint(df.melt(id_vars='id',var_name='channel',value_name='value').to_dict('records'))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Build wide DataFrame from records with sample_id,GFP,DAPI. Melt into long_df with sample_id,channel,signal; return long_records preserving source and channel order.",
+          "starter_code": "# I08-G03 | APPLY | Reshape wide and long measurement tables\n# TASK: Build wide DataFrame from records with sample_id,GFP,DAPI. Melt into\n#   long_df with sample_id,channel,signal; return long_records preserving source\n#   and channel order.\n# INPUTS: records\n\n",
+          "preview_inputs": {
+            "records": [
+              {
+                "sample_id": "A",
+                "GFP": 2,
+                "DAPI": 5
+              },
+              {
+                "sample_id": "B",
+                "GFP": 3,
+                "DAPI": 4
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "sample_id": "A",
+                    "GFP": 2,
+                    "DAPI": 5
+                  },
+                  {
+                    "sample_id": "B",
+                    "GFP": 3,
+                    "DAPI": 4
+                  }
+                ]
+              },
+              "assertions": [
+                "long_df.columns.tolist()==['sample_id','channel','signal']",
+                "len(long_records)==4",
+                "long_records[0]=={'sample_id':'A','channel':'GFP','signal':2}"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "sample_id": "X",
+                    "GFP": 0,
+                    "DAPI": 1
+                  }
+                ]
+              },
+              "assertions": [
+                "len(long_records)==2",
+                "long_df.loc[long_df['channel']=='DAPI','signal'].iloc[0]==1"
+              ]
+            },
+            {
+              "inputs": {
+                "records": []
+              },
+              "assertions": [
+                "long_records==[]",
+                "long_df.columns.tolist()==['sample_id','channel','signal']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "`pivot` requires unique identifier-channel pairs. Repeated pairs must be reported, not silently averaged or overwritten.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed reshape wide and long measurement tables?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for reshape wide and long measurement tables."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From long data with specimen,channel,score, only pivot when each specimen-channel pair is unique. Set unique_pairs; if false wide=None, otherwise wide DataFrame indexed by specimen, columns channel.",
+          "starter_code": "# I08-G03 | PROVE | Reshape wide and long measurement tables\n# TASK: From long data with specimen,channel,score, only pivot when each\n#   specimen-channel pair is unique. Set unique_pairs; if false wide=None,\n#   otherwise wide DataFrame indexed by specimen, columns channel.\n# INPUTS: rows\n\n",
+          "preview_inputs": {
+            "rows": [
+              {
+                "specimen": "A",
+                "channel": "GFP",
+                "score": 2
+              },
+              {
+                "specimen": "A",
+                "channel": "DAPI",
+                "score": 4
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "rows": [
+                  {
+                    "specimen": "A",
+                    "channel": "GFP",
+                    "score": 2
+                  },
+                  {
+                    "specimen": "A",
+                    "channel": "DAPI",
+                    "score": 4
+                  }
+                ]
+              },
+              "assertions": [
+                "unique_pairs is True",
+                "wide.loc['A','GFP']==2",
+                "wide.loc['A','DAPI']==4"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  {
+                    "specimen": "X",
+                    "channel": "GFP",
+                    "score": 2
+                  },
+                  {
+                    "specimen": "X",
+                    "channel": "GFP",
+                    "score": 3
+                  }
+                ]
+              },
+              "assertions": [
+                "unique_pairs is False",
+                "wide is None"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": []
+              },
+              "assertions": [
+                "unique_pairs is True",
+                "wide is not None",
+                "wide.empty"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "`pivot` requires unique identifier-channel pairs. Repeated pairs must be reported, not silently averaged or overwritten.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed reshape wide and long measurement tables?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for reshape wide and long measurement tables."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check key uniqueness, missing data and record order before transforming.",
+          "Run the supplied changed-input checks without copying a preview result."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+        "KeyError": "Required column missing; inspect schema before referencing values.",
+        "ValueError": "Review column dtypes, axes or savefig options.",
+        "hardcoded": "New specimen IDs, rows and conditions must change your results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Changed-input public practice",
+        "prove": "Independent-transfer practice, not retained mastery"
+      }
+    },
+    {
+      "id": "I08-G04",
+      "title": "Handle timestamps and experimental categories",
+      "competencies": [
+        "061"
+      ],
+      "why": "Incorrect timestamps and treatment labels can silently misassign acquisitions to the wrong experimental group.",
+      "explain": [
+        "Use `pd.to_datetime(...,utc=True,errors='coerce')` to parse explicit timestamps consistently. Invalid input becomes `NaT`, not a fabricated time.",
+        "Categorical variables represent experimental conditions, not measurements; preserving original spelling is important for provenance.",
+        "A UTC timestamp does not alone establish temporal acquisition order or instrument-clock synchronization."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\nprint(pd.to_datetime(['2026-01-01T12:00:00Z','bad'],utc=True,errors='coerce').isna().tolist())",
+        "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+      },
+      "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+      "walkthrough": [
+        "Check column names and whether keys can appear once or multiple times.",
+        "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+        "Explain the origin of the experimental unit and which inference is unsupported."
+      ],
+      "investigate": [
+        "Try missing rows, changed keys or an invalid metadata join.",
+        "Preserve source IDs and record the exact descriptive output.",
+        "Test whether plot axes or file exports maintain stated units and provenance."
+      ],
+      "debug_task": "Find an unsafe assumption in handle timestamps and experimental categories and demonstrate it with a new input.",
+      "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+      "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the data in the example.",
+          "starter_code": "# I08-G04 | LEARN | Handle timestamps and experimental categories\n# TASK: Predict, run and change the data in the example.\n\nimport pandas as pd\nprint(pd.to_datetime(['2026-01-01T12:00:00Z','bad'],utc=True,errors='coerce').isna().tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Build DataFrame from acquisitions with specimen_id,time,condition. Parse time as UTC to column parsed_time, classify invalid_times by specimen ID, and preserve original condition labels.",
+          "starter_code": "# I08-G04 | APPLY | Handle timestamps and experimental categories\n# TASK: Build DataFrame from acquisitions with specimen_id,time,condition. Parse\n#   time as UTC to column parsed_time, classify invalid_times by specimen ID,\n#   and preserve original condition labels.\n# INPUTS: acquisitions\n\n",
+          "preview_inputs": {
+            "acquisitions": [
+              {
+                "specimen_id": "A",
+                "time": "2026-01-01T12:00:00Z",
+                "condition": "control"
+              },
+              {
+                "specimen_id": "B",
+                "time": "invalid",
+                "condition": "heat"
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "acquisitions": [
+                  {
+                    "specimen_id": "A",
+                    "time": "2026-01-01T12:00:00Z",
+                    "condition": "control"
+                  },
+                  {
+                    "specimen_id": "B",
+                    "time": "invalid",
+                    "condition": "heat"
+                  }
+                ]
+              },
+              "assertions": [
+                "invalid_times==['B']",
+                "df['condition'].tolist()==['control','heat']",
+                "str(df['parsed_time'].dtype).startswith('datetime64')"
+              ]
+            },
+            {
+              "inputs": {
+                "acquisitions": [
+                  {
+                    "specimen_id": "R",
+                    "time": "2026-01-01T00:00:00Z",
+                    "condition": "control"
+                  }
+                ]
+              },
+              "assertions": [
+                "invalid_times==[]",
+                "df['condition'].iloc[0]=='control'"
+              ]
+            },
+            {
+              "inputs": {
+                "acquisitions": []
+              },
+              "assertions": [
+                "invalid_times==[]",
+                "len(df)==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Categorical variables represent experimental conditions, not measurements; preserving original spelling is important for provenance.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed handle timestamps and experimental categories?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for handle timestamps and experimental categories."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From records with run_id, recorded_at, treatment, parse recorded_at UTC and set missing_run_ids for unparseable times, category_names for distinct treatments in first-seen order.",
+          "starter_code": "# I08-G04 | PROVE | Handle timestamps and experimental categories\n# TASK: From records with run_id, recorded_at, treatment, parse recorded_at UTC\n#   and set missing_run_ids for unparseable times, category_names for distinct\n#   treatments in first-seen order.\n# INPUTS: records\n\n",
+          "preview_inputs": {
+            "records": [
+              {
+                "run_id": "A",
+                "recorded_at": "2026-01-01T12:00:00Z",
+                "treatment": "Ctrl"
+              },
+              {
+                "run_id": "B",
+                "recorded_at": "bad",
+                "treatment": "Heat"
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "run_id": "A",
+                    "recorded_at": "2026-01-01T12:00:00Z",
+                    "treatment": "Ctrl"
+                  },
+                  {
+                    "run_id": "B",
+                    "recorded_at": "bad",
+                    "treatment": "Heat"
+                  }
+                ]
+              },
+              "assertions": [
+                "missing_run_ids==['B']",
+                "category_names==['Ctrl','Heat']"
+              ]
+            },
+            {
+              "inputs": {
+                "records": [
+                  {
+                    "run_id": "R",
+                    "recorded_at": "2026-01-01T12:00:00Z",
+                    "treatment": "Ctrl"
+                  },
+                  {
+                    "run_id": "S",
+                    "recorded_at": "2026-01-02T12:00:00Z",
+                    "treatment": "Ctrl"
+                  }
+                ]
+              },
+              "assertions": [
+                "missing_run_ids==[]",
+                "category_names==['Ctrl']"
+              ]
+            },
+            {
+              "inputs": {
+                "records": []
+              },
+              "assertions": [
+                "missing_run_ids==[]",
+                "category_names==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Categorical variables represent experimental conditions, not measurements; preserving original spelling is important for provenance.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed handle timestamps and experimental categories?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for handle timestamps and experimental categories."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check key uniqueness, missing data and record order before transforming.",
+          "Run the supplied changed-input checks without copying a preview result."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+        "KeyError": "Required column missing; inspect schema before referencing values.",
+        "ValueError": "Review column dtypes, axes or savefig options.",
+        "hardcoded": "New specimen IDs, rows and conditions must change your results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Changed-input public practice",
+        "prove": "Independent-transfer practice, not retained mastery"
+      }
+    },
+    {
+      "id": "I08-G05",
+      "title": "Export and reload a traceable dataset",
+      "competencies": [
+        "062"
+      ],
+      "why": "A reproducible tabular report should preserve specimen IDs and missing values on an actual read/write round trip.",
+      "explain": [
+        "Use DataFrame `.to_csv` with `index=False` to avoid exporting an accidental integer index as a scientific column.",
+        "Read back with explicit string ID dtype, preserve missingness as missing, and verify expected columns and row count.",
+        "A successful CSV round trip verifies a software artifact, not that source specimens or measured signals were correct."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd,io\ndf=pd.DataFrame({'id':['001','002'],'value':[1,None]})\ns=io.StringIO();df.to_csv(s,index=False)\nprint(pd.read_csv(io.StringIO(s.getvalue()),dtype={'id':'string'})['id'].tolist())",
+        "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+      },
+      "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+      "walkthrough": [
+        "Check column names and whether keys can appear once or multiple times.",
+        "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+        "Explain the origin of the experimental unit and which inference is unsupported."
+      ],
+      "investigate": [
+        "Try missing rows, changed keys or an invalid metadata join.",
+        "Preserve source IDs and record the exact descriptive output.",
+        "Test whether plot axes or file exports maintain stated units and provenance."
+      ],
+      "debug_task": "Find an unsafe assumption in export and reload a traceable dataset and demonstrate it with a new input.",
+      "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+      "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the data in the example.",
+          "starter_code": "# I08-G05 | LEARN | Export and reload a traceable dataset\n# TASK: Predict, run and change the data in the example.\n\nimport pandas as pd,io\ndf=pd.DataFrame({'id':['001','002'],'value':[1,None]})\ns=io.StringIO();df.to_csv(s,index=False)\nprint(pd.read_csv(io.StringIO(s.getvalue()),dtype={'id':'string'})['id'].tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Given specimen_rows with specimen_id and value, export DataFrame to csv_text using StringIO without index; read back with specimen_id as string into restored. Set preserved_ids, missing_count.",
+          "starter_code": "# I08-G05 | APPLY | Export and reload a traceable dataset\n# TASK: Given specimen_rows with specimen_id and value, export DataFrame to\n#   csv_text using StringIO without index; read back with specimen_id as string\n#   into restored. Set preserved_ids, missing_count.\n# INPUTS: specimen_rows\n\n",
+          "preview_inputs": {
+            "specimen_rows": [
+              {
+                "specimen_id": "001",
+                "value": 2
+              },
+              {
+                "specimen_id": "002",
+                "value": null
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "specimen_rows": [
+                  {
+                    "specimen_id": "001",
+                    "value": 2
+                  },
+                  {
+                    "specimen_id": "002",
+                    "value": null
+                  }
+                ]
+              },
+              "assertions": [
+                "preserved_ids==['001','002']",
+                "missing_count==1",
+                "'Unnamed: 0' not in restored.columns"
+              ]
+            },
+            {
+              "inputs": {
+                "specimen_rows": [
+                  {
+                    "specimen_id": "X",
+                    "value": 0
+                  }
+                ]
+              },
+              "assertions": [
+                "preserved_ids==['X']",
+                "missing_count==0"
+              ]
+            },
+            {
+              "inputs": {
+                "specimen_rows": [
+                  {
+                    "specimen_id": "0007",
+                    "value": 5
+                  }
+                ]
+              },
+              "assertions": [
+                "preserved_ids==['0007']",
+                "restored.columns.tolist()==['specimen_id','value']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Read back with explicit string ID dtype, preserve missingness as missing, and verify expected columns and row count.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed export and reload a traceable dataset?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for export and reload a traceable dataset."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Round-trip field_records with field_id,score in CSV text. Preserve leading zeros, original order, and separate zero from missing. Return reloaded table, missing_ids, is_traceable boolean.",
+          "starter_code": "# I08-G05 | PROVE | Export and reload a traceable dataset\n# TASK: Round-trip field_records with field_id,score in CSV text. Preserve\n#   leading zeros, original order, and separate zero from missing. Return\n#   reloaded table, missing_ids, is_traceable boolean.\n# INPUTS: field_records\n\n",
+          "preview_inputs": {
+            "field_records": [
+              {
+                "field_id": "0001",
+                "score": 0
+              },
+              {
+                "field_id": "0002",
+                "score": null
+              }
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_records": [
+                  {
+                    "field_id": "0001",
+                    "score": 0
+                  },
+                  {
+                    "field_id": "0002",
+                    "score": null
+                  }
+                ]
+              },
+              "assertions": [
+                "is_traceable is True",
+                "missing_ids==['0002']",
+                "reloaded['field_id'].tolist()==['0001','0002']"
+              ]
+            },
+            {
+              "inputs": {
+                "field_records": [
+                  {
+                    "field_id": "F1",
+                    "score": 1
+                  }
+                ]
+              },
+              "assertions": [
+                "is_traceable is True",
+                "missing_ids==[]"
+              ]
+            },
+            {
+              "inputs": {
+                "field_records": [
+                  {
+                    "field_id": "007",
+                    "score": 0.75
+                  },
+                  {
+                    "field_id": "008",
+                    "score": 0.25
+                  }
+                ]
+              },
+              "assertions": [
+                "is_traceable is True",
+                "len(reloaded)==2"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Read back with explicit string ID dtype, preserve missingness as missing, and verify expected columns and row count.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed export and reload a traceable dataset?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for export and reload a traceable dataset."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check key uniqueness, missing data and record order before transforming.",
+          "Run the supplied changed-input checks without copying a preview result."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+        "KeyError": "Required column missing; inspect schema before referencing values.",
+        "ValueError": "Review column dtypes, axes or savefig options.",
+        "hardcoded": "New specimen IDs, rows and conditions must change your results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Changed-input public practice",
+        "prove": "Independent-transfer practice, not retained mastery"
+      }
+    },
+    {
+      "id": "I08-G06",
+      "title": "Compare groups without inventing independent replicates",
+      "competencies": [
+        "066"
+      ],
+      "why": "A group plot should show individual specimen summaries and make their sampling unit unambiguous.",
+      "explain": [
+        "Descriptive group comparison can display individual measured specimen values using scatter plots; do not infer significance without a replication-aware model.",
+        "A bar of field-level means may conceal heterogeneity and pseudoreplication. Start with explicit points and clearly labeled unit of observation.",
+        "Label the plotted quantity and state whether the values are synthetic or represent biological sample-level summaries."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.scatter([0,0,1],[2,4,3])\nax.set(xlabel='Condition index',ylabel='Specimen-level value')\nprint(len(ax.collections))",
+        "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+      },
+      "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+      "walkthrough": [
+        "Check column names and whether keys can appear once or multiple times.",
+        "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+        "Explain the origin of the experimental unit and which inference is unsupported."
+      ],
+      "investigate": [
+        "Try missing rows, changed keys or an invalid metadata join.",
+        "Preserve source IDs and record the exact descriptive output.",
+        "Test whether plot axes or file exports maintain stated units and provenance."
+      ],
+      "debug_task": "Find an unsafe assumption in compare groups without inventing independent replicates and demonstrate it with a new input.",
+      "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+      "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the data in the example.",
+          "starter_code": "# I08-G06 | LEARN | Compare groups without inventing independent replicates\n# TASK: Predict, run and change the data in the example.\n\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.scatter([0,0,1],[2,4,3])\nax.set(xlabel='Condition index',ylabel='Specimen-level value')\nprint(len(ax.collections))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Given group_labels and values, plot individual points at group indices in first-seen order. Create group_order, plotted_count and ax with y label 'Specimen summary (a.u.)'.",
+          "starter_code": "# I08-G06 | APPLY | Compare groups without inventing independent replicates\n# TASK: Given group_labels and values, plot individual points at group indices\n#   in first-seen order. Create group_order, plotted_count and ax with y label\n#   'Specimen summary (a.u.)'.\n# INPUTS: group_labels, values\n\n",
+          "preview_inputs": {
+            "group_labels": [
+              "ctrl",
+              "ctrl",
+              "heat"
+            ],
+            "values": [
+              2,
+              4,
+              3
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "group_labels": [
+                  "ctrl",
+                  "ctrl",
+                  "heat"
+                ],
+                "values": [
+                  2,
+                  4,
+                  3
+                ]
+              },
+              "assertions": [
+                "group_order==['ctrl','heat']",
+                "plotted_count==3",
+                "ax.get_ylabel()=='Specimen summary (a.u.)'"
+              ]
+            },
+            {
+              "inputs": {
+                "group_labels": [
+                  "A",
+                  "B"
+                ],
+                "values": [
+                  0,
+                  1
+                ]
+              },
+              "assertions": [
+                "group_order==['A','B']",
+                "plotted_count==2"
+              ]
+            },
+            {
+              "inputs": {
+                "group_labels": [
+                  "X"
+                ],
+                "values": [
+                  5
+                ]
+              },
+              "assertions": [
+                "group_order==['X']",
+                "len(ax.collections)==1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A bar of field-level means may conceal heterogeneity and pseudoreplication. Start with explicit points and clearly labeled unit of observation.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed compare groups without inventing independent replicates?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for compare groups without inventing independent replicates."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Plot individual replicate means for treatments and measurements using scatter. Set unique_treatments in first-seen order, observations count and no_significance_test=True.",
+          "starter_code": "# I08-G06 | PROVE | Compare groups without inventing independent replicates\n# TASK: Plot individual replicate means for treatments and measurements using\n#   scatter. Set unique_treatments in first-seen order, observations count and\n#   no_significance_test=True.\n# INPUTS: treatments, measurements\n\n",
+          "preview_inputs": {
+            "treatments": [
+              "control",
+              "heat",
+              "control"
+            ],
+            "measurements": [
+              2,
+              4,
+              3
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "treatments": [
+                  "control",
+                  "heat",
+                  "control"
+                ],
+                "measurements": [
+                  2,
+                  4,
+                  3
+                ]
+              },
+              "assertions": [
+                "unique_treatments==['control','heat']",
+                "observations==3",
+                "no_significance_test is True"
+              ]
+            },
+            {
+              "inputs": {
+                "treatments": [
+                  "A"
+                ],
+                "measurements": [
+                  0
+                ]
+              },
+              "assertions": [
+                "unique_treatments==['A']",
+                "observations==1"
+              ]
+            },
+            {
+              "inputs": {
+                "treatments": [
+                  "X",
+                  "Y"
+                ],
+                "measurements": [
+                  5,
+                  7
+                ]
+              },
+              "assertions": [
+                "len(ax.collections)==1",
+                "no_significance_test is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A bar of field-level means may conceal heterogeneity and pseudoreplication. Start with explicit points and clearly labeled unit of observation.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed compare groups without inventing independent replicates?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for compare groups without inventing independent replicates."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check key uniqueness, missing data and record order before transforming.",
+          "Run the supplied changed-input checks without copying a preview result."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+        "KeyError": "Required column missing; inspect schema before referencing values.",
+        "ValueError": "Review column dtypes, axes or savefig options.",
+        "hardcoded": "New specimen IDs, rows and conditions must change your results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Changed-input public practice",
+        "prove": "Independent-transfer practice, not retained mastery"
+      }
+    },
+    {
+      "id": "I08-G07",
+      "title": "Choose honest scales and accessible plot design",
+      "competencies": [
+        "069"
+      ],
+      "why": "Plot style affects interpretation; truncated axes and unlabeled quantities can exaggerate differences.",
+      "explain": [
+        "Specify axes labels, numerical units and chart meaning rather than choosing colors alone. Good figures remain interpretable in grayscale or on low-contrast screens.",
+        "For quantities with meaningful zero, state whether the y-axis starts at zero. Changes to axis limits can visually exaggerate small effects.",
+        "Accessible design requires labels and marker distinctions, not color as the only encoded property; avoid claiming publication readiness without reviewer-level audit."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot([0,1],[2,3],marker='o')\nax.set(xlabel='Time (min)',ylabel='Mean signal (a.u.)',ylim=(0,4))\nprint(ax.get_ylim())",
+        "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+      },
+      "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+      "walkthrough": [
+        "Check column names and whether keys can appear once or multiple times.",
+        "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+        "Explain the origin of the experimental unit and which inference is unsupported."
+      ],
+      "investigate": [
+        "Try missing rows, changed keys or an invalid metadata join.",
+        "Preserve source IDs and record the exact descriptive output.",
+        "Test whether plot axes or file exports maintain stated units and provenance."
+      ],
+      "debug_task": "Find an unsafe assumption in choose honest scales and accessible plot design and demonstrate it with a new input.",
+      "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+      "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the data in the example.",
+          "starter_code": "# I08-G07 | LEARN | Choose honest scales and accessible plot design\n# TASK: Predict, run and change the data in the example.\n\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot([0,1],[2,3],marker='o')\nax.set(xlabel='Time (min)',ylabel='Mean signal (a.u.)',ylim=(0,4))\nprint(ax.get_ylim())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Plot x and y with marker='o'; label x_label and y_label, ensure y lower limit=0, and set limits_ok and marker_used. Preserve input data.",
+          "starter_code": "# I08-G07 | APPLY | Choose honest scales and accessible plot design\n# TASK: Plot x and y with marker='o'; label x_label and y_label, ensure y lower\n#   limit=0, and set limits_ok and marker_used. Preserve input data.\n# INPUTS: x, y, x_label, y_label\n\n",
+          "preview_inputs": {
+            "x": [
+              0,
+              1,
+              2
+            ],
+            "y": [
+              2,
+              3,
+              4
+            ],
+            "x_label": "Time (min)",
+            "y_label": "Signal (a.u.)"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "x": [
+                  0,
+                  1,
+                  2
+                ],
+                "y": [
+                  2,
+                  3,
+                  4
+                ],
+                "x_label": "Time (min)",
+                "y_label": "Signal (a.u.)"
+              },
+              "assertions": [
+                "limits_ok is True",
+                "marker_used is True",
+                "ax.get_xlabel()=='Time (min)'",
+                "ax.get_ylabel()=='Signal (a.u.)'"
+              ]
+            },
+            {
+              "inputs": {
+                "x": [
+                  0,
+                  2
+                ],
+                "y": [
+                  0,
+                  6
+                ],
+                "x_label": "Frame",
+                "y_label": "Distance (µm)"
+              },
+              "assertions": [
+                "ax.get_ylim()[0]==0",
+                "ax.get_ylabel()=='Distance (µm)'"
+              ]
+            },
+            {
+              "inputs": {
+                "x": [
+                  0
+                ],
+                "y": [
+                  1
+                ],
+                "x_label": "Time",
+                "y_label": "Value"
+              },
+              "assertions": [
+                "marker_used is True",
+                "limits_ok is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For quantities with meaningful zero, state whether the y-axis starts at zero. Changes to axis limits can visually exaggerate small effects.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed choose honest scales and accessible plot design?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for choose honest scales and accessible plot design."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For categories and values, make an accessible bar plot with y-axis starting at zero, named x='Condition' and y='Descriptive count'. Set accessible=True only when labels, noncolor categorical distinctions and zero baseline are present.",
+          "starter_code": "# I08-G07 | PROVE | Choose honest scales and accessible plot design\n# TASK: For categories and values, make an accessible bar plot with y-axis\n#   starting at zero, named x='Condition' and y='Descriptive count'. Set\n#   accessible=True only when labels, noncolor categorical distinctions and zero\n#   baseline are present.\n# INPUTS: categories, values\n\n",
+          "preview_inputs": {
+            "categories": [
+              "A",
+              "B"
+            ],
+            "values": [
+              2,
+              3
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "categories": [
+                  "A",
+                  "B"
+                ],
+                "values": [
+                  2,
+                  3
+                ]
+              },
+              "assertions": [
+                "accessible is True",
+                "ax.get_ylim()[0]==0",
+                "ax.get_ylabel()=='Descriptive count'"
+              ]
+            },
+            {
+              "inputs": {
+                "categories": [
+                  "Control"
+                ],
+                "values": [
+                  0
+                ]
+              },
+              "assertions": [
+                "accessible is True",
+                "len(ax.patches)==1"
+              ]
+            },
+            {
+              "inputs": {
+                "categories": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "values": [
+                  1,
+                  2,
+                  1
+                ]
+              },
+              "assertions": [
+                "accessible is True",
+                "ax.get_xlabel()=='Condition'"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For quantities with meaningful zero, state whether the y-axis starts at zero. Changes to axis limits can visually exaggerate small effects.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed choose honest scales and accessible plot design?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for choose honest scales and accessible plot design."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check key uniqueness, missing data and record order before transforming.",
+          "Run the supplied changed-input checks without copying a preview result."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+        "KeyError": "Required column missing; inspect schema before referencing values.",
+        "ValueError": "Review column dtypes, axes or savefig options.",
+        "hardcoded": "New specimen IDs, rows and conditions must change your results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Changed-input public practice",
+        "prove": "Independent-transfer practice, not retained mastery"
+      }
+    },
+    {
+      "id": "I08-G08",
+      "title": "Export reproducible vector and raster figures",
+      "competencies": [
+        "070"
+      ],
+      "why": "A figure must be exportable with stable labels, provenance and appropriate format rather than existing only in a transient browser canvas.",
+      "explain": [
+        "Matplotlib's `fig.savefig` can produce SVG vector graphics or PNG raster data. Record the target format, resolution and source as part of report provenance.",
+        "A large PNG byte stream proves file generation, not correct scientific interpretation. Browser output may be embedded but local use should preserve the original source image and script.",
+        "Do not call a figure publication-ready solely because it is 300 DPI; annotations, statistics, accessibility and data validity require independent review."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt,io\nfig,ax=plt.subplots();ax.plot([0,1],[1,2])\nbuf=io.BytesIO();fig.savefig(buf,format='png',dpi=150)\nprint(len(buf.getvalue())>100)",
+        "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+      },
+      "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+      "walkthrough": [
+        "Check column names and whether keys can appear once or multiple times.",
+        "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+        "Explain the origin of the experimental unit and which inference is unsupported."
+      ],
+      "investigate": [
+        "Try missing rows, changed keys or an invalid metadata join.",
+        "Preserve source IDs and record the exact descriptive output.",
+        "Test whether plot axes or file exports maintain stated units and provenance."
+      ],
+      "debug_task": "Find an unsafe assumption in export reproducible vector and raster figures and demonstrate it with a new input.",
+      "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+      "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the data in the example.",
+          "starter_code": "# I08-G08 | LEARN | Export reproducible vector and raster figures\n# TASK: Predict, run and change the data in the example.\n\nimport matplotlib.pyplot as plt,io\nfig,ax=plt.subplots();ax.plot([0,1],[1,2])\nbuf=io.BytesIO();fig.savefig(buf,format='png',dpi=150)\nprint(len(buf.getvalue())>100)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Draw x,y with Matplotlib, label axes, save fig to io.BytesIO as SVG (using UTF-8 bytes) and PNG at 150 dpi. Set png_bytes, svg_contains_label and exported_formats=['svg','png'].",
+          "starter_code": "# I08-G08 | APPLY | Export reproducible vector and raster figures\n# TASK: Draw x,y with Matplotlib, label axes, save fig to io.BytesIO as SVG\n#   (using UTF-8 bytes) and PNG at 150 dpi. Set png_bytes, svg_contains_label\n#   and exported_formats=['svg','png'].\n# INPUTS: x, y, label\n\n",
+          "preview_inputs": {
+            "x": [
+              0,
+              1,
+              2
+            ],
+            "y": [
+              1,
+              3,
+              2
+            ],
+            "label": "Measurement"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "x": [
+                  0,
+                  1,
+                  2
+                ],
+                "y": [
+                  1,
+                  3,
+                  2
+                ],
+                "label": "Measurement"
+              },
+              "assertions": [
+                "png_bytes>100",
+                "svg_contains_label is True",
+                "exported_formats==['svg','png']"
+              ]
+            },
+            {
+              "inputs": {
+                "x": [
+                  0
+                ],
+                "y": [
+                  0
+                ],
+                "label": "Control"
+              },
+              "assertions": [
+                "png_bytes>100",
+                "svg_contains_label is True"
+              ]
+            },
+            {
+              "inputs": {
+                "x": [
+                  0,
+                  1
+                ],
+                "y": [
+                  1,
+                  2
+                ],
+                "label": "Intensity"
+              },
+              "assertions": [
+                "exported_formats==['svg','png']",
+                "svg_contains_label is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A large PNG byte stream proves file generation, not correct scientific interpretation. Browser output may be embedded but local use should preserve the original source image and script.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed export reproducible vector and raster figures?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for export reproducible vector and raster figures."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Build and export a labeled scatter figure from positions and values to PNG BytesIO (dpi=200). Set is_png_signature, byte_count, dpi_used=200 and exported_locally=False; do not claim an actual downloaded local file.",
+          "starter_code": "# I08-G08 | PROVE | Export reproducible vector and raster figures\n# TASK: Build and export a labeled scatter figure from positions and values to\n#   PNG BytesIO (dpi=200). Set is_png_signature, byte_count, dpi_used=200 and\n#   exported_locally=False; do not claim an actual downloaded local file.\n# INPUTS: positions, values\n\n",
+          "preview_inputs": {
+            "positions": [
+              0,
+              1
+            ],
+            "values": [
+              2,
+              3
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "positions": [
+                  0,
+                  1
+                ],
+                "values": [
+                  2,
+                  3
+                ]
+              },
+              "assertions": [
+                "is_png_signature is True",
+                "byte_count>100",
+                "dpi_used==200",
+                "exported_locally is False"
+              ]
+            },
+            {
+              "inputs": {
+                "positions": [
+                  0
+                ],
+                "values": [
+                  0
+                ]
+              },
+              "assertions": [
+                "is_png_signature is True",
+                "byte_count>100"
+              ]
+            },
+            {
+              "inputs": {
+                "positions": [
+                  2,
+                  3,
+                  4
+                ],
+                "values": [
+                  4,
+                  1,
+                  2
+                ]
+              },
+              "assertions": [
+                "dpi_used==200",
+                "exported_locally is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A large PNG byte stream proves file generation, not correct scientific interpretation. Browser output may be embedded but local use should preserve the original source image and script.",
+            "probe": "What row-identity, group-unit or export limitation would matter if you changed export reproducible vector and raster figures?",
+            "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for export reproducible vector and raster figures."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Check key uniqueness, missing data and record order before transforming.",
+          "Run the supplied changed-input checks without copying a preview result."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+        "KeyError": "Required column missing; inspect schema before referencing values.",
+        "ValueError": "Review column dtypes, axes or savefig options.",
+        "hardcoded": "New specimen IDs, rows and conditions must change your results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Changed-input public practice",
+        "prove": "Independent-transfer practice, not retained mastery"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I08-CAPSTONE",
+    "title": "Build a joined and traceable microscopy reporting workflow",
+    "competencies": [],
+    "why": "A valid report must retain identities, avoid join-driven row multiplication, keep missing data visible and create a clear figure without pretending to perform biological inference.",
+    "explain": [
+      "Start from field-level synthetic measurement rows and specimen metadata; validate uniqueness of sample keys before joining.",
+      "Preserve every field row, report unmatched specimen IDs and explicit missing values, and generate descriptive per-sample summaries.",
+      "Create an actual Matplotlib display of descriptive values with units, while avoiding statistical claims based on fields or an unverified biological unit."
+    ],
+    "worked_example": {
+      "code": "import pandas as pd\nfields=pd.DataFrame({'sample_id':['A','A'],'field_id':['F1','F2'],'value':[1,2]})\nmeta=pd.DataFrame({'sample_id':['A'],'condition':['ctrl']})\nprint(fields.merge(meta,on='sample_id',validate='many_to_one').shape)",
+      "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+    },
+    "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+    "walkthrough": [
+      "Check column names and whether keys can appear once or multiple times.",
+      "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+      "Explain the origin of the experimental unit and which inference is unsupported."
+    ],
+    "investigate": [
+      "Try missing rows, changed keys or an invalid metadata join.",
+      "Preserve source IDs and record the exact descriptive output.",
+      "Test whether plot axes or file exports maintain stated units and provenance."
+    ],
+    "debug_task": "Find an unsafe assumption in build a joined and traceable microscopy reporting workflow and demonstrate it with a new input.",
+    "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+    "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and investigate",
+        "description": "Predict, run and change the data in the example.",
+        "starter_code": "# I08-CAPSTONE | LEARN | Build a joined and traceable microscopy reporting workflow\n# TASK: Predict, run and change the data in the example.\n\nimport pandas as pd\nfields=pd.DataFrame({'sample_id':['A','A'],'field_id':['F1','F2'],'value':[1,2]})\nmeta=pd.DataFrame({'sample_id':['A'],'condition':['ctrl']})\nprint(fields.merge(meta,on='sample_id',validate='many_to_one').shape)\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with changed data",
+        "description": "From field_rows (sample_id,field_id,value) and metadata_rows (sample_id,condition), refuse nonunique metadata. Otherwise left-join, set report={'rows':N,'unmatched':[field IDs],'missing':[field IDs with absent value],'join_safe':bool}, and plot observed field points labeled 'Field value (a.u.)'.",
+        "starter_code": "# I08-CAPSTONE | APPLY | Build a joined and traceable microscopy reporting workflow\n# TASK: From field_rows (sample_id,field_id,value) and metadata_rows\n#   (sample_id,condition), refuse nonunique metadata. Otherwise left-join, set\n#   report={'rows':N,'unmatched':[field IDs],'missing':[field IDs with absent\n#   value],'join_safe':bool}, and plot observed field points labeled 'Field\n#   value (a.u.)'.\n# INPUTS: field_rows, metadata_rows\n\n",
+        "preview_inputs": {
+          "field_rows": [
+            {
+              "sample_id": "A",
+              "field_id": "F1",
+              "value": 2
+            },
+            {
+              "sample_id": "A",
+              "field_id": "F2",
+              "value": null
+            },
+            {
+              "sample_id": "B",
+              "field_id": "F3",
+              "value": 3
+            }
+          ],
+          "metadata_rows": [
+            {
+              "sample_id": "A",
+              "condition": "control"
+            },
+            {
+              "sample_id": "B",
+              "condition": "heat"
+            }
+          ]
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "field_rows": [
+                {
+                  "sample_id": "A",
+                  "field_id": "F1",
+                  "value": 2
+                },
+                {
+                  "sample_id": "A",
+                  "field_id": "F2",
+                  "value": null
+                },
+                {
+                  "sample_id": "B",
+                  "field_id": "F3",
+                  "value": 3
+                }
+              ],
+              "metadata_rows": [
+                {
+                  "sample_id": "A",
+                  "condition": "control"
+                },
+                {
+                  "sample_id": "B",
+                  "condition": "heat"
+                }
+              ]
+            },
+            "assertions": [
+              "report=={'rows':3,'unmatched':[],'missing':['F2'],'join_safe':True}",
+              "ax.get_ylabel()=='Field value (a.u.)'"
+            ]
+          },
+          {
+            "inputs": {
+              "field_rows": [
+                {
+                  "sample_id": "X",
+                  "field_id": "F9",
+                  "value": 0
+                }
+              ],
+              "metadata_rows": []
+            },
+            "assertions": [
+              "report=={'rows':1,'unmatched':['F9'],'missing':[],'join_safe':True}"
+            ]
+          },
+          {
+            "inputs": {
+              "field_rows": [
+                {
+                  "sample_id": "X",
+                  "field_id": "F1",
+                  "value": 2
+                }
+              ],
+              "metadata_rows": [
+                {
+                  "sample_id": "X",
+                  "condition": "ctrl"
+                },
+                {
+                  "sample_id": "X",
+                  "condition": "heat"
+                }
+              ]
+            },
+            "assertions": [
+              "report['join_safe'] is False",
+              "report['rows']==0",
+              "joined is None"
+            ]
+          },
+          {
+            "inputs": {
+              "field_rows": [],
+              "metadata_rows": []
+            },
+            "assertions": [
+              "report=={'rows':0,'unmatched':[],'missing':[],'join_safe':True}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Preserve every field row, report unmatched specimen IDs and explicit missing values, and generate descriptive per-sample summaries.",
+          "probe": "What row-identity, group-unit or export limitation would matter if you changed build a joined and traceable microscopy reporting workflow?",
+          "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for build a joined and traceable microscopy reporting workflow."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Join independent observations (specimen,tag,value) to treatments (specimen,treatment) only when treatments are unique. Set audit={'safe':bool,'rows':N,'unknown':[tag IDs]}, create CSV text with source IDs when safe and preserve order.",
+        "starter_code": "# I08-CAPSTONE | PROVE | Build a joined and traceable microscopy reporting workflow\n# TASK: Join independent observations (specimen,tag,value) to treatments\n#   (specimen,treatment) only when treatments are unique. Set\n#   audit={'safe':bool,'rows':N,'unknown':[tag IDs]}, create CSV text with\n#   source IDs when safe and preserve order.\n# INPUTS: observations, treatments\n\n",
+        "preview_inputs": {
+          "observations": [
+            {
+              "specimen": "A",
+              "tag": "F1",
+              "value": 1
+            },
+            {
+              "specimen": "B",
+              "tag": "F2",
+              "value": 0
+            }
+          ],
+          "treatments": [
+            {
+              "specimen": "A",
+              "treatment": "ctrl"
+            }
+          ]
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "observations": [
+                {
+                  "specimen": "A",
+                  "tag": "F1",
+                  "value": 1
+                },
+                {
+                  "specimen": "B",
+                  "tag": "F2",
+                  "value": 0
+                }
+              ],
+              "treatments": [
+                {
+                  "specimen": "A",
+                  "treatment": "ctrl"
+                }
+              ]
+            },
+            "assertions": [
+              "audit=={'safe':True,'rows':2,'unknown':['F2']}",
+              "'F1' in csv_text and 'F2' in csv_text"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                {
+                  "specimen": "A",
+                  "tag": "X",
+                  "value": 1
+                }
+              ],
+              "treatments": [
+                {
+                  "specimen": "A",
+                  "treatment": "ctrl"
+                },
+                {
+                  "specimen": "A",
+                  "treatment": "heat"
+                }
+              ]
+            },
+            "assertions": [
+              "audit=={'safe':False,'rows':0,'unknown':[]}",
+              "csv_text==''"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [],
+              "treatments": []
+            },
+            "assertions": [
+              "audit=={'safe':True,'rows':0,'unknown':[]}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Preserve every field row, report unmatched specimen IDs and explicit missing values, and generate descriptive per-sample summaries.",
+          "probe": "What row-identity, group-unit or export limitation would matter if you changed build a joined and traceable microscopy reporting workflow?",
+          "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for build a joined and traceable microscopy reporting workflow."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Check key uniqueness, missing data and record order before transforming.",
+        "Run the supplied changed-input checks without copying a preview result."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+      "KeyError": "Required column missing; inspect schema before referencing values.",
+      "ValueError": "Review column dtypes, axes or savefig options.",
+      "hardcoded": "New specimen IDs, rows and conditions must change your results."
+    },
+    "reflection_prompts": [
+      "Which source rows were preserved and which were unmatched?",
+      "Is each field an independent biological replicate?",
+      "What would be required for defensible statistical inference and published figures?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration",
+      "apply": "Changed-input public practice",
+      "prove": "Independent-transfer practice, not retained mastery"
+    },
+    "build_steps": [
+      "Validate metadata key uniqueness before merging, and stop on ambiguous keys.",
+      "Preserve field rows and report unmatched and missing values.",
+      "Prepare specimen-level descriptive summaries before any group inference.",
+      "Create a labeled, auditable plot and a traceable CSV export.",
+      "Repeat Prove using a new join-key layout without copying earlier code."
+    ],
+    "assessment": {
+      "code": "REAL_PANDAS_MATPLOTLIB_PUBLIC_CASES",
+      "scientific": "DESCRIPTIVE_ONLY_NOT_REPLICATE_INFERENCE",
+      "independent": "NOT_AUTOMATICALLY_CERTIFIED"
+    }
+  },
+  "review": {
+    "id": "I08-REVIEW",
+    "title": "Independently repair an unsafe table join",
+    "competencies": [],
+    "why": "Returning to unfamiliar metadata should expose row multiplication risks rather than encourage one-off scripts.",
+    "explain": [
+      "Inspect the intended key cardinality before joining two data tables.",
+      "Reject repeated metadata keys when each specimen is supposed to have exactly one metadata record.",
+      "Report unmatched IDs and actual row count separately from biological effect or replicate count."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "What output would the data produce, and what scientific conclusion does it not justify?"
+    },
+    "prediction_answer": "The output follows actual source rows or plotting objects. Source validity and biological replication need separate evidence.",
+    "walkthrough": [
+      "Check column names and whether keys can appear once or multiple times.",
+      "Predict the result and run real Pandas or Matplotlib with changed inputs.",
+      "Explain the origin of the experimental unit and which inference is unsupported."
+    ],
+    "investigate": [
+      "Try missing rows, changed keys or an invalid metadata join.",
+      "Preserve source IDs and record the exact descriptive output.",
+      "Test whether plot axes or file exports maintain stated units and provenance."
+    ],
+    "debug_task": "Find an unsafe assumption in independently repair an unsafe table join and demonstrate it with a new input.",
+    "misconception": "A merged table or attractive figure proves data are independent biological replicates or publication-ready.",
+    "scientific_boundary": "All field and specimen measurements are synthetic training data. Display plots and grouped field means are descriptive only, never evidence of statistical significance.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and investigate",
+        "description": "Recall the join-validation method without an earlier solution.",
+        "starter_code": "# I08-REVIEW | LEARN | Independently repair an unsafe table join\n# TASK: Recall the join-validation method without an earlier solution.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with changed data",
+        "description": "Write pseudocode for an auditable one-to-many join, including duplicate detection and missing sample metadata.",
+        "starter_code": "# I08-REVIEW | APPLY | Independently repair an unsafe table join\n# TASK: Write pseudocode for an auditable one-to-many join, including duplicate\n#   detection and missing sample metadata.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Reject repeated metadata keys when each specimen is supposed to have exactly one metadata record.",
+          "probe": "What row-identity, group-unit or export limitation would matter if you changed independently repair an unsafe table join?",
+          "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for independently repair an unsafe table join."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Join sample observations to unique batch metadata only when batch keys are unique; set safe_join, missing_tags and n_rows. Refuse duplicated metadata by returning n_rows=0 and missing_tags=[].",
+        "starter_code": "# I08-REVIEW | PROVE | Independently repair an unsafe table join\n# TASK: Join sample observations to unique batch metadata only when batch keys\n#   are unique; set safe_join, missing_tags and n_rows. Refuse duplicated\n#   metadata by returning n_rows=0 and missing_tags=[].\n# INPUTS: observed, batches\n\n",
+        "preview_inputs": {
+          "observed": [
+            {
+              "batch": "B1",
+              "tag": "F1"
+            },
+            {
+              "batch": "B2",
+              "tag": "F2"
+            }
+          ],
+          "batches": [
+            {
+              "batch": "B1",
+              "label": "control"
+            }
+          ]
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "observed": [
+                {
+                  "batch": "B1",
+                  "tag": "F1"
+                },
+                {
+                  "batch": "B2",
+                  "tag": "F2"
+                }
+              ],
+              "batches": [
+                {
+                  "batch": "B1",
+                  "label": "control"
+                }
+              ]
+            },
+            "assertions": [
+              "safe_join is True",
+              "missing_tags==['F2']",
+              "n_rows==2"
+            ]
+          },
+          {
+            "inputs": {
+              "observed": [
+                {
+                  "batch": "B",
+                  "tag": "F1"
+                }
+              ],
+              "batches": [
+                {
+                  "batch": "B",
+                  "label": "ctrl"
+                },
+                {
+                  "batch": "B",
+                  "label": "heat"
+                }
+              ]
+            },
+            "assertions": [
+              "safe_join is False",
+              "n_rows==0",
+              "missing_tags==[]"
+            ]
+          },
+          {
+            "inputs": {
+              "observed": [],
+              "batches": []
+            },
+            "assertions": [
+              "safe_join is True",
+              "n_rows==0",
+              "missing_tags==[]"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Reject repeated metadata keys when each specimen is supposed to have exactly one metadata record.",
+          "probe": "What row-identity, group-unit or export limitation would matter if you changed independently repair an unsafe table join?",
+          "check": "Preserve IDs, check empty and duplicate keys, and follow the documented data contract for independently repair an unsafe table join."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "MergeError": "The merge key cardinality is unsafe: audit duplicated keys and choose explicit validation.",
+      "KeyError": "Required column missing; inspect schema before referencing values.",
+      "ValueError": "Review column dtypes, axes or savefig options.",
+      "hardcoded": "New specimen IDs, rows and conditions must change your results."
+    },
+    "reflection_prompts": [
+      "Which source rows were preserved and which were unmatched?",
+      "Is each field an independent biological replicate?",
+      "What would be required for defensible statistical inference and published figures?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration",
+      "apply": "Changed-input public practice",
+      "prove": "Independent-transfer practice, not retained mastery"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "traceable_image_measurement_report.py",
+    "brief": "Export an executable safe join, metadata audit and descriptive figure, maintaining every source field ID.",
+    "status": "BROWSER_QA_PENDING_USER_TRIAL"
+  }
+}

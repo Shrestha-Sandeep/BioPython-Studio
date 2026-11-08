@@ -57,3 +57,7 @@
 #bps-chapter-select{margin-bottom:.35rem;}
 #p01-navigation{max-width:100%;}
 .p01-active #p01-detail-root{max-width:100%;}
+
+/* Actual Matplotlib figures returned from scientific Python execution. */
+.p01-result-figure{margin:12px 0;max-width:100%;text-align:left;white-space:normal}
+.p01-result-figure img{display:block;max-width:min(100%,850px);height:auto;border-radius:6px;border:1px solid var(--border,rgba(128,128,128,.25));background:#fff}

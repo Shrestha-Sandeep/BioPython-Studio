@@ -1,0 +1,34 @@
+{
+  "I02-G01": {
+    "apply": "import numpy as np\nimage=np.asarray(image_rows)\nroi=image[y0:y1,x0:x1]\nroi_shape=roi.shape\nroi_sum=int(roi.sum())",
+    "prove": "import numpy as np\nstack=np.asarray(stack_data)\ncrop=stack[z,y0:y1,x0:x1]\ncrop_size=int(crop.size)\nsource_yx=(y0,x0)"
+  },
+  "I02-G02": {
+    "apply": "import numpy as np\nsource=np.asarray(rows)\nview=source[:,:2]\nsafe_copy=view.copy()\nbefore=int(source[0,0])\nview[0,0]=mark\nsource_changed=bool(source[0,0]!=before)\ncopy_unchanged=bool(safe_copy[0,0]==before)",
+    "prove": "import numpy as np\nvalues=np.asarray(readings)\nview=values[1:3]\nindependent=view.copy()\ninitial=independent[0]\nview[0]=replacement\noriginal_after=int(values[1])\nprotected=bool(independent[0]==initial)"
+  },
+  "I02-G03": {
+    "apply": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\ncrop=rgb[y0:y1,x0:x1]\ncrop_shape=crop.shape\nbounds=(y0,y1,x0,x1)",
+    "prove": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\ngreen_crop=rgb[roi_y:roi_y+roi_h,roi_x:roi_x+roi_w,1]\npixels_selected=int(green_crop.size)\nis_raw=False"
+  },
+  "I02-G04": {
+    "apply": "area_um2=pixel_count*um_per_pixel**2 if um_per_pixel>0 else None\ncalibration_is_source=False",
+    "prove": "if pixels_per_um>0:\n    width_um=width_px/pixels_per_um\n    height_um=height_px/pixels_per_um\n    area_um2=width_um*height_um\nelse:\n    width_um=height_um=area_um2=None"
+  },
+  "I02-G05": {
+    "apply": "import numpy as np\nvolume=np.asarray(stack_data)\nvalid_axes=len(axis_names)==volume.ndim and len(set(axis_names))==len(axis_names)\naxis_lengths=dict(zip(axis_names,volume.shape)) if valid_axes else {}",
+    "prove": "axes_ok=len(named_axes)==len(dimensions) and len(set(named_axes))==len(named_axes)\naxis_map=dict(zip(named_axes,dimensions)) if axes_ok else {}"
+  },
+  "I02-G06": {
+    "apply": "from PIL import Image\nimport numpy as np,io\nsrc=np.asarray(pixel_rows,dtype=np.uint16)\nbuffer=io.BytesIO()\nImage.fromarray(src).save(buffer,format='TIFF',tiffinfo={270:description})\nbuffer.seek(0)\nreopened=Image.open(buffer)\nrecovered_shape=np.asarray(reopened).shape\nrecovered_description=str(reopened.tag_v2.get(270,''))\nis_ome_claim=recovered_description.strip().startswith('<OME')",
+    "prove": "from PIL import Image\nimport numpy as np,io\nsrc=np.asarray(intensity_rows,dtype=np.uint16)\nbuffer=io.BytesIO()\nImage.fromarray(src).save(buffer,format='TIFF',tiffinfo={270:note})\nbuffer.seek(0)\nopened=Image.open(buffer)\nverified_pixels=bool(np.array_equal(src,np.asarray(opened)))\nfile_type='TIFF'\nmetadata_claim=note.strip().startswith('<OME')"
+  },
+  "I02-CAPSTONE": {
+    "apply": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[y0:y1,x0:x1].copy()\nreport={'shape':roi.shape,'bounds':(y0,y1,x0,x1),'rgb_mean':float(roi.mean()),'calibrated':False}\nprint(report)",
+    "prove": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\ncrop=rgb[top:bottom,left:right,channel_index]\nreport={'source_bounds':(top,left,bottom,right),'n_display_pixels':int(crop.size),'raw_data':False}\nprint(report)"
+  },
+  "I02-REVIEW": {
+    "apply": "",
+    "prove": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nselected=rgb[y_start:y_start+height,x_start:x_start+width]\nselected_shape=selected.shape\npixel_count=int(selected.size)\ncalibrated=False"
+  }
+}

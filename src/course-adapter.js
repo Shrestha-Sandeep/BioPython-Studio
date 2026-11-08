@@ -2,7 +2,10 @@
 "use strict";
 (() => {
 const el=id=>document.getElementById(id);
-const IDS=["P01","P02","P03","P04","P05","P06"];
+const P_IDS=["P01","P02","P03","P04","P05","P06"];
+const I_IDS=["I01","I02","I03","I04","I07","I08"];
+const IDS=[...P_IDS,...I_IDS];
+const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I07:7,I08:8};
 const KEYS=Object.fromEntries(IDS.map(id=>[id,"biopython."+id.toLowerCase()+".v1"]));
 const SELECT_KEY="biopython.course-selected.v1";
 const chapters={},states={};
@@ -27,14 +30,18 @@ function loadState(id){
 let activeId="P01",chapter=null,state=fresh(),worker=null,pending=null,busy=false,seq=0;
 try{const selected=localStorage.getItem(SELECT_KEY);if(KEYS[selected])activeId=selected;}catch{}
 const pythonSelected=()=>document.querySelector('[data-stage="Python"]')?.getAttribute("aria-current")==="page";
+const microscopySelected=()=>document.querySelector('[data-stage="Microscopy"]')?.getAttribute("aria-current")==="page";
+const isImaging=id=>I_IDS.includes(id);
+const stageIds=()=>microscopySelected()?I_IDS:P_IDS;
+let lastP="P01",lastI="I01";
 const codeSelected=()=>document.querySelector('[data-mode="python"]')?.getAttribute("aria-pressed")==="true";
 const bridge=()=>window.BioPythonStudioBridge;
 const goals=()=>chapter?[...chapter.goals,chapter.capstone,chapter.review].filter(Boolean):[];
 const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
-const active=()=>!!chapter&&pythonSelected()&&codeSelected();
-const newerChapter=()=>["P04","P05","P06"].includes(activeId);
+const active=()=>!!chapter&&(isImaging(activeId)?microscopySelected():pythonSelected()&&codeSelected());
+const newerChapter=()=>["P04","P05","P06"].includes(activeId)||isImaging(activeId);
 function preferEditorWhenCoding(){if(newerChapter())bridge()?.expandLesson?.(state.phase==="learn");}
 // Task comments are not an attempt. Keep actual Python separate from the prompt.
 const hasExecutableCode=code=>String(code||"").split(/\r?\n/).some(line=>{
@@ -58,16 +65,23 @@ function status(message){
  const dot=document.createElement("span");dot.className="status-dot";dot.setAttribute("aria-hidden","true");
  target.replaceChildren(dot,document.createTextNode(" "+message));
 }
-let lastOutput = "", lastOutputFailed = false;
+let lastOutput = "", lastOutputFailed = false, lastFigures=[];
 function restoreOutput(){
  const placeholder=el("output-placeholder");
  if(!placeholder)return;
  placeholder.textContent=lastOutput;
+  for(const data of lastFigures){
+    if(typeof data!=="string"||!data.startsWith("data:image/png;base64,"))continue;
+    const frame=document.createElement("figure");frame.className="p01-result-figure";
+    const img=document.createElement("img");img.src=data;
+    img.alt="Scientific figure rendered with real Matplotlib";frame.append(img);placeholder.append(frame);
+  }
  placeholder.classList.add("p01-console-result");
  if(lastOutputFailed)placeholder.setAttribute("data-error","true");
  else placeholder.removeAttribute("data-error");
 }
-function output(message,failed=false){
+function output(message,failed=false,figures=[]){
+ lastFigures=Array.isArray(figures)?figures.slice(0,2):[];
  lastOutput=message||"(No printed output.)";lastOutputFailed=failed;
  el("result-output").click(); // Keep the output-placeholder element required by the frozen UI.
  restoreOutput();
@@ -130,8 +144,8 @@ function render(){
     }
   }
   bridge()?.writeCode?.(value);
- el("crumb").textContent="Python foundations · "+activeId;
- el("page-title").textContent="Python workspace";
+ el("crumb").textContent=(isImaging(activeId)?"Microscopy":"Python foundations")+" · "+activeId;
+ el("page-title").textContent=isImaging(activeId)?"Image analysis workspace":"Python workspace";
  el("page-subtitle").textContent=g.why;
  save();
 }
@@ -169,7 +183,7 @@ function send(type,fields){
    pending=null;worker?.terminate();worker=null;busy=false;
    el("run-button").disabled=false;el("p01-check").disabled=false;
    resolve({ok:false,error:"Python did not finish. Check code or connectivity; your draft is preserved."});
-  },60000);
+  },isImaging(activeId)?180000:60000);
   pending={id,resolve,timer};
   try{instance().postMessage(Object.assign({id,type},fields));}
   catch(e){clearTimeout(timer);pending=null;busy=false;resolve({ok:false,error:String(e)});}
@@ -186,7 +200,7 @@ async function run(){
  if(!active()||key()!==k)return;
  if(!result.ok){output(result.error,true);status("Python unavailable");return;}
  const r=result.result;
- output([r.stdout,r.stderr,r.traceback].filter(Boolean).join("\n"),!!r.traceback);
+ output([r.stdout,r.stderr,r.traceback].filter(Boolean).join("\n"),!!r.traceback,r.figures||[]);
  if(key()===k)progress(r.traceback?"needs_review":"explored");
  status("Python 3 · real execution"+(r.traceback?" · traceback":""));
 }
@@ -259,12 +273,13 @@ function pyLiteral(value){
 }
 function exportPython(){
  if(!active()||!(goal()?.id.endsWith("-CAPSTONE")||goal()?.id.endsWith("-REVIEW")))return;
- const vars=task().preview_inputs||{};
+ const vars={...(task().preview_inputs||{})};
+ if(isImaging(activeId)&&vars.image_path==="/home/pyodide/witz_published_figure.png")vars.image_path="./assets/witz/fluorescence-single.png";
  const preamble=Object.entries(vars).map(([name,value])=>name+" = "+pyLiteral(value)).join("\n");
  const code=bridge()?.readCode()||"";
  if(!hasExecutableCode(code)){output("Write your Python program before exporting.");return;}
  const source=["# BioPython Studio "+activeId+" · original learner code",
- "# Synthetic microscopy records and example calibration, not real image measurements.",
+ (isImaging(activeId)?"# Witz/HPA published RGB notebook figure, not calibrated raw intensity. Keep source image beside this exported script.":"# Synthetic microscopy records and example calibration, not real image measurements."),
  "# The assignments below reproduce one supplied practice input.",preamble,"",code,""].join("\n");
  const blob=new Blob([source],{type:"text/x-python;charset=utf-8"});
  const url=URL.createObjectURL(blob);
@@ -272,6 +287,16 @@ function exportPython(){
  link.href=url;link.download=chapter?.final_project?.name||"scientific_program.py";
  document.body.append(link);link.click();link.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function refreshChapterOptions(){
+ const selector=el("bps-chapter-select");if(!selector)return;
+ selector.replaceChildren();
+ for(const id of stageIds()){
+  if(!chapters[id])continue;
+  const option=document.createElement("option");option.value=id;
+  option.textContent=id+" · "+chapters[id].title;selector.append(option);
+ }
+ selector.value=activeId;
 }
 function refreshGoalOptions(selector=el("p01-goal-select")){
  if(!selector)return;
@@ -286,17 +311,19 @@ function switchChapter(next){
  if(!chapters[next]||next===activeId||busy)return;
  remember();
  activeId=next;chapter=chapters[next];state=states[next];
+ if(isImaging(next))lastI=next;else lastP=next;
  state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
- refreshGoalOptions();
+ refreshGoalOptions();refreshChapterOptions();
  bridge()?.selectPhase?.(state.phase);
  bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
+ if(isImaging(activeId))bridge()?.ensureExampleImage?.();
  render();save();
 }
 function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
  const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Chapter";chapterLabel.className="p01-label";
  const chapterSelect=document.createElement("select");chapterSelect.id="bps-chapter-select";chapterSelect.setAttribute("aria-label","Choose Python chapter");
- for(const id of IDS){
+ for(const id of stageIds()){
    const o=document.createElement("option");o.value=id;o.textContent=id+" · "+chapters[id].title;
    chapterSelect.append(o);
  }
@@ -330,7 +357,9 @@ function mount(){
   b.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight"].includes(e.key))queueMicrotask(()=>choosePhase(document.querySelector('[data-phase][aria-selected="true"]')?.dataset.phase||"learn"));});
  });
  document.querySelectorAll("[data-stage]").forEach(b=>b.addEventListener("click",()=>{
-  syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
+  if(b.dataset.stage==="Microscopy"&&!isImaging(activeId))switchChapter(lastI);
+   if(b.dataset.stage==="Python"&&isImaging(activeId))switchChapter(lastP);
+   syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
  }));
  document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
   syncActivity();if(active())render();
@@ -344,14 +373,17 @@ async function start(){
    const r=await fetch("./content/"+id.toLowerCase()+"/lesson.json");
    if(!r.ok)throw Error(id+" content HTTP "+r.status);
    const data=await r.json();
-   if(data.schema_version!=="bps.chapter.v1"||data.chapter_id!==id||data.goals?.length!==({P01:7,P02:4,P03:7,P04:6,P05:6,P06:6}[id])||!data.capstone||!data.review)
+   if(data.schema_version!=="bps.chapter.v1"||data.chapter_id!==id||data.goals?.length!==GOAL_COUNTS[id]||!data.capstone||!data.review)
      throw Error(id+" chapter import contract failed");
    chapters[id]=data;states[id]=loadState(id);
   }
   if(!chapters[activeId])activeId="P01";
   chapter=chapters[activeId];state=states[activeId];
+  if(isImaging(activeId))lastI=activeId;else lastP=activeId;
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
+  if(isImaging(activeId))bridge()?.selectStage?.("Microscopy");
   mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
+  if(isImaging(activeId))bridge()?.ensureExampleImage?.();
   render();syncActivity();
   el("output-placeholder").textContent="Run your code to see real Python output or traceback.";
   status("Python ready to load on first Run");

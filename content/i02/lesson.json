@@ -1,0 +1,1663 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I02",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_TIFF_METADATA_PARTIAL",
+  "title": "Crop and inspect image planes",
+  "competencies": [
+    "040",
+    "041",
+    "077",
+    "079",
+    "080",
+    "081"
+  ],
+  "intro": "Use genuine NumPy ROI slicing, views/copies, declared 5D axes, scale conversion on explicitly synthetic metadata, and actual TIFF-container decoding without misrepresenting OME conformance or HPA PNG calibration.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/03-More_on_images.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "RENDERED_IMAGE_CROPPING_PLUS_SYNTHETIC_TIFF_METADATA",
+    "caution": "No verified source raw OME-TIFF or calibrated intensity is supplied. Synthetic TIFF tags do not establish standards conformance."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove, with explicit array geometry.",
+  "goals": [
+    {
+      "id": "I02-G01",
+      "title": "Slice a rectangular numerical subarray",
+      "competencies": [
+        "040"
+      ],
+      "why": "ROI slices are half-open and use row-first indexing; a wrong right endpoint shifts experimental selection.",
+      "explain": [
+        "NumPy slicing uses `arr[y0:y1,x0:x1]`, with the final index excluded. A rectangle's height is `y1-y0` and width is `x1-x0`.",
+        "A slice preserves coordinate relationships: the first ROI pixel corresponds to the original image location `(y0,x0)`.",
+        "An empty ROI is a computational selection, not evidence that a field contains zero biological objects."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nimage=np.arange(20).reshape(4,5)\nroi=image[1:3,2:5]\nprint(roi.shape,roi.tolist())",
+        "predict": "Predict the displayed output and its scientific limitation."
+      },
+      "prediction_answer": "Use declared axes and given source; no result verifies raw-fluorescence calibration.",
+      "walkthrough": [
+        "Identify array shape, declared axes, image source and the requested output.",
+        "Predict the example, run it in real Python and change a bound or record.",
+        "Explain which result is data processing and which biological conclusion is unsupported."
+      ],
+      "investigate": [
+        "Try alternative bounds or empty inputs when the contract permits.",
+        "Compare a view and a copy or inspect a TIFF tag explicitly.",
+        "State what calibration and source information would be necessary for real microscopy."
+      ],
+      "debug_task": "Diagnose one mistake in slice a rectangular numerical subarray and demonstrate how changed-input Python checks would detect it.",
+      "misconception": "A PNG or synthetic TIFF automatically provides correct raw microscope units and acquisition metadata.",
+      "scientific_boundary": "Published HPA/Witz notebook PNG is authentic visual content but not calibrated raw fluorescence; the in-memory TIFF examples are synthetic, and their OME text is a claim, not validated OME metadata.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the runnable Python example.",
+          "starter_code": "# I02-G01 | LEARN | Slice a rectangular numerical subarray\n# TASK: Predict, run and change the runnable Python example.\n\nimport numpy as np\nimage=np.arange(20).reshape(4,5)\nroi=image[1:3,2:5]\nprint(roi.shape,roi.tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "From image_rows create NumPy image, crop roi using y0:y1, x0:x1, and set roi_shape and roi_sum.",
+          "starter_code": "# I02-G01 | APPLY | Slice a rectangular numerical subarray\n# TASK: From image_rows create NumPy image, crop roi using y0:y1, x0:x1, and set\n#   roi_shape and roi_sum.\n# INPUTS: image_rows, y0, y1, x0, x1\n\n",
+          "preview_inputs": {
+            "image_rows": [
+              [
+                1,
+                2,
+                3,
+                4
+              ],
+              [
+                5,
+                6,
+                7,
+                8
+              ],
+              [
+                9,
+                10,
+                11,
+                12
+              ]
+            ],
+            "y0": 1,
+            "y1": 3,
+            "x0": 1,
+            "x1": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_rows": [
+                  [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  [
+                    5,
+                    6,
+                    7,
+                    8
+                  ],
+                  [
+                    9,
+                    10,
+                    11,
+                    12
+                  ]
+                ],
+                "y0": 1,
+                "y1": 3,
+                "x0": 1,
+                "x1": 3
+              },
+              "assertions": [
+                "roi.tolist()==[[6,7],[10,11]]",
+                "roi_shape==(2,2)",
+                "roi_sum==34"
+              ]
+            },
+            {
+              "inputs": {
+                "image_rows": [
+                  [
+                    0,
+                    1,
+                    2,
+                    3
+                  ]
+                ],
+                "y0": 0,
+                "y1": 1,
+                "x0": 2,
+                "x1": 4
+              },
+              "assertions": [
+                "roi.tolist()==[[2,3]]",
+                "roi_shape==(1,2)"
+              ]
+            },
+            {
+              "inputs": {
+                "image_rows": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    3,
+                    4
+                  ]
+                ],
+                "y0": 0,
+                "y1": 0,
+                "x0": 0,
+                "x1": 2
+              },
+              "assertions": [
+                "roi_shape==(0,2)",
+                "roi_sum==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A slice preserves coordinate relationships: the first ROI pixel corresponds to the original image location `(y0,x0)`.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in slice a rectangular numerical subarray?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for slice a rectangular numerical subarray."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given stack_data in (Z,Y,X) order, slice selected z and bounding rectangle into crop. Set crop_size and source_yx=(y0,x0).",
+          "starter_code": "# I02-G01 | PROVE | Slice a rectangular numerical subarray\n# TASK: Given stack_data in (Z,Y,X) order, slice selected z and bounding\n#   rectangle into crop. Set crop_size and source_yx=(y0,x0).\n# INPUTS: stack_data, z, y0, y1, x0, x1\n\n",
+          "preview_inputs": {
+            "stack_data": [
+              [
+                [
+                  1,
+                  2,
+                  3
+                ],
+                [
+                  4,
+                  5,
+                  6
+                ]
+              ],
+              [
+                [
+                  7,
+                  8,
+                  9
+                ],
+                [
+                  10,
+                  11,
+                  12
+                ]
+              ]
+            ],
+            "z": 1,
+            "y0": 0,
+            "y1": 2,
+            "x0": 1,
+            "x1": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      1,
+                      2,
+                      3
+                    ],
+                    [
+                      4,
+                      5,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      7,
+                      8,
+                      9
+                    ],
+                    [
+                      10,
+                      11,
+                      12
+                    ]
+                  ]
+                ],
+                "z": 1,
+                "y0": 0,
+                "y1": 2,
+                "x0": 1,
+                "x1": 3
+              },
+              "assertions": [
+                "crop.tolist()==[[8,9],[11,12]]",
+                "crop_size==4",
+                "source_yx==(0,1)"
+              ]
+            },
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      4,
+                      5,
+                      6
+                    ]
+                  ]
+                ],
+                "z": 0,
+                "y0": 0,
+                "y1": 1,
+                "x0": 0,
+                "x1": 2
+              },
+              "assertions": [
+                "crop.tolist()==[[4,5]]",
+                "crop_size==2"
+              ]
+            },
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      3,
+                      4
+                    ]
+                  ]
+                ],
+                "z": 0,
+                "y0": 1,
+                "y1": 2,
+                "x0": 0,
+                "x1": 1
+              },
+              "assertions": [
+                "crop.tolist()==[[3]]",
+                "source_yx==(1,0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A slice preserves coordinate relationships: the first ROI pixel corresponds to the original image location `(y0,x0)`.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in slice a rectangular numerical subarray?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for slice a rectangular numerical subarray."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "First identify source shape, index order and required output.",
+          "Preserve input data; do not convert invented calibration into biological measurement."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check image axes and calibration input.",
+        "IndexError": "Check zero-based row/column indexing and ROI bounds.",
+        "FileNotFoundError": "The credited source must load; no synthetic fallback is permitted.",
+        "TypeError": "Read the TIFF description and array shape explicitly.",
+        "hardcoded": "Changed inputs must alter the selected image region or data report."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Changed-input public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I02-G02",
+      "title": "Distinguish NumPy views from independent copies",
+      "competencies": [
+        "041"
+      ],
+      "why": "Unintended changes to original pixel data can invalidate an audit and make an analysis irreproducible.",
+      "explain": [
+        "Basic NumPy slices normally return *views* into source arrays. Changing a view can alter original stored values.",
+        "An explicit `.copy()` creates independent storage so downstream mask and display transformations cannot alter original pixels.",
+        "Treat original image arrays as immutable in scientific pipelines unless deliberate in-place edits are documented."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\noriginal=np.array([[1,2],[3,4]])\nview=original[:1,:]\nsafe=view.copy()\nview[0,0]=99\nprint(original.tolist(),safe.tolist())",
+        "predict": "Will changing a slice affect the source?"
+      },
+      "prediction_answer": "Basic slices are views; `.copy()` protects original storage.",
+      "walkthrough": [
+        "Identify array shape, declared axes, image source and the requested output.",
+        "Predict the example, run it in real Python and change a bound or record.",
+        "Explain which result is data processing and which biological conclusion is unsupported."
+      ],
+      "investigate": [
+        "Try alternative bounds or empty inputs when the contract permits.",
+        "Compare a view and a copy or inspect a TIFF tag explicitly.",
+        "State what calibration and source information would be necessary for real microscopy."
+      ],
+      "debug_task": "Diagnose one mistake in distinguish numpy views from independent copies and demonstrate how changed-input Python checks would detect it.",
+      "misconception": "A PNG or synthetic TIFF automatically provides correct raw microscope units and acquisition metadata.",
+      "scientific_boundary": "Published HPA/Witz notebook PNG is authentic visual content but not calibrated raw fluorescence; the in-memory TIFF examples are synthetic, and their OME text is a claim, not validated OME metadata.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the runnable Python example.",
+          "starter_code": "# I02-G02 | LEARN | Distinguish NumPy views from independent copies\n# TASK: Predict, run and change the runnable Python example.\n\nimport numpy as np\noriginal=np.array([[1,2],[3,4]])\nview=original[:1,:]\nsafe=view.copy()\nview[0,0]=99\nprint(original.tolist(),safe.tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Create source array from rows; make view=source[:,:2] and safe_copy=view.copy(). Record before=int(source[0,0]), then set view[0,0]=mark. Set source_changed and copy_unchanged booleans.",
+          "starter_code": "# I02-G02 | APPLY | Distinguish NumPy views from independent copies\n# TASK: Create source array from rows; make view=source[:,:2] and\n#   safe_copy=view.copy(). Record before=int(source[0,0]), then set\n#   view[0,0]=mark. Set source_changed and copy_unchanged booleans.\n# INPUTS: rows, mark\n\n",
+          "preview_inputs": {
+            "rows": [
+              [
+                1,
+                2,
+                3
+              ],
+              [
+                4,
+                5,
+                6
+              ]
+            ],
+            "mark": 99
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    1,
+                    2,
+                    3
+                  ],
+                  [
+                    4,
+                    5,
+                    6
+                  ]
+                ],
+                "mark": 99
+              },
+              "assertions": [
+                "before==1",
+                "source[0,0]==99",
+                "source_changed is True",
+                "copy_unchanged is True",
+                "safe_copy[0,0]==1"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    0,
+                    8
+                  ],
+                  [
+                    7,
+                    6
+                  ]
+                ],
+                "mark": 3
+              },
+              "assertions": [
+                "before==0",
+                "source[0,0]==3",
+                "safe_copy[0,0]==0"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    10,
+                    20,
+                    30
+                  ]
+                ],
+                "mark": 11
+              },
+              "assertions": [
+                "before==10",
+                "source_changed is True",
+                "copy_unchanged is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "An explicit `.copy()` creates independent storage so downstream mask and display transformations cannot alter original pixels.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in distinguish numpy views from independent copies?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for distinguish numpy views from independent copies."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Create values from readings, slice view=values[1:3], independent=values[1:3].copy(). Store initial independent values, then set view[0]=replacement. Set original_after=int(values[1]) and protected=bool(independent[0]==initial).",
+          "starter_code": "# I02-G02 | PROVE | Distinguish NumPy views from independent copies\n# TASK: Create values from readings, slice view=values[1:3],\n#   independent=values[1:3].copy(). Store initial independent values, then set\n#   view[0]=replacement. Set original_after=int(values[1]) and\n#   protected=bool(independent[0]==initial).\n# INPUTS: readings, replacement\n\n",
+          "preview_inputs": {
+            "readings": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "replacement": 20
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "readings": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "replacement": 20
+              },
+              "assertions": [
+                "original_after==20",
+                "protected is True",
+                "independent.tolist()==[2,3]"
+              ]
+            },
+            {
+              "inputs": {
+                "readings": [
+                  8,
+                  0,
+                  9
+                ],
+                "replacement": 5
+              },
+              "assertions": [
+                "original_after==5",
+                "independent[0]==0"
+              ]
+            },
+            {
+              "inputs": {
+                "readings": [
+                  1,
+                  9,
+                  11,
+                  12
+                ],
+                "replacement": 4
+              },
+              "assertions": [
+                "original_after==4",
+                "protected is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "An explicit `.copy()` creates independent storage so downstream mask and display transformations cannot alter original pixels.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in distinguish numpy views from independent copies?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for distinguish numpy views from independent copies."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "First identify source shape, index order and required output.",
+          "Preserve input data; do not convert invented calibration into biological measurement."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check image axes and calibration input.",
+        "IndexError": "Check zero-based row/column indexing and ROI bounds.",
+        "FileNotFoundError": "The credited source must load; no synthetic fallback is permitted.",
+        "TypeError": "Read the TIFF description and array shape explicitly.",
+        "hardcoded": "Changed inputs must alter the selected image region or data report."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Changed-input public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I02-G03",
+      "title": "Crop a documented image region",
+      "competencies": [
+        "077"
+      ],
+      "why": "A crop is only interpretable if its exact source bounds are retained.",
+      "explain": [
+        "Extracting an ROI from a real file is a pixel-selection operation, not object detection. Use explicit row/column bounds and preserve full-image dimensions.",
+        "For the credited Witz/HPA PNG, cropping demonstrates genuine RGB-array operations but cannot recover original fluorescence intensities or calibration.",
+        "Record the bounding rectangle and avoid interpreting crop mean as biological signal."
+      ],
+      "worked_example": {
+        "code": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[0:20,0:30]\nprint(roi.shape)",
+        "predict": "Predict the displayed output and its scientific limitation."
+      },
+      "prediction_answer": "Use declared axes and given source; no result verifies raw-fluorescence calibration.",
+      "walkthrough": [
+        "Identify array shape, declared axes, image source and the requested output.",
+        "Predict the example, run it in real Python and change a bound or record.",
+        "Explain which result is data processing and which biological conclusion is unsupported."
+      ],
+      "investigate": [
+        "Try alternative bounds or empty inputs when the contract permits.",
+        "Compare a view and a copy or inspect a TIFF tag explicitly.",
+        "State what calibration and source information would be necessary for real microscopy."
+      ],
+      "debug_task": "Diagnose one mistake in crop a documented image region and demonstrate how changed-input Python checks would detect it.",
+      "misconception": "A PNG or synthetic TIFF automatically provides correct raw microscope units and acquisition metadata.",
+      "scientific_boundary": "Published HPA/Witz notebook PNG is authentic visual content but not calibrated raw fluorescence; the in-memory TIFF examples are synthetic, and their OME text is a claim, not validated OME metadata.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the runnable Python example.",
+          "starter_code": "# I02-G03 | LEARN | Crop a documented image region\n# TASK: Predict, run and change the runnable Python example.\n# INPUTS: image_path\n\nfrom PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[0:20,0:30]\nprint(roi.shape)\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png"
+          }
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Load image_path as RGB, make crop using bounds y0:y1 and x0:x1, set crop_shape and bounds=(y0,y1,x0,x1).",
+          "starter_code": "# I02-G03 | APPLY | Crop a documented image region\n# TASK: Load image_path as RGB, make crop using bounds y0:y1 and x0:x1, set\n#   crop_shape and bounds=(y0,y1,x0,x1).\n# INPUTS: image_path, y0, y1, x0, x1\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "y0": 3,
+            "y1": 23,
+            "x0": 5,
+            "x1": 25
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "y0": 3,
+                "y1": 23,
+                "x0": 5,
+                "x1": 25
+              },
+              "assertions": [
+                "crop.shape==(20,20,3)",
+                "bounds==(3,23,5,25)",
+                "np.array_equal(crop,rgb[3:23,5:25])"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "y0": 0,
+                "y1": 10,
+                "x0": 0,
+                "x1": 5
+              },
+              "assertions": [
+                "crop_shape==(10,5,3)",
+                "np.array_equal(crop,rgb[:10,:5])"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "y0": 10,
+                "y1": 13,
+                "x0": 20,
+                "x1": 24
+              },
+              "assertions": [
+                "crop_shape==(3,4,3)",
+                "bounds==(10,13,20,24)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For the credited Witz/HPA PNG, cropping demonstrates genuine RGB-array operations but cannot recover original fluorescence intensities or calibration.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in crop a documented image region?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for crop a documented image region."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Read the Witz/HPA RGB figure. Create green_crop from RGB component 1 using roi_y:roi_y+roi_h and roi_x:roi_x+roi_w. Set pixels_selected and is_raw=False.",
+          "starter_code": "# I02-G03 | PROVE | Crop a documented image region\n# TASK: Read the Witz/HPA RGB figure. Create green_crop from RGB component 1\n#   using roi_y:roi_y+roi_h and roi_x:roi_x+roi_w. Set pixels_selected and\n#   is_raw=False.\n# INPUTS: image_path, roi_y, roi_x, roi_h, roi_w\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "roi_y": 2,
+            "roi_x": 2,
+            "roi_h": 8,
+            "roi_w": 6
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "roi_y": 2,
+                "roi_x": 2,
+                "roi_h": 8,
+                "roi_w": 6
+              },
+              "assertions": [
+                "green_crop.shape==(8,6)",
+                "pixels_selected==48",
+                "is_raw is False"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "roi_y": 0,
+                "roi_x": 4,
+                "roi_h": 5,
+                "roi_w": 3
+              },
+              "assertions": [
+                "green_crop.shape==(5,3)",
+                "pixels_selected==15"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "roi_y": 10,
+                "roi_x": 12,
+                "roi_h": 2,
+                "roi_w": 3
+              },
+              "assertions": [
+                "np.array_equal(green_crop,rgb[10:12,12:15,1])",
+                "is_raw is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For the credited Witz/HPA PNG, cropping demonstrates genuine RGB-array operations but cannot recover original fluorescence intensities or calibration.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in crop a documented image region?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for crop a documented image region."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "First identify source shape, index order and required output.",
+          "Preserve input data; do not convert invented calibration into biological measurement."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check image axes and calibration input.",
+        "IndexError": "Check zero-based row/column indexing and ROI bounds.",
+        "FileNotFoundError": "The credited source must load; no synthetic fallback is permitted.",
+        "TypeError": "Read the TIFF description and array shape explicitly.",
+        "hardcoded": "Changed inputs must alter the selected image region or data report."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Changed-input public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I02-G04",
+      "title": "Convert pixel geometry with declared calibration",
+      "competencies": [
+        "079"
+      ],
+      "why": "Physical area depends quadratically on pixel size and cannot be guessed from a rendered source figure.",
+      "explain": [
+        "To convert area from pixel² to µm², multiply by `(micrometres_per_pixel)²`. A length uses the factor only once.",
+        "These exercises provide an explicit *synthetic* pixel size; do not apply the factor to the HPA teaching screenshot as if it were microscope metadata.",
+        "Keep the units and provenance in the returned report. Reject invalid nonpositive scale to avoid nonsensical physical area."
+      ],
+      "worked_example": {
+        "code": "pixel_count=50\num_per_pixel=0.2\nprint(pixel_count*um_per_pixel**2)",
+        "predict": "Which pixel-size conversion has squared units?"
+      },
+      "prediction_answer": "Area scales with the square of micrometres-per-pixel, using documented calibration only.",
+      "walkthrough": [
+        "Identify array shape, declared axes, image source and the requested output.",
+        "Predict the example, run it in real Python and change a bound or record.",
+        "Explain which result is data processing and which biological conclusion is unsupported."
+      ],
+      "investigate": [
+        "Try alternative bounds or empty inputs when the contract permits.",
+        "Compare a view and a copy or inspect a TIFF tag explicitly.",
+        "State what calibration and source information would be necessary for real microscopy."
+      ],
+      "debug_task": "Diagnose one mistake in convert pixel geometry with declared calibration and demonstrate how changed-input Python checks would detect it.",
+      "misconception": "A PNG or synthetic TIFF automatically provides correct raw microscope units and acquisition metadata.",
+      "scientific_boundary": "Published HPA/Witz notebook PNG is authentic visual content but not calibrated raw fluorescence; the in-memory TIFF examples are synthetic, and their OME text is a claim, not validated OME metadata.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the runnable Python example.",
+          "starter_code": "# I02-G04 | LEARN | Convert pixel geometry with declared calibration\n# TASK: Predict, run and change the runnable Python example.\n\npixel_count=50\num_per_pixel=0.2\nprint(pixel_count*um_per_pixel**2)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Given pixel_count and synthetic um_per_pixel, compute area_um2 or None for invalid scale. Set calibration_is_source=False.",
+          "starter_code": "# I02-G04 | APPLY | Convert pixel geometry with declared calibration\n# TASK: Given pixel_count and synthetic um_per_pixel, compute area_um2 or None\n#   for invalid scale. Set calibration_is_source=False.\n# INPUTS: pixel_count, um_per_pixel\n\n",
+          "preview_inputs": {
+            "pixel_count": 50,
+            "um_per_pixel": 0.2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixel_count": 50,
+                "um_per_pixel": 0.2
+              },
+              "assertions": [
+                "abs(area_um2-2.0)<1e-9",
+                "calibration_is_source is False"
+              ]
+            },
+            {
+              "inputs": {
+                "pixel_count": 0,
+                "um_per_pixel": 0.25
+              },
+              "assertions": [
+                "area_um2==0"
+              ]
+            },
+            {
+              "inputs": {
+                "pixel_count": 30,
+                "um_per_pixel": 0
+              },
+              "assertions": [
+                "area_um2 is None",
+                "calibration_is_source is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "These exercises provide an explicit *synthetic* pixel size; do not apply the factor to the HPA teaching screenshot as if it were microscope metadata.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in convert pixel geometry with declared calibration?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for convert pixel geometry with declared calibration."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Convert pixel dimensions width_px and height_px using synthetic pixels_per_um. Set width_um,height_um and area_um2, or all None if invalid scale.",
+          "starter_code": "# I02-G04 | PROVE | Convert pixel geometry with declared calibration\n# TASK: Convert pixel dimensions width_px and height_px using synthetic\n#   pixels_per_um. Set width_um,height_um and area_um2, or all None if invalid\n#   scale.\n# INPUTS: width_px, height_px, pixels_per_um\n\n",
+          "preview_inputs": {
+            "width_px": 20,
+            "height_px": 10,
+            "pixels_per_um": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "width_px": 20,
+                "height_px": 10,
+                "pixels_per_um": 2
+              },
+              "assertions": [
+                "width_um==10",
+                "height_um==5",
+                "area_um2==50"
+              ]
+            },
+            {
+              "inputs": {
+                "width_px": 8,
+                "height_px": 5,
+                "pixels_per_um": 0
+              },
+              "assertions": [
+                "width_um is None",
+                "area_um2 is None"
+              ]
+            },
+            {
+              "inputs": {
+                "width_px": 0,
+                "height_px": 12,
+                "pixels_per_um": 4
+              },
+              "assertions": [
+                "width_um==0",
+                "height_um==3",
+                "area_um2==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "These exercises provide an explicit *synthetic* pixel size; do not apply the factor to the HPA teaching screenshot as if it were microscope metadata.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in convert pixel geometry with declared calibration?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for convert pixel geometry with declared calibration."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "First identify source shape, index order and required output.",
+          "Preserve input data; do not convert invented calibration into biological measurement."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check image axes and calibration input.",
+        "IndexError": "Check zero-based row/column indexing and ROI bounds.",
+        "FileNotFoundError": "The credited source must load; no synthetic fallback is permitted.",
+        "TypeError": "Read the TIFF description and array shape explicitly.",
+        "hardcoded": "Changed inputs must alter the selected image region or data report."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Changed-input public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I02-G05",
+      "title": "Inspect multidimensional axes explicitly",
+      "competencies": [
+        "080"
+      ],
+      "why": "A 5D image shape is uninterpretable without the stored axis order.",
+      "explain": [
+        "Microscopy arrays may have time, channel, z, y and x axes. A declared layout `TCZYX` maps each axis label to a shape length.",
+        "Never assume the largest axis is X or a three-element axis is biological channels. Check the file metadata and source documentation.",
+        "`dict(zip(axis_names, arr.shape))` can summarize declared axes; unequal counts must be rejected rather than silently truncated."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nstack=np.zeros((2,3,1,4,5))\nlabels='TCZYX'\nprint(dict(zip(labels,stack.shape)))",
+        "predict": "Predict the displayed output and its scientific limitation."
+      },
+      "prediction_answer": "Use declared axes and given source; no result verifies raw-fluorescence calibration.",
+      "walkthrough": [
+        "Identify array shape, declared axes, image source and the requested output.",
+        "Predict the example, run it in real Python and change a bound or record.",
+        "Explain which result is data processing and which biological conclusion is unsupported."
+      ],
+      "investigate": [
+        "Try alternative bounds or empty inputs when the contract permits.",
+        "Compare a view and a copy or inspect a TIFF tag explicitly.",
+        "State what calibration and source information would be necessary for real microscopy."
+      ],
+      "debug_task": "Diagnose one mistake in inspect multidimensional axes explicitly and demonstrate how changed-input Python checks would detect it.",
+      "misconception": "A PNG or synthetic TIFF automatically provides correct raw microscope units and acquisition metadata.",
+      "scientific_boundary": "Published HPA/Witz notebook PNG is authentic visual content but not calibrated raw fluorescence; the in-memory TIFF examples are synthetic, and their OME text is a claim, not validated OME metadata.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the runnable Python example.",
+          "starter_code": "# I02-G05 | LEARN | Inspect multidimensional axes explicitly\n# TASK: Predict, run and change the runnable Python example.\n\nimport numpy as np\nstack=np.zeros((2,3,1,4,5))\nlabels='TCZYX'\nprint(dict(zip(labels,stack.shape)))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Create NumPy volume from stack_data and given axis_names. Set axis_lengths=dict(zip(axis_names,volume.shape)) only if lengths match; set valid_axes boolean.",
+          "starter_code": "# I02-G05 | APPLY | Inspect multidimensional axes explicitly\n# TASK: Create NumPy volume from stack_data and given axis_names. Set\n#   axis_lengths=dict(zip(axis_names,volume.shape)) only if lengths match; set\n#   valid_axes boolean.\n# INPUTS: stack_data, axis_names\n\n",
+          "preview_inputs": {
+            "stack_data": [
+              [
+                [
+                  1,
+                  2
+                ],
+                [
+                  3,
+                  4
+                ]
+              ],
+              [
+                [
+                  5,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            ],
+            "axis_names": "ZYX"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      3,
+                      4
+                    ]
+                  ],
+                  [
+                    [
+                      5,
+                      6
+                    ],
+                    [
+                      7,
+                      8
+                    ]
+                  ]
+                ],
+                "axis_names": "ZYX"
+              },
+              "assertions": [
+                "valid_axes is True",
+                "axis_lengths=={'Z':2,'Y':2,'X':2}"
+              ]
+            },
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    3,
+                    4
+                  ]
+                ],
+                "axis_names": "YX"
+              },
+              "assertions": [
+                "valid_axes is True",
+                "axis_lengths=={'Y':2,'X':2}"
+              ]
+            },
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      1,
+                      2
+                    ]
+                  ]
+                ],
+                "axis_names": "YX"
+              },
+              "assertions": [
+                "valid_axes is False",
+                "axis_lengths=={}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Never assume the largest axis is X or a three-element axis is biological channels. Check the file metadata and source documentation.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in inspect multidimensional axes explicitly?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for inspect multidimensional axes explicitly."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given named_axes and dimensions list, reject length mismatch or repeated axis labels. Produce axis_map (dictionary) and axes_ok; preserve original names.",
+          "starter_code": "# I02-G05 | PROVE | Inspect multidimensional axes explicitly\n# TASK: Given named_axes and dimensions list, reject length mismatch or repeated\n#   axis labels. Produce axis_map (dictionary) and axes_ok; preserve original\n#   names.\n# INPUTS: named_axes, dimensions\n\n",
+          "preview_inputs": {
+            "named_axes": "TCZYX",
+            "dimensions": [
+              2,
+              1,
+              3,
+              4,
+              5
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "named_axes": "TCZYX",
+                "dimensions": [
+                  2,
+                  1,
+                  3,
+                  4,
+                  5
+                ]
+              },
+              "assertions": [
+                "axes_ok is True",
+                "axis_map=={'T':2,'C':1,'Z':3,'Y':4,'X':5}"
+              ]
+            },
+            {
+              "inputs": {
+                "named_axes": "YXC",
+                "dimensions": [
+                  6,
+                  7,
+                  2
+                ]
+              },
+              "assertions": [
+                "axes_ok is True",
+                "axis_map['C']==2"
+              ]
+            },
+            {
+              "inputs": {
+                "named_axes": "YYX",
+                "dimensions": [
+                  2,
+                  4,
+                  5
+                ]
+              },
+              "assertions": [
+                "axes_ok is False",
+                "axis_map=={}"
+              ]
+            },
+            {
+              "inputs": {
+                "named_axes": "ZYX",
+                "dimensions": [
+                  1,
+                  2
+                ]
+              },
+              "assertions": [
+                "axes_ok is False",
+                "axis_map=={}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Never assume the largest axis is X or a three-element axis is biological channels. Check the file metadata and source documentation.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in inspect multidimensional axes explicitly?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for inspect multidimensional axes explicitly."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "First identify source shape, index order and required output.",
+          "Preserve input data; do not convert invented calibration into biological measurement."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check image axes and calibration input.",
+        "IndexError": "Check zero-based row/column indexing and ROI bounds.",
+        "FileNotFoundError": "The credited source must load; no synthetic fallback is permitted.",
+        "TypeError": "Read the TIFF description and array shape explicitly.",
+        "hardcoded": "Changed inputs must alter the selected image region or data report."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Changed-input public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I02-G06",
+      "title": "Inspect real TIFF containers and OME metadata claims",
+      "competencies": [
+        "081"
+      ],
+      "why": "Reading TIFF pixel bytes and reading trustworthy OME axes metadata are related but distinct operations.",
+      "explain": [
+        "Pillow can create and decode a genuine TIFF container. A TIFF's ImageDescription tag may contain ordinary text or OME-XML metadata; the presence of a string beginning with `<OME` is not sufficient to validate OME conformance.",
+        "These exercises create **synthetic TIFF pixels** with explicit tag values, not an authentic raw microscopy acquisition or complete multiscale OME-TIFF.",
+        "A full OME-TIFF workflow later requires reading the raw source file, verified units, channel metadata, axes order and possibly multi-plane pages; never infer them from this toy TIFF."
+      ],
+      "worked_example": {
+        "code": "from PIL import Image\nimport numpy as np, io\nsample=Image.fromarray(np.array([[1,2],[3,4]],dtype=np.uint16))\nb=io.BytesIO();sample.save(b,format='TIFF',tiffinfo={270:'synthetic teaching TIFF'})\nb.seek(0);opened=Image.open(b)\nprint(opened.size,opened.tag_v2.get(270))",
+        "predict": "Predict the displayed output and its scientific limitation."
+      },
+      "prediction_answer": "Use declared axes and given source; no result verifies raw-fluorescence calibration.",
+      "walkthrough": [
+        "Identify array shape, declared axes, image source and the requested output.",
+        "Predict the example, run it in real Python and change a bound or record.",
+        "Explain which result is data processing and which biological conclusion is unsupported."
+      ],
+      "investigate": [
+        "Try alternative bounds or empty inputs when the contract permits.",
+        "Compare a view and a copy or inspect a TIFF tag explicitly.",
+        "State what calibration and source information would be necessary for real microscopy."
+      ],
+      "debug_task": "Diagnose one mistake in inspect real tiff containers and ome metadata claims and demonstrate how changed-input Python checks would detect it.",
+      "misconception": "A PNG or synthetic TIFF automatically provides correct raw microscope units and acquisition metadata.",
+      "scientific_boundary": "Published HPA/Witz notebook PNG is authentic visual content but not calibrated raw fluorescence; the in-memory TIFF examples are synthetic, and their OME text is a claim, not validated OME metadata.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict, run and change the runnable Python example.",
+          "starter_code": "# I02-G06 | LEARN | Inspect real TIFF containers and OME metadata claims\n# TASK: Predict, run and change the runnable Python example.\n\nfrom PIL import Image\nimport numpy as np, io\nsample=Image.fromarray(np.array([[1,2],[3,4]],dtype=np.uint16))\nb=io.BytesIO();sample.save(b,format='TIFF',tiffinfo={270:'synthetic teaching TIFF'})\nb.seek(0);opened=Image.open(b)\nprint(opened.size,opened.tag_v2.get(270))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed data",
+          "description": "Import Pillow, numpy and io. Save pixel_rows as uint16 TIFF to BytesIO with ImageDescription description; reopen and set recovered_shape, recovered_description, is_ome_claim based only on description beginning '<OME'.",
+          "starter_code": "# I02-G06 | APPLY | Inspect real TIFF containers and OME metadata claims\n# TASK: Import Pillow, numpy and io. Save pixel_rows as uint16 TIFF to BytesIO\n#   with ImageDescription description; reopen and set recovered_shape,\n#   recovered_description, is_ome_claim based only on description beginning\n#   '<OME'.\n# INPUTS: pixel_rows, description\n\n",
+          "preview_inputs": {
+            "pixel_rows": [
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                4
+              ]
+            ],
+            "description": "synthetic TIFF"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixel_rows": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    3,
+                    4
+                  ]
+                ],
+                "description": "synthetic TIFF"
+              },
+              "assertions": [
+                "recovered_shape==(2,2)",
+                "recovered_description=='synthetic TIFF'",
+                "is_ome_claim is False"
+              ]
+            },
+            {
+              "inputs": {
+                "pixel_rows": [
+                  [
+                    7,
+                    8,
+                    9
+                  ]
+                ],
+                "description": "<OME>sample</OME>"
+              },
+              "assertions": [
+                "recovered_shape==(1,3)",
+                "is_ome_claim is True"
+              ]
+            },
+            {
+              "inputs": {
+                "pixel_rows": [
+                  [
+                    0
+                  ]
+                ],
+                "description": ""
+              },
+              "assertions": [
+                "recovered_shape==(1,1)",
+                "is_ome_claim is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "These exercises create **synthetic TIFF pixels** with explicit tag values, not an authentic raw microscopy acquisition or complete multiscale OME-TIFF.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in inspect real tiff containers and ome metadata claims?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for inspect real tiff containers and ome metadata claims."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Write uint16 TIFF from intensity_rows and tag note, reopen using PIL. Set verified_pixels=bool(np.array_equal(...)), file_type='TIFF', metadata_claim=bool(note.strip().startswith('<OME')). Do not claim validated OME.",
+          "starter_code": "# I02-G06 | PROVE | Inspect real TIFF containers and OME metadata claims\n# TASK: Write uint16 TIFF from intensity_rows and tag note, reopen using PIL.\n#   Set verified_pixels=bool(np.array_equal(...)), file_type='TIFF',\n#   metadata_claim=bool(note.strip().startswith('<OME')). Do not claim validated\n#   OME.\n# INPUTS: intensity_rows, note\n\n",
+          "preview_inputs": {
+            "intensity_rows": [
+              [
+                10,
+                20
+              ],
+              [
+                30,
+                40
+              ]
+            ],
+            "note": "<OME>toy</OME>"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "intensity_rows": [
+                  [
+                    10,
+                    20
+                  ],
+                  [
+                    30,
+                    40
+                  ]
+                ],
+                "note": "<OME>toy</OME>"
+              },
+              "assertions": [
+                "verified_pixels is True",
+                "metadata_claim is True",
+                "file_type=='TIFF'"
+              ]
+            },
+            {
+              "inputs": {
+                "intensity_rows": [
+                  [
+                    0,
+                    65535
+                  ]
+                ],
+                "note": "plain TIFF"
+              },
+              "assertions": [
+                "verified_pixels is True",
+                "metadata_claim is False"
+              ]
+            },
+            {
+              "inputs": {
+                "intensity_rows": [
+                  [
+                    5
+                  ]
+                ],
+                "note": "  <OME>claim</OME>"
+              },
+              "assertions": [
+                "metadata_claim is True",
+                "verified_pixels is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "These exercises create **synthetic TIFF pixels** with explicit tag values, not an authentic raw microscopy acquisition or complete multiscale OME-TIFF.",
+            "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in inspect real tiff containers and ome metadata claims?",
+            "check": "Use current input names and explicit image axes; do not hardcode the example for inspect real tiff containers and ome metadata claims."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "First identify source shape, index order and required output.",
+          "Preserve input data; do not convert invented calibration into biological measurement."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check image axes and calibration input.",
+        "IndexError": "Check zero-based row/column indexing and ROI bounds.",
+        "FileNotFoundError": "The credited source must load; no synthetic fallback is permitted.",
+        "TypeError": "Read the TIFF description and array shape explicitly.",
+        "hardcoded": "Changed inputs must alter the selected image region or data report."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Changed-input public practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I02-CAPSTONE",
+    "title": "Export a traceable ROI inspection script",
+    "competencies": [],
+    "why": "A researcher must state exactly which display pixels were cropped and avoid turning notebook pixels into a calibrated measurement.",
+    "explain": [
+      "Use Pillow to decode the genuine credited PNG, retain exact source coordinates and copy the selected ROI to protect source arrays.",
+      "Report width, height and mean RGB display-code values, explicitly flagging them as not raw fluorescence.",
+      "Use independent bounds for Prove and include the scientific caveat in the exported script."
+    ],
+    "worked_example": {
+      "code": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[0:10,0:15].copy()\nprint(roi.shape,'display pixels only')",
+      "predict": "Predict the displayed output and its scientific limitation."
+    },
+    "prediction_answer": "Use declared axes and given source; no result verifies raw-fluorescence calibration.",
+    "walkthrough": [
+      "Identify array shape, declared axes, image source and the requested output.",
+      "Predict the example, run it in real Python and change a bound or record.",
+      "Explain which result is data processing and which biological conclusion is unsupported."
+    ],
+    "investigate": [
+      "Try alternative bounds or empty inputs when the contract permits.",
+      "Compare a view and a copy or inspect a TIFF tag explicitly.",
+      "State what calibration and source information would be necessary for real microscopy."
+    ],
+    "debug_task": "Diagnose one mistake in export a traceable roi inspection script and demonstrate how changed-input Python checks would detect it.",
+    "misconception": "A PNG or synthetic TIFF automatically provides correct raw microscope units and acquisition metadata.",
+    "scientific_boundary": "Published HPA/Witz notebook PNG is authentic visual content but not calibrated raw fluorescence; the in-memory TIFF examples are synthetic, and their OME text is a claim, not validated OME metadata.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and investigate",
+        "description": "Predict, run and change the runnable Python example.",
+        "starter_code": "# I02-CAPSTONE | LEARN | Export a traceable ROI inspection script\n# TASK: Predict, run and change the runnable Python example.\n# INPUTS: image_path\n\nfrom PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nroi=rgb[0:10,0:15].copy()\nprint(roi.shape,'display pixels only')\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png"
+        }
+      },
+      "apply": {
+        "title": "Apply to changed data",
+        "description": "Load image_path as RGB. Create roi=rgb[y0:y1,x0:x1].copy(); set report with shape, bounds, rgb_mean and calibrated False. Print report.",
+        "starter_code": "# I02-CAPSTONE | APPLY | Export a traceable ROI inspection script\n# TASK: Load image_path as RGB. Create roi=rgb[y0:y1,x0:x1].copy(); set report\n#   with shape, bounds, rgb_mean and calibrated False. Print report.\n# INPUTS: image_path, y0, y1, x0, x1\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "y0": 2,
+          "y1": 12,
+          "x0": 4,
+          "x1": 14
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 2,
+              "y1": 12,
+              "x0": 4,
+              "x1": 14
+            },
+            "assertions": [
+              "report['bounds']==(2,12,4,14)",
+              "report['shape']==(10,10,3)",
+              "report['calibrated'] is False",
+              "abs(report['rgb_mean']-float(roi.mean()))<1e-12"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 0,
+              "y1": 5,
+              "x0": 0,
+              "x1": 8
+            },
+            "assertions": [
+              "report['shape']==(5,8,3)",
+              "report['calibrated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 10,
+              "y1": 12,
+              "x0": 20,
+              "x1": 23
+            },
+            "assertions": [
+              "report['shape']==(2,3,3)",
+              "np.array_equal(roi,rgb[10:12,20:23])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Report width, height and mean RGB display-code values, explicitly flagging them as not raw fluorescence.",
+          "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in export a traceable roi inspection script?",
+          "check": "Use current input names and explicit image axes; do not hardcode the example for export a traceable roi inspection script."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "From credited RGB file select channel_index and a rectangle. Report {'source_bounds':(top,left,bottom,right),'n_display_pixels':N,'raw_data':False}. Print report.",
+        "starter_code": "# I02-CAPSTONE | PROVE | Export a traceable ROI inspection script\n# TASK: From credited RGB file select channel_index and a rectangle. Report\n#   {'source_bounds':(top,left,bottom,right),'n_display_pixels':N,'raw_data':False}.\n#   Print report.\n# INPUTS: image_path, channel_index, top, bottom, left, right\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "channel_index": 1,
+          "top": 2,
+          "bottom": 12,
+          "left": 4,
+          "right": 9
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "channel_index": 1,
+              "top": 2,
+              "bottom": 12,
+              "left": 4,
+              "right": 9
+            },
+            "assertions": [
+              "report['source_bounds']==(2,4,12,9)",
+              "report['n_display_pixels']==50",
+              "report['raw_data'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "channel_index": 0,
+              "top": 0,
+              "bottom": 4,
+              "left": 0,
+              "right": 2
+            },
+            "assertions": [
+              "report['n_display_pixels']==8",
+              "report['raw_data'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "channel_index": 2,
+              "top": 10,
+              "bottom": 13,
+              "left": 20,
+              "right": 30
+            },
+            "assertions": [
+              "report['n_display_pixels']==30",
+              "crop.ndim==2"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Report width, height and mean RGB display-code values, explicitly flagging them as not raw fluorescence.",
+          "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in export a traceable roi inspection script?",
+          "check": "Use current input names and explicit image axes; do not hardcode the example for export a traceable roi inspection script."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "First identify source shape, index order and required output.",
+        "Preserve input data; do not convert invented calibration into biological measurement."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check image axes and calibration input.",
+      "IndexError": "Check zero-based row/column indexing and ROI bounds.",
+      "FileNotFoundError": "The credited source must load; no synthetic fallback is permitted.",
+      "TypeError": "Read the TIFF description and array shape explicitly.",
+      "hardcoded": "Changed inputs must alter the selected image region or data report."
+    },
+    "reflection_prompts": [
+      "What was the source image and its raw-data status?",
+      "How were row/column axes established?",
+      "Which measurements require verified pixel calibration?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Changed-input public practice",
+      "prove": "Transfer, not certified mastery"
+    },
+    "build_steps": [
+      "Open the credited source and inspect its actual RGB dimensions.",
+      "Select a precise ROI with exclusive upper bounds.",
+      "Copy the ROI to avoid mutating the source array.",
+      "Report pixel-only statistics and explicit noncalibrated status.",
+      "Reconstruct on a changed rectangle in Prove."
+    ],
+    "assessment": {
+      "code": "PUBLIC_REAL_PYTHON_CHECKS",
+      "scientific": "NOT_CALIBRATED_RAW",
+      "local": "MANUAL_TIFF_VALIDATION"
+    }
+  },
+  "review": {
+    "id": "I02-REVIEW",
+    "title": "Reconstruct crop geometry without a solution",
+    "competencies": [],
+    "why": "A delayed independent attempt should retain coordinate and provenance reasoning.",
+    "explain": [
+      "Rebuild a crop from new bounds without using code from prior examples.",
+      "Report a pixel count and preserve the source image rather than claiming biological detection.",
+      "Use synthetic calibrated geometry only for the explicit toy examples, not for the HPA figure."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the displayed output and its scientific limitation."
+    },
+    "prediction_answer": "Use declared axes and given source; no result verifies raw-fluorescence calibration.",
+    "walkthrough": [
+      "Identify array shape, declared axes, image source and the requested output.",
+      "Predict the example, run it in real Python and change a bound or record.",
+      "Explain which result is data processing and which biological conclusion is unsupported."
+    ],
+    "investigate": [
+      "Try alternative bounds or empty inputs when the contract permits.",
+      "Compare a view and a copy or inspect a TIFF tag explicitly.",
+      "State what calibration and source information would be necessary for real microscopy."
+    ],
+    "debug_task": "Diagnose one mistake in reconstruct crop geometry without a solution and demonstrate how changed-input Python checks would detect it.",
+    "misconception": "A PNG or synthetic TIFF automatically provides correct raw microscope units and acquisition metadata.",
+    "scientific_boundary": "Published HPA/Witz notebook PNG is authentic visual content but not calibrated raw fluorescence; the in-memory TIFF examples are synthetic, and their OME text is a claim, not validated OME metadata.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and investigate",
+        "description": "Recall from memory without opening earlier code.",
+        "starter_code": "# I02-REVIEW | LEARN | Reconstruct crop geometry without a solution\n# TASK: Recall from memory without opening earlier code.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed data",
+        "description": "Write pseudocode comments to check source dimensions, record ROI bounds and avoid altering source.",
+        "starter_code": "# I02-REVIEW | APPLY | Reconstruct crop geometry without a solution\n# TASK: Write pseudocode comments to check source dimensions, record ROI bounds\n#   and avoid altering source.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Report a pixel count and preserve the source image rather than claiming biological detection.",
+          "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in reconstruct crop geometry without a solution?",
+          "check": "Use current input names and explicit image axes; do not hardcode the example for reconstruct crop geometry without a solution."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "From rgb image_path make selected crop defined by y_start,x_start,height,width; report selected_shape and pixel_count. Set calibrated=False.",
+        "starter_code": "# I02-REVIEW | PROVE | Reconstruct crop geometry without a solution\n# TASK: From rgb image_path make selected crop defined by\n#   y_start,x_start,height,width; report selected_shape and pixel_count. Set\n#   calibrated=False.\n# INPUTS: image_path, y_start, x_start, height, width\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "y_start": 1,
+          "x_start": 4,
+          "height": 3,
+          "width": 5
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y_start": 1,
+              "x_start": 4,
+              "height": 3,
+              "width": 5
+            },
+            "assertions": [
+              "selected_shape==(3,5,3)",
+              "pixel_count==45",
+              "calibrated is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y_start": 0,
+              "x_start": 0,
+              "height": 2,
+              "width": 2
+            },
+            "assertions": [
+              "selected_shape==(2,2,3)",
+              "pixel_count==12"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y_start": 10,
+              "x_start": 12,
+              "height": 4,
+              "width": 3
+            },
+            "assertions": [
+              "selected_shape==(4,3,3)",
+              "pixel_count==36"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Report a pixel count and preserve the source image rather than claiming biological detection.",
+          "probe": "What could go wrong if coordinate conventions, TIFF provenance or calibration were assumed in reconstruct crop geometry without a solution?",
+          "check": "Use current input names and explicit image axes; do not hardcode the example for reconstruct crop geometry without a solution."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check image axes and calibration input.",
+      "IndexError": "Check zero-based row/column indexing and ROI bounds.",
+      "FileNotFoundError": "The credited source must load; no synthetic fallback is permitted.",
+      "TypeError": "Read the TIFF description and array shape explicitly.",
+      "hardcoded": "Changed inputs must alter the selected image region or data report."
+    },
+    "reflection_prompts": [
+      "What was the source image and its raw-data status?",
+      "How were row/column axes established?",
+      "Which measurements require verified pixel calibration?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Changed-input public practice",
+      "prove": "Transfer, not certified mastery"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "inspect_image_roi.py",
+    "brief": "Export a traceable source-image crop report with pixel-only geometry and honest source limitations.",
+    "status": "BROWSER_LEARNING_PILOT_RAW_OME_TRANSFER_PENDING"
+  }
+}
