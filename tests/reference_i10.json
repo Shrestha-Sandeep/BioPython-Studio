@@ -1,0 +1,34 @@
+{
+  "I10-G01": {
+    "apply": "import numpy as np\na=np.asarray(data['before'],float);b=np.asarray(data['after'],float)\nresult=(np.linalg.norm(b-a,axis=1)*data['pixel_um']/data['dt']).tolist()\nprint(str(result)[:450])",
+    "prove": "import numpy as np\na=np.asarray(sample['before'],float);b=np.asarray(sample['after'],float)\nresult=np.linalg.norm(b-a,axis=1).tolist()\nprint(str(result)[:450])"
+  },
+  "I10-G02": {
+    "apply": "import numpy as np\na=np.asarray(data['after'],float);p=np.asarray(data['before'][0],float)\nd=np.linalg.norm(a-p,axis=1);order=np.argsort(d)\nresult={'nearest':int(order[0]),'ambiguous':bool(len(order)>1 and d[order[1]]-d[order[0]]<=0.5)}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nd=np.linalg.norm(np.asarray(sample['after'],float)-np.asarray(sample['before'][0],float),axis=1)\nresult=[int(i) for i in np.flatnonzero(d<=sample['radius'])]\nprint(str(result)[:450])"
+  },
+  "I10-G03": {
+    "apply": "import numpy as np\nresult={'image_id':data['image_id'],'annotator':data['annotator'],'shape':tuple(np.asarray(data['truth']).shape),'axis_order':'yx','version':1}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nh,w=np.asarray(sample['truth']).shape\nok=all(len(p)==2 and all(isinstance(v,int) for v in p) and 0<=p[0]<h and 0<=p[1]<w for p in sample['annotations'])\nresult={'valid':bool(ok),'count':len(sample['annotations'])}\nprint(str(result)[:450])"
+  },
+  "I10-G04": {
+    "apply": "import numpy as np\np=np.asarray(data['pred'],bool);t=np.asarray(data['truth'],bool)\ninter=int((p&t).sum());union=int((p|t).sum());npred=int(p.sum())\nresult={'iou':inter/union if union else 1.0,'precision':inter/npred if npred else (1.0 if not t.any() else 0.0)}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\np=np.asarray(sample['pred'],bool);t=np.asarray(sample['truth'],bool);tp=int((p&t).sum())\nsize=int(p.sum()+t.sum());positives=int(t.sum())\nresult={'dice':2*tp/size if size else 1.0,'recall':tp/positives if positives else (1.0 if not p.any() else 0.0)}\nprint(str(result)[:450])"
+  },
+  "I10-G05": {
+    "apply": "import numpy as np\nfrom scipy.spatial.distance import cdist\nfrom scipy.optimize import linear_sum_assignment\np=np.asarray(data['after'],float);t=np.asarray(data['before'],float)\nd=cdist(p,t);ri,ci=linear_sum_assignment(d)\ntp=int(sum(d[i,j]<=data['radius'] for i,j in zip(ri,ci)))\nresult={'tp':tp,'fp':len(p)-tp,'fn':len(t)-tp}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nfrom scipy.spatial.distance import cdist\nfrom scipy.optimize import linear_sum_assignment\np=np.asarray(sample['after'],float);t=np.asarray(sample['before'],float);d=cdist(p,t)\nr,c=linear_sum_assignment(d);tp=int(sum(d[i,j]<=sample['radius'] for i,j in zip(r,c)))\nresult={'precision':tp/len(p) if len(p) else (1.0 if len(t)==0 else 0.0),'recall':tp/len(t) if len(t) else (1.0 if len(p)==0 else 0.0)}\nprint(str(result)[:450])"
+  },
+  "I10-G06": {
+    "apply": "import numpy as np\na=np.asarray(data['image'],float);t=np.asarray(data['truth'],bool)\ndef iou(p):\n    union=int((p|t).sum());return float((p&t).sum()/union) if union else 1.0\nresult=[iou(a>v) for v in (data['threshold']-10,data['threshold'],data['threshold']+10)]\nprint(str(result)[:450])",
+    "prove": "import numpy as np\na=np.asarray(sample['image'],float);t=np.asarray(sample['truth'],bool);edited=a.copy();edited[0,0]=max(float(edited.max()),sample['threshold']+50)\ndef j(p):\n    u=int((p|t).sum());return float((p&t).sum()/u) if u else 1.0\nresult={'original':j(a>sample['threshold']),'artifact':j(edited>sample['threshold'])}\nprint(str(result)[:450])"
+  },
+  "I10-CAPSTONE": {
+    "apply": "import numpy as np\np=np.asarray(data['pred'],bool);t=np.asarray(data['truth'],bool);u=int((p|t).sum())\niou=float((p&t).sum()/u) if u else 1.0\nv=np.linalg.norm(np.asarray(data['after'],float)-np.asarray(data['before'],float),axis=1)\nresult={'iou':iou,'mean_speed':float(v.mean()*data['pixel_um']/data['dt']),'provenance':'synthetic'}\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy.spatial.distance import cdist\nfrom scipy.optimize import linear_sum_assignment\nd=cdist(np.asarray(sample['after'],float),np.asarray(sample['before'],float))\nr,c=linear_sum_assignment(d);tp=int(sum(d[i,j]<=sample['radius'] for i,j in zip(r,c)))\nresult={'matched':tp,'unmatched_new':len(sample['after'])-tp,'unmatched_old':len(sample['before'])-tp,'validated':False}\nprint(result)"
+  },
+  "I10-REVIEW": {
+    "apply": "",
+    "prove": "import numpy as np\np=np.asarray(sample['pred'],bool);t=np.asarray(sample['truth'],bool)\nu=int((p|t).sum());s=int(p.sum()+t.sum());tp=int((p&t).sum())\nresult={'iou':tp/u if u else 1.0,'dice':2*tp/s if s else 1.0}\nprint(result)"
+  }
+}
