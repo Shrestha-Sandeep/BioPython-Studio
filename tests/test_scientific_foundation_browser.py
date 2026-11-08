@@ -55,6 +55,8 @@ def main():
             assert page.locator("#bps-chapter-select option").count()==6
             assert page.locator("#bps-chapter-select").input_value()=="I01"
             assert page.locator("#image-panel").is_visible()
+            page.wait_for_function("document.querySelector(\'#image-meta\')?.textContent.includes(\'Witz-HPA-rendered-RGB-example.png\')",timeout=20000)
+            assert page.locator("#image-empty").is_hidden()
 
             for cid in IDS:
                 page.locator("#bps-chapter-select").select_option(cid)
@@ -118,8 +120,9 @@ def main():
                 mobile.locator("#bps-chapter-select").wait_for(state="attached",timeout=25000)
                 if width<=720:mobile.locator("#nav-toggle").click()
                 mobile.locator('[data-stage="Microscopy"]').click()
-                if width<=720:mobile.locator("#nav-toggle").click()
+                assert mobile.locator("#nav-toggle").get_attribute("aria-expanded")=="false"
                 assert mobile.locator("#bps-chapter-select").input_value()=="I01"
+                mobile.wait_for_function("document.querySelector(\'#image-meta\')?.textContent.includes(\'Witz-HPA-rendered-RGB-example.png\')",timeout=20000)
                 assert mobile.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),width
                 mobile.screenshot(path=str(images/f"scientific-{width}.png"),full_page=True)
                 mobile.close()
