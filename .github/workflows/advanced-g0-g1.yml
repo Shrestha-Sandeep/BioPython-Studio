@@ -29,11 +29,11 @@ jobs:
           python -m pip install -r projects/advanced/requirements.txt
       - name: Full advanced and frozen inventory contracts
         run: |
-          python -m pytest -q tests/test_advanced_g0_contract.py tests/test_advanced_image_audit.py tests/test_advanced_segmentation_validation.py
+          python -m pytest -q tests/test_advanced_g0_contract.py tests/test_advanced_image_audit.py tests/test_advanced_segmentation_validation.py tests/test_advanced_bbbc038_official.py
       - name: CLI and bytecode smoke
         run: |
           python projects/advanced/a01/image_audit.py --help
           python -m projects.advanced.a02.run_tiff --help
           python -m projects.advanced.a02.sensitivity --help
           python -m projects.advanced.a03.benchmark --help
-          python -m py_compile projects/advanced/a01/image_audit.py projects/advanced/a02/segmentation.py projects/advanced/a02/run_tiff.py projects/advanced/a02/sensitivity.py projects/advanced/a03/dataset.py projects/advanced/a03/metrics.py projects/advanced/a03/benchmark.py
+          python -m py_compile projects/advanced/a01/image_audit.py projects/advanced/a02/segmentation.py projects/advanced/a02/run_tiff.py projects/advanced/a02/sensitivity.py projects/advanced/a03/dataset.py projects/advanced/a03/metrics.py projects/advanced/a03/benchmark.py projects/advanced/a03/prepare_bbbc038.py projects/advanced/a03/run_official_bbbc038.py
