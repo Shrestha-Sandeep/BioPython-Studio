@@ -1,0 +1,34 @@
+{
+  "I05-G01": {
+    "apply": "import numpy as np\na=np.asarray(data['image'],float)\nbg=float(np.percentile(a,data['percentile']))\nresult={'background':bg,'corrected':np.maximum(a-bg,0)}\nprint(str(result)[:500])",
+    "prove": "import numpy as np\na=np.asarray(sample['image'],float)\nborder=np.concatenate((a[0,:],a[-1,:],a[1:-1,0],a[1:-1,-1]))\nbg=float(np.median(border))\nresult={'background':bg,'corrected':np.maximum(a-bg,0)}\nprint(str(result)[:500])"
+  },
+  "I05-G02": {
+    "apply": "import numpy as np\nfrom skimage.filters import gaussian\na=np.asarray(data['image'],dtype=float)\nresult=gaussian(a,sigma=data['sigma'],preserve_range=True)\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage.filters import gaussian\na=np.asarray(sample['image'],float)\nresult=gaussian(a,sigma=1.5*sample['sigma'],preserve_range=True)\nprint(str(result)[:500])"
+  },
+  "I05-G03": {
+    "apply": "import numpy as np\nfrom skimage import filters,morphology\na=np.asarray(data['image'],float)\nresult={'median':filters.median(a,footprint=morphology.disk(1)),'gaussian':filters.gaussian(a,sigma=data['sigma'],preserve_range=True)}\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage import filters,morphology\na=np.asarray(sample['image'],float)\nf=filters.median(a,footprint=morphology.disk(1))\nresult={'pixels':f,'shape_ok':f.shape==a.shape}\nprint(str(result)[:500])"
+  },
+  "I05-G04": {
+    "apply": "import numpy as np\na=np.asarray(data['image'],float)\nresult=a>data['threshold']\nprint(str(result)[:500])",
+    "prove": "import numpy as np\na=np.asarray(sample['image'],float)\nresult=a>=sample['threshold']\nprint(str(result)[:500])"
+  },
+  "I05-G05": {
+    "apply": "import numpy as np\nfrom skimage.filters import threshold_otsu\na=np.asarray(data['image'],float)\nt=float(threshold_otsu(a))\nresult={'threshold':t,'mask':a>t}\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage.filters import threshold_otsu\na=np.asarray(sample['image'],float)\nt=float(threshold_otsu(a));q=float(np.percentile(a,sample['percentile']))\nresult={'otsu':t,'percentile':q,'counts':(int((a>t).sum()),int((a>q).sum()))}\nprint(str(result)[:500])"
+  },
+  "I05-G06": {
+    "apply": "import numpy as np\na=np.asarray(data['image'],float)\nresult=[int((a>t).sum()) for t in (data['threshold']-15,data['threshold'],data['threshold']+15)]\nprint(str(result)[:500])",
+    "prove": "import numpy as np\na=np.asarray(sample['image'],float)\na1=a>sample['threshold'];a2=a>(sample['threshold']+20)\nunion=int((a1|a2).sum())\nresult={'iou':float((a1&a2).sum()/union) if union else 1.0,'area_change':int(a1.sum()-a2.sum())}\nprint(str(result)[:500])"
+  },
+  "I05-CAPSTONE": {
+    "apply": "from PIL import Image\nimport numpy as np\nim=np.asarray(Image.open(image_path).convert('RGB'))\nroi=im[y0:y0+32,x0:x0+32,component]\nresult={'count':int((roi>threshold).sum()),'area':int(roi.size),'calibrated':False}\nprint(result)",
+    "prove": "from PIL import Image\nimport numpy as np\nim=np.asarray(Image.open(image_path).convert('RGB'))\nroi=im[top:top+32,left:left+32,band]\nresult={'low':int((roi>low).sum()),'high':int((roi>high).sum()),'raw':False}\nprint(result)"
+  },
+  "I05-REVIEW": {
+    "apply": "",
+    "prove": "import numpy as np\na=np.asarray(sample['image'],float)\nresult={'count_low':int((a>sample['threshold']-10).sum()),'count_high':int((a>sample['threshold']+10).sum())}\nprint(result)"
+  }
+}
