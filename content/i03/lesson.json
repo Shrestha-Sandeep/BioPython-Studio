@@ -1,0 +1,2385 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I03",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_NUMPY_ROI",
+  "title": "Calculate useful pixel measurements",
+  "competencies": [
+    "042",
+    "043",
+    "044",
+    "045",
+    "046",
+    "047",
+    "048",
+    "049",
+    "050",
+    "078"
+  ],
+  "intro": "Learn NumPy vectorization, broadcasting, Boolean masks, source-preserving transformations, axis aggregation, missingness, percentiles, seeded simulation, dtype overflow and ROI summaries. Credited Witz/HPA published PNG is used as real display-pixel context, never raw calibrated fluorescence.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/02-Images_as_arrays.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "REAL_RENDERED_IMAGE_AND_SYNTHETIC_NUMERIC_EXERCISES",
+    "caution": "Thresholds and ROI means computed on synthetic values or rendered RGB do not identify verified nuclei, exophers or fluorescent intensity."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove using genuine NumPy arrays and source-preserving code.",
+  "goals": [
+    {
+      "id": "I03-G01",
+      "title": "Use vectorized NumPy operations",
+      "competencies": [
+        "042"
+      ],
+      "why": "Pixel-wise transformations should operate on arrays rather than hardcoded scalar loops.",
+      "explain": [
+        "NumPy ufuncs such as `np.sqrt` and array arithmetic apply to all elements and preserve shape.",
+        "A mathematical transform can change a signal scale. It should not silently rewrite the original pixel array.",
+        "Never interpret a transformed display pixel as calibrated fluorescence merely because a formula is mathematically correct."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nx=np.asarray([1,4,9],dtype=float)\nprint(np.sqrt(x).tolist())",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in use vectorized numpy operations and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G01 | LEARN | Use vectorized NumPy operations\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\nx=np.asarray([1,4,9],dtype=float)\nprint(np.sqrt(x).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Convert values to float NumPy arr, set transformed=arr*factor+offset and root=np.sqrt(np.clip(arr,0,None)). Preserve values.",
+          "starter_code": "# I03-G01 | APPLY | Use vectorized NumPy operations\n# TASK: Convert values to float NumPy arr, set transformed=arr*factor+offset and\n#   root=np.sqrt(np.clip(arr,0,None)). Preserve values.\n# INPUTS: values, factor, offset\n\n",
+          "preview_inputs": {
+            "values": [
+              1,
+              4,
+              9
+            ],
+            "factor": 2,
+            "offset": 1
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "values": [
+                  1,
+                  4,
+                  9
+                ],
+                "factor": 2,
+                "offset": 1
+              },
+              "assertions": [
+                "np.allclose(transformed,[3,9,19])",
+                "np.allclose(root,[1,2,3])"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  0,
+                  -1,
+                  16
+                ],
+                "factor": 1,
+                "offset": 0
+              },
+              "assertions": [
+                "np.allclose(transformed,[0,-1,16])",
+                "np.allclose(root,[0,0,4])"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [],
+                "factor": 3,
+                "offset": 0
+              },
+              "assertions": [
+                "transformed.size==0",
+                "root.size==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A mathematical transform can change a signal scale. It should not silently rewrite the original pixel array.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of use vectorized numpy operations?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in use vectorized numpy operations."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Calculate measured=np.asarray(counts,dtype=float), corrected=np.maximum(measured-background,0), and ratio=corrected/reference for positive reference; otherwise ratio=np.full_like(corrected,np.nan).",
+          "starter_code": "# I03-G01 | PROVE | Use vectorized NumPy operations\n# TASK: Calculate measured=np.asarray(counts,dtype=float),\n#   corrected=np.maximum(measured-background,0), and ratio=corrected/reference\n#   for positive reference; otherwise ratio=np.full_like(corrected,np.nan).\n# INPUTS: counts, background, reference\n\n",
+          "preview_inputs": {
+            "counts": [
+              10,
+              5,
+              0
+            ],
+            "background": 2,
+            "reference": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "counts": [
+                  10,
+                  5,
+                  0
+                ],
+                "background": 2,
+                "reference": 4
+              },
+              "assertions": [
+                "np.allclose(corrected,[8,3,0])",
+                "np.allclose(ratio,[2,.75,0])"
+              ]
+            },
+            {
+              "inputs": {
+                "counts": [
+                  1,
+                  2
+                ],
+                "background": 5,
+                "reference": 2
+              },
+              "assertions": [
+                "np.allclose(corrected,[0,0])"
+              ]
+            },
+            {
+              "inputs": {
+                "counts": [
+                  5
+                ],
+                "background": 0,
+                "reference": 0
+              },
+              "assertions": [
+                "np.isnan(ratio).all()"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A mathematical transform can change a signal scale. It should not silently rewrite the original pixel array.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of use vectorized numpy operations?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in use vectorized numpy operations."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G02",
+      "title": "Apply broadcasting with known axes",
+      "competencies": [
+        "043"
+      ],
+      "why": "Subtracting a per-channel background from the wrong axis can corrupt measurements even without raising an error.",
+      "explain": [
+        "Broadcasting expands compatible dimensions; for a rows×channels table, a 1D channel background aligns with the final dimension.",
+        "A `(rows,1)` divisor or offset applies per row instead. Shape annotations and explicit `[:,None]` reduce mistakes.",
+        "Validate the biological meaning of axes before applying the mathematically allowed broadcasting rule."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nimg=np.array([[10,20],[30,40]])\nprint((img-np.array([1,2])).tolist())",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in apply broadcasting with known axes and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G02 | LEARN | Apply broadcasting with known axes\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\nimg=np.array([[10,20],[30,40]])\nprint((img-np.array([1,2])).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Given data rows×channels and channel_background of matching final dimension, create corrected=np.maximum(np.asarray(data)-np.asarray(channel_background),0) and corrected_shape.",
+          "starter_code": "# I03-G02 | APPLY | Apply broadcasting with known axes\n# TASK: Given data rows×channels and channel_background of matching final\n#   dimension, create\n#   corrected=np.maximum(np.asarray(data)-np.asarray(channel_background),0) and\n#   corrected_shape.\n# INPUTS: data, channel_background\n\n",
+          "preview_inputs": {
+            "data": [
+              [
+                10,
+                20
+              ],
+              [
+                30,
+                40
+              ]
+            ],
+            "channel_background": [
+              2,
+              5
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": [
+                  [
+                    10,
+                    20
+                  ],
+                  [
+                    30,
+                    40
+                  ]
+                ],
+                "channel_background": [
+                  2,
+                  5
+                ]
+              },
+              "assertions": [
+                "corrected.tolist()==[[8,15],[28,35]]",
+                "corrected_shape==(2,2)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": [
+                  [
+                    1,
+                    2,
+                    3
+                  ]
+                ],
+                "channel_background": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "assertions": [
+                "corrected.tolist()==[[0,1,2]]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": [
+                  [
+                    0,
+                    5
+                  ],
+                  [
+                    5,
+                    0
+                  ],
+                  [
+                    7,
+                    7
+                  ]
+                ],
+                "channel_background": [
+                  2,
+                  1
+                ]
+              },
+              "assertions": [
+                "corrected.shape==(3,2)",
+                "corrected.tolist()[0]==[0,4]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A `(rows,1)` divisor or offset applies per row instead. Shape annotations and explicit `[:,None]` reduce mistakes.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of apply broadcasting with known axes?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in apply broadcasting with known axes."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given table rows and positive row_factors, divide each row by its factor using [:,None]. Set normalized and source_shape; do not divide columns by the wrong axis.",
+          "starter_code": "# I03-G02 | PROVE | Apply broadcasting with known axes\n# TASK: Given table rows and positive row_factors, divide each row by its factor\n#   using [:,None]. Set normalized and source_shape; do not divide columns by\n#   the wrong axis.\n# INPUTS: table, row_factors\n\n",
+          "preview_inputs": {
+            "table": [
+              [
+                4,
+                8
+              ],
+              [
+                9,
+                12
+              ]
+            ],
+            "row_factors": [
+              2,
+              3
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "table": [
+                  [
+                    4,
+                    8
+                  ],
+                  [
+                    9,
+                    12
+                  ]
+                ],
+                "row_factors": [
+                  2,
+                  3
+                ]
+              },
+              "assertions": [
+                "np.allclose(normalized,[[2,4],[3,4]])",
+                "source_shape==(2,2)"
+              ]
+            },
+            {
+              "inputs": {
+                "table": [
+                  [
+                    0,
+                    2
+                  ],
+                  [
+                    8,
+                    4
+                  ]
+                ],
+                "row_factors": [
+                  1,
+                  4
+                ]
+              },
+              "assertions": [
+                "np.allclose(normalized,[[0,2],[2,1]])"
+              ]
+            },
+            {
+              "inputs": {
+                "table": [
+                  [
+                    20
+                  ]
+                ],
+                "row_factors": [
+                  5
+                ]
+              },
+              "assertions": [
+                "normalized.shape==(1,1)",
+                "float(normalized[0,0])==4"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A `(rows,1)` divisor or offset applies per row instead. Shape annotations and explicit `[:,None]` reduce mistakes.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of apply broadcasting with known axes?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in apply broadcasting with known axes."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G03",
+      "title": "Make Boolean masks that respect missingness",
+      "competencies": [
+        "044"
+      ],
+      "why": "A missing score must not be silently treated as a failed biological sample or a real zero measurement.",
+      "explain": [
+        "A Boolean mask is an array of True/False positions. Conditions can be combined with `&` and parentheses.",
+        "Convert optional numeric values to float and use `np.isfinite` before threshold comparison; None becomes NaN in an appropriate float array.",
+        "A threshold identifies numerical candidates only; it is not a validated object classifier."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nvalues=np.array([.9,np.nan,.5])\nmask=np.isfinite(values)&(values>=.8)\nprint(mask.tolist())",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in make boolean masks that respect missingness and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G03 | LEARN | Make Boolean masks that respect missingness\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\nvalues=np.array([.9,np.nan,.5])\nmask=np.isfinite(values)&(values>=.8)\nprint(mask.tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Convert scores with None to float array. Build valid=np.isfinite(arr), mask=valid & (arr>=minimum), and selected_indices=np.flatnonzero(mask).tolist().",
+          "starter_code": "# I03-G03 | APPLY | Make Boolean masks that respect missingness\n# TASK: Convert scores with None to float array. Build valid=np.isfinite(arr),\n#   mask=valid & (arr>=minimum), and\n#   selected_indices=np.flatnonzero(mask).tolist().\n# INPUTS: scores, minimum\n\n",
+          "preview_inputs": {
+            "scores": [
+              0.8,
+              null,
+              0.5
+            ],
+            "minimum": 0.8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "scores": [
+                  0.8,
+                  null,
+                  0.5
+                ],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "mask.tolist()==[True,False,False]",
+                "selected_indices==[0]"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [
+                  null,
+                  0,
+                  1
+                ],
+                "minimum": 0
+              },
+              "assertions": [
+                "selected_indices==[1,2]"
+              ]
+            },
+            {
+              "inputs": {
+                "scores": [],
+                "minimum": 0.8
+              },
+              "assertions": [
+                "selected_indices==[]",
+                "mask.size==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Convert optional numeric values to float and use `np.isfinite` before threshold comparison; None becomes NaN in an appropriate float array.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of make boolean masks that respect missingness?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in make boolean masks that respect missingness."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From intensity_rows build image array. Create mask for pixels strictly greater than cutoff and set foreground_count=int(mask.sum()) and foreground_fraction=mask.mean() (0 if empty).",
+          "starter_code": "# I03-G03 | PROVE | Make Boolean masks that respect missingness\n# TASK: From intensity_rows build image array. Create mask for pixels strictly\n#   greater than cutoff and set foreground_count=int(mask.sum()) and\n#   foreground_fraction=mask.mean() (0 if empty).\n# INPUTS: intensity_rows, cutoff\n\n",
+          "preview_inputs": {
+            "intensity_rows": [
+              [
+                0,
+                2,
+                3
+              ],
+              [
+                1,
+                4,
+                5
+              ]
+            ],
+            "cutoff": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "intensity_rows": [
+                  [
+                    0,
+                    2,
+                    3
+                  ],
+                  [
+                    1,
+                    4,
+                    5
+                  ]
+                ],
+                "cutoff": 2
+              },
+              "assertions": [
+                "mask.tolist()==[[False,False,True],[False,True,True]]",
+                "foreground_count==3",
+                "foreground_fraction==.5"
+              ]
+            },
+            {
+              "inputs": {
+                "intensity_rows": [
+                  [
+                    0,
+                    0
+                  ]
+                ],
+                "cutoff": 0
+              },
+              "assertions": [
+                "foreground_count==0",
+                "foreground_fraction==0"
+              ]
+            },
+            {
+              "inputs": {
+                "intensity_rows": [
+                  [
+                    5
+                  ]
+                ],
+                "cutoff": 5
+              },
+              "assertions": [
+                "foreground_count==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Convert optional numeric values to float and use `np.isfinite` before threshold comparison; None becomes NaN in an appropriate float array.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of make boolean masks that respect missingness?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in make boolean masks that respect missingness."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G04",
+      "title": "Apply masked edits without damaging sources",
+      "competencies": [
+        "045"
+      ],
+      "why": "In-place masking can destroy the raw record and undermine reproducibility.",
+      "explain": [
+        "Boolean indexing selects array elements matching a condition. Assignments into a view or shared array can alter source pixels.",
+        "Use `array.copy()` before masking and retain source/processed arrays with clear names.",
+        "Mask values are computed quality rules on numerical data; a selected region is not automatically a validated cell."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\noriginal=np.array([1,9,3])\nprocessed=original.copy();processed[processed<5]=0\nprint(processed.tolist(),original.tolist())",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in apply masked edits without damaging sources and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G04 | LEARN | Apply masked edits without damaging sources\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\noriginal=np.array([1,9,3])\nprocessed=original.copy();processed[processed<5]=0\nprint(processed.tolist(),original.tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Create original from values and cleaned=original.copy(); replace cleaned values below threshold with zero. Set original_untouched=True if original still matches input values.",
+          "starter_code": "# I03-G04 | APPLY | Apply masked edits without damaging sources\n# TASK: Create original from values and cleaned=original.copy(); replace cleaned\n#   values below threshold with zero. Set original_untouched=True if original\n#   still matches input values.\n# INPUTS: values, threshold\n\n",
+          "preview_inputs": {
+            "values": [
+              1,
+              9,
+              3
+            ],
+            "threshold": 5
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "values": [
+                  1,
+                  9,
+                  3
+                ],
+                "threshold": 5
+              },
+              "assertions": [
+                "cleaned.tolist()==[0,9,0]",
+                "original.tolist()==values",
+                "original_untouched is True"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  0,
+                  5,
+                  10
+                ],
+                "threshold": 5
+              },
+              "assertions": [
+                "cleaned.tolist()==[0,5,10]"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [],
+                "threshold": 1
+              },
+              "assertions": [
+                "cleaned.size==0",
+                "original_untouched is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use `array.copy()` before masking and retain source/processed arrays with clear names.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of apply masked edits without damaging sources?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in apply masked edits without damaging sources."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From readings create float array original, repaired=original.copy(); set readings outside valid 0..1 and None to np.nan in repaired. Set invalid_count and preserved boolean.",
+          "starter_code": "# I03-G04 | PROVE | Apply masked edits without damaging sources\n# TASK: From readings create float array original, repaired=original.copy(); set\n#   readings outside valid 0..1 and None to np.nan in repaired. Set\n#   invalid_count and preserved boolean.\n# INPUTS: readings\n\n",
+          "preview_inputs": {
+            "readings": [
+              0.8,
+              1.2,
+              null,
+              -0.1,
+              0
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "readings": [
+                  0.8,
+                  1.2,
+                  null,
+                  -0.1,
+                  0
+                ]
+              },
+              "assertions": [
+                "invalid_count==3",
+                "np.isnan(repaired[1:4]).all()",
+                "preserved is True"
+              ]
+            },
+            {
+              "inputs": {
+                "readings": [
+                  0,
+                  1
+                ]
+              },
+              "assertions": [
+                "invalid_count==0",
+                "preserved is True"
+              ]
+            },
+            {
+              "inputs": {
+                "readings": [
+                  null
+                ]
+              },
+              "assertions": [
+                "invalid_count==1",
+                "np.isnan(repaired[0])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use `array.copy()` before masking and retain source/processed arrays with clear names.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of apply masked edits without damaging sources?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in apply masked edits without damaging sources."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G05",
+      "title": "Aggregate image values over an explicit axis",
+      "competencies": [
+        "046"
+      ],
+      "why": "A channel mean, per-row mean and field mean answer different questions.",
+      "explain": [
+        "NumPy reductions such as `np.mean` collapse a chosen axis, producing a shape based on the remaining axes.",
+        "For `(rows,cols)` data, `axis=0` aggregates down rows to per-column means. `axis=1` aggregates across columns to per-row means.",
+        "Decide the scientific unit before aggregating; microscope fields are not automatically independent replicates."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nm=np.array([[2,4,6],[8,10,12]])\nprint(m.mean(axis=0).tolist())\nprint(m.mean(axis=1).tolist())",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in aggregate image values over an explicit axis and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G05 | LEARN | Aggregate image values over an explicit axis\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\nm=np.array([[2,4,6],[8,10,12]])\nprint(m.mean(axis=0).tolist())\nprint(m.mean(axis=1).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Create arr from matrix and calculate column_means=arr.mean(axis=0), row_means=arr.mean(axis=1) and overall_mean=float(arr.mean()).",
+          "starter_code": "# I03-G05 | APPLY | Aggregate image values over an explicit axis\n# TASK: Create arr from matrix and calculate column_means=arr.mean(axis=0),\n#   row_means=arr.mean(axis=1) and overall_mean=float(arr.mean()).\n# INPUTS: matrix\n\n",
+          "preview_inputs": {
+            "matrix": [
+              [
+                2,
+                4
+              ],
+              [
+                6,
+                8
+              ]
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "matrix": [
+                  [
+                    2,
+                    4
+                  ],
+                  [
+                    6,
+                    8
+                  ]
+                ]
+              },
+              "assertions": [
+                "np.allclose(column_means,[4,6])",
+                "np.allclose(row_means,[3,7])",
+                "overall_mean==5"
+              ]
+            },
+            {
+              "inputs": {
+                "matrix": [
+                  [
+                    0,
+                    0,
+                    3
+                  ]
+                ]
+              },
+              "assertions": [
+                "np.allclose(row_means,[1])",
+                "overall_mean==1"
+              ]
+            },
+            {
+              "inputs": {
+                "matrix": [
+                  [
+                    1
+                  ],
+                  [
+                    3
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              },
+              "assertions": [
+                "np.allclose(column_means,[3])",
+                "np.allclose(row_means,[1,3,5])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For `(rows,cols)` data, `axis=0` aggregates down rows to per-column means. `axis=1` aggregates across columns to per-row means.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of aggregate image values over an explicit axis?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in aggregate image values over an explicit axis."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given stack_data in (fields,rows,cols) order, calculate mean_image=arr.mean(axis=0), field_means=arr.mean(axis=(1,2)), and field_count.",
+          "starter_code": "# I03-G05 | PROVE | Aggregate image values over an explicit axis\n# TASK: Given stack_data in (fields,rows,cols) order, calculate\n#   mean_image=arr.mean(axis=0), field_means=arr.mean(axis=(1,2)), and\n#   field_count.\n# INPUTS: stack_data\n\n",
+          "preview_inputs": {
+            "stack_data": [
+              [
+                [
+                  1,
+                  3
+                ],
+                [
+                  5,
+                  7
+                ]
+              ],
+              [
+                [
+                  2,
+                  4
+                ],
+                [
+                  6,
+                  8
+                ]
+              ]
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      1,
+                      3
+                    ],
+                    [
+                      5,
+                      7
+                    ]
+                  ],
+                  [
+                    [
+                      2,
+                      4
+                    ],
+                    [
+                      6,
+                      8
+                    ]
+                  ]
+                ]
+              },
+              "assertions": [
+                "np.allclose(mean_image,[[1.5,3.5],[5.5,7.5]])",
+                "np.allclose(field_means,[4,5])",
+                "field_count==2"
+              ]
+            },
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      2,
+                      2
+                    ]
+                  ]
+                ]
+              },
+              "assertions": [
+                "np.allclose(field_means,[1])",
+                "field_count==1"
+              ]
+            },
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      10
+                    ]
+                  ]
+                ]
+              },
+              "assertions": [
+                "mean_image.shape==(1,1)",
+                "field_means.shape==(1,)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For `(rows,cols)` data, `axis=0` aggregates down rows to per-column means. `axis=1` aggregates across columns to per-row means.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of aggregate image values over an explicit axis?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in aggregate image values over an explicit axis."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G06",
+      "title": "Handle NaN and missing numerical records",
+      "competencies": [
+        "047"
+      ],
+      "why": "An absent signal measurement must be excluded transparently rather than converted into zero.",
+      "explain": [
+        "None may become NaN in a float NumPy array. `np.isfinite` separates observed numeric values from missing, infinite or invalid entries.",
+        "Compute an arithmetic mean over finite values, explicitly returning `None` when no observations remain.",
+        "The missingness mechanism itself may bias a biological result. A computational mean cannot justify ignoring systematic exclusions."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\narr=np.asarray([2,None,4],dtype=float)\nvalid=arr[np.isfinite(arr)]\nprint(valid.mean())",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in handle nan and missing numerical records and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G06 | LEARN | Handle NaN and missing numerical records\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\narr=np.asarray([2,None,4],dtype=float)\nvalid=arr[np.isfinite(arr)]\nprint(valid.mean())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Convert values to float; compute observed_count, missing_count, and finite_mean=float(mean of finite numbers) or None when none.",
+          "starter_code": "# I03-G06 | APPLY | Handle NaN and missing numerical records\n# TASK: Convert values to float; compute observed_count, missing_count, and\n#   finite_mean=float(mean of finite numbers) or None when none.\n# INPUTS: values\n\n",
+          "preview_inputs": {
+            "values": [
+              2,
+              null,
+              4
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "values": [
+                  2,
+                  null,
+                  4
+                ]
+              },
+              "assertions": [
+                "observed_count==2",
+                "missing_count==1",
+                "finite_mean==3"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  null,
+                  null
+                ]
+              },
+              "assertions": [
+                "observed_count==0",
+                "finite_mean is None",
+                "missing_count==2"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  0,
+                  1,
+                  2
+                ]
+              },
+              "assertions": [
+                "observed_count==3",
+                "finite_mean==1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Compute an arithmetic mean over finite values, explicitly returning `None` when no observations remain.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of handle nan and missing numerical records?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in handle nan and missing numerical records."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given labelled observations [id,value], create accepted_ids for finite numeric values, rejected_ids for None or nonfinite, and mean_value of accepted values or None.",
+          "starter_code": "# I03-G06 | PROVE | Handle NaN and missing numerical records\n# TASK: Given labelled observations [id,value], create accepted_ids for finite\n#   numeric values, rejected_ids for None or nonfinite, and mean_value of\n#   accepted values or None.\n# INPUTS: observations\n\n",
+          "preview_inputs": {
+            "observations": [
+              [
+                "A",
+                0.8
+              ],
+              [
+                "B",
+                null
+              ],
+              [
+                "C",
+                0.6
+              ]
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "observations": [
+                  [
+                    "A",
+                    0.8
+                  ],
+                  [
+                    "B",
+                    null
+                  ],
+                  [
+                    "C",
+                    0.6
+                  ]
+                ]
+              },
+              "assertions": [
+                "accepted_ids==['A','C']",
+                "rejected_ids==['B']",
+                "abs(mean_value-.7)<1e-9"
+              ]
+            },
+            {
+              "inputs": {
+                "observations": [
+                  [
+                    "A",
+                    null
+                  ]
+                ]
+              },
+              "assertions": [
+                "accepted_ids==[]",
+                "mean_value is None"
+              ]
+            },
+            {
+              "inputs": {
+                "observations": [
+                  [
+                    "X",
+                    0
+                  ],
+                  [
+                    "Y",
+                    1
+                  ]
+                ]
+              },
+              "assertions": [
+                "mean_value==.5",
+                "rejected_ids==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Compute an arithmetic mean over finite values, explicitly returning `None` when no observations remain.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of handle nan and missing numerical records?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in handle nan and missing numerical records."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G07",
+      "title": "Use percentiles and ranks responsibly",
+      "competencies": [
+        "048"
+      ],
+      "why": "Different threshold choices can give very different candidate counts on the same field.",
+      "explain": [
+        "`np.percentile` computes an interpolated empirical percentile. It is not automatically the brightest 25% as an integer count.",
+        "Sorting an array reveals ordered values but loses original spatial positions unless indices are kept separately.",
+        "A 75th percentile of pixel values is a numerical criterion, not a universally validated biological segmentation threshold."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nvalues=np.array([0,1,2,3,4])\nprint(np.percentile(values,75))\nprint(np.sort(values).tolist())",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in use percentiles and ranks responsibly and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G07 | LEARN | Use percentiles and ranks responsibly\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\nvalues=np.array([0,1,2,3,4])\nprint(np.percentile(values,75))\nprint(np.sort(values).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "For values numeric, produce sorted_values=np.sort(arr).tolist(), percentile=float(np.percentile(arr,percentile)) and above_count=int((arr>percentile).sum()). Nonempty inputs.",
+          "starter_code": "# I03-G07 | APPLY | Use percentiles and ranks responsibly\n# TASK: For values numeric, produce sorted_values=np.sort(arr).tolist(),\n#   percentile=float(np.percentile(arr,percentile)) and\n#   above_count=int((arr>percentile).sum()). Nonempty inputs.\n# INPUTS: values, percentile\n\n",
+          "preview_inputs": {
+            "values": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "percentile": 75
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "values": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "percentile": 75
+              },
+              "assertions": [
+                "sorted_values==[0,1,2,3,4]",
+                "percentile_value==3",
+                "above_count==1"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  10,
+                  0,
+                  20,
+                  30
+                ],
+                "percentile": 50
+              },
+              "assertions": [
+                "sorted_values==[0,10,20,30]",
+                "percentile_value==15",
+                "above_count==2"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  1,
+                  1,
+                  1
+                ],
+                "percentile": 90
+              },
+              "assertions": [
+                "percentile_value==1",
+                "above_count==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Sorting an array reveals ordered values but loses original spatial positions unless indices are kept separately.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of use percentiles and ranks responsibly?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in use percentiles and ranks responsibly."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For intensities create threshold_value as NumPy percentile at q and candidate_indices from values strictly above that cutoff. Return sorted_indices=np.argsort(arr).tolist().",
+          "starter_code": "# I03-G07 | PROVE | Use percentiles and ranks responsibly\n# TASK: For intensities create threshold_value as NumPy percentile at q and\n#   candidate_indices from values strictly above that cutoff. Return\n#   sorted_indices=np.argsort(arr).tolist().\n# INPUTS: intensities, q\n\n",
+          "preview_inputs": {
+            "intensities": [
+              4,
+              1,
+              8,
+              3
+            ],
+            "q": 50
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "intensities": [
+                  4,
+                  1,
+                  8,
+                  3
+                ],
+                "q": 50
+              },
+              "assertions": [
+                "threshold_value==3.5",
+                "candidate_indices==[0,2]",
+                "sorted_indices==[1,3,0,2]"
+              ]
+            },
+            {
+              "inputs": {
+                "intensities": [
+                  0,
+                  0,
+                  1
+                ],
+                "q": 50
+              },
+              "assertions": [
+                "threshold_value==0",
+                "candidate_indices==[2]"
+              ]
+            },
+            {
+              "inputs": {
+                "intensities": [
+                  5,
+                  7,
+                  9
+                ],
+                "q": 100
+              },
+              "assertions": [
+                "threshold_value==9",
+                "candidate_indices==[]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Sorting an array reveals ordered values but loses original spatial positions unless indices are kept separately.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of use percentiles and ranks responsibly?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in use percentiles and ranks responsibly."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G08",
+      "title": "Use reproducible seeded random simulations",
+      "competencies": [
+        "049"
+      ],
+      "why": "Teaching simulations must be reproducible and clearly distinguished from observed biological experiments.",
+      "explain": [
+        "`np.random.default_rng(seed)` creates a seeded generator; identical seeds and algorithms reproduce identical example draws.",
+        "A new seed changes the simulation but is not a new biological replicate. Record the generator, parameters and model assumptions.",
+        "Synthetic Poisson counts can help learn variability, yet real experiment design and between-sample variation cannot be replaced by simulation."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nrng=np.random.default_rng(17)\nprint(rng.poisson(3,size=5).tolist())",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in use reproducible seeded random simulations and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G08 | LEARN | Use reproducible seeded random simulations\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\nrng=np.random.default_rng(17)\nprint(rng.poisson(3,size=5).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Create rng=np.random.default_rng(seed), draw simulations=rng.poisson(mean_count,size=n), and set reproducible comparing with a new generator same seed.",
+          "starter_code": "# I03-G08 | APPLY | Use reproducible seeded random simulations\n# TASK: Create rng=np.random.default_rng(seed), draw\n#   simulations=rng.poisson(mean_count,size=n), and set reproducible comparing\n#   with a new generator same seed.\n# INPUTS: seed, mean_count, n\n\n",
+          "preview_inputs": {
+            "seed": 17,
+            "mean_count": 3,
+            "n": 5
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "seed": 17,
+                "mean_count": 3,
+                "n": 5
+              },
+              "assertions": [
+                "len(simulations)==5",
+                "reproducible is True",
+                "(simulations>=0).all()"
+              ]
+            },
+            {
+              "inputs": {
+                "seed": 1,
+                "mean_count": 0,
+                "n": 4
+              },
+              "assertions": [
+                "simulations.tolist()==[0,0,0,0]",
+                "reproducible is True"
+              ]
+            },
+            {
+              "inputs": {
+                "seed": 9,
+                "mean_count": 5,
+                "n": 0
+              },
+              "assertions": [
+                "simulations.size==0",
+                "reproducible is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A new seed changes the simulation but is not a new biological replicate. Record the generator, parameters and model assumptions.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of use reproducible seeded random simulations?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in use reproducible seeded random simulations."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Simulate integers with default_rng(seed).integers(low,high,size=n) where high is exclusive. Set draws, same_seed_equal and min_bound_ok, preserving input values.",
+          "starter_code": "# I03-G08 | PROVE | Use reproducible seeded random simulations\n# TASK: Simulate integers with default_rng(seed).integers(low,high,size=n) where\n#   high is exclusive. Set draws, same_seed_equal and min_bound_ok, preserving\n#   input values.\n# INPUTS: seed, low, high, n\n\n",
+          "preview_inputs": {
+            "seed": 42,
+            "low": 0,
+            "high": 10,
+            "n": 6
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "seed": 42,
+                "low": 0,
+                "high": 10,
+                "n": 6
+              },
+              "assertions": [
+                "draws.size==6",
+                "same_seed_equal is True",
+                "min_bound_ok is True"
+              ]
+            },
+            {
+              "inputs": {
+                "seed": 4,
+                "low": 5,
+                "high": 6,
+                "n": 3
+              },
+              "assertions": [
+                "draws.tolist()==[5,5,5]",
+                "same_seed_equal is True"
+              ]
+            },
+            {
+              "inputs": {
+                "seed": 7,
+                "low": 0,
+                "high": 5,
+                "n": 0
+              },
+              "assertions": [
+                "draws.size==0",
+                "min_bound_ok is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A new seed changes the simulation but is not a new biological replicate. Record the generator, parameters and model assumptions.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of use reproducible seeded random simulations?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in use reproducible seeded random simulations."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G09",
+      "title": "Avoid overflow and precision traps",
+      "competencies": [
+        "050"
+      ],
+      "why": "Unsigned image data can wrap around when arithmetic exceeds the storage range.",
+      "explain": [
+        "`uint8` stores 0–255; adding 10 to 250 in uint8 arithmetic wraps instead of producing 260, so promote dtype before arithmetic.",
+        "Use an integer type with sufficient range for sums and a float dtype for noninteger means. Inspect `np.iinfo` and `np.finfo` rather than guessing precision.",
+        "Saturation in a raw detector and overflow in a processed array are distinct problems requiring different diagnostics."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nraw=np.array([250],dtype=np.uint8)\nprint((raw+np.uint8(10)).tolist())\nprint((raw.astype(np.int64)+10).tolist())",
+        "predict": "What does uint8 overflow do at its maximum?"
+      },
+      "prediction_answer": "uint8 arithmetic can wrap; promote dtype before calculating sums or transforms.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in avoid overflow and precision traps and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G09 | LEARN | Avoid overflow and precision traps\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\nraw=np.array([250],dtype=np.uint8)\nprint((raw+np.uint8(10)).tolist())\nprint((raw.astype(np.int64)+10).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Create raw uint8 array from values; set safe_sum=raw.astype(np.int64)+added, wrapped=(raw+np.uint8(added)), and overflow_detected=bool(any difference). Added between 0 and 255.",
+          "starter_code": "# I03-G09 | APPLY | Avoid overflow and precision traps\n# TASK: Create raw uint8 array from values; set\n#   safe_sum=raw.astype(np.int64)+added, wrapped=(raw+np.uint8(added)), and\n#   overflow_detected=bool(any difference). Added between 0 and 255.\n# INPUTS: values, added\n\n",
+          "preview_inputs": {
+            "values": [
+              250,
+              10
+            ],
+            "added": 10
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "values": [
+                  250,
+                  10
+                ],
+                "added": 10
+              },
+              "assertions": [
+                "safe_sum.tolist()==[260,20]",
+                "wrapped.tolist()==[4,20]",
+                "overflow_detected is True"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  0,
+                  100
+                ],
+                "added": 20
+              },
+              "assertions": [
+                "safe_sum.tolist()==[20,120]",
+                "overflow_detected is False"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  255
+                ],
+                "added": 1
+              },
+              "assertions": [
+                "safe_sum.tolist()==[256]",
+                "overflow_detected is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use an integer type with sufficient range for sums and a float dtype for noninteger means. Inspect `np.iinfo` and `np.finfo` rather than guessing precision.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of avoid overflow and precision traps?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in avoid overflow and precision traps."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For uint8 counts create safe_total=int(arr.astype(np.int64).sum()), unsafe_total=int(arr.sum(dtype=np.uint8)), and overflow=unsafe_total != safe_total.",
+          "starter_code": "# I03-G09 | PROVE | Avoid overflow and precision traps\n# TASK: For uint8 counts create safe_total=int(arr.astype(np.int64).sum()),\n#   unsafe_total=int(arr.sum(dtype=np.uint8)), and overflow=unsafe_total !=\n#   safe_total.\n# INPUTS: counts\n\n",
+          "preview_inputs": {
+            "counts": [
+              250,
+              20
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "counts": [
+                  250,
+                  20
+                ]
+              },
+              "assertions": [
+                "safe_total==270",
+                "unsafe_total==14",
+                "overflow is True"
+              ]
+            },
+            {
+              "inputs": {
+                "counts": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "assertions": [
+                "safe_total==6",
+                "unsafe_total==6",
+                "overflow is False"
+              ]
+            },
+            {
+              "inputs": {
+                "counts": [
+                  255,
+                  255
+                ]
+              },
+              "assertions": [
+                "safe_total==510",
+                "overflow is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use an integer type with sufficient range for sums and a float dtype for noninteger means. Inspect `np.iinfo` and `np.finfo` rather than guessing precision.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of avoid overflow and precision traps?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in avoid overflow and precision traps."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    },
+    {
+      "id": "I03-G10",
+      "title": "Quantify a defined ROI without overclaiming",
+      "competencies": [
+        "078"
+      ],
+      "why": "ROI measurements need a documented mask and denominator; selecting pixels does not validate an object.",
+      "explain": [
+        "An ROI mask selects numerical pixels. Mean or sum are defined only for the selected array and the specific channel or data type.",
+        "When no pixels are selected, return None for the mean instead of inventing zero. Keep pixel count separate from number of objects or independent biological samples.",
+        "These lessons use explicitly synthetic small matrices for formula correctness. Real fluorescence requires raw source, validated segmentation and background/calibration."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nimg=np.array([[1,2],[3,4]])\nmask=img>=3\nprint(int(mask.sum()),float(img[mask].mean()))",
+        "predict": "Predict the numerical output and its biological interpretation."
+      },
+      "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+      "walkthrough": [
+        "Identify shape, dtype, mask and denominators before execution.",
+        "Predict the worked result and change one threshold, axis or missing observation.",
+        "Explain whether the data describe real source pixels, synthetic examples or biological units."
+      ],
+      "investigate": [
+        "Try an empty or boundary input when the contract specifies behavior.",
+        "Check how results differ after adjusting an explicit parameter.",
+        "Explain why a candidate mask or field mean is not independently validated biological evidence."
+      ],
+      "debug_task": "Identify a realistic failure in quantify a defined roi without overclaiming and demonstrate a changed-input test that would reveal it.",
+      "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+      "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict and execute the worked NumPy example.",
+          "starter_code": "# I03-G10 | LEARN | Quantify a defined ROI without overclaiming\n# TASK: Predict and execute the worked NumPy example.\n\nimport numpy as np\nimg=np.array([[1,2],[3,4]])\nmask=img>=3\nprint(int(mask.sum()),float(img[mask].mean()))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Convert pixels and same-shaped region_mask to arrays; set selected_count=int(mask.sum()), selected_mean=float(arr[mask].mean()) or None when empty, and selected_sum=float(arr[mask].sum()).",
+          "starter_code": "# I03-G10 | APPLY | Quantify a defined ROI without overclaiming\n# TASK: Convert pixels and same-shaped region_mask to arrays; set\n#   selected_count=int(mask.sum()), selected_mean=float(arr[mask].mean()) or\n#   None when empty, and selected_sum=float(arr[mask].sum()).\n# INPUTS: pixels, region_mask\n\n",
+          "preview_inputs": {
+            "pixels": [
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                4
+              ]
+            ],
+            "region_mask": [
+              [
+                false,
+                false
+              ],
+              [
+                true,
+                true
+              ]
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixels": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    3,
+                    4
+                  ]
+                ],
+                "region_mask": [
+                  [
+                    false,
+                    false
+                  ],
+                  [
+                    true,
+                    true
+                  ]
+                ]
+              },
+              "assertions": [
+                "selected_count==2",
+                "selected_mean==3.5",
+                "selected_sum==7"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": [
+                  [
+                    0
+                  ]
+                ],
+                "region_mask": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "assertions": [
+                "selected_count==0",
+                "selected_mean is None",
+                "selected_sum==0"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": [
+                  [
+                    0,
+                    1
+                  ]
+                ],
+                "region_mask": [
+                  [
+                    true,
+                    true
+                  ]
+                ]
+              },
+              "assertions": [
+                "selected_mean==.5",
+                "selected_count==2"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "When no pixels are selected, return None for the mean instead of inventing zero. Keep pixel count separate from number of objects or independent biological samples.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of quantify a defined roi without overclaiming?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in quantify a defined roi without overclaiming."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For numeric field and cutoff, create mask=(field>=cutoff), set area_pixels, mean_selected (or None), and fraction_selected. Do not call area_pixels a cell count.",
+          "starter_code": "# I03-G10 | PROVE | Quantify a defined ROI without overclaiming\n# TASK: For numeric field and cutoff, create mask=(field>=cutoff), set\n#   area_pixels, mean_selected (or None), and fraction_selected. Do not call\n#   area_pixels a cell count.\n# INPUTS: field, cutoff\n\n",
+          "preview_inputs": {
+            "field": [
+              [
+                0,
+                3,
+                4
+              ],
+              [
+                2,
+                5,
+                1
+              ]
+            ],
+            "cutoff": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field": [
+                  [
+                    0,
+                    3,
+                    4
+                  ],
+                  [
+                    2,
+                    5,
+                    1
+                  ]
+                ],
+                "cutoff": 3
+              },
+              "assertions": [
+                "area_pixels==3",
+                "mean_selected==4",
+                "fraction_selected==.5"
+              ]
+            },
+            {
+              "inputs": {
+                "field": [
+                  [
+                    0,
+                    0
+                  ]
+                ],
+                "cutoff": 1
+              },
+              "assertions": [
+                "area_pixels==0",
+                "mean_selected is None",
+                "fraction_selected==0"
+              ]
+            },
+            {
+              "inputs": {
+                "field": [
+                  [
+                    0,
+                    1
+                  ]
+                ],
+                "cutoff": 0
+              },
+              "assertions": [
+                "area_pixels==2",
+                "mean_selected==.5",
+                "fraction_selected==1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "When no pixels are selected, return None for the mean instead of inventing zero. Keep pixel count separate from number of objects or independent biological samples.",
+            "probe": "How could a changed threshold, missing value, axis or datatype alter the result of quantify a defined roi without overclaiming?",
+            "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in quantify a defined roi without overclaiming."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Inspect dtype, axis shape and validity mask before coding.",
+          "Test the missing, boundary or threshold case independently of the example."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check shape, dtype, threshold and numerical contract.",
+        "TypeError": "Guard None before numeric operations.",
+        "IndexError": "Check shape and array-axis indexing.",
+        "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independent/retained certification"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I03-CAPSTONE",
+    "title": "Build an honest pixel-ROI summary",
+    "competencies": [],
+    "why": "Combine actual image decoding, array masks and numeric summaries without presenting display pixels as calibrated signal.",
+    "explain": [
+      "Decode the credited Witz/HPA notebook PNG and choose a rectangular component crop. Apply a display-code threshold using NumPy.",
+      "Report ROI pixel count, candidate-mask count and mean selected display intensity, and explicitly mark the calculation as uncalibrated.",
+      "Changed thresholds must change numerical results. Neither an RGB mask nor a bright patch is automatically a nucleus or biological replicate."
+    ],
+    "worked_example": {
+      "code": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nplane=rgb[:10,:10,1]\nprint(plane.shape,'display RGB, not raw signal')",
+      "predict": "Predict the numerical output and its biological interpretation."
+    },
+    "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+    "walkthrough": [
+      "Identify shape, dtype, mask and denominators before execution.",
+      "Predict the worked result and change one threshold, axis or missing observation.",
+      "Explain whether the data describe real source pixels, synthetic examples or biological units."
+    ],
+    "investigate": [
+      "Try an empty or boundary input when the contract specifies behavior.",
+      "Check how results differ after adjusting an explicit parameter.",
+      "Explain why a candidate mask or field mean is not independently validated biological evidence."
+    ],
+    "debug_task": "Identify a realistic failure in build an honest pixel-roi summary and demonstrate a changed-input test that would reveal it.",
+    "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+    "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict and execute the worked NumPy example.",
+        "starter_code": "# I03-CAPSTONE | LEARN | Build an honest pixel-ROI summary\n# TASK: Predict and execute the worked NumPy example.\n# INPUTS: image_path\n\nfrom PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nplane=rgb[:10,:10,1]\nprint(plane.shape,'display RGB, not raw signal')\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png"
+        }
+      },
+      "apply": {
+        "title": "Apply to changed inputs",
+        "description": "Decode RGB image_path. Select plane from y0:y1,x0:x1 and channel_index, create mask=(plane>=threshold), set report with area_pixels, selected_mean or None, raw_calibrated=False. Print report.",
+        "starter_code": "# I03-CAPSTONE | APPLY | Build an honest pixel-ROI summary\n# TASK: Decode RGB image_path. Select plane from y0:y1,x0:x1 and channel_index,\n#   create mask=(plane>=threshold), set report with area_pixels, selected_mean\n#   or None, raw_calibrated=False. Print report.\n# INPUTS: image_path, y0, y1, x0, x1, channel_index, threshold\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "y0": 2,
+          "y1": 12,
+          "x0": 3,
+          "x1": 13,
+          "channel_index": 1,
+          "threshold": 128
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 2,
+              "y1": 12,
+              "x0": 3,
+              "x1": 13,
+              "channel_index": 1,
+              "threshold": 128
+            },
+            "assertions": [
+              "report['area_pixels']==int(mask.sum())",
+              "report['raw_calibrated'] is False",
+              "(report['selected_mean'] is None)==(int(mask.sum())==0)"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 0,
+              "y1": 5,
+              "x0": 0,
+              "x1": 10,
+              "channel_index": 0,
+              "threshold": 255
+            },
+            "assertions": [
+              "report['area_pixels']==int(mask.sum())",
+              "plane.shape==(5,10)"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "y0": 10,
+              "y1": 15,
+              "x0": 2,
+              "x1": 8,
+              "channel_index": 2,
+              "threshold": 0
+            },
+            "assertions": [
+              "report['area_pixels']==30",
+              "report['selected_mean']==float(plane.mean())"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Report ROI pixel count, candidate-mask count and mean selected display intensity, and explicitly mark the calculation as uncalibrated.",
+          "probe": "How could a changed threshold, missing value, axis or datatype alter the result of build an honest pixel-roi summary?",
+          "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in build an honest pixel-roi summary."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "From credited RGB image, choose ROI and component, create passed=roi>limit and summary={'n':count,'fraction':fraction,'raw':False}. Print summary; source must remain unmodified.",
+        "starter_code": "# I03-CAPSTONE | PROVE | Build an honest pixel-ROI summary\n# TASK: From credited RGB image, choose ROI and component, create\n#   passed=roi>limit and summary={'n':count,'fraction':fraction,'raw':False}.\n#   Print summary; source must remain unmodified.\n# INPUTS: image_path, top, bottom, left, right, component, limit\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "top": 0,
+          "bottom": 8,
+          "left": 2,
+          "right": 10,
+          "component": 1,
+          "limit": 100
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 0,
+              "bottom": 8,
+              "left": 2,
+              "right": 10,
+              "component": 1,
+              "limit": 100
+            },
+            "assertions": [
+              "summary['n']==int(passed.sum())",
+              "summary['fraction']==float(passed.mean())",
+              "summary['raw'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 1,
+              "bottom": 6,
+              "left": 0,
+              "right": 4,
+              "component": 0,
+              "limit": 255
+            },
+            "assertions": [
+              "summary['n']==0",
+              "summary['raw'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 10,
+              "bottom": 13,
+              "left": 10,
+              "right": 14,
+              "component": 2,
+              "limit": -1
+            },
+            "assertions": [
+              "summary['fraction']==1",
+              "summary['n']==12"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Report ROI pixel count, candidate-mask count and mean selected display intensity, and explicitly mark the calculation as uncalibrated.",
+          "probe": "How could a changed threshold, missing value, axis or datatype alter the result of build an honest pixel-roi summary?",
+          "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in build an honest pixel-roi summary."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Inspect dtype, axis shape and validity mask before coding.",
+        "Test the missing, boundary or threshold case independently of the example."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check shape, dtype, threshold and numerical contract.",
+      "TypeError": "Guard None before numeric operations.",
+      "IndexError": "Check shape and array-axis indexing.",
+      "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+    },
+    "reflection_prompts": [
+      "What actual source was measured?",
+      "What do missingness, thresholds and denominators mean?",
+      "Why is the result not a calibrated biological effect or object count?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer, not independent/retained certification"
+    },
+    "build_steps": [
+      "Decode the credited Witz/HPA rendered image into real NumPy RGB pixels.",
+      "Select a component and explicit pixel ROI without mutating the source.",
+      "Construct a threshold mask and inspect numeric consequences.",
+      "Return a clear summary with source provenance and raw_calibrated False.",
+      "Repeat Prove with changed ROI and threshold without copying the Apply solution."
+    ],
+    "assessment": {
+      "code": "PUBLIC_REAL_PYTHON_INPUT_CASES",
+      "scientific": "NO_CALIBRATED_INTENSITY",
+      "independent": "NOT_AUTO_CERTIFIED"
+    }
+  },
+  "review": {
+    "id": "I03-REVIEW",
+    "title": "Rebuild numerical ROI decisions after a delay",
+    "competencies": [],
+    "why": "Independent practice should transfer array-masking and missingness rules to unfamiliar data.",
+    "explain": [
+      "Use explicit mask and array dtype and verify denominator.",
+      "Keep empty ROI means distinct from a measured zero.",
+      "Independently count numerical candidate pixels without claiming validated biological objects."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the numerical output and its biological interpretation."
+    },
+    "prediction_answer": "The mathematical result follows actual NumPy operations, not an automatic biological inference.",
+    "walkthrough": [
+      "Identify shape, dtype, mask and denominators before execution.",
+      "Predict the worked result and change one threshold, axis or missing observation.",
+      "Explain whether the data describe real source pixels, synthetic examples or biological units."
+    ],
+    "investigate": [
+      "Try an empty or boundary input when the contract specifies behavior.",
+      "Check how results differ after adjusting an explicit parameter.",
+      "Explain why a candidate mask or field mean is not independently validated biological evidence."
+    ],
+    "debug_task": "Identify a realistic failure in rebuild numerical roi decisions after a delay and demonstrate a changed-input test that would reveal it.",
+    "misconception": "A numerical array output or high RGB value automatically identifies true biological signal or independent observations.",
+    "scientific_boundary": "Numerical arrays are synthetic training data except explicitly credited Witz/HPA rendered RGB pixels; no raw calibration, validated object segmentation or independent biological replication.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Recall prior NumPy methods independently.",
+        "starter_code": "# I03-REVIEW | LEARN | Rebuild numerical ROI decisions after a delay\n# TASK: Recall prior NumPy methods independently.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed inputs",
+        "description": "Write pseudocode comments for a numeric ROI report that distinguishes missing data, zeros and object counts.",
+        "starter_code": "# I03-REVIEW | APPLY | Rebuild numerical ROI decisions after a delay\n# TASK: Write pseudocode comments for a numeric ROI report that distinguishes\n#   missing data, zeros and object counts.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Keep empty ROI means distinct from a measured zero.",
+          "probe": "How could a changed threshold, missing value, axis or datatype alter the result of rebuild numerical roi decisions after a delay?",
+          "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in rebuild numerical roi decisions after a delay."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Given new numeric matrix, compute selected_count, selected_sum and selected_mean (or None) for values strictly above cutoff. Return report and print it.",
+        "starter_code": "# I03-REVIEW | PROVE | Rebuild numerical ROI decisions after a delay\n# TASK: Given new numeric matrix, compute selected_count, selected_sum and\n#   selected_mean (or None) for values strictly above cutoff. Return report and\n#   print it.\n# INPUTS: matrix, cutoff\n\n",
+        "preview_inputs": {
+          "matrix": [
+            [
+              0,
+              4
+            ],
+            [
+              2,
+              6
+            ]
+          ],
+          "cutoff": 3
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "matrix": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  2,
+                  6
+                ]
+              ],
+              "cutoff": 3
+            },
+            "assertions": [
+              "report=={'selected_count':2,'selected_sum':10.0,'selected_mean':5.0}"
+            ]
+          },
+          {
+            "inputs": {
+              "matrix": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "cutoff": 0
+            },
+            "assertions": [
+              "report['selected_count']==0",
+              "report['selected_mean'] is None"
+            ]
+          },
+          {
+            "inputs": {
+              "matrix": [
+                [
+                  1,
+                  2,
+                  3
+                ]
+              ],
+              "cutoff": 1
+            },
+            "assertions": [
+              "report['selected_count']==2",
+              "report['selected_sum']==5"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Keep empty ROI means distinct from a measured zero.",
+          "probe": "How could a changed threshold, missing value, axis or datatype alter the result of rebuild numerical roi decisions after a delay?",
+          "check": "Use explicit NumPy array inputs, preserve the original source and avoid hardcoded answers in rebuild numerical roi decisions after a delay."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check shape, dtype, threshold and numerical contract.",
+      "TypeError": "Guard None before numeric operations.",
+      "IndexError": "Check shape and array-axis indexing.",
+      "hardcoded": "A changed input must change the result; preserve source arrays and return types."
+    },
+    "reflection_prompts": [
+      "What actual source was measured?",
+      "What do missingness, thresholds and denominators mean?",
+      "Why is the result not a calibrated biological effect or object count?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer, not independent/retained certification"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "pixel_roi_summary.py",
+    "brief": "Export a transparent NumPy ROI report with threshold sensitivity, missingness rules and explicitly uncalibrated source provenance.",
+    "status": "BROWSER_QA_PENDING"
+  }
+}
