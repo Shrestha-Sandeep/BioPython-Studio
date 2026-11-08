@@ -1,0 +1,58 @@
+name: Inspect original BBBC039 layout and mask encoding
+on:
+  push:
+    branches: ['advancement/a04-modality-aware-external-bbbc039']
+    paths: ['.github/workflows/advanced-bbbc039-inspect.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download Broad original metadata and example masks and print archive layouts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install pillow numpy tifffile
+          mkdir -p /tmp/bbbc039
+          base="https://data.broadinstitute.org/bbbc/BBBC039"
+          for f in images.zip masks.zip metadata.zip; do
+             curl --fail --location --retry 3 --retry-all-errors --max-time 1200 --output "/tmp/bbbc039/$f" "$base/$f"
+             echo "=== $f bytes and sha256 ==="
+             sha256sum "/tmp/bbbc039/$f"
+             python - "$f" <<'PY'
+          import zipfile,sys
+          path='/tmp/bbbc039/'+sys.argv[1]
+          with zipfile.ZipFile(path) as z:
+              names=z.namelist()
+              print('Entries',len(names))
+              print('First 35:',*names[:35],sep='\n  ')
+          PY
+          done
+          python - <<'PY'
+          import zipfile,io,numpy as np
+          from PIL import Image
+          root='/tmp/bbbc039/'
+          with zipfile.ZipFile(root+'masks.zip') as z:
+            p=next(n for n in z.namelist() if n.lower().endswith('.png'))
+            x=np.array(Image.open(io.BytesIO(z.read(p))))
+            print('MASK EXAMPLE',p,'shape',x.shape,'dtype',x.dtype,'min',x.min(),'max',x.max())
+            if x.ndim==3:
+              v,c=np.unique(x.reshape(-1,x.shape[-1]),axis=0,return_counts=True)
+              ix=np.argsort(c)[-12:]
+              print('MOST COMMON MASK COLORS',[(i.tolist(),int(j)) for i,j in zip(v[ix],c[ix])])
+              print('TOTAL UNIQUE COLORS',len(v))
+            else:
+              v,c=np.unique(x,return_counts=True)
+              print('MASK 2D UNIQUE VALUES',list(zip(v.tolist()[:20],c.tolist()[:20])))
+          with zipfile.ZipFile(root+'metadata.zip') as z:
+            for p in z.namelist():
+              if p.lower().endswith(('.csv','.txt')):
+                print('METADATA SAMPLE',p,z.read(p)[:1200].decode('utf-8',errors='replace'))
+          PY

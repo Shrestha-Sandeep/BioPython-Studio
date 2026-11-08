@@ -1,0 +1,70 @@
+name: BBBC038 ORIGINAL training-only polarity diagnostic
+
+on:
+  push:
+    branches:
+      - advancement/a04-modality-aware-external-bbbc039
+    paths:
+      - '.github/workflows/advanced-bbbc038-training-polarity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  training-modality-diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: projects/advanced/requirements.txt
+      - name: Install scientific dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install -r projects/advanced/requirements.txt
+      - name: Download original Broad BBBC038 training annotations only
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="${RUNNER_TEMP}/bbbc038-training-only"
+          mkdir -p "$ROOT" artifacts/training-router
+          curl --fail --location --retry 3 --retry-all-errors --max-time 1200 \
+            --output "$ROOT/stage1_train.zip" \
+            https://data.broadinstitute.org/bbbc/BBBC038/stage1_train.zip
+          sha256sum "$ROOT/stage1_train.zip" \
+            | sed "s|$ROOT/||g" > artifacts/training-router/source_sha256.txt
+          unzip -t "$ROOT/stage1_train.zip" | tail -n 1
+          unzip -q "$ROOT/stage1_train.zip" -d "$ROOT"
+      - name: 'Retrospective method development - training images ONLY'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="${RUNNER_TEMP}/bbbc038-training-only"
+          python -m projects.advanced.a02b.probe_bbbc038_training \
+            --train "$ROOT" \
+            --out artifacts/training-router \
+            --count 40 \
+            | tee artifacts/training-router/training_diagnostic_console.txt
+          echo "## Retrospective ORIGINAL training-only image analysis" >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          p=Path("artifacts/training-router/BBBC038_TRAINING_ROUTER_DIAGNOSTIC.json")
+          j=json.loads(p.read_text())
+          print(f"- Original BBBC038 training images: {j['images_used']}")
+          print(f"- Fixed baseline image-macro object F1: {j['baseline_macro_image_object_f1']:.4f}")
+          print(f"- Input-only polarity route image-macro F1: {j['routed_macro_image_object_f1']:.4f}")
+          print(f"- Routed bright/dark: {j['routed_bright_images']}/{j['routed_dark_images']}")
+          print("- RETROSPECTIVE TRAINING DATA ONLY: NOT independent test evidence")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bbbc038-training-only-polarity-diagnostic
+          path: artifacts/training-router/
+          retention-days: 90
+          if-no-files-found: warn
