@@ -1,0 +1,36 @@
+name: Advanced G0 inventory and A01 native image pilot
+
+on:
+  pull_request:
+    paths:
+      - 'projects/advanced/**'
+      - 'docs/ADVANCEMENT_*'
+      - 'tests/test_advanced_*'
+      - '.github/workflows/advanced-g0-g1.yml'
+  push:
+    branches:
+      - 'advancement/**'
+  workflow_dispatch:
+
+jobs:
+  native-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: projects/advanced/requirements.txt
+      - name: Install native dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install -r projects/advanced/requirements.txt
+      - name: Frozen curriculum inventory and source-image audit
+        run: |
+          python -m pytest -q tests/test_advanced_g0_contract.py tests/test_advanced_image_audit.py
+      - name: CLI smoke
+        run: |
+          python projects/advanced/a01/image_audit.py --help
+          python -m py_compile projects/advanced/a01/image_audit.py
