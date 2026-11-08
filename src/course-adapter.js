@@ -306,7 +306,7 @@ function exportPython(){
  const code=bridge()?.readCode()||"";
  if(!hasExecutableCode(code)){output("Write your Python program before exporting.");return;}
  const source=["# BioPython Studio "+activeId+" · original learner code",
- ({Python:"# Synthetic specimen records for learning, not real measurements.",Microscopy:"# Witz/HPA published RGB figure; image analysis requires independently validated raw data.",NGS:"# Synthetic sequence reads unless separately attributed. Not real biological sequencing.",ML:"# Synthetic biological samples; no external predictive accuracy or clinical validation."})[stageOf(activeId)],
+ ({Python:"# Synthetic microscopy records and example calibration, not real image measurements.",Microscopy:"# Witz/HPA published RGB figure; image analysis requires independently validated raw data.",NGS:"# Synthetic sequence reads unless separately attributed. Not real biological sequencing.",ML:"# Synthetic biological samples; no external predictive accuracy or clinical validation."})[stageOf(activeId)],
  "# The assignments below reproduce one supplied practice input.",preamble,"",localPrelude,code,""].join("\n");
  const blob=new Blob([source],{type:"text/x-python;charset=utf-8"});
  const url=URL.createObjectURL(blob);
