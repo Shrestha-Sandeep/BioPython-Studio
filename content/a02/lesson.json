@@ -1663,12 +1663,12 @@
           "description": "Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.",
           "starter_code": "# A02-G05 | APPLY | Measure parameter sensitivity, not accuracy\n# TASK: Compare data.baseline and data.variant binary masks; return result={'foreground_iou':float,'changed_fraction':float,'verified_accuracy':False}.\n# INPUTS: data (see the lesson panel for values)\n# OUTPUT: assign your answer to result\n\n\n",
           "preview_inputs": {
-            "data": "np.isclose(result['foreground_iou'],np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/max(1,np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))))"
+            "data": "np.isclose(result['foreground_iou'],np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/max(1,np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0))"
           },
           "public_checks": [
             {
               "inputs": {
-                "data": "np.isclose(result['foreground_iou'],np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/max(1,np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool))))"
+                "data": "np.isclose(result['foreground_iou'],np.count_nonzero(np.asarray(data['baseline'],bool)&np.asarray(data['variant'],bool))/max(1,np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) if np.count_nonzero(np.asarray(data['baseline'],bool)|np.asarray(data['variant'],bool)) else 1.0))"
               },
               "assertions": "import numpy as np\na=np.asarray(data[\"baseline\"],bool)\nb=np.asarray(data[\"variant\"],bool)\ninter=int(np.count_nonzero(a&b));union=int(np.count_nonzero(a|b))\nresult={\"foreground_iou\":float(inter/union if union else 1.0),\"changed_fraction\":float(np.mean(a!=b)),\"verified_accuracy\":False}\nprint(result)"
             },
