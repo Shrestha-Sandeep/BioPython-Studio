@@ -260,7 +260,7 @@
                     7,
                     11
                   ],
-                  "paired": false,
+                  "paired": true,
                   "seed": 17,
                   "alpha": 0.1,
                   "pvalues": [
@@ -878,7 +878,7 @@
                     7,
                     11
                   ],
-                  "paired": false,
+                  "paired": true,
                   "seed": 17,
                   "alpha": 0.1,
                   "pvalues": [
@@ -1188,7 +1188,7 @@
                     7,
                     11
                   ],
-                  "paired": false,
+                  "paired": true,
                   "seed": 17,
                   "alpha": 0.1,
                   "pvalues": [
@@ -2127,7 +2127,7 @@
                     7,
                     11
                   ],
-                  "paired": false,
+                  "paired": true,
                   "seed": 17,
                   "alpha": 0.1,
                   "pvalues": [
@@ -2757,7 +2757,7 @@
                     7,
                     11
                   ],
-                  "paired": false,
+                  "paired": true,
                   "seed": 17,
                   "alpha": 0.1,
                   "pvalues": [
@@ -3075,7 +3075,7 @@
                   7,
                   11
                 ],
-                "paired": false,
+                "paired": true,
                 "seed": 17,
                 "alpha": 0.1,
                 "pvalues": [
@@ -3283,7 +3283,7 @@
                   7,
                   11
                 ],
-                "paired": false,
+                "paired": true,
                 "seed": 17,
                 "alpha": 0.1,
                 "pvalues": [

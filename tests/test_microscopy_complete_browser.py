@@ -81,7 +81,7 @@ def main():
             for width,height in ((390,844),(768,920)):
                 mobile=browser.new_page(viewport={'width':width,'height':height})
                 mobile.goto(URL,wait_until='domcontentloaded')
-                mobile.locator('#bps-chapter-select').wait_for(timeout=25000)
+                mobile.locator('#bps-chapter-select').wait_for(state='attached',timeout=25000)
                 if width<720:mobile.locator('#nav-toggle').click()
                 mobile.locator('[data-stage="Microscopy"]').click()
                 assert mobile.locator('#bps-chapter-select option').count()==13

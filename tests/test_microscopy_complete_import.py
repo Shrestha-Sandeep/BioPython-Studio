@@ -47,5 +47,11 @@ for cid,n in expected.items():
             cases_count+=len(public)
 assert len(claimed)==46 and len(set(claimed))==46
 assert set(claimed)<={x['number'] for x in manifest['competencies']}
+for cid in ('I12',):
+    chapter=load(f'content/{cid.lower()}/lesson.json')
+    paired_ids={'I12-G01','I12-G03','I12-G04','I12-G07','I12-G09','I12-CAPSTONE','I12-REVIEW'}
+    for g in [*chapter['goals'],chapter['capstone'],chapter['review']]:
+        if g['id'] in paired_ids:
+            assert all(c['inputs']['sample']['paired'] is True for c in g['phases']['prove']['public_checks']),(g['id'],'paired transfer needs matched units')
 assert cases_count==339,cases_count
 print('PASS 7 new chapters; 46 canonical skills; 339 public scenarios; independent blank Prove tasks')
