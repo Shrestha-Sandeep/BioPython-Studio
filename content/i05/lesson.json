@@ -1,0 +1,3324 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I05",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_REAL_SCIENTIFIC_PYTHON",
+  "title": "Separate image foreground from background",
+  "competencies": [
+    "083",
+    "084",
+    "085",
+    "086",
+    "087",
+    "088"
+  ],
+  "intro": "Separate image foreground from background. Authentic Witz-led method; teach parameter sensitivity and source integrity before biological interpretation.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/04-Thresholding.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "SOURCE_RENDERED_RGB_AND_SYNTHETIC_EXERCISES",
+    "caution": "The credited source is a rendered HPA notebook figure, not raw calibrated image data; labels are candidates, not verified objects."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review.",
+  "goals": [
+    {
+      "id": "I05-G01",
+      "title": "Estimate and subtract image background",
+      "competencies": [
+        "083"
+      ],
+      "why": "Quantify a declared background estimator instead of treating every display pixel as signal.",
+      "explain": [
+        "A percentile of a chosen image plane gives a reproducible background estimate.",
+        "Clip background-subtracted values at zero only if that physical convention is declared.",
+        "A rendered RGB figure is not calibrated fluorescence; background choices can remove real features."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nx=np.array([2.,3.,8.,15.]); print(np.percentile(x,25))",
+        "predict": "Predict the printed numerical result and one limitation before execution."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I05-G01 | LEARN | Estimate and subtract image background\n# TASK: Predict the output, execute this worked example, then change one\n#   parameter.\n\n\nimport numpy as np\nx=np.array([2.,3.,8.,15.]); print(np.percentile(x,25))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Estimate the percentile background of data.image; store result as {'background': float, 'corrected': NumPy array}, clipped at zero.",
+          "starter_code": "# I05-G01 | APPLY | Estimate and subtract image background\n# TASK: Estimate the percentile background of data.image; store result as\n#   {'background': float, 'corrected': NumPy array}, clipped at zero.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "np.isclose(result['background'],np.percentile(np.asarray(data['image']),data['percentile']))",
+                "np.allclose(result['corrected'],np.maximum(np.asarray(data['image'])-result['background'],0))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "np.isclose(result['background'],np.percentile(np.asarray(data['image']),data['percentile']))",
+                "np.allclose(result['corrected'],np.maximum(np.asarray(data['image'])-result['background'],0))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "np.isclose(result['background'],np.percentile(np.asarray(data['image']),data['percentile']))",
+                "np.allclose(result['corrected'],np.maximum(np.asarray(data['image'])-result['background'],0))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+            "probe": "What changes under a different input, threshold, sample or experiment?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Independently estimate a border-median background from sample.image and return the clipped corrected image in result.",
+          "starter_code": "# I05-G01 | PROVE | Estimate and subtract image background\n# TASK: Independently estimate a border-median background from sample.image and\n#   return the clipped corrected image in result.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "np.isclose(result['background'],np.median(np.concatenate((np.asarray(sample['image'])[0,:],np.asarray(sample['image'])[-1,:],np.asarray(sample['image'])[1:-1,0],np.asarray(sample['image'])[1:-1,-1]))))",
+                "np.all(result['corrected']>=0)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "np.isclose(result['background'],np.median(np.concatenate((np.asarray(sample['image'])[0,:],np.asarray(sample['image'])[-1,:],np.asarray(sample['image'])[1:-1,0],np.asarray(sample['image'])[1:-1,-1]))))",
+                "np.all(result['corrected']>=0)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "np.isclose(result['background'],np.median(np.concatenate((np.asarray(sample['image'])[0,:],np.asarray(sample['image'])[-1,:],np.asarray(sample['image'])[1:-1,0],np.asarray(sample['image'])[1:-1,-1]))))",
+                "np.all(result['corrected']>=0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A new input tests transfer without supplying a ready-made final answer.",
+            "probe": "Which scientific caveat still applies after these tests pass?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I05-G02",
+      "title": "Apply Gaussian smoothing without silent data loss",
+      "competencies": [
+        "084"
+      ],
+      "why": "Control smoothing width and preserve original intensity scale.",
+      "explain": [
+        "A Gaussian filter is a local weighted average; sigma is measured in pixels here.",
+        "Smoothing attenuates high-frequency variation and may merge neighboring objects.",
+        "Estimate whether filtering changes the feature size before interpreting a segmentation."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nfrom skimage.filters import gaussian\nprint(gaussian(np.eye(4),sigma=0.5,preserve_range=True).shape)",
+        "predict": "Predict the printed numerical result and one limitation before execution."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I05-G02 | LEARN | Apply Gaussian smoothing without silent data loss\n# TASK: Predict the output, execute this worked example, then change one\n#   parameter.\n\n\nimport numpy as np\nfrom skimage.filters import gaussian\nprint(gaussian(np.eye(4),sigma=0.5,preserve_range=True).shape)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Convert data.image to float and set result to Gaussian-smoothed pixels with data.sigma; preserve range.",
+          "starter_code": "# I05-G02 | APPLY | Apply Gaussian smoothing without silent data loss\n# TASK: Convert data.image to float and set result to Gaussian-smoothed pixels\n#   with data.sigma; preserve range.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "result.shape==np.asarray(data['image']).shape",
+                "np.allclose(result,gaussian(np.asarray(data['image'],float),sigma=data['sigma'],preserve_range=True))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "result.shape==np.asarray(data['image']).shape",
+                "np.allclose(result,gaussian(np.asarray(data['image'],float),sigma=data['sigma'],preserve_range=True))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "result.shape==np.asarray(data['image']).shape",
+                "np.allclose(result,gaussian(np.asarray(data['image'],float),sigma=data['sigma'],preserve_range=True))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+            "probe": "What changes under a different input, threshold, sample or experiment?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Apply a *different* Gaussian width (1.5 × sample.sigma) and return the result without changing sample.image.",
+          "starter_code": "# I05-G02 | PROVE | Apply Gaussian smoothing without silent data loss\n# TASK: Apply a *different* Gaussian width (1.5 × sample.sigma) and return the\n#   result without changing sample.image.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "np.allclose(result,gaussian(np.asarray(sample['image'],float),sigma=sample['sigma']*1.5,preserve_range=True))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "np.allclose(result,gaussian(np.asarray(sample['image'],float),sigma=sample['sigma']*1.5,preserve_range=True))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "np.allclose(result,gaussian(np.asarray(sample['image'],float),sigma=sample['sigma']*1.5,preserve_range=True))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A new input tests transfer without supplying a ready-made final answer.",
+            "probe": "Which scientific caveat still applies after these tests pass?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I05-G03",
+      "title": "Contrast impulse and Gaussian denoising",
+      "competencies": [
+        "085"
+      ],
+      "why": "Choose a filter according to the noise model, not its attractive appearance.",
+      "explain": [
+        "A median filter suppresses isolated bright/salt-and-pepper pixels without averaging them.",
+        "Gaussian filtering changes edge contrast and spatial resolution; document its sigma.",
+        "No denoiser can restore a biological feature that has been filtered away."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nfrom skimage.filters import median\nprint(median(np.array([[0,0,0],[0,9,0],[0,0,0]])))",
+        "predict": "Predict the printed numerical result and one limitation before execution."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I05-G03 | LEARN | Contrast impulse and Gaussian denoising\n# TASK: Predict the output, execute this worked example, then change one\n#   parameter.\n\n\nimport numpy as np\nfrom skimage.filters import median\nprint(median(np.array([[0,0,0],[0,9,0],[0,0,0]])))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Produce result={'median': median-filtered image, 'gaussian': Gaussian image}; use disk(1) and sigma=data.sigma.",
+          "starter_code": "# I05-G03 | APPLY | Contrast impulse and Gaussian denoising\n# TASK: Produce result={'median': median-filtered image, 'gaussian': Gaussian\n#   image}; use disk(1) and sigma=data.sigma.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "result['median'].shape==np.asarray(data['image']).shape",
+                "np.allclose(result['median'],filters.median(np.asarray(data['image'],float),footprint=morphology.disk(1)))",
+                "np.allclose(result['gaussian'],filters.gaussian(np.asarray(data['image'],float),sigma=data['sigma'],preserve_range=True))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "result['median'].shape==np.asarray(data['image']).shape",
+                "np.allclose(result['median'],filters.median(np.asarray(data['image'],float),footprint=morphology.disk(1)))",
+                "np.allclose(result['gaussian'],filters.gaussian(np.asarray(data['image'],float),sigma=data['sigma'],preserve_range=True))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "result['median'].shape==np.asarray(data['image']).shape",
+                "np.allclose(result['median'],filters.median(np.asarray(data['image'],float),footprint=morphology.disk(1)))",
+                "np.allclose(result['gaussian'],filters.gaussian(np.asarray(data['image'],float),sigma=data['sigma'],preserve_range=True))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+            "probe": "What changes under a different input, threshold, sample or experiment?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Return sample.image filtered with disk(1) median; also record whether it preserves image shape.",
+          "starter_code": "# I05-G03 | PROVE | Contrast impulse and Gaussian denoising\n# TASK: Return sample.image filtered with disk(1) median; also record whether it\n#   preserves image shape.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "result['shape_ok'] is True",
+                "np.array_equal(result['pixels'],filters.median(np.asarray(sample['image'],float),footprint=morphology.disk(1)))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "result['shape_ok'] is True",
+                "np.array_equal(result['pixels'],filters.median(np.asarray(sample['image'],float),footprint=morphology.disk(1)))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "result['shape_ok'] is True",
+                "np.array_equal(result['pixels'],filters.median(np.asarray(sample['image'],float),footprint=morphology.disk(1)))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A new input tests transfer without supplying a ready-made final answer.",
+            "probe": "Which scientific caveat still applies after these tests pass?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I05-G04",
+      "title": "Define a global threshold mask",
+      "competencies": [
+        "086"
+      ],
+      "why": "Make inclusive/exclusive cutoff behavior explicit.",
+      "explain": [
+        "Threshold operators produce Boolean candidate masks; they do not prove object identity.",
+        "A strict greater-than rule excludes pixels exactly equal to the chosen threshold.",
+        "Inspect the candidate count and exposure sensitivity, not only the overlay."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nprint((np.array([0,5,10])>5).tolist())",
+        "predict": "Predict the printed numerical result and one limitation before execution."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I05-G04 | LEARN | Define a global threshold mask\n# TASK: Predict the output, execute this worked example, then change one\n#   parameter.\n\n\nimport numpy as np\nprint((np.array([0,5,10])>5).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Set result to a Boolean NumPy mask where data.image is strictly greater than data.threshold.",
+          "starter_code": "# I05-G04 | APPLY | Define a global threshold mask\n# TASK: Set result to a Boolean NumPy mask where data.image is strictly greater\n#   than data.threshold.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "result.dtype==np.dtype(bool)",
+                "np.array_equal(result,np.asarray(data['image'])>data['threshold'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "result.dtype==np.dtype(bool)",
+                "np.array_equal(result,np.asarray(data['image'])>data['threshold'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "result.dtype==np.dtype(bool)",
+                "np.array_equal(result,np.asarray(data['image'])>data['threshold'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+            "probe": "What changes under a different input, threshold, sample or experiment?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Use *inclusive* comparison for sample.image and sample.threshold; result must be Boolean.",
+          "starter_code": "# I05-G04 | PROVE | Define a global threshold mask\n# TASK: Use *inclusive* comparison for sample.image and sample.threshold; result\n#   must be Boolean.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "result.dtype==np.dtype(bool)",
+                "np.array_equal(result,np.asarray(sample['image'])>=sample['threshold'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "result.dtype==np.dtype(bool)",
+                "np.array_equal(result,np.asarray(sample['image'])>=sample['threshold'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "result.dtype==np.dtype(bool)",
+                "np.array_equal(result,np.asarray(sample['image'])>=sample['threshold'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A new input tests transfer without supplying a ready-made final answer.",
+            "probe": "Which scientific caveat still applies after these tests pass?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I05-G05",
+      "title": "Compare automatic and manual thresholds",
+      "competencies": [
+        "087"
+      ],
+      "why": "Treat automatically selected thresholds as candidates requiring inspection.",
+      "explain": [
+        "Otsu thresholding maximizes between-class separation of histogram intensities.",
+        "Otsu can fail when signal is unimodal or when background occupies most pixels.",
+        "Report the numerical cutoff; never equate a high-intensity region with a cell."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nfrom skimage.filters import threshold_otsu\nprint(threshold_otsu(np.array([0,0,0,10,10,10])))",
+        "predict": "Predict the printed numerical result and one limitation before execution."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I05-G05 | LEARN | Compare automatic and manual thresholds\n# TASK: Predict the output, execute this worked example, then change one\n#   parameter.\n\n\nimport numpy as np\nfrom skimage.filters import threshold_otsu\nprint(threshold_otsu(np.array([0,0,0,10,10,10])))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Return result containing Otsu threshold and Boolean mask of pixels strictly above the cutoff.",
+          "starter_code": "# I05-G05 | APPLY | Compare automatic and manual thresholds\n# TASK: Return result containing Otsu threshold and Boolean mask of pixels\n#   strictly above the cutoff.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "np.isclose(result['threshold'],threshold_otsu(np.asarray(data['image'],float)))",
+                "np.array_equal(result['mask'],np.asarray(data['image'])>result['threshold'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "np.isclose(result['threshold'],threshold_otsu(np.asarray(data['image'],float)))",
+                "np.array_equal(result['mask'],np.asarray(data['image'])>result['threshold'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "np.isclose(result['threshold'],threshold_otsu(np.asarray(data['image'],float)))",
+                "np.array_equal(result['mask'],np.asarray(data['image'])>result['threshold'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+            "probe": "What changes under a different input, threshold, sample or experiment?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Compare Otsu with the sample.percentile cutoff: return numerical thresholds and both candidate pixel counts.",
+          "starter_code": "# I05-G05 | PROVE | Compare automatic and manual thresholds\n# TASK: Compare Otsu with the sample.percentile cutoff: return numerical\n#   thresholds and both candidate pixel counts.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "np.isclose(result['percentile'],np.percentile(np.asarray(sample['image']),sample['percentile']))",
+                "result['counts']==(int((np.asarray(sample['image'])>result['otsu']).sum()),int((np.asarray(sample['image'])>result['percentile']).sum()))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "np.isclose(result['percentile'],np.percentile(np.asarray(sample['image']),sample['percentile']))",
+                "result['counts']==(int((np.asarray(sample['image'])>result['otsu']).sum()),int((np.asarray(sample['image'])>result['percentile']).sum()))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "np.isclose(result['percentile'],np.percentile(np.asarray(sample['image']),sample['percentile']))",
+                "result['counts']==(int((np.asarray(sample['image'])>result['otsu']).sum()),int((np.asarray(sample['image'])>result['percentile']).sum()))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A new input tests transfer without supplying a ready-made final answer.",
+            "probe": "Which scientific caveat still applies after these tests pass?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "I05-G06",
+      "title": "Measure sensitivity to segmentation threshold",
+      "competencies": [
+        "088"
+      ],
+      "why": "Estimate how unstable candidate area is under reasonable parameter changes.",
+      "explain": [
+        "Vary the threshold around the declared decision boundary, rather than optimizing by eye.",
+        "Report both candidate counts and proportion of selected pixels.",
+        "Threshold robustness does not replace ground-truth segmentation validation."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nx=np.array([0,10,20,30]); print([int((x>t).sum()) for t in (5,15,25)])",
+        "predict": "Predict the printed numerical result and one limitation before execution."
+      },
+      "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+      "walkthrough": [
+        "Identify the source arrays, parameters and expected output before changing code.",
+        "Run the worked example and record which choice alters a candidate measurement.",
+        "Inspect one boundary input and distinguish a mask from validated biological identity."
+      ],
+      "investigate": [
+        "Change one input value or ROI deliberately.",
+        "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+        "Record the scientific meaning of the output and its denominator."
+      ],
+      "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+      "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+      "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the observable output before running this independent demonstration.",
+          "starter_code": "# I05-G06 | LEARN | Measure sensitivity to segmentation threshold\n# TASK: Predict the output, execute this worked example, then change one\n#   parameter.\n\n\nimport numpy as np\nx=np.array([0,10,20,30]); print([int((x>t).sum()) for t in (5,15,25)])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed inputs",
+          "description": "Calculate candidate counts at thresholds data.threshold−15, threshold, and threshold+15; store ordered list result.",
+          "starter_code": "# I05-G06 | APPLY | Measure sensitivity to segmentation threshold\n# TASK: Calculate candidate counts at thresholds data.threshold−15, threshold, and\n#   threshold+15; store ordered list result.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "result==[int((np.asarray(data['image'])>t).sum()) for t in (data['threshold']-15,data['threshold'],data['threshold']+15)]",
+                "result[0]>=result[1]>=result[2]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "result==[int((np.asarray(data['image'])>t).sum()) for t in (data['threshold']-15,data['threshold'],data['threshold']+15)]",
+                "result[0]>=result[1]>=result[2]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "result==[int((np.asarray(data['image'])>t).sum()) for t in (data['threshold']-15,data['threshold'],data['threshold']+15)]",
+                "result[0]>=result[1]>=result[2]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+            "probe": "What changes under a different input, threshold, sample or experiment?",
+            "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Compare two sample masks (cutoff and cutoff+20) and set result={'iou': float, 'area_change': int}. Empty union has IoU 1.",
+          "starter_code": "# I05-G06 | PROVE | Measure sensitivity to segmentation threshold\n# TASK: Compare two sample masks (cutoff and cutoff+20) and set result={'iou':\n#   float, 'area_change': int}. Empty union has IoU 1.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "image": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  12,
+                  14,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  18,
+                  220,
+                  19,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "threshold": 35,
+              "percentile": 25,
+              "sigma": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      12,
+                      14,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      18,
+                      220,
+                      19,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  ],
+                  "threshold": 35,
+                  "percentile": 25,
+                  "sigma": 0.7
+                }
+              },
+              "assertions": [
+                "0<=result['iou']<=1",
+                "result['area_change']==int((np.asarray(sample['image'])>sample['threshold']).sum()-(np.asarray(sample['image'])>sample['threshold']+20).sum())"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      5,
+                      5,
+                      20,
+                      0,
+                      0
+                    ],
+                    [
+                      5,
+                      200,
+                      190,
+                      0,
+                      0
+                    ],
+                    [
+                      20,
+                      180,
+                      250,
+                      5,
+                      3
+                    ],
+                    [
+                      0,
+                      0,
+                      4,
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      5,
+                      0,
+                      0,
+                      20
+                    ]
+                  ],
+                  "threshold": 100,
+                  "percentile": 30,
+                  "sigma": 1.1
+                }
+              },
+              "assertions": [
+                "0<=result['iou']<=1",
+                "result['area_change']==int((np.asarray(sample['image'])>sample['threshold']).sum()-(np.asarray(sample['image'])>sample['threshold']+20).sum())"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "image": [
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      12,
+                      28,
+                      12,
+                      2
+                    ],
+                    [
+                      2,
+                      8,
+                      12,
+                      8,
+                      2
+                    ],
+                    [
+                      2,
+                      2,
+                      2,
+                      2,
+                      2
+                    ]
+                  ],
+                  "threshold": 12,
+                  "percentile": 60,
+                  "sigma": 0.5
+                }
+              },
+              "assertions": [
+                "0<=result['iou']<=1",
+                "result['area_change']==int((np.asarray(sample['image'])>sample['threshold']).sum()-(np.asarray(sample['image'])>sample['threshold']+20).sum())"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A new input tests transfer without supplying a ready-made final answer.",
+            "probe": "Which scientific caveat still applies after these tests pass?",
+            "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the expected output variable result and the input contract.",
+          "Use the relevant numerical or segmentation operation with explicit parameters."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+        "TypeError": "Check numeric types and missing values.",
+        "IndexError": "Check row/column order and ROI bounds.",
+        "hardcoded": "Changing the input must change the output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer practice, not retained-mastery certification"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I05-CAPSTONE",
+    "title": "Audit real rendered-pixel threshold sensitivity",
+    "competencies": [],
+    "why": "Combine real computational techniques into a source-preserving, interpretable report.",
+    "explain": [
+      "Document inputs, parameters, units and outputs together.",
+      "A successful candidate mask may fail validation on unseen annotated images.",
+      "Do not treat fields, display RGB intensities or connected regions as independent biological truth."
+    ],
+    "worked_example": {
+      "code": "import numpy as np\nprint(np.asarray([[0,1],[1,0]]).shape)",
+      "predict": "Predict the printed numerical result and one limitation before execution."
+    },
+    "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+    "walkthrough": [
+      "Identify the source arrays, parameters and expected output before changing code.",
+      "Run the worked example and record which choice alters a candidate measurement.",
+      "Inspect one boundary input and distinguish a mask from validated biological identity."
+    ],
+    "investigate": [
+      "Change one input value or ROI deliberately.",
+      "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+      "Record the scientific meaning of the output and its denominator."
+    ],
+    "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+    "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+    "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the observable output before running this independent demonstration.",
+        "starter_code": "# I05-CAPSTONE | LEARN | Audit real rendered-pixel threshold sensitivity\n# TASK: Predict the output, execute this worked example, then change one\n#   parameter.\n\n\nimport numpy as np\nprint(np.asarray([[0,1],[1,0]]).shape)\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed inputs",
+        "description": "Load the credited PNG at image_path; crop the 32×32 RGB component ROI at x0,y0 and count display pixels above threshold. Return result with count, area and calibrated=False.",
+        "starter_code": "# I05-CAPSTONE | APPLY | Audit real rendered-pixel threshold sensitivity\n# TASK: Load the credited PNG at image_path; crop the 32×32 RGB component ROI at\n#   x0,y0 and count display pixels above threshold. Return result with count,\n#   area and calibrated=False.\n# INPUTS: image_path, x0, y0, component, threshold\n\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "x0": 0,
+          "y0": 0,
+          "component": 0,
+          "threshold": 100
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "x0": 0,
+              "y0": 0,
+              "component": 0,
+              "threshold": 100
+            },
+            "assertions": [
+              "result['count']==int((np.asarray(Image.open(image_path).convert('RGB'))[y0:y0+32,x0:x0+32,component]>threshold).sum())",
+              "result['area']==1024",
+              "result['calibrated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "x0": 30,
+              "y0": 20,
+              "component": 1,
+              "threshold": 150
+            },
+            "assertions": [
+              "result['count']==int((np.asarray(Image.open(image_path).convert('RGB'))[y0:y0+32,x0:x0+32,component]>threshold).sum())",
+              "result['area']==1024",
+              "result['calibrated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "x0": 70,
+              "y0": 50,
+              "component": 2,
+              "threshold": 200
+            },
+            "assertions": [
+              "result['count']==int((np.asarray(Image.open(image_path).convert('RGB'))[y0:y0+32,x0:x0+32,component]>threshold).sum())",
+              "result['area']==1024",
+              "result['calibrated'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+          "probe": "What changes under a different input, threshold, sample or experiment?",
+          "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "On a new ROI from the credited image, compare strict thresholds low and high and return {'low': count, 'high': count, 'raw':False}.",
+        "starter_code": "# I05-CAPSTONE | PROVE | Audit real rendered-pixel threshold sensitivity\n# TASK: On a new ROI from the credited image, compare strict thresholds low and\n#   high and return {'low': count, 'high': count, 'raw':False}.\n# INPUTS: image_path, top, left, band, low, high\n\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "top": 10,
+          "left": 5,
+          "band": 0,
+          "low": 80,
+          "high": 180
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 10,
+              "left": 5,
+              "band": 0,
+              "low": 80,
+              "high": 180
+            },
+            "assertions": [
+              "result['low']>=result['high']",
+              "result['low']==int((np.asarray(Image.open(image_path).convert('RGB'))[top:top+32,left:left+32,band]>low).sum())",
+              "result['raw'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 30,
+              "left": 25,
+              "band": 1,
+              "low": 100,
+              "high": 200
+            },
+            "assertions": [
+              "result['low']>=result['high']",
+              "result['low']==int((np.asarray(Image.open(image_path).convert('RGB'))[top:top+32,left:left+32,band]>low).sum())",
+              "result['raw'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "top": 60,
+              "left": 40,
+              "band": 2,
+              "low": 0,
+              "high": 255
+            },
+            "assertions": [
+              "result['low']>=result['high']",
+              "result['low']==int((np.asarray(Image.open(image_path).convert('RGB'))[top:top+32,left:left+32,band]>low).sum())",
+              "result['raw'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A new input tests transfer without supplying a ready-made final answer.",
+          "probe": "Which scientific caveat still applies after these tests pass?",
+          "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Identify the expected output variable result and the input contract.",
+        "Use the relevant numerical or segmentation operation with explicit parameters."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+      "TypeError": "Check numeric types and missing values.",
+      "IndexError": "Check row/column order and ROI bounds.",
+      "hardcoded": "Changing the input must change the output."
+    },
+    "reflection_prompts": [],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer practice, not retained-mastery certification"
+    },
+    "build_steps": [
+      "Inspect all inputs and declare parameters before running.",
+      "Apply multiple chapter methods without mutating source arrays.",
+      "Report changed-input outcomes and excluded or ambiguous records.",
+      "Export the resulting source code and document non-calibrated limitations."
+    ],
+    "assessment": {
+      "code": "PUBLIC_CHANGED_INPUT_CHECKS",
+      "independent": "NOT_AUTO_CERTIFIED",
+      "biology": "NO_GROUND_TRUTH_VALIDATION"
+    }
+  },
+  "review": {
+    "id": "I05-REVIEW",
+    "title": "Re-evaluate a new threshold perturbation",
+    "competencies": [],
+    "why": "Reconstruct the method after a delay on a fresh input.",
+    "explain": [
+      "Reproduce the key numerical decision from memory.",
+      "Check edge behavior and compare to a second input.",
+      "Do not equate remembered code with biological validation."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the printed numerical result and one limitation before execution."
+    },
+    "prediction_answer": "Check the printed values against the chosen axis, units and algorithm; a computational check is not experimental validation.",
+    "walkthrough": [
+      "Identify the source arrays, parameters and expected output before changing code.",
+      "Run the worked example and record which choice alters a candidate measurement.",
+      "Inspect one boundary input and distinguish a mask from validated biological identity."
+    ],
+    "investigate": [
+      "Change one input value or ROI deliberately.",
+      "Inspect source data and a failure case rather than trusting a clean-looking overlay.",
+      "Record the scientific meaning of the output and its denominator."
+    ],
+    "debug_task": "Diagnose one shape, threshold, indexing or data-provenance failure and explain how a changed input exposes it.",
+    "misconception": "Numerically plausible image features are automatically true objects or independent biological replicates.",
+    "scientific_boundary": "Examples are synthetic unless a credited Witz/HPA rendered PNG is explicitly decoded; no raw calibration or manually validated segmentation is implied.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the observable output before running this independent demonstration.",
+        "starter_code": "# I05-REVIEW | LEARN | Re-evaluate a new threshold perturbation\n# TASK: Recall the method from an earlier session without a solved example.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed inputs",
+        "description": "Return to this method later without copying the solved example.",
+        "starter_code": "# I05-REVIEW | APPLY | Re-evaluate a new threshold perturbation\n# TASK: Return to this method later without copying the solved example.\n\n\n",
+        "preview_inputs": {},
+        "public_checks": [],
+        "practice_feedback": {
+          "why": "This coding step makes a parameter or measurement decision explicit and reproducible.",
+          "probe": "What changes under a different input, threshold, sample or experiment?",
+          "check": "Inspect the supplied input, declared axes, units, boundaries and missing values; never hardcode a practice example."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "On a fresh sample, reproduce the specified method independently; store the checked variables in result.",
+        "starter_code": "# I05-REVIEW | PROVE | Re-evaluate a new threshold perturbation\n# TASK: On the unfamiliar sample, compute the specified new summary and store it\n#   in result.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "image": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                12,
+                14,
+                0,
+                0
+              ],
+              [
+                0,
+                18,
+                220,
+                19,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "threshold": 35,
+            "percentile": 25,
+            "sigma": 0.7
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "image": [
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    12,
+                    14,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    18,
+                    220,
+                    19,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                ],
+                "threshold": 35,
+                "percentile": 25,
+                "sigma": 0.7
+              }
+            },
+            "assertions": [
+              "result['count_low']>=result['count_high']",
+              "result['count_high']==int((np.asarray(sample['image'])>sample['threshold']+10).sum())"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "image": [
+                  [
+                    5,
+                    5,
+                    20,
+                    0,
+                    0
+                  ],
+                  [
+                    5,
+                    200,
+                    190,
+                    0,
+                    0
+                  ],
+                  [
+                    20,
+                    180,
+                    250,
+                    5,
+                    3
+                  ],
+                  [
+                    0,
+                    0,
+                    4,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    5,
+                    0,
+                    0,
+                    20
+                  ]
+                ],
+                "threshold": 100,
+                "percentile": 30,
+                "sigma": 1.1
+              }
+            },
+            "assertions": [
+              "result['count_low']>=result['count_high']",
+              "result['count_high']==int((np.asarray(sample['image'])>sample['threshold']+10).sum())"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "image": [
+                  [
+                    2,
+                    2,
+                    2,
+                    2,
+                    2
+                  ],
+                  [
+                    2,
+                    8,
+                    12,
+                    8,
+                    2
+                  ],
+                  [
+                    2,
+                    12,
+                    28,
+                    12,
+                    2
+                  ],
+                  [
+                    2,
+                    8,
+                    12,
+                    8,
+                    2
+                  ],
+                  [
+                    2,
+                    2,
+                    2,
+                    2,
+                    2
+                  ]
+                ],
+                "threshold": 12,
+                "percentile": 60,
+                "sigma": 0.5
+              }
+            },
+            "assertions": [
+              "result['count_low']>=result['count_high']",
+              "result['count_high']==int((np.asarray(sample['image'])>sample['threshold']+10).sum())"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A new input tests transfer without supplying a ready-made final answer.",
+          "probe": "Which scientific caveat still applies after these tests pass?",
+          "check": "Use a separate implementation and test an edge case before interpreting a biological finding."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Identify the expected output variable result and the input contract.",
+        "Use the relevant numerical or segmentation operation with explicit parameters."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Check dimensionality and shape; an empty mask is not a missing experiment.",
+      "TypeError": "Check numeric types and missing values.",
+      "IndexError": "Check row/column order and ROI bounds.",
+      "hardcoded": "Changing the input must change the output."
+    },
+    "reflection_prompts": [
+      "Which decision would you validate with manual annotation or experimental replicates?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer practice, not retained-mastery certification"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "i05_image_analysis.py",
+    "brief": "Audit real rendered-pixel threshold sensitivity",
+    "status": "LEARNER_PILOT"
+  }
+}

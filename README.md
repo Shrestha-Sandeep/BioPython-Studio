@@ -41,7 +41,7 @@ Then open `http://localhost:8000` and select Python foundations. Internet access
 
 ## Scientific Python microscopy missions (draft PR #18)
 
-The frozen 26-mission course places the scientific-computing foundation inside applied microscopy missions, rather than in an unrelated additional chapter series. The active development branch adds **45 distinct competencies** and real Python execution to these missions:
+The frozen 26-mission course places the scientific-computing foundation inside applied microscopy missions, rather than in an unrelated additional chapter series. The combined full microscopy integration branch adds **91 distinct competencies** and real Python execution to these missions:
 
 | Mission | Core techniques | Competencies |
 |---|---|---:|
@@ -52,13 +52,31 @@ The frozen 26-mission course places the scientific-computing foundation inside a
 | I07 | Pandas tables, explicit-typed CSV, QC, duplicate and missing records | 7 |
 | I08 | Safe metadata joins, group summaries, reshaping, timestamps, plots and exports | 8 |
 
-These are **six separate missions** with a total of 45 goals, six capstones and six delayed reviews (57 activities). They cover **33/34** numerical/data/plotting foundation skills. Competency **068 — Represent uncertainty** is intentionally reserved for I12, where biological replication and uncertainty estimation are taught together. Missions I05 and I06 are not yet implemented, despite later I07/I08 being accessible for foundation practice.
+The original six scientific-foundation missions account for 45 goals. This development integration adds seven further microscopy missions (46 goals), resulting in **13 missions and 91 distinct canonical competencies**. Competency 068 is now taught with biological replication in I12. Real learner mastery and biological validity remain unverified.
 
 Source hygiene: The bundled `assets/witz/fluorescence-single.png` is a **real attributed published notebook figure based on Human Protein Atlas**, decoded into actual pixels in Pyodide. It is not a calibrated raw HPA TIFF. Synthetic numerical examples and synthetic TIFF files remain explicitly labeled. An OME-looking TIFF Description tag is not validated OME metadata.
 
-The pinned scientific Python worker lazily imports NumPy, Pillow, Pandas and Matplotlib. Actual Matplotlib figures render in the results console, not precomputed stock pictures. First import needs a network connection. I01 and other Python mission progress keys are kept separate; stage switching does not overwrite prior drafts. The image-analysis stage displays the existing frozen IDE and its image-preview panel.
+The pinned scientific Python worker lazily imports NumPy, Pillow, Pandas, Matplotlib, SciPy and scikit-image. Actual Matplotlib figures render in the results console, not precomputed stock pictures. First import needs a network connection. I01 and other Python mission progress keys are kept separate; stage switching does not overwrite prior drafts. The image-analysis stage displays the existing frozen IDE and its image-preview panel.
 
 This is a **draft learner pilot**, not scientifically validated quantitative image analysis or demonstrated learner mastery.
+
+## Full microscopy course — I01–I13 (isolated draft)
+
+`integration/microscopy-i05-i13-complete` integrates the seven remaining missions into the original frozen IDE. All 91 microscopy skills now have a goal-specific Learn, Apply and independent Prove exercise, plus a mission capstone and delayed review.
+
+| Mission | Content | Goals |
+|---|---|---:|
+| I05 | Background, denoising, thresholds and sensitivity | 6 |
+| I06 | Morphology, watershed, connected objects and 3D limitations | 7 |
+| I09 | Candidate-region properties, intensity, colocalization and proximity | 6 |
+| I10 | Tracking and segmentation validation against synthetic annotations | 6 |
+| I11 | Biological units, QC, batch structure and normalization | 7 |
+| I12 | Replicate-aware uncertainty, testing and plots | 9 |
+| I13 | Source-aware integrated real-image pipeline and visualization | 5 |
+
+**Scientific boundary:** The bundled Witz/HPA PNG is a credited published *rendered RGB figure*, not a raw calibrated microscope image. Exercises run real scientific Python, including actual pixel decoding and candidate segmentation, but no validated nucleus/exopher detection, nuclear-edge localization, raw intensity or biological effect estimate is claimed. Those require real raw data, calibrated metadata, controls, manual annotations and biological replicates.
+
+The development release remains draft until complete CPython and Pyodide QA, desktop/mobile checks, standalone exported scripts and a real learner trial pass. The new QA scripts are `tests/test_microscopy_complete_import.py`, `tests/test_microscopy_complete_reference.py` and `tests/test_microscopy_complete_browser.py`.
 
 ## P06 local-machine limit
 
@@ -84,6 +102,6 @@ Browser tests additionally require Playwright and Chromium; see `.github/workflo
 
 Witz [Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner) is the primary source spine. Supporting references include the [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/), [Python for Biologists](https://www.pythonforbiologists.org/), [Introduction to Bioimage Analysis](https://bioimagebook.github.io/) and [Bio-image Analysis Notebooks](https://haesleinhuepf.github.io/BioImageAnalysisNotebooks/).
 
-Synthetic specimen IDs, cutoffs, calibrations and field scores are for programming education only. Image fields are not independent biological replicates; connected regions are not validated cell/exopher detections. Calibrated quantitative image analysis belongs to later I01–I13 missions.
+Synthetic specimen IDs, cutoffs, calibrations and field scores are for programming education only. Image fields are not independent biological replicates; connected regions are not validated cell/exopher detections. Calibrated quantitative microscopy requires original raw images and independent validation beyond the rendered figure.
 
 **Release policy:** Keep this branch in draft until the exact-commit QA suite, a real-device learner pilot and a deployment preview are confirmed. Do not merge or update production automatically.

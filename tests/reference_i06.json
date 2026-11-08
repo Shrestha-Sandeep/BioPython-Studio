@@ -1,0 +1,38 @@
+{
+  "I06-G01": {
+    "apply": "import numpy as np\nfrom skimage.morphology import binary_closing,disk\nresult=binary_closing(np.asarray(data['mask'],bool),footprint=disk(1))\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage.morphology import binary_opening,disk\nresult=binary_opening(np.asarray(sample['mask'],bool),footprint=disk(1))\nprint(str(result)[:500])"
+  },
+  "I06-G02": {
+    "apply": "import numpy as np\nfrom skimage.measure import label\nlab=label(np.asarray(data['mask'],bool),connectivity=1)\nresult={'labels':lab,'count':int(lab.max())}\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage.measure import label\nlab=label(np.asarray(sample['mask'],bool),connectivity=2)\nresult={'labels':lab,'count':int(lab.max())}\nprint(str(result)[:500])"
+  },
+  "I06-G03": {
+    "apply": "import numpy as np\nfrom skimage.measure import label,regionprops\nlab=label(np.asarray(data['mask'],bool),connectivity=1)\nkeep=[r.label for r in regionprops(lab) if r.area>=data['min_size']]\nresult={'mask':np.isin(lab,keep)&(lab>0),'removed':len(regionprops(lab))-len(keep)}\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage.measure import label,regionprops\nlab=label(np.asarray(sample['mask'],bool),connectivity=1)\nresult=sorted(int(r.area) for r in regionprops(lab) if sample['min_size']<=r.area<=sample['min_size']+2)\nprint(str(result)[:500])"
+  },
+  "I06-G04": {
+    "apply": "import numpy as np\nfrom skimage.segmentation import clear_border\nresult=np.asarray(clear_border(np.asarray(data['mask'],bool)),bool)\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage.segmentation import clear_border\nfrom skimage.measure import label\nm=clear_border(np.asarray(sample['mask'],bool))\nresult={'pixels':int(m.sum()),'components':int(label(m,connectivity=1).max())}\nprint(str(result)[:500])"
+  },
+  "I06-G05": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nfrom skimage.segmentation import watershed\nmask=np.asarray(data['mask'],bool); seeds=np.asarray(data['markers'],int)\nresult=watershed(-ndi.distance_transform_edt(mask),seeds,mask=mask)\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nfrom skimage.segmentation import watershed\nmask=np.asarray(sample['mask'],bool);lab=watershed(-ndi.distance_transform_edt(mask),np.asarray(sample['markers'],int),mask=mask)\nresult={'labels':lab,'ids':sorted(int(v) for v in np.unique(lab) if v>0)}\nprint(str(result)[:500])"
+  },
+  "I06-G06": {
+    "apply": "import numpy as np\nfrom skimage.measure import label\nvol=np.asarray(data['volume'],bool)\nresult={'volume_count':int(label(vol,connectivity=1).max()),'shape':vol.shape}\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage.measure import label\nv=np.asarray(sample['volume'],bool)\nresult={'projection':int(label(v.any(axis=0),connectivity=1).max()),'volume':int(label(v,connectivity=1).max())}\nprint(str(result)[:500])"
+  },
+  "I06-G07": {
+    "apply": "import numpy as np\nfrom skimage.measure import label,regionprops\ndef segment(image,threshold,min_size):\n    lab=label(np.asarray(image,float)>threshold,connectivity=1)\n    return sum(int(r.area>=min_size) for r in regionprops(lab))\nresult=segment(data['image'],data['threshold'],data['min_size'])\nprint(str(result)[:500])",
+    "prove": "import numpy as np\nfrom skimage.measure import label,regionprops\ndef measure_candidates(image,threshold,min_size):\n    lab=label(np.asarray(image,float)>threshold,connectivity=1)\n    areas=sorted(int(r.area) for r in regionprops(lab) if r.area>=min_size)\n    return {'areas':areas,'count':len(areas)}\nresult=measure_candidates(sample['image'],sample['threshold'],sample['min_size'])\nprint(str(result)[:500])"
+  },
+  "I06-CAPSTONE": {
+    "apply": "import numpy as np\nfrom skimage.measure import label,regionprops\nbinary=np.asarray(data['image'],float)>data['threshold']\nlab=label(binary,connectivity=1)\nareas=sorted(int(r.area) for r in regionprops(lab) if r.area>=data['min_size'])\nresult={'areas':areas,'count':len(areas),'verified':False}\nprint(result)",
+    "prove": "import numpy as np\nfrom skimage.segmentation import clear_border\nfrom skimage.measure import label,regionprops\noriginal=regionprops(label(np.asarray(sample['mask'],bool),connectivity=1))\nclean=regionprops(label(clear_border(np.asarray(sample['mask'],bool)),connectivity=1))\nkept=[r for r in clean if r.area>=sample['min_size']]\nresult={'count':len(kept),'rejected':len(original)-len(kept)}\nprint(result)"
+  },
+  "I06-REVIEW": {
+    "apply": "",
+    "prove": "import numpy as np\nfrom skimage.segmentation import clear_border\nm=np.asarray(sample['mask'],bool)\nresult={'before':int(m.sum()),'after':int(clear_border(m).sum())}\nprint(result)"
+  }
+}
