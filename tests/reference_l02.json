@@ -1,0 +1,26 @@
+{
+  "L02-G01": {
+    "apply": "from sklearn.dummy import DummyClassifier\nm=DummyClassifier(strategy='most_frequent').fit(data['train_X'],data['train_y']);result=[int(x) for x in m.predict(data['test_X'])]\nprint(result)",
+    "prove": "from sklearn.dummy import DummyClassifier\nfrom sklearn.metrics import accuracy_score\nm=DummyClassifier(strategy='most_frequent').fit(sample['train_X'],sample['train_y']);pred=m.predict(sample['test_X']);result={'majority':int(m.classes_[0] if len(m.classes_)==1 else pred[0]),'accuracy':float(accuracy_score(sample['test_y'],pred))}\nprint(result)"
+  },
+  "L02-G02": {
+    "apply": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit(data['reg_X'],data['reg_y']);result={'slope':float(m.coef_[0]),'predictions':[float(v) for v in m.predict(data['reg_test'])]}\nprint(result)",
+    "prove": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit(sample['reg_X'],sample['reg_y']);result=[round(float(v),6) for v in m.predict(sample['reg_test'])]\nprint(result)"
+  },
+  "L02-G03": {
+    "apply": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nm=Pipeline([('scale',StandardScaler()),('clf',LogisticRegression(C=1,max_iter=300,random_state=0))]).fit(data['train_X'],data['train_y']);result=[float(v) for v in m.predict_proba(data['test_X'])[:,1]]\nprint(result)",
+    "prove": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nm=Pipeline([('scale',StandardScaler()),('clf',LogisticRegression(C=1,max_iter=300,random_state=0))]).fit(sample['train_X'],sample['train_y']);result={'predictions':[int(v) for v in m.predict(sample['test_X'])],'n_features':len(sample['train_X'][0])}\nprint(result)"
+  },
+  "L02-G04": {
+    "apply": "from sklearn.tree import DecisionTreeClassifier\nfrom sklearn.metrics import accuracy_score\nm=DecisionTreeClassifier(max_depth=2,random_state=0).fit(data['train_X'],data['train_y']);result={'depth':m.get_depth(),'test_accuracy':float(accuracy_score(data['test_y'],m.predict(data['test_X'])))}\nprint(result)",
+    "prove": "from sklearn.tree import DecisionTreeClassifier\nfrom sklearn.dummy import DummyClassifier\nfrom sklearn.metrics import accuracy_score\na=DecisionTreeClassifier(max_depth=2,random_state=0).fit(sample['train_X'],sample['train_y']);b=DummyClassifier(strategy='most_frequent').fit(sample['train_X'],sample['train_y']);result={'tree_accuracy':float(accuracy_score(sample['test_y'],a.predict(sample['test_X']))),'dummy_accuracy':float(accuracy_score(sample['test_y'],b.predict(sample['test_X'])))}\nprint(result)"
+  },
+  "L02-CAPSTONE": {
+    "apply": "from sklearn.dummy import DummyClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\nm0=DummyClassifier(strategy='most_frequent').fit(data['train_X'],data['train_y']);m1=Pipeline([('scale',StandardScaler()),('clf',LogisticRegression(C=1,max_iter=300,random_state=0))]).fit(data['train_X'],data['train_y']);result={'dummy':float(accuracy_score(data['test_y'],m0.predict(data['test_X']))),'logistic':float(accuracy_score(data['test_y'],m1.predict(data['test_X']))),'n_test':len(data['test_y'])}\nprint(result)",
+    "prove": "from sklearn.dummy import DummyClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nd=DummyClassifier(strategy='most_frequent').fit(sample['train_X'],sample['train_y']);t=DecisionTreeClassifier(max_depth=2,random_state=0).fit(sample['train_X'],sample['train_y']);result={'dummy_preds':[int(x) for x in d.predict(sample['test_X'])],'tree_preds':[int(x) for x in t.predict(sample['test_X'])],'test_labels':list(sample['test_y'])}\nprint(result)"
+  },
+  "L02-REVIEW": {
+    "apply": "",
+    "prove": "from sklearn.dummy import DummyClassifier\nm=DummyClassifier(strategy='most_frequent').fit(sample['train_X'],sample['train_y']);pred=m.predict(sample['test_X']);result={'majority':int(pred[0]),'test_errors':sum(int(a!=b) for a,b in zip(pred,sample['test_y']))}\nprint(result)"
+  }
+}

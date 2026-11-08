@@ -1,0 +1,26 @@
+{
+  "L03-G01": {
+    "apply": "from sklearn.model_selection import GroupKFold\nrows=data['records'];groups=[r['animal'] for r in rows];result=[{'train_subjects':sorted({groups[i] for i in tr}),'validation_subjects':sorted({groups[i] for i in te})} for tr,te in GroupKFold(n_splits=3).split(rows,groups=groups)]\nprint(result)",
+    "prove": "from sklearn.model_selection import GroupKFold\nrows=sample['records'];groups=[r['animal'] for r in rows];folds=list(GroupKFold(n_splits=3).split(rows,groups=groups));hits=[int(i in te) for tr,te in folds for i in te];result={'folds':len(folds),'all_validation_rows_once':sorted(i for tr,te in folds for i in te)==list(range(len(rows))),'max_group_overlap':max(len({groups[i] for i in tr}&{groups[i] for i in te}) for tr,te in folds)}\nprint(result)"
+  },
+  "L03-G02": {
+    "apply": "from sklearn.metrics import precision_score,recall_score,balanced_accuracy_score\ntruth=data['eval_y'];pred=data['eval_pred'];result={'precision':float(precision_score(truth,pred,zero_division=0)),'recall':float(recall_score(truth,pred,zero_division=0)),'balanced_accuracy':float(balanced_accuracy_score(truth,pred))}\nprint(result)",
+    "prove": "pairs=list(zip(sample['eval_y'],sample['eval_pred']));tp=sum(a==1 and b==1 for a,b in pairs);fp=sum(a==0 and b==1 for a,b in pairs);fn=sum(a==1 and b==0 for a,b in pairs);tn=sum(a==0 and b==0 for a,b in pairs);result={'TP':tp,'FP':fp,'FN':fn,'TN':tn,'positive_recall':tp/(tp+fn) if tp+fn else 0.0}\nprint(result)"
+  },
+  "L03-G03": {
+    "apply": "from sklearn.metrics import brier_score_loss\ntruth=data['eval_y'];p=data['eval_prob'];result={'brier':float(brier_score_loss(truth,p)),'mean_probability':sum(p)/len(p),'positive_rate':sum(truth)/len(truth)}\nprint(result)",
+    "prove": "rows=list(zip(sample['eval_y'],sample['eval_prob']));result={'high_confidence_errors':sum(int((p>=.5)!=bool(y)) for y,p in rows if p>=.75 or p<=.25),'n':len(rows)}\nprint(result)"
+  },
+  "L03-G04": {
+    "apply": "import numpy as np\nfrom sklearn.model_selection import GroupKFold\nfrom sklearn.dummy import DummyClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import balanced_accuracy_score\nrows=data['records'];x=np.asarray([[r['signal']] for r in rows],float);y=np.asarray([r['label'] for r in rows],int);g=[r['animal'] for r in rows];lr=[];dm=[];leaks=0\nfor tr,te in GroupKFold(3).split(x,y,g):\n leaks+=len({g[i] for i in tr}&{g[i] for i in te})\n a=DummyClassifier(strategy='most_frequent').fit(x[tr],y[tr]);b=Pipeline([('scale',StandardScaler()),('clf',LogisticRegression(C=1,max_iter=300,random_state=0))]).fit(x[tr],y[tr]);lr.append(float(balanced_accuracy_score(y[te],b.predict(x[te]))));dm.append(float(balanced_accuracy_score(y[te],a.predict(x[te]))))\nresult={'logistic_balanced_accuracy':lr,'dummy_balanced_accuracy':dm,'group_leaks':leaks}\nprint(result)",
+    "prove": "from collections import Counter\nfrom sklearn.model_selection import GroupKFold\nrows=sample['records'];g=[r['animal'] for r in rows];counter=Counter()\nfor tr,te in GroupKFold(3).split(rows,groups=g):counter.update(set(g[i] for i in te))\nresult={'n_folds':3,'subject_validation_counts':dict(counter),'total_fields':len(rows)}\nprint(result)"
+  },
+  "L03-CAPSTONE": {
+    "apply": "from sklearn.model_selection import GroupKFold\ng=[r['animal'] for r in data['records']];folds=list(GroupKFold(3).split(data['records'],groups=g));result={'folds':len(folds),'leak_count':sum(len({g[i] for i in tr}&{g[i] for i in te}) for tr,te in folds),'validation_n':sum(len(te) for tr,te in folds)}\nprint(result)",
+    "prove": "from collections import Counter\nfrom sklearn.model_selection import GroupKFold\ng=[r['animal'] for r in sample['records']];splits=list(GroupKFold(3).split(sample['records'],groups=g));cnt=Counter(g[i] for tr,te in splits for i in te);result={'cv_subjects':len(set(g)),'heldout_once':all(cnt[x]==sum(a==x for a in g) for x in set(g)),'n_predictions':sum(len(te) for tr,te in splits)}\nprint(result)"
+  },
+  "L03-REVIEW": {
+    "apply": "",
+    "prove": "g=set(r['animal'] for r in sample['records']);errors=[(p-y)**2 for y,p in zip(sample['eval_y'],sample['eval_prob'])];result={'biological_n':len(g),'brier':sum(errors)/len(errors),'fields':len(sample['records'])}\nprint(result)"
+  }
+}
