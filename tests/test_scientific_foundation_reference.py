@@ -17,6 +17,7 @@ for cid in ('I01','I02','I03','I04','I07','I08'):
         for phase in ('apply','prove'):
             cases=goal['phases'][phase].get('public_checks',[])
             if not cases:continue
+            print('TEST',cid,goal['id'],phase,len(cases),flush=True)
             script=references[goal['id']][phase]
             assert script and isinstance(script,str),(cid,goal['id'],phase,'missing QA reference')
             compile(script,'<transparent scientific reference>','exec')
