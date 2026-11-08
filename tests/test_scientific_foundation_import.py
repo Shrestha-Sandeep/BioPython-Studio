@@ -59,4 +59,4 @@ assert len(set(all_assigned))==45,'duplicate competencies'
 assert set(all_assigned)<={g['number'] for g in manifest['competencies']}
 assert '068' not in all_assigned,'replicate-aware uncertainty belongs to I12'
 assert checks==327,checks
-print(f'PASS 6 scientific Python missions, 45 canonical distinct skills, {checks} public cases, 54 activity screens, no leaked solutions or scientific overclaim')
+print(f'PASS 6 scientific Python missions, 45 canonical distinct skills, {checks} public cases, 57 teaching activities, no leaked solutions or scientific overclaim')
