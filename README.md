@@ -39,6 +39,27 @@ python -m http.server 8000
 
 Then open `http://localhost:8000` and select Python foundations. Internet access is required to download the Pyodide runtime on first Run.
 
+## Scientific Python microscopy missions (draft PR #18)
+
+The frozen 26-mission course places the scientific-computing foundation inside applied microscopy missions, rather than in an unrelated additional chapter series. The active development branch adds **45 distinct competencies** and real Python execution to these missions:
+
+| Mission | Core techniques | Competencies |
+|---|---|---:|
+| I01 | NumPy arrays, real credited Witz/HPA PNG bytes, shape, dtype, provenance | 8 |
+| I02 | ROI cropping, views and copies, axis labels, synthetic TIFF I/O | 6 |
+| I03 | Vectorization, broadcasting, masks, missingness, statistics, dtype overflow, ROI | 10 |
+| I04 | Real Matplotlib line/scatter/histograms, contrast, figure panels | 6 |
+| I07 | Pandas tables, explicit-typed CSV, QC, duplicate and missing records | 7 |
+| I08 | Safe metadata joins, group summaries, reshaping, timestamps, plots and exports | 8 |
+
+These are **six separate missions** with a total of 45 goals, six capstones and six delayed reviews (57 activities). They cover **33/34** numerical/data/plotting foundation skills. Competency **068 — Represent uncertainty** is intentionally reserved for I12, where biological replication and uncertainty estimation are taught together. Missions I05 and I06 are not yet implemented, despite later I07/I08 being accessible for foundation practice.
+
+Source hygiene: The bundled `assets/witz/fluorescence-single.png` is a **real attributed published notebook figure based on Human Protein Atlas**, decoded into actual pixels in Pyodide. It is not a calibrated raw HPA TIFF. Synthetic numerical examples and synthetic TIFF files remain explicitly labeled. An OME-looking TIFF Description tag is not validated OME metadata.
+
+The pinned scientific Python worker lazily imports NumPy, Pillow, Pandas and Matplotlib. Actual Matplotlib figures render in the results console, not precomputed stock pictures. First import needs a network connection. I01 and other Python mission progress keys are kept separate; stage switching does not overwrite prior drafts. The image-analysis stage displays the existing frozen IDE and its image-preview panel.
+
+This is a **draft learner pilot**, not scientifically validated quantitative image analysis or demonstrated learner mastery.
+
 ## P06 local-machine limit
 
 Browser Python can create genuine temporary files in its own virtual filesystem, encode JSON and execute assertions. **It cannot create your computer's .venv, run local Git, verify an on-disk repository, or certify a local notebook kernel.**
@@ -57,7 +78,7 @@ python tests/test_p04_p06_import.py
 python tests/test_p04_p06_reference.py
 ```
 
-Browser tests additionally require Playwright and Chromium; see `.github/workflows/p04-p06-integration.yml`. They run the original frozen-shell regression and P01–P06 chapter flows, changed-input checks in genuine Pyodide, exported script execution in CPython, draft preservation and mobile/tablet/desktop layout tests.
+Browser tests additionally require Playwright and Chromium; see `.github/workflows/p04-p06-integration.yml` for Python foundations and `.github/workflows/scientific-python-integration.yml` for real NumPy/Pandas/Matplotlib microscopy missions. Scientific CPython QA runs `tests/test_scientific_foundation_import.py` and `tests/test_scientific_foundation_reference.py`; complete real Pyodide QA runs `tests/test_i01_browser.py` and `tests/test_scientific_foundation_browser.py`. They run the original frozen-shell regression and P01–P06 chapter flows, changed-input checks in genuine Pyodide, exported script execution in CPython, draft preservation and mobile/tablet/desktop layout tests.
 
 ## Learning sources and scientific safeguards
 
