@@ -316,6 +316,7 @@ function switchChapter(next){
  refreshGoalOptions();refreshChapterOptions();
  bridge()?.selectPhase?.(state.phase);
  bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
+ if(isImaging(activeId))bridge()?.ensureExampleImage?.();
  render();save();
 }
 function mount(){
@@ -382,6 +383,7 @@ async function start(){
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
   if(isImaging(activeId))bridge()?.selectStage?.("Microscopy");
   mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
+  if(isImaging(activeId))bridge()?.ensureExampleImage?.();
   render();syncActivity();
   el("output-placeholder").textContent="Run your code to see real Python output or traceback.";
   status("Python ready to load on first Run");
