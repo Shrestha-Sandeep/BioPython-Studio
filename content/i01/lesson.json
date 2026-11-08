@@ -1,0 +1,1863 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I01",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_RENDERED_IMAGE_ONLY",
+  "title": "Open a real microscopy image",
+  "competencies": [
+    "037",
+    "038",
+    "039",
+    "071",
+    "072",
+    "073",
+    "074",
+    "075"
+  ],
+  "intro": "Start NumPy image analysis using real Python, actual attributed Witz/HPA notebook-figure PNG bytes, dtype, axes and precise source provenance. The figure is rendered RGB rather than the original calibrated TIFF: no quantitative fluorescence claims.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/02-Images_as_arrays.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "RENDERED_NOTEBOOK_FIGURE_PIXEL_INSPECTION_ONLY",
+    "caution": "Source image is genuine Witz/HPA published figure, not raw microscopy TIFF; pixel arrays represent an RGB rendering."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove; genuine Pyodide/Pillow/NumPy pixel decoding.",
+  "goals": [
+    {
+      "id": "I01-G01",
+      "title": "Construct typed NumPy arrays",
+      "competencies": [
+        "037"
+      ],
+      "why": "Array dtype matters: a microscope pixel value is a number with a storage range, not a biological measurement on its own.",
+      "explain": [
+        "NumPy arrays store homogeneous numerical elements and support vectorized work. A list of measurements can become `np.asarray(values, dtype=np.uint16)` with explicit integer type.",
+        "The distinction between list and array matters: numeric operations on arrays act elementwise; repeating a Python list with multiplication does not perform elementwise scaling.",
+        "A datatype constrains numerical range and precision. It does not tell you whether values are background-subtracted, photon counts or calibrated intensity."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nscores=np.asarray([10,20,30],dtype=np.uint16)\nprint(scores.dtype,scores.shape)\nprint((scores+2).tolist())",
+        "predict": "What is the dtype and the result of adding 2?"
+      },
+      "prediction_answer": "uint16, shape (3,), and [12,22,32]. NumPy adds elementwise.",
+      "walkthrough": [
+        "Predict a file, array or coordinate output before running the code.",
+        "Run genuine Python, then change a coordinate or array input.",
+        "Explain the source provenance and scientific interpretation."
+      ],
+      "investigate": [
+        "Try different pixel coordinates or numeric arrays.",
+        "Check dtype, shape and data preservation for new inputs.",
+        "Identify any claim that would require original raw fluorescence TIFF."
+      ],
+      "debug_task": "Locate an incorrect assumption in construct typed numpy arrays: how would you rule out swapped axes, absent calibration or invented data?",
+      "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+      "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the worked example, run and modify it.",
+          "starter_code": "# I01-G01 | LEARN | Construct typed NumPy arrays\n# TASK: Predict the worked example, run and modify it.\n\nimport numpy as np\nscores=np.asarray([10,20,30],dtype=np.uint16)\nprint(scores.dtype,scores.shape)\nprint((scores+2).tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing records",
+          "description": "Import numpy; create pixels as a uint16 array from values. Set pixel_count and doubled as a new array of twice the values; preserve values.",
+          "starter_code": "# I01-G01 | APPLY | Construct typed NumPy arrays\n# TASK: Import numpy; create pixels as a uint16 array from values. Set pixel_count\n#   and doubled as a new array of twice the values; preserve values.\n# INPUTS: values\n\n",
+          "preview_inputs": {
+            "values": [
+              10,
+              20,
+              30
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "values": [
+                  10,
+                  20,
+                  30
+                ]
+              },
+              "assertions": [
+                "str(pixels.dtype)=='uint16'",
+                "pixel_count==3",
+                "np.array_equal(doubled,np.array([20,40,60]))"
+              ]
+            },
+            {
+              "inputs": {
+                "values": []
+              },
+              "assertions": [
+                "pixel_count==0",
+                "doubled.shape==(0,)"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  0,
+                  5,
+                  100
+                ]
+              },
+              "assertions": [
+                "np.array_equal(doubled,np.array([0,10,200]))",
+                "values==[0,5,100]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The distinction between list and array matters: numeric operations on arrays act elementwise; repeating a Python list with multiplication does not perform elementwise scaling.",
+            "probe": "What does construct typed numpy arrays tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for construct typed numpy arrays; changed-image-array checks should not be hardcoded."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "From raw_counts create a float32 NumPy array intensities. Set shifted=intensities+offset and total=float(intensities.sum()); keep raw_counts unchanged.",
+          "starter_code": "# I01-G01 | PROVE | Construct typed NumPy arrays\n# TASK: From raw_counts create a float32 NumPy array intensities. Set\n#   shifted=intensities+offset and total=float(intensities.sum()); keep raw_counts\n#   unchanged.\n# INPUTS: raw_counts, offset\n\n",
+          "preview_inputs": {
+            "raw_counts": [
+              1,
+              3,
+              5
+            ],
+            "offset": 0.5
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "raw_counts": [
+                  1,
+                  3,
+                  5
+                ],
+                "offset": 0.5
+              },
+              "assertions": [
+                "str(intensities.dtype)=='float32'",
+                "np.allclose(shifted,[1.5,3.5,5.5])",
+                "total==9"
+              ]
+            },
+            {
+              "inputs": {
+                "raw_counts": [],
+                "offset": 2
+              },
+              "assertions": [
+                "intensities.size==0",
+                "total==0.0"
+              ]
+            },
+            {
+              "inputs": {
+                "raw_counts": [
+                  0,
+                  10
+                ],
+                "offset": -1
+              },
+              "assertions": [
+                "np.allclose(shifted,[-1,9])",
+                "raw_counts==[0,10]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The distinction between list and array matters: numeric operations on arrays act elementwise; repeating a Python list with multiplication does not perform elementwise scaling.",
+            "probe": "What does construct typed numpy arrays tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for construct typed numpy arrays; changed-image-array checks should not be hardcoded."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+          "Use changing inputs and source filename/metadata rather than copying the example output."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "Verify array shape and which index is row versus column.",
+        "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+        "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+        "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+        "hardcoded": "Changed inputs and the actual image bytes must determine results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independently certified mastery"
+      }
+    },
+    {
+      "id": "I01-G02",
+      "title": "Inspect array shape and dimensions",
+      "competencies": [
+        "038"
+      ],
+      "why": "The difference between a one-dimensional measurement list and a 2D image is encoded in shape, not in the filename.",
+      "explain": [
+        "A NumPy array's `shape` is its axis lengths; `ndim` is the number of axes. A 2D image is often `(rows, columns)`, not `(x,y)`.",
+        "Image geometry may include channel, z and time axes. Always inspect shape and metadata before assuming axis meaning.",
+        "The number of pixels is `arr.size`. Array shape alone cannot tell you whether a given axis is a biological channel or timepoint."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nimg=np.array([[1,2,3],[4,5,6]])\nprint(img.shape,img.ndim,img.size)",
+        "predict": "How many rows, columns and dimensions exist?"
+      },
+      "prediction_answer": "Shape (2,3), ndim 2 and size 6; two rows, three columns.",
+      "walkthrough": [
+        "Predict a file, array or coordinate output before running the code.",
+        "Run genuine Python, then change a coordinate or array input.",
+        "Explain the source provenance and scientific interpretation."
+      ],
+      "investigate": [
+        "Try different pixel coordinates or numeric arrays.",
+        "Check dtype, shape and data preservation for new inputs.",
+        "Identify any claim that would require original raw fluorescence TIFF."
+      ],
+      "debug_task": "Locate an incorrect assumption in inspect array shape and dimensions: how would you rule out swapped axes, absent calibration or invented data?",
+      "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+      "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the worked example, run and modify it.",
+          "starter_code": "# I01-G02 | LEARN | Inspect array shape and dimensions\n# TASK: Predict the worked example, run and modify it.\n\nimport numpy as np\nimg=np.array([[1,2,3],[4,5,6]])\nprint(img.shape,img.ndim,img.size)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing records",
+          "description": "Convert rows to a NumPy array. Set shape as a tuple, dimensions as an integer and element_count. Handle empty rows as a 1D empty array.",
+          "starter_code": "# I01-G02 | APPLY | Inspect array shape and dimensions\n# TASK: Convert rows to a NumPy array. Set shape as a tuple, dimensions as an\n#   integer and element_count. Handle empty rows as a 1D empty array.\n# INPUTS: rows\n\n",
+          "preview_inputs": {
+            "rows": [
+              [
+                1,
+                2,
+                3
+              ],
+              [
+                4,
+                5,
+                6
+              ]
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    1,
+                    2,
+                    3
+                  ],
+                  [
+                    4,
+                    5,
+                    6
+                  ]
+                ]
+              },
+              "assertions": [
+                "shape==(2,3)",
+                "dimensions==2",
+                "element_count==6"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    9,
+                    8
+                  ]
+                ]
+              },
+              "assertions": [
+                "shape==(1,2)",
+                "element_count==2"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": []
+              },
+              "assertions": [
+                "shape==(0,)",
+                "dimensions==1",
+                "element_count==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Image geometry may include channel, z and time axes. Always inspect shape and metadata before assuming axis meaning.",
+            "probe": "What does inspect array shape and dimensions tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for inspect array shape and dimensions; changed-image-array checks should not be hardcoded."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Convert stack_data into NumPy array stack. Set plane_count=stack.shape[0], pixel_count=stack.size and dimensionality=stack.ndim.",
+          "starter_code": "# I01-G02 | PROVE | Inspect array shape and dimensions\n# TASK: Convert stack_data into NumPy array stack. Set plane_count=stack.shape[0],\n#   pixel_count=stack.size and dimensionality=stack.ndim.\n# INPUTS: stack_data\n\n",
+          "preview_inputs": {
+            "stack_data": [
+              [
+                [
+                  1,
+                  2
+                ],
+                [
+                  3,
+                  4
+                ]
+              ],
+              [
+                [
+                  5,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      3,
+                      4
+                    ]
+                  ],
+                  [
+                    [
+                      5,
+                      6
+                    ],
+                    [
+                      7,
+                      8
+                    ]
+                  ]
+                ]
+              },
+              "assertions": [
+                "plane_count==2",
+                "pixel_count==8",
+                "dimensionality==3"
+              ]
+            },
+            {
+              "inputs": {
+                "stack_data": [
+                  [
+                    [
+                      0
+                    ]
+                  ]
+                ]
+              },
+              "assertions": [
+                "plane_count==1",
+                "pixel_count==1",
+                "dimensionality==3"
+              ]
+            },
+            {
+              "inputs": {
+                "stack_data": []
+              },
+              "assertions": [
+                "plane_count==0",
+                "pixel_count==0",
+                "dimensionality==1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Image geometry may include channel, z and time axes. Always inspect shape and metadata before assuming axis meaning.",
+            "probe": "What does inspect array shape and dimensions tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for inspect array shape and dimensions; changed-image-array checks should not be hardcoded."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+          "Use changing inputs and source filename/metadata rather than copying the example output."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "Verify array shape and which index is row versus column.",
+        "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+        "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+        "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+        "hardcoded": "Changed inputs and the actual image bytes must determine results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independently certified mastery"
+      }
+    },
+    {
+      "id": "I01-G03",
+      "title": "Index rows, columns and planes",
+      "competencies": [
+        "039"
+      ],
+      "why": "Pixel selection must preserve the difference between zero-based Python row indexing and microscope field identifiers.",
+      "explain": [
+        "Use `array[row,column]` in that order for a 2D image; row increases downward and column increases rightward in common displayed image coordinates.",
+        "For a stack with declared order `(plane,row,column)`, a specific scalar is `stack[plane,row,column]`. This axis order is an exercise convention, never an inference from shape alone.",
+        "A scientific report should retain the original source ID, plane index and pixel coordinate with its numeric measurement."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nstack=np.array([[[1,2],[3,4]],[[5,6],[7,8]]])\nprint(stack[1,0,1])\nprint(stack[0].shape)",
+        "predict": "What value is at plane 1, row 0, column 1?"
+      },
+      "prediction_answer": "6; selected_plane has shape (2,2).",
+      "walkthrough": [
+        "Predict a file, array or coordinate output before running the code.",
+        "Run genuine Python, then change a coordinate or array input.",
+        "Explain the source provenance and scientific interpretation."
+      ],
+      "investigate": [
+        "Try different pixel coordinates or numeric arrays.",
+        "Check dtype, shape and data preservation for new inputs.",
+        "Identify any claim that would require original raw fluorescence TIFF."
+      ],
+      "debug_task": "Locate an incorrect assumption in index rows, columns and planes: how would you rule out swapped axes, absent calibration or invented data?",
+      "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+      "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the worked example, run and modify it.",
+          "starter_code": "# I01-G03 | LEARN | Index rows, columns and planes\n# TASK: Predict the worked example, run and modify it.\n\nimport numpy as np\nstack=np.array([[[1,2],[3,4]],[[5,6],[7,8]]])\nprint(stack[1,0,1])\nprint(stack[0].shape)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing records",
+          "description": "Import numpy; create stack from planes (plane,row,column). Set selected_plane=stack[plane_index], selected_value=int(stack[plane_index,row,col]), plane_shape=selected_plane.shape.",
+          "starter_code": "# I01-G03 | APPLY | Index rows, columns and planes\n# TASK: Import numpy; create stack from planes (plane,row,column). Set\n#   selected_plane=stack[plane_index],\n#   selected_value=int(stack[plane_index,row,col]),\n#   plane_shape=selected_plane.shape.\n# INPUTS: planes, plane_index, row, col\n\n",
+          "preview_inputs": {
+            "planes": [
+              [
+                [
+                  1,
+                  2
+                ],
+                [
+                  3,
+                  4
+                ]
+              ],
+              [
+                [
+                  5,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            ],
+            "plane_index": 1,
+            "row": 0,
+            "col": 1
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "planes": [
+                  [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      3,
+                      4
+                    ]
+                  ],
+                  [
+                    [
+                      5,
+                      6
+                    ],
+                    [
+                      7,
+                      8
+                    ]
+                  ]
+                ],
+                "plane_index": 1,
+                "row": 0,
+                "col": 1
+              },
+              "assertions": [
+                "selected_value==6",
+                "plane_shape==(2,2)"
+              ]
+            },
+            {
+              "inputs": {
+                "planes": [
+                  [
+                    [
+                      9,
+                      8,
+                      7
+                    ]
+                  ]
+                ],
+                "plane_index": 0,
+                "row": 0,
+                "col": 2
+              },
+              "assertions": [
+                "selected_value==7",
+                "plane_shape==(1,3)"
+              ]
+            },
+            {
+              "inputs": {
+                "planes": [
+                  [
+                    [
+                      1
+                    ]
+                  ],
+                  [
+                    [
+                      4
+                    ]
+                  ]
+                ],
+                "plane_index": 0,
+                "row": 0,
+                "col": 0
+              },
+              "assertions": [
+                "selected_value==1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For a stack with declared order `(plane,row,column)`, a specific scalar is `stack[plane,row,column]`. This axis order is an exercise convention, never an inference from shape alone.",
+            "probe": "What does index rows, columns and planes tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for index rows, columns and planes; changed-image-array checks should not be hardcoded."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Given volume (z,y,x), calculate voxel_value=int(volume[z,y,x]) and xy_coordinate=(x,y); set slice_shape for that z. Do not swap x and y.",
+          "starter_code": "# I01-G03 | PROVE | Index rows, columns and planes\n# TASK: Given volume (z,y,x), calculate voxel_value=int(volume[z,y,x]) and\n#   xy_coordinate=(x,y); set slice_shape for that z. Do not swap x and y.\n# INPUTS: volume, z, y, x\n\n",
+          "preview_inputs": {
+            "volume": [
+              [
+                [
+                  1,
+                  2
+                ],
+                [
+                  3,
+                  4
+                ]
+              ],
+              [
+                [
+                  5,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            ],
+            "z": 1,
+            "y": 1,
+            "x": 0
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "volume": [
+                  [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      3,
+                      4
+                    ]
+                  ],
+                  [
+                    [
+                      5,
+                      6
+                    ],
+                    [
+                      7,
+                      8
+                    ]
+                  ]
+                ],
+                "z": 1,
+                "y": 1,
+                "x": 0
+              },
+              "assertions": [
+                "voxel_value==7",
+                "xy_coordinate==(0,1)",
+                "slice_shape==(2,2)"
+              ]
+            },
+            {
+              "inputs": {
+                "volume": [
+                  [
+                    [
+                      4,
+                      5,
+                      6
+                    ]
+                  ]
+                ],
+                "z": 0,
+                "y": 0,
+                "x": 2
+              },
+              "assertions": [
+                "voxel_value==6",
+                "xy_coordinate==(2,0)"
+              ]
+            },
+            {
+              "inputs": {
+                "volume": [
+                  [
+                    [
+                      0,
+                      8
+                    ]
+                  ]
+                ],
+                "z": 0,
+                "y": 0,
+                "x": 0
+              },
+              "assertions": [
+                "voxel_value==0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For a stack with declared order `(plane,row,column)`, a specific scalar is `stack[plane,row,column]`. This axis order is an exercise convention, never an inference from shape alone.",
+            "probe": "What does index rows, columns and planes tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for index rows, columns and planes; changed-image-array checks should not be hardcoded."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+          "Use changing inputs and source filename/metadata rather than copying the example output."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "Verify array shape and which index is row versus column.",
+        "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+        "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+        "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+        "hardcoded": "Changed inputs and the actual image bytes must determine results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independently certified mastery"
+      }
+    },
+    {
+      "id": "I01-G04",
+      "title": "Document a genuine source image",
+      "competencies": [
+        "071"
+      ],
+      "why": "Image provenance is essential: a published illustration and a raw fluorescence file support fundamentally different claims.",
+      "explain": [
+        "The source figure used here is a real Witz notebook output derived from Human Protein Atlas fluorescence imagery, credited under CC BY-SA 3.0. It is not the raw source TIFF and includes plotting/display transformations.",
+        "A minimum provenance record identifies source, filename, license, intended use and whether raw calibration is available. Never guess pixel size, exposure or axes from a screenshot.",
+        "The exercise makes explicit the distinction between real biological origin, numerical display pixels and quantitative scientific measurements. The raw Witz TIFF remains necessary for calibrated analysis."
+      ],
+      "worked_example": {
+        "code": "metadata={'origin':'Witz / Human Protein Atlas','format':'rendered PNG','calibrated':False}\nprint(metadata['origin'])\nprint(metadata['calibrated'])",
+        "predict": "Does authentic biological origin make a rendered PNG a calibrated raw image?"
+      },
+      "prediction_answer": "No. The publication is authentic, but the rendered notebook figure is not calibrated raw fluorescence.",
+      "walkthrough": [
+        "Predict a file, array or coordinate output before running the code.",
+        "Run genuine Python, then change a coordinate or array input.",
+        "Explain the source provenance and scientific interpretation."
+      ],
+      "investigate": [
+        "Try different pixel coordinates or numeric arrays.",
+        "Check dtype, shape and data preservation for new inputs.",
+        "Identify any claim that would require original raw fluorescence TIFF."
+      ],
+      "debug_task": "Locate an incorrect assumption in document a genuine source image: how would you rule out swapped axes, absent calibration or invented data?",
+      "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+      "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the worked example, run and modify it.",
+          "starter_code": "# I01-G04 | LEARN | Document a genuine source image\n# TASK: Predict the worked example, run and modify it.\n\nmetadata={'origin':'Witz / Human Protein Atlas','format':'rendered PNG','calibrated':False}\nprint(metadata['origin'])\nprint(metadata['calibrated'])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing records",
+          "description": "Build provenance={'filename':filename,'source_url':source_url,'license':license_name,'raw_calibrated':False}. Set can_measure_absolute=False. Preserve all incoming strings.",
+          "starter_code": "# I01-G04 | APPLY | Document a genuine source image\n# TASK: Build\n#   provenance={'filename':filename,'source_url':source_url,'license':license_name,'raw_calibrated':False}.\n#   Set can_measure_absolute=False. Preserve all incoming strings.\n# INPUTS: filename, source_url, license_name\n\n",
+          "preview_inputs": {
+            "filename": "fluorescence-single.png",
+            "source_url": "https://github.com/guiwitz/PyImageCourse_beginner",
+            "license_name": "CC BY-SA 3.0"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "filename": "fluorescence-single.png",
+                "source_url": "https://github.com/guiwitz/PyImageCourse_beginner",
+                "license_name": "CC BY-SA 3.0"
+              },
+              "assertions": [
+                "provenance['filename']==filename",
+                "provenance['license']==license_name",
+                "provenance['raw_calibrated'] is False",
+                "can_measure_absolute is False"
+              ]
+            },
+            {
+              "inputs": {
+                "filename": "figure.png",
+                "source_url": "https://example.org/attributed",
+                "license_name": "CC BY-SA"
+              },
+              "assertions": [
+                "provenance['source_url']==source_url",
+                "can_measure_absolute is False"
+              ]
+            },
+            {
+              "inputs": {
+                "filename": "another.png",
+                "source_url": "https://x.test",
+                "license_name": "CC BY"
+              },
+              "assertions": [
+                "provenance['filename']=='another.png'",
+                "provenance['raw_calibrated'] is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A minimum provenance record identifies source, filename, license, intended use and whether raw calibration is available. Never guess pixel size, exposure or axes from a screenshot.",
+            "probe": "What does document a genuine source image tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for document a genuine source image; changed-image-array checks should not be hardcoded."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Create image_record={'id':image_id,'origin':origin,'display_only':True,'pixel_size_um':None} and provenance_ok=bool(origin.strip()). Do not fabricate calibration.",
+          "starter_code": "# I01-G04 | PROVE | Document a genuine source image\n# TASK: Create\n#   image_record={'id':image_id,'origin':origin,'display_only':True,'pixel_size_um':None}\n#   and provenance_ok=bool(origin.strip()). Do not fabricate calibration.\n# INPUTS: image_id, origin\n\n",
+          "preview_inputs": {
+            "image_id": "HPA_F01",
+            "origin": "Human Protein Atlas via Witz"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_id": "HPA_F01",
+                "origin": "Human Protein Atlas via Witz"
+              },
+              "assertions": [
+                "image_record['pixel_size_um'] is None",
+                "image_record['display_only'] is True",
+                "provenance_ok is True"
+              ]
+            },
+            {
+              "inputs": {
+                "image_id": "A",
+                "origin": ""
+              },
+              "assertions": [
+                "provenance_ok is False",
+                "image_record['id']=='A'"
+              ]
+            },
+            {
+              "inputs": {
+                "image_id": "B",
+                "origin": "  Witz  "
+              },
+              "assertions": [
+                "provenance_ok is True",
+                "image_record['origin']==origin"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A minimum provenance record identifies source, filename, license, intended use and whether raw calibration is available. Never guess pixel size, exposure or axes from a screenshot.",
+            "probe": "What does document a genuine source image tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for document a genuine source image; changed-image-array checks should not be hardcoded."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+          "Use changing inputs and source filename/metadata rather than copying the example output."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "Verify array shape and which index is row versus column.",
+        "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+        "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+        "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+        "hardcoded": "Changed inputs and the actual image bytes must determine results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independently certified mastery"
+      }
+    },
+    {
+      "id": "I01-G05",
+      "title": "Decode the credited image into pixels",
+      "competencies": [
+        "072"
+      ],
+      "why": "Image processing starts when actual file bytes are decoded into a NumPy array, not when a picture is displayed beside code.",
+      "explain": [
+        "The app makes the existing credited Witz/HPA notebook figure accessible as `image_path`. `PIL.Image.open` decodes real PNG bytes, then `np.asarray` exposes pixel values with shape and dtype.",
+        "This demonstrates real image-file handling rather than simulated output. Because the asset is a rendered figure, its pixel values reflect a visualization; they must not be reported as calibrated fluorescence intensities.",
+        "For quantitative localization or cell detection, the source TIFF and acquisition metadata are required. A missing file should produce a clear error, not silently substitute invented pixels."
+      ],
+      "worked_example": {
+        "code": "from PIL import Image\nimport numpy as np\nimg=np.asarray(Image.open(image_path).convert('RGB'))\nprint(img.shape,img.dtype)\nprint(img[0,0].tolist())",
+        "predict": "Why does a decoded RGB image usually have three dimensions?"
+      },
+      "prediction_answer": "Rows, columns and three stored display-color components. These are not independently calibrated biological channels.",
+      "walkthrough": [
+        "Predict a file, array or coordinate output before running the code.",
+        "Run genuine Python, then change a coordinate or array input.",
+        "Explain the source provenance and scientific interpretation."
+      ],
+      "investigate": [
+        "Try different pixel coordinates or numeric arrays.",
+        "Check dtype, shape and data preservation for new inputs.",
+        "Identify any claim that would require original raw fluorescence TIFF."
+      ],
+      "debug_task": "Locate an incorrect assumption in decode the credited image into pixels: how would you rule out swapped axes, absent calibration or invented data?",
+      "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+      "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the worked example, run and modify it.",
+          "starter_code": "# I01-G05 | LEARN | Decode the credited image into pixels\n# TASK: Predict the worked example, run and modify it.\n\nfrom PIL import Image\nimport numpy as np\nimg=np.asarray(Image.open(image_path).convert('RGB'))\nprint(img.shape,img.dtype)\nprint(img[0,0].tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing records",
+          "description": "Open the credited image_path with Pillow, convert to RGB, and make NumPy array image. Set height,width=int sizes, channels, dtype_name and pixel_value as RGB list at (sample_row,sample_col).",
+          "starter_code": "# I01-G05 | APPLY | Decode the credited image into pixels\n# TASK: Open the credited image_path with Pillow, convert to RGB, and make NumPy\n#   array image. Set height,width=int sizes, channels, dtype_name and pixel_value as\n#   RGB list at (sample_row,sample_col).\n# INPUTS: image_path, sample_row, sample_col\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "sample_row": 0,
+            "sample_col": 0
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "sample_row": 0,
+                "sample_col": 0
+              },
+              "assertions": [
+                "image.ndim==3",
+                "channels==3",
+                "height>10 and width>10",
+                "dtype_name=='uint8'",
+                "pixel_value==image[0,0].tolist()"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "sample_row": 2,
+                "sample_col": 3
+              },
+              "assertions": [
+                "pixel_value==image[2,3].tolist()",
+                "image.shape==(height,width,3)"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "sample_row": 5,
+                "sample_col": 2
+              },
+              "assertions": [
+                "pixel_value==image[5,2].tolist()",
+                "int(image.max())>int(image.min())"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This demonstrates real image-file handling rather than simulated output. Because the asset is a rendered figure, its pixel values reflect a visualization; they must not be reported as calibrated fluorescence intensities.",
+            "probe": "What does decode the credited image into pixels tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for decode the credited image into pixels; changed-image-array checks should not be hardcoded."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Open image_path and produce rgb NumPy array plus channel_plane=rgb[:,:,color_index]. Set plane_shape, pixel_at=int(channel_plane[row,col]), distinct_levels=int(np.unique(channel_plane).size).",
+          "starter_code": "# I01-G05 | PROVE | Decode the credited image into pixels\n# TASK: Open image_path and produce rgb NumPy array plus\n#   channel_plane=rgb[:,:,color_index]. Set plane_shape,\n#   pixel_at=int(channel_plane[row,col]),\n#   distinct_levels=int(np.unique(channel_plane).size).\n# INPUTS: image_path, color_index, row, col\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "color_index": 0,
+            "row": 0,
+            "col": 0
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 0,
+                "row": 0,
+                "col": 0
+              },
+              "assertions": [
+                "channel_plane.ndim==2",
+                "plane_shape==rgb.shape[:2]",
+                "pixel_at==int(rgb[0,0,0])",
+                "distinct_levels>1"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 1,
+                "row": 2,
+                "col": 3
+              },
+              "assertions": [
+                "pixel_at==int(rgb[2,3,1])",
+                "distinct_levels>1"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 2,
+                "row": 4,
+                "col": 2
+              },
+              "assertions": [
+                "pixel_at==int(rgb[4,2,2])",
+                "plane_shape==rgb.shape[:2]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "This demonstrates real image-file handling rather than simulated output. Because the asset is a rendered figure, its pixel values reflect a visualization; they must not be reported as calibrated fluorescence intensities.",
+            "probe": "What does decode the credited image into pixels tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for decode the credited image into pixels; changed-image-array checks should not be hardcoded."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+          "Use changing inputs and source filename/metadata rather than copying the example output."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "Verify array shape and which index is row versus column.",
+        "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+        "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+        "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+        "hardcoded": "Changed inputs and the actual image bytes must determine results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independently certified mastery"
+      }
+    },
+    {
+      "id": "I01-G06",
+      "title": "Inspect RGB components without inventing channels",
+      "competencies": [
+        "073"
+      ],
+      "why": "Rendered RGB display colors can be separated computationally, but they are not raw detector-channel measurements.",
+      "explain": [
+        "A decoded RGB array has shape `(rows,columns,3)`. `arr[:,:,0]`, `arr[:,:,1]` and `arr[:,:,2]` extract red, green and blue output components respectively.",
+        "Compute a component summary to learn indexing and floating-point conversion. The value describes rendered pixels and any overlays, not molecules, exposure-normalized signal or biological abundance.",
+        "A true multi-channel TIFF requires its actual stored channel axis and acquisition record. The image shown here is explicitly a teaching figure from Witz's notebook."
+      ],
+      "worked_example": {
+        "code": "from PIL import Image\nimport numpy as np\narr=np.asarray(Image.open(image_path).convert('RGB'))\nprint(arr.shape[-1])\nprint(int(arr[:,:,0].max()))",
+        "predict": "What does the final axis represent for this published PNG?"
+      },
+      "prediction_answer": "Three rendered RGB color components, not verified raw detector channels.",
+      "walkthrough": [
+        "Predict a file, array or coordinate output before running the code.",
+        "Run genuine Python, then change a coordinate or array input.",
+        "Explain the source provenance and scientific interpretation."
+      ],
+      "investigate": [
+        "Try different pixel coordinates or numeric arrays.",
+        "Check dtype, shape and data preservation for new inputs.",
+        "Identify any claim that would require original raw fluorescence TIFF."
+      ],
+      "debug_task": "Locate an incorrect assumption in inspect rgb components without inventing channels: how would you rule out swapped axes, absent calibration or invented data?",
+      "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+      "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the worked example, run and modify it.",
+          "starter_code": "# I01-G06 | LEARN | Inspect RGB components without inventing channels\n# TASK: Predict the worked example, run and modify it.\n\nfrom PIL import Image\nimport numpy as np\narr=np.asarray(Image.open(image_path).convert('RGB'))\nprint(arr.shape[-1])\nprint(int(arr[:,:,0].max()))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing records",
+          "description": "Decode image_path as RGB and select color_index into component. Set component_mean=float(component.mean()), component_min=int(...min()) and component_shape.",
+          "starter_code": "# I01-G06 | APPLY | Inspect RGB components without inventing channels\n# TASK: Decode image_path as RGB and select color_index into component. Set\n#   component_mean=float(component.mean()), component_min=int(...min()) and\n#   component_shape.\n# INPUTS: image_path, color_index\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "color_index": 1
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 1
+              },
+              "assertions": [
+                "component.shape==arr.shape[:2]",
+                "component_mean==float(arr[:,:,1].mean())",
+                "component_min==int(arr[:,:,1].min())"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 0
+              },
+              "assertions": [
+                "component_mean==float(arr[:,:,0].mean())",
+                "component_shape==arr.shape[:2]"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 2
+              },
+              "assertions": [
+                "component_min==int(arr[:,:,2].min())",
+                "0<=component_mean<=255"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Compute a component summary to learn indexing and floating-point conversion. The value describes rendered pixels and any overlays, not molecules, exposure-normalized signal or biological abundance.",
+            "probe": "What does inspect rgb components without inventing channels tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for inspect rgb components without inventing channels; changed-image-array checks should not be hardcoded."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Read credited RGB image, compute red,green,blue component arrays, and produce means=[float(x.mean()) for x in ...] and brightest_component=int(np.argmax(means)). Do not label it the highest-expressing protein.",
+          "starter_code": "# I01-G06 | PROVE | Inspect RGB components without inventing channels\n# TASK: Read credited RGB image, compute red,green,blue component arrays, and\n#   produce means=[float(x.mean()) for x in ...] and\n#   brightest_component=int(np.argmax(means)). Do not label it the\n#   highest-expressing protein.\n# INPUTS: image_path, offset\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "offset": 0
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "offset": 0
+              },
+              "assertions": [
+                "len(means)==3",
+                "brightest_component==int(np.argmax(means))",
+                "all(0<=v<=255 for v in means)"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "offset": 1
+              },
+              "assertions": [
+                "means[0]==float(red.mean())",
+                "means[2]==float(blue.mean())"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "offset": 3
+              },
+              "assertions": [
+                "np.allclose(means,[red.mean(),green.mean(),blue.mean()])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Compute a component summary to learn indexing and floating-point conversion. The value describes rendered pixels and any overlays, not molecules, exposure-normalized signal or biological abundance.",
+            "probe": "What does inspect rgb components without inventing channels tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for inspect rgb components without inventing channels; changed-image-array checks should not be hardcoded."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+          "Use changing inputs and source filename/metadata rather than copying the example output."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "Verify array shape and which index is row versus column.",
+        "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+        "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+        "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+        "hardcoded": "Changed inputs and the actual image bytes must determine results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independently certified mastery"
+      }
+    },
+    {
+      "id": "I01-G07",
+      "title": "Explain pixel coordinates precisely",
+      "competencies": [
+        "074"
+      ],
+      "why": "Confusing x/y with row/column can silently select the wrong location in an image.",
+      "explain": [
+        "NumPy uses `(row,column)` for 2D image indexing. Common image-display coordinates describe the same location as `(x=column,y=row)`.",
+        "Python indexing begins at zero. Positive rows usually move downward in a rendered image; a microscope's physical stage coordinates follow their own conventions.",
+        "Preserve both coordinate conventions in traceable output. Changing display orientation never proves the physical sample axis or its pixel size."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\narr=np.arange(12).reshape(3,4)\nrow,col=2,1\nprint(int(arr[row,col]))\nprint((col,row))",
+        "predict": "Which NumPy element corresponds to displayed (x=1,y=2)?"
+      },
+      "prediction_answer": "arr[2,1], value 9. The coordinate pair reverses to (column,row).",
+      "walkthrough": [
+        "Predict a file, array or coordinate output before running the code.",
+        "Run genuine Python, then change a coordinate or array input.",
+        "Explain the source provenance and scientific interpretation."
+      ],
+      "investigate": [
+        "Try different pixel coordinates or numeric arrays.",
+        "Check dtype, shape and data preservation for new inputs.",
+        "Identify any claim that would require original raw fluorescence TIFF."
+      ],
+      "debug_task": "Locate an incorrect assumption in explain pixel coordinates precisely: how would you rule out swapped axes, absent calibration or invented data?",
+      "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+      "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the worked example, run and modify it.",
+          "starter_code": "# I01-G07 | LEARN | Explain pixel coordinates precisely\n# TASK: Predict the worked example, run and modify it.\n\nimport numpy as np\narr=np.arange(12).reshape(3,4)\nrow,col=2,1\nprint(int(arr[row,col]))\nprint((col,row))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing records",
+          "description": "Create image array from rows. Select intensity=int(image[row,col]); set display_xy=(col,row) and dimensions=(height,width).",
+          "starter_code": "# I01-G07 | APPLY | Explain pixel coordinates precisely\n# TASK: Create image array from rows. Select intensity=int(image[row,col]); set\n#   display_xy=(col,row) and dimensions=(height,width).\n# INPUTS: rows, row, col\n\n",
+          "preview_inputs": {
+            "rows": [
+              [
+                1,
+                2,
+                3
+              ],
+              [
+                4,
+                5,
+                6
+              ]
+            ],
+            "row": 1,
+            "col": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    1,
+                    2,
+                    3
+                  ],
+                  [
+                    4,
+                    5,
+                    6
+                  ]
+                ],
+                "row": 1,
+                "col": 2
+              },
+              "assertions": [
+                "intensity==6",
+                "display_xy==(2,1)",
+                "dimensions==(2,3)"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    0,
+                    10
+                  ]
+                ],
+                "row": 0,
+                "col": 1
+              },
+              "assertions": [
+                "intensity==10",
+                "display_xy==(1,0)"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    8
+                  ],
+                  [
+                    9
+                  ],
+                  [
+                    10
+                  ]
+                ],
+                "row": 2,
+                "col": 0
+              },
+              "assertions": [
+                "intensity==10",
+                "dimensions==(3,1)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Python indexing begins at zero. Positive rows usually move downward in a rendered image; a microscope's physical stage coordinates follow their own conventions.",
+            "probe": "What does explain pixel coordinates precisely tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for explain pixel coordinates precisely; changed-image-array checks should not be hardcoded."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Decode image_path as RGB; from selected row, col and component_index create coordinate_report={'x':col,'y':row,'component':component_index,'value':int(pixel)}.",
+          "starter_code": "# I01-G07 | PROVE | Explain pixel coordinates precisely\n# TASK: Decode image_path as RGB; from selected row, col and component_index create\n#   coordinate_report={'x':col,'y':row,'component':component_index,'value':int(pixel)}.\n# INPUTS: image_path, row, col, component_index\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "row": 2,
+            "col": 3,
+            "component_index": 1
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "row": 2,
+                "col": 3,
+                "component_index": 1
+              },
+              "assertions": [
+                "coordinate_report['x']==3",
+                "coordinate_report['y']==2",
+                "coordinate_report['value']==int(arr[2,3,1])"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "row": 4,
+                "col": 1,
+                "component_index": 0
+              },
+              "assertions": [
+                "coordinate_report['value']==int(arr[4,1,0])",
+                "coordinate_report['component']==0"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "row": 0,
+                "col": 0,
+                "component_index": 2
+              },
+              "assertions": [
+                "coordinate_report['x']==0",
+                "coordinate_report['value']==int(arr[0,0,2])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Python indexing begins at zero. Positive rows usually move downward in a rendered image; a microscope's physical stage coordinates follow their own conventions.",
+            "probe": "What does explain pixel coordinates precisely tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for explain pixel coordinates precisely; changed-image-array checks should not be hardcoded."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+          "Use changing inputs and source filename/metadata rather than copying the example output."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "Verify array shape and which index is row versus column.",
+        "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+        "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+        "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+        "hardcoded": "Changed inputs and the actual image bytes must determine results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independently certified mastery"
+      }
+    },
+    {
+      "id": "I01-G08",
+      "title": "Interpret pixel dtype and numerical limits",
+      "competencies": [
+        "075"
+      ],
+      "why": "A high display pixel value is not evidence of molecular abundance, and dtype limits can hide overflow.",
+      "explain": [
+        "For an unsigned 8-bit RGB image, 0–255 are display-code values; NumPy `np.iinfo` gives type bounds, not observed biological concentrations.",
+        "`arr.min()` and `arr.max()` describe the actual stored pixel range. The dtype's maximum may exceed the observed maximum.",
+        "For raw fluorescence, detector bit depth, gain, saturation, calibration and background handling are separate issues. Do not infer them from a notebook PNG."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\narr=np.array([0,128,255],dtype=np.uint8)\nprint(np.iinfo(arr.dtype).max)\nprint(int(arr.max()))",
+        "predict": "Does a maximum of 255 mean a protein is saturated?"
+      },
+      "prediction_answer": "No. It is the maximum storage code for uint8 and cannot establish raw detector saturation.",
+      "walkthrough": [
+        "Predict a file, array or coordinate output before running the code.",
+        "Run genuine Python, then change a coordinate or array input.",
+        "Explain the source provenance and scientific interpretation."
+      ],
+      "investigate": [
+        "Try different pixel coordinates or numeric arrays.",
+        "Check dtype, shape and data preservation for new inputs.",
+        "Identify any claim that would require original raw fluorescence TIFF."
+      ],
+      "debug_task": "Locate an incorrect assumption in interpret pixel dtype and numerical limits: how would you rule out swapped axes, absent calibration or invented data?",
+      "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+      "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the worked example, run and modify it.",
+          "starter_code": "# I01-G08 | LEARN | Interpret pixel dtype and numerical limits\n# TASK: Predict the worked example, run and modify it.\n\nimport numpy as np\narr=np.array([0,128,255],dtype=np.uint8)\nprint(np.iinfo(arr.dtype).max)\nprint(int(arr.max()))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing records",
+          "description": "Create NumPy uint8 array from pixels. Set dtype_name, observed_min, observed_max and storage_max using np.iinfo, without interpreting as fluorescence concentration.",
+          "starter_code": "# I01-G08 | APPLY | Interpret pixel dtype and numerical limits\n# TASK: Create NumPy uint8 array from pixels. Set dtype_name, observed_min,\n#   observed_max and storage_max using np.iinfo, without interpreting as\n#   fluorescence concentration.\n# INPUTS: pixels\n\n",
+          "preview_inputs": {
+            "pixels": [
+              0,
+              20,
+              200
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixels": [
+                  0,
+                  20,
+                  200
+                ]
+              },
+              "assertions": [
+                "dtype_name=='uint8'",
+                "observed_min==0",
+                "observed_max==200",
+                "storage_max==255"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": [
+                  5,
+                  10
+                ]
+              },
+              "assertions": [
+                "observed_min==5",
+                "storage_max==255"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": [
+                  255,
+                  255
+                ]
+              },
+              "assertions": [
+                "observed_max==255",
+                "observed_min==255"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "`arr.min()` and `arr.max()` describe the actual stored pixel range. The dtype's maximum may exceed the observed maximum.",
+            "probe": "What does interpret pixel dtype and numerical limits tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for interpret pixel dtype and numerical limits; changed-image-array checks should not be hardcoded."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Decode image_path to RGB array. Set dtype_name, observed_range=(min,max), display_ceiling=np.iinfo(dtype).max, calibrated=False.",
+          "starter_code": "# I01-G08 | PROVE | Interpret pixel dtype and numerical limits\n# TASK: Decode image_path to RGB array. Set dtype_name, observed_range=(min,max),\n#   display_ceiling=np.iinfo(dtype).max, calibrated=False.\n# INPUTS: image_path, unused\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "unused": "first"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "unused": "first"
+              },
+              "assertions": [
+                "dtype_name=='uint8'",
+                "0<=observed_range[0]<=observed_range[1]<=display_ceiling",
+                "display_ceiling==255",
+                "calibrated is False"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "unused": "second"
+              },
+              "assertions": [
+                "observed_range==(int(arr.min()),int(arr.max()))",
+                "calibrated is False"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "unused": "third"
+              },
+              "assertions": [
+                "arr.ndim==3",
+                "arr.shape[2]==3"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "`arr.min()` and `arr.max()` describe the actual stored pixel range. The dtype's maximum may exceed the observed maximum.",
+            "probe": "What does interpret pixel dtype and numerical limits tell us about display pixels, and what would require raw calibrated data?",
+            "check": "Read the input names and output contract for interpret pixel dtype and numerical limits; changed-image-array checks should not be hardcoded."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+          "Use changing inputs and source filename/metadata rather than copying the example output."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "IndexError": "Verify array shape and which index is row versus column.",
+        "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+        "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+        "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+        "hardcoded": "Changed inputs and the actual image bytes must determine results."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration only",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not independently certified mastery"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I01-CAPSTONE",
+    "title": "Create an honest Witz/HPA image-inspection report",
+    "competencies": [],
+    "why": "Opening actual file bytes must produce a traceable shape, dtype and pixel observation without pretending the notebook PNG is raw data.",
+    "explain": [
+      "Decode the attributed published notebook figure using Pillow and NumPy. Record axes as RGB display axes; evaluate a chosen pixel and a 2D display component.",
+      "The output contains actual numerical pixels derived from the bundled image, but no calibrated fluorescence, nuclear localization or count can be inferred.",
+      "An honest result describes data origin and the limits of what was loaded. A separate raw TIFF data stream is required for later quantitative workflows."
+    ],
+    "worked_example": {
+      "code": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nprint('shape',rgb.shape,'dtype',rgb.dtype)\nprint('RGB preview only; not calibrated raw fluorescence')",
+      "predict": "What does the source file establish, and what does it not establish?"
+    },
+    "prediction_answer": "Compute from the actual image bytes, and do not infer calibrated raw intensity.",
+    "walkthrough": [
+      "Predict a file, array or coordinate output before running the code.",
+      "Run genuine Python, then change a coordinate or array input.",
+      "Explain the source provenance and scientific interpretation."
+    ],
+    "investigate": [
+      "Try different pixel coordinates or numeric arrays.",
+      "Check dtype, shape and data preservation for new inputs.",
+      "Identify any claim that would require original raw fluorescence TIFF."
+    ],
+    "debug_task": "Locate an incorrect assumption in create an honest witz/hpa image-inspection report: how would you rule out swapped axes, absent calibration or invented data?",
+    "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+    "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the worked example, run and modify it.",
+        "starter_code": "# I01-CAPSTONE | LEARN | Create an honest Witz/HPA image-inspection report\n# TASK: Predict the worked example, run and modify it.\n\nfrom PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nprint('shape',rgb.shape,'dtype',rgb.dtype)\nprint('RGB preview only; not calibrated raw fluorescence')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changing records",
+        "description": "Decode image_path as RGB; create image_report={'height':H,'width':W,'components':3,'dtype':'uint8','source':'Witz/HPA rendered figure','calibrated':False,'component_mean':float(selected channel mean)}. Print the source and pixel shape.",
+        "starter_code": "# I01-CAPSTONE | APPLY | Create an honest Witz/HPA image-inspection report\n# TASK: Decode image_path as RGB; create\n#   image_report={'height':H,'width':W,'components':3,'dtype':'uint8','source':'Witz/HPA\n#   rendered figure','calibrated':False,'component_mean':float(selected channel\n#   mean)}. Print the source and pixel shape.\n# INPUTS: image_path, component_index\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "component_index": 0
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component_index": 0
+            },
+            "assertions": [
+              "image_report['height']>10",
+              "image_report['width']>10",
+              "image_report['components']==3",
+              "image_report['dtype']=='uint8'",
+              "image_report['calibrated'] is False",
+              "image_report['component_mean']==float(rgb[:,:,0].mean())"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component_index": 1
+            },
+            "assertions": [
+              "image_report['component_mean']==float(rgb[:,:,1].mean())",
+              "image_report['source']=='Witz/HPA rendered figure'"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component_index": 2
+            },
+            "assertions": [
+              "image_report['component_mean']==float(rgb[:,:,2].mean())",
+              "image_report['calibrated'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The output contains actual numerical pixels derived from the bundled image, but no calibrated fluorescence, nuclear localization or count can be inferred.",
+          "probe": "What does create an honest witz/hpa image-inspection report tell us about display pixels, and what would require raw calibrated data?",
+          "check": "Read the input names and output contract for create an honest witz/hpa image-inspection report; changed-image-array checks should not be hardcoded."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Decode the same credited RGB figure, and build audit={'shape':tuple(rgb.shape),'component':component_index,'pixel':int(rgb[row,col,component_index]),'raw_calibrated':False}. Print audit and preserve the actual numeric pixel.",
+        "starter_code": "# I01-CAPSTONE | PROVE | Create an honest Witz/HPA image-inspection report\n# TASK: Decode the same credited RGB figure, and build\n#   audit={'shape':tuple(rgb.shape),'component':component_index,'pixel':int(rgb[row,col,component_index]),'raw_calibrated':False}.\n#   Print audit and preserve the actual numeric pixel.\n# INPUTS: image_path, component_index, row, col\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "component_index": 2,
+          "row": 3,
+          "col": 4
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component_index": 2,
+              "row": 3,
+              "col": 4
+            },
+            "assertions": [
+              "audit['shape']==rgb.shape",
+              "audit['pixel']==int(rgb[3,4,2])",
+              "audit['raw_calibrated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component_index": 1,
+              "row": 2,
+              "col": 2
+            },
+            "assertions": [
+              "audit['pixel']==int(rgb[2,2,1])",
+              "audit['component']==1"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component_index": 0,
+              "row": 0,
+              "col": 0
+            },
+            "assertions": [
+              "audit['pixel']==int(rgb[0,0,0])",
+              "audit['shape'][2]==3"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The output contains actual numerical pixels derived from the bundled image, but no calibrated fluorescence, nuclear localization or count can be inferred.",
+          "probe": "What does create an honest witz/hpa image-inspection report tell us about display pixels, and what would require raw calibrated data?",
+          "check": "Read the input names and output contract for create an honest witz/hpa image-inspection report; changed-image-array checks should not be hardcoded."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Identify the correct NumPy dtype, shape or coordinate convention before coding.",
+        "Use changing inputs and source filename/metadata rather than copying the example output."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "IndexError": "Verify array shape and which index is row versus column.",
+      "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+      "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+      "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+      "hardcoded": "Changed inputs and the actual image bytes must determine results."
+    },
+    "reflection_prompts": [
+      "What exactly is the provenance and format of this figure?",
+      "What does a displayed RGB pixel value represent, and what can it not establish?",
+      "How do row/column order and missing calibration affect interpretation?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer, not independently certified mastery"
+    },
+    "build_steps": [
+      "Load the credited Witz/HPA source figure into a NumPy array, not a made-up pixel array.",
+      "Inspect actual shape, dtype and channel count.",
+      "Read a chosen RGB component and compute a display-pixel summary.",
+      "Record source provenance and explicit noncalibration.",
+      "Rebuild Prove using changed pixel coordinates without reusing the Apply program."
+    ],
+    "assessment": {
+      "code": "REAL_PYTHON_CHANGED_INPUT_CASES",
+      "scientific": "RENDERED_RGB_NOT_CALIBRATED",
+      "retained": "NOT_AUTO_CERTIFIED"
+    }
+  },
+  "review": {
+    "id": "I01-REVIEW",
+    "title": "Read a genuine image independently",
+    "competencies": [],
+    "why": "Unseen coordinate requests should be solved from the original file bytes without consulting the previous capstone code.",
+    "explain": [
+      "Reconstruct the decoding pipeline from the source and explicit RGB axes.",
+      "Report source limitations even if the numeric pixel lookup succeeds.",
+      "A returned display pixel describes a rendered image, not calibrated microscopy."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "What does the source file establish, and what does it not establish?"
+    },
+    "prediction_answer": "Compute from the actual image bytes, and do not infer calibrated raw intensity.",
+    "walkthrough": [
+      "Predict a file, array or coordinate output before running the code.",
+      "Run genuine Python, then change a coordinate or array input.",
+      "Explain the source provenance and scientific interpretation."
+    ],
+    "investigate": [
+      "Try different pixel coordinates or numeric arrays.",
+      "Check dtype, shape and data preservation for new inputs.",
+      "Identify any claim that would require original raw fluorescence TIFF."
+    ],
+    "debug_task": "Locate an incorrect assumption in read a genuine image independently: how would you rule out swapped axes, absent calibration or invented data?",
+    "misconception": "A rendered HPA/Witz notebook figure is identical to a calibrated raw fluorescence TIFF.",
+    "scientific_boundary": "Credited Witz/HPA notebook output is genuine published biological imagery, but RGB PNG pixels are display values, NOT original raw/calibrated fluorescence. Synthetic small arrays are marked as exercises.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Recall the source and NumPy steps without previous solutions.",
+        "starter_code": "# I01-REVIEW | LEARN | Read a genuine image independently\n# TASK: Recall the source and NumPy steps without previous solutions.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changing records",
+        "description": "Write pseudocode comments for loading source pixels and documenting provenance, shape, and pixel coordinate conversion.",
+        "starter_code": "# I01-REVIEW | APPLY | Read a genuine image independently\n# TASK: Write pseudocode comments for loading source pixels and documenting\n#   provenance, shape, and pixel coordinate conversion.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Report source limitations even if the numeric pixel lookup succeeds.",
+          "probe": "What does read a genuine image independently tell us about display pixels, and what would require raw calibrated data?",
+          "check": "Read the input names and output contract for read a genuine image independently; changed-image-array checks should not be hardcoded."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Open the credited image_path as RGB and create result={'xy':(col,row),'value':int(rgb[row,col,color_index]),'dimensions':(height,width),'calibrated':False}. Print result.",
+        "starter_code": "# I01-REVIEW | PROVE | Read a genuine image independently\n# TASK: Open the credited image_path as RGB and create\n#   result={'xy':(col,row),'value':int(rgb[row,col,color_index]),'dimensions':(height,width),'calibrated':False}.\n#   Print result.\n# INPUTS: image_path, row, col, color_index\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "row": 2,
+          "col": 3,
+          "color_index": 2
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "row": 2,
+              "col": 3,
+              "color_index": 2
+            },
+            "assertions": [
+              "result['xy']==(3,2)",
+              "result['value']==int(rgb[2,3,2])",
+              "result['calibrated'] is False"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "row": 1,
+              "col": 5,
+              "color_index": 1
+            },
+            "assertions": [
+              "result['value']==int(rgb[1,5,1])",
+              "result['dimensions']==rgb.shape[:2]"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "row": 0,
+              "col": 0,
+              "color_index": 0
+            },
+            "assertions": [
+              "result['xy']==(0,0)",
+              "result['value']==int(rgb[0,0,0])"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Report source limitations even if the numeric pixel lookup succeeds.",
+          "probe": "What does read a genuine image independently tell us about display pixels, and what would require raw calibrated data?",
+          "check": "Read the input names and output contract for read a genuine image independently; changed-image-array checks should not be hardcoded."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "IndexError": "Verify array shape and which index is row versus column.",
+      "ModuleNotFoundError": "The scientific package may still be loading; check connectivity and try again.",
+      "FileNotFoundError": "The source figure must load successfully. Do not use a synthetic fallback.",
+      "TypeError": "Confirm the numeric dtype and separate missing data from zero.",
+      "hardcoded": "Changed inputs and the actual image bytes must determine results."
+    },
+    "reflection_prompts": [
+      "What exactly is the provenance and format of this figure?",
+      "What does a displayed RGB pixel value represent, and what can it not establish?",
+      "How do row/column order and missing calibration affect interpretation?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration only",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer, not independently certified mastery"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "inspect_witz_image.py",
+    "brief": "An auditable script that decodes the credited PNG and reports shape, dtype, pixel values and explicitly noncalibrated provenance.",
+    "status": "READY_FOR_BROWSER_QA"
+  }
+}
