@@ -1,0 +1,1519 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "I04",
+  "version": "1.0.0",
+  "status": "LEARNER_PILOT_MATPLOTLIB",
+  "title": "Display an interpretable microscopy image",
+  "competencies": [
+    "063",
+    "064",
+    "065",
+    "067",
+    "076",
+    "082"
+  ],
+  "intro": "Create actual Matplotlib outputs for observations, distributions and microscopy figure panels. Work on credited Witz/HPA rendered PNG pixels while keeping display contrast separate from raw data and biological replication.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/03-More_on_images.ipynb",
+    "asset": "assets/witz/fluorescence-single.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "Genuine_Matplotlib_plots_of_rendered_image_and_synthetic_observations",
+    "caution": "Displayed RGB figure pixel statistics are not calibrated biological fluorescence intensity."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove; show actual rendered PNG output from Matplotlib.",
+  "goals": [
+    {
+      "id": "I04-G01",
+      "title": "Build a labeled Matplotlib figure",
+      "competencies": [
+        "063"
+      ],
+      "why": "A numerical report is not interpretable without explicit units, axes and the plotted data source.",
+      "explain": [
+        "Matplotlib's object-oriented interface creates a figure and axes with `fig, ax = plt.subplots()`, then plots data on that axes.",
+        "A title and labels are part of scientific communication; missing units or source identity can make a correct-looking plot misleading.",
+        "The app renders the real Matplotlib figure produced by Python rather than drawing a fake schematic."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot([1,2,3],[2,5,4])\nax.set(xlabel='Field',ylabel='Signal (a.u.)',title='Illustrative counts')\nprint(len(fig.axes))",
+        "predict": "Predict the plotted data, labels and scientific limitation."
+      },
+      "prediction_answer": "A figure reflects actual Python Matplotlib objects and the input data, not a simulated picture or certified scientific result.",
+      "walkthrough": [
+        "Identify plotted data, units, sample/field identity and expected axes.",
+        "Run actual Python; inspect the figure generated in the results panel.",
+        "Change a scientific input or display limit and explain which interpretation is still unsupported."
+      ],
+      "investigate": [
+        "Try a changed label, data series or histogram bin count.",
+        "Check plot object counts against the data and unchanged source arrays.",
+        "Explain the limits of RGB rendered imagery and grouped biological evidence."
+      ],
+      "debug_task": "Find a realistic plotting or labeling mistake in build a labeled matplotlib figure and demonstrate a changed-input test.",
+      "misconception": "A bright, well-styled plot is inherently a defensible biological conclusion.",
+      "scientific_boundary": "Rendered Witz/HPA notebook PNG provides authentic display pixels only, not raw calibrated fluorescence; simulated numeric values and microscope fields are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and inspect",
+          "description": "Predict the figure output and run the example.",
+          "starter_code": "# I04-G01 | LEARN | Build a labeled Matplotlib figure\n# TASK: Predict the figure output and run the example.\n\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot([1,2,3],[2,5,4])\nax.set(xlabel='Field',ylabel='Signal (a.u.)',title='Illustrative counts')\nprint(len(fig.axes))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Using times and signals, create fig,ax with a line plot; set xlabel='Time (min)', ylabel='Signal (a.u.)', title=sample_name. Set plotted_points=len(times).",
+          "starter_code": "# I04-G01 | APPLY | Build a labeled Matplotlib figure\n# TASK: Using times and signals, create fig,ax with a line plot; set xlabel='Time\n#   (min)', ylabel='Signal (a.u.)', title=sample_name. Set\n#   plotted_points=len(times).\n# INPUTS: times, signals, sample_name\n\n",
+          "preview_inputs": {
+            "times": [
+              0,
+              1,
+              2
+            ],
+            "signals": [
+              2,
+              4,
+              3
+            ],
+            "sample_name": "Control"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "times": [
+                  0,
+                  1,
+                  2
+                ],
+                "signals": [
+                  2,
+                  4,
+                  3
+                ],
+                "sample_name": "Control"
+              },
+              "assertions": [
+                "ax.get_xlabel()=='Time (min)'",
+                "ax.get_ylabel()=='Signal (a.u.)'",
+                "ax.get_title()=='Control'",
+                "plotted_points==3"
+              ]
+            },
+            {
+              "inputs": {
+                "times": [
+                  0,
+                  3
+                ],
+                "signals": [
+                  0,
+                  8
+                ],
+                "sample_name": "Sample B"
+              },
+              "assertions": [
+                "len(ax.get_lines())==1",
+                "plotted_points==2"
+              ]
+            },
+            {
+              "inputs": {
+                "times": [
+                  0
+                ],
+                "signals": [
+                  5
+                ],
+                "sample_name": "One"
+              },
+              "assertions": [
+                "ax.get_title()=='One'",
+                "plotted_points==1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A title and labels are part of scientific communication; missing units or source identity can make a correct-looking plot misleading.",
+            "probe": "How could build a labeled matplotlib figure mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for build a labeled matplotlib figure."
+          }
+        },
+        "prove": {
+          "title": "Apply with changed data",
+          "description": "Plot positions vs distance_um using Matplotlib. Set plot_title as ID + ' displacement', x_label='Frame', y_label='Distance (µm)'; assign those to ax, and line_count=len(ax.lines).",
+          "starter_code": "# I04-G01 | PROVE | Build a labeled Matplotlib figure\n# TASK: Plot positions vs distance_um using Matplotlib. Set plot_title as ID + '\n#   displacement', x_label='Frame', y_label='Distance (µm)'; assign those to ax,\n#   and line_count=len(ax.lines).\n# INPUTS: positions, distance_um, sample_id\n\n",
+          "preview_inputs": {
+            "positions": [
+              0,
+              1,
+              2
+            ],
+            "distance_um": [
+              0,
+              0.5,
+              1
+            ],
+            "sample_id": "R1"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "positions": [
+                  0,
+                  1,
+                  2
+                ],
+                "distance_um": [
+                  0,
+                  0.5,
+                  1
+                ],
+                "sample_id": "R1"
+              },
+              "assertions": [
+                "plot_title=='R1 displacement'",
+                "ax.get_ylabel()=='Distance (µm)'",
+                "line_count==1"
+              ]
+            },
+            {
+              "inputs": {
+                "positions": [
+                  0,
+                  2
+                ],
+                "distance_um": [
+                  0,
+                  3
+                ],
+                "sample_id": "X"
+              },
+              "assertions": [
+                "ax.get_title()=='X displacement'",
+                "ax.get_xlabel()=='Frame'"
+              ]
+            },
+            {
+              "inputs": {
+                "positions": [
+                  1
+                ],
+                "distance_um": [
+                  2
+                ],
+                "sample_id": "One"
+              },
+              "assertions": [
+                "len(ax.lines[0].get_xdata())==1",
+                "line_count==1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A title and labels are part of scientific communication; missing units or source identity can make a correct-looking plot misleading.",
+            "probe": "How could build a labeled matplotlib figure mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for build a labeled matplotlib figure."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with plt.subplots(), then choose the correct axis method.",
+          "Label the actual unit and preserve source data; do not plot a hardcoded screenshot."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check Matplotlib imports and input names.",
+        "ValueError": "Check histogram bins or display limits.",
+        "TypeError": "Check plotted numeric values and missingness.",
+        "hardcoded": "Change inputs and verify plot lines, bars or image arrays change accordingly."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I04-G02",
+      "title": "Compare line and scatter representations",
+      "competencies": [
+        "064"
+      ],
+      "why": "Connected lines imply ordered relationships, while scatter plots reveal individual observations.",
+      "explain": [
+        "`ax.plot` connects points in specified order, which suits temporal trajectories only when the order is meaningful.",
+        "`ax.scatter` shows individual points without inventing a connected path. Choose based on experimental design, not visual smoothness.",
+        "A line across unrelated biological replicates can imply continuity that does not exist."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot([0,1,2],[1,3,2],label='ordered')\nax.scatter([0,1,2],[1,3,2])\nprint(len(ax.lines),len(ax.collections))",
+        "predict": "Predict the plotted data, labels and scientific limitation."
+      },
+      "prediction_answer": "A figure reflects actual Python Matplotlib objects and the input data, not a simulated picture or certified scientific result.",
+      "walkthrough": [
+        "Identify plotted data, units, sample/field identity and expected axes.",
+        "Run actual Python; inspect the figure generated in the results panel.",
+        "Change a scientific input or display limit and explain which interpretation is still unsupported."
+      ],
+      "investigate": [
+        "Try a changed label, data series or histogram bin count.",
+        "Check plot object counts against the data and unchanged source arrays.",
+        "Explain the limits of RGB rendered imagery and grouped biological evidence."
+      ],
+      "debug_task": "Find a realistic plotting or labeling mistake in compare line and scatter representations and demonstrate a changed-input test.",
+      "misconception": "A bright, well-styled plot is inherently a defensible biological conclusion.",
+      "scientific_boundary": "Rendered Witz/HPA notebook PNG provides authentic display pixels only, not raw calibrated fluorescence; simulated numeric values and microscope fields are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and inspect",
+          "description": "Predict the figure output and run the example.",
+          "starter_code": "# I04-G02 | LEARN | Compare line and scatter representations\n# TASK: Predict the figure output and run the example.\n\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot([0,1,2],[1,3,2],label='ordered')\nax.scatter([0,1,2],[1,3,2])\nprint(len(ax.lines),len(ax.collections))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Create fig,ax, plot times/signals as a line and scatter the same data. Set n_lines and n_scatter_groups from ax; label x='Time (min)' and y='Intensity (a.u.)'.",
+          "starter_code": "# I04-G02 | APPLY | Compare line and scatter representations\n# TASK: Create fig,ax, plot times/signals as a line and scatter the same data. Set\n#   n_lines and n_scatter_groups from ax; label x='Time (min)' and y='Intensity\n#   (a.u.)'.\n# INPUTS: times, signals\n\n",
+          "preview_inputs": {
+            "times": [
+              0,
+              1,
+              2
+            ],
+            "signals": [
+              2,
+              1,
+              5
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "times": [
+                  0,
+                  1,
+                  2
+                ],
+                "signals": [
+                  2,
+                  1,
+                  5
+                ]
+              },
+              "assertions": [
+                "n_lines==1",
+                "n_scatter_groups==1",
+                "ax.get_xlabel()=='Time (min)'"
+              ]
+            },
+            {
+              "inputs": {
+                "times": [
+                  0
+                ],
+                "signals": [
+                  2
+                ]
+              },
+              "assertions": [
+                "n_lines==1",
+                "n_scatter_groups==1"
+              ]
+            },
+            {
+              "inputs": {
+                "times": [
+                  0,
+                  2
+                ],
+                "signals": [
+                  0,
+                  0
+                ]
+              },
+              "assertions": [
+                "len(ax.lines[0].get_ydata())==2"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "`ax.scatter` shows individual points without inventing a connected path. Choose based on experimental design, not visual smoothness.",
+            "probe": "How could compare line and scatter representations mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for compare line and scatter representations."
+          }
+        },
+        "prove": {
+          "title": "Apply with changed data",
+          "description": "Display numeric batch_index and observed as scatter only (no connected line); set scatter_points=count, connected=False, xlabel='Batch index', ylabel='Observed value'.",
+          "starter_code": "# I04-G02 | PROVE | Compare line and scatter representations\n# TASK: Display numeric batch_index and observed as scatter only (no connected\n#   line); set scatter_points=count, connected=False, xlabel='Batch index',\n#   ylabel='Observed value'.\n# INPUTS: batch_index, observed\n\n",
+          "preview_inputs": {
+            "batch_index": [
+              0,
+              1,
+              2
+            ],
+            "observed": [
+              2,
+              8,
+              1
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "batch_index": [
+                  0,
+                  1,
+                  2
+                ],
+                "observed": [
+                  2,
+                  8,
+                  1
+                ]
+              },
+              "assertions": [
+                "scatter_points==3",
+                "connected is False",
+                "len(ax.lines)==0"
+              ]
+            },
+            {
+              "inputs": {
+                "batch_index": [
+                  3
+                ],
+                "observed": [
+                  5
+                ]
+              },
+              "assertions": [
+                "scatter_points==1",
+                "ax.get_xlabel()=='Batch index'"
+              ]
+            },
+            {
+              "inputs": {
+                "batch_index": [
+                  1,
+                  2
+                ],
+                "observed": [
+                  0,
+                  1
+                ]
+              },
+              "assertions": [
+                "scatter_points==2",
+                "ax.get_ylabel()=='Observed value'"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "`ax.scatter` shows individual points without inventing a connected path. Choose based on experimental design, not visual smoothness.",
+            "probe": "How could compare line and scatter representations mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for compare line and scatter representations."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with plt.subplots(), then choose the correct axis method.",
+          "Label the actual unit and preserve source data; do not plot a hardcoded screenshot."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check Matplotlib imports and input names.",
+        "ValueError": "Check histogram bins or display limits.",
+        "TypeError": "Check plotted numeric values and missingness.",
+        "hardcoded": "Change inputs and verify plot lines, bars or image arrays change accordingly."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I04-G03",
+      "title": "Show a numerical distribution honestly",
+      "competencies": [
+        "065"
+      ],
+      "why": "Histograms summarize bins of observations, not independent biological replicate counts.",
+      "explain": [
+        "`ax.hist(values,bins=...)` returns bin heights and boundaries; the plotted histogram uses observations in the provided array.",
+        "Changing bin count changes apparent distribution even when data do not change. Record bins and sampling unit.",
+        "If inputs represent microscope fields from the same culture, their plotted `n` is the field count, not independent biological replication."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\ncounts,edges,patches=ax.hist([1,1,2,3],bins=3)\nprint(int(counts.sum()))",
+        "predict": "Predict the plotted data, labels and scientific limitation."
+      },
+      "prediction_answer": "A figure reflects actual Python Matplotlib objects and the input data, not a simulated picture or certified scientific result.",
+      "walkthrough": [
+        "Identify plotted data, units, sample/field identity and expected axes.",
+        "Run actual Python; inspect the figure generated in the results panel.",
+        "Change a scientific input or display limit and explain which interpretation is still unsupported."
+      ],
+      "investigate": [
+        "Try a changed label, data series or histogram bin count.",
+        "Check plot object counts against the data and unchanged source arrays.",
+        "Explain the limits of RGB rendered imagery and grouped biological evidence."
+      ],
+      "debug_task": "Find a realistic plotting or labeling mistake in show a numerical distribution honestly and demonstrate a changed-input test.",
+      "misconception": "A bright, well-styled plot is inherently a defensible biological conclusion.",
+      "scientific_boundary": "Rendered Witz/HPA notebook PNG provides authentic display pixels only, not raw calibrated fluorescence; simulated numeric values and microscope fields are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and inspect",
+          "description": "Predict the figure output and run the example.",
+          "starter_code": "# I04-G03 | LEARN | Show a numerical distribution honestly\n# TASK: Predict the figure output and run the example.\n\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots()\ncounts,edges,patches=ax.hist([1,1,2,3],bins=3)\nprint(int(counts.sum()))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Plot histogram of measurements with n_bins, set observation_count=int(counts.sum()), bar_count=len(patches), xlabel='Field score', ylabel='Fields (not replicates)'.",
+          "starter_code": "# I04-G03 | APPLY | Show a numerical distribution honestly\n# TASK: Plot histogram of measurements with n_bins, set\n#   observation_count=int(counts.sum()), bar_count=len(patches), xlabel='Field\n#   score', ylabel='Fields (not replicates)'.\n# INPUTS: measurements, n_bins\n\n",
+          "preview_inputs": {
+            "measurements": [
+              1,
+              1,
+              2,
+              3
+            ],
+            "n_bins": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "measurements": [
+                  1,
+                  1,
+                  2,
+                  3
+                ],
+                "n_bins": 3
+              },
+              "assertions": [
+                "observation_count==4",
+                "bar_count==3",
+                "ax.get_ylabel()=='Fields (not replicates)'"
+              ]
+            },
+            {
+              "inputs": {
+                "measurements": [
+                  0,
+                  1
+                ],
+                "n_bins": 2
+              },
+              "assertions": [
+                "observation_count==2",
+                "bar_count==2"
+              ]
+            },
+            {
+              "inputs": {
+                "measurements": [
+                  5,
+                  5,
+                  5
+                ],
+                "n_bins": 4
+              },
+              "assertions": [
+                "observation_count==3",
+                "bar_count==4"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Changing bin count changes apparent distribution even when data do not change. Record bins and sampling unit.",
+            "probe": "How could show a numerical distribution honestly mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for show a numerical distribution honestly."
+          }
+        },
+        "prove": {
+          "title": "Apply with changed data",
+          "description": "Build histogram for sample_values using bins=bin_number, set total=int(heights.sum()), rightmost=float(edges[-1]), and label y='Measurement count'.",
+          "starter_code": "# I04-G03 | PROVE | Show a numerical distribution honestly\n# TASK: Build histogram for sample_values using bins=bin_number, set\n#   total=int(heights.sum()), rightmost=float(edges[-1]), and label y='Measurement\n#   count'.\n# INPUTS: sample_values, bin_number\n\n",
+          "preview_inputs": {
+            "sample_values": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "bin_number": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample_values": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "bin_number": 4
+              },
+              "assertions": [
+                "total==4",
+                "len(heights)==4",
+                "ax.get_ylabel()=='Measurement count'"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_values": [
+                  10,
+                  20
+                ],
+                "bin_number": 2
+              },
+              "assertions": [
+                "total==2",
+                "rightmost==20"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_values": [
+                  5,
+                  5,
+                  5
+                ],
+                "bin_number": 3
+              },
+              "assertions": [
+                "total==3",
+                "len(heights)==3"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Changing bin count changes apparent distribution even when data do not change. Record bins and sampling unit.",
+            "probe": "How could show a numerical distribution honestly mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for show a numerical distribution honestly."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with plt.subplots(), then choose the correct axis method.",
+          "Label the actual unit and preserve source data; do not plot a hardcoded screenshot."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check Matplotlib imports and input names.",
+        "ValueError": "Check histogram bins or display limits.",
+        "TypeError": "Check plotted numeric values and missingness.",
+        "hardcoded": "Change inputs and verify plot lines, bars or image arrays change accordingly."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I04-G04",
+      "title": "Arrange comparable scientific panels",
+      "competencies": [
+        "067"
+      ],
+      "why": "Different views of the same dataset need shared interpretation and clear labels.",
+      "explain": [
+        "`plt.subplots(1,2)` creates one figure with two separately addressable axes; each panel requires a meaningful role.",
+        "A line plot and histogram can coexist without being treated as the same statistical unit. State source and units in labels.",
+        "Be cautious with shared scales and implied comparisons when groups have different acquisition settings or replicate structures."
+      ],
+      "worked_example": {
+        "code": "import matplotlib.pyplot as plt\nfig,axes=plt.subplots(1,2)\naxes[0].plot([0,1],[1,2]);axes[1].hist([1,2,3])\nprint(len(fig.axes))",
+        "predict": "Predict the plotted data, labels and scientific limitation."
+      },
+      "prediction_answer": "A figure reflects actual Python Matplotlib objects and the input data, not a simulated picture or certified scientific result.",
+      "walkthrough": [
+        "Identify plotted data, units, sample/field identity and expected axes.",
+        "Run actual Python; inspect the figure generated in the results panel.",
+        "Change a scientific input or display limit and explain which interpretation is still unsupported."
+      ],
+      "investigate": [
+        "Try a changed label, data series or histogram bin count.",
+        "Check plot object counts against the data and unchanged source arrays.",
+        "Explain the limits of RGB rendered imagery and grouped biological evidence."
+      ],
+      "debug_task": "Find a realistic plotting or labeling mistake in arrange comparable scientific panels and demonstrate a changed-input test.",
+      "misconception": "A bright, well-styled plot is inherently a defensible biological conclusion.",
+      "scientific_boundary": "Rendered Witz/HPA notebook PNG provides authentic display pixels only, not raw calibrated fluorescence; simulated numeric values and microscope fields are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and inspect",
+          "description": "Predict the figure output and run the example.",
+          "starter_code": "# I04-G04 | LEARN | Arrange comparable scientific panels\n# TASK: Predict the figure output and run the example.\n\nimport matplotlib.pyplot as plt\nfig,axes=plt.subplots(1,2)\naxes[0].plot([0,1],[1,2]);axes[1].hist([1,2,3])\nprint(len(fig.axes))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Create fig,axes=plt.subplots(1,2): plot x and y on axes[0], histogram y with bins on axes[1]. Set panel_count and panel_titles=['Trajectory','Distribution'].",
+          "starter_code": "# I04-G04 | APPLY | Arrange comparable scientific panels\n# TASK: Create fig,axes=plt.subplots(1,2): plot x and y on axes[0], histogram y\n#   with bins on axes[1]. Set panel_count and\n#   panel_titles=['Trajectory','Distribution'].\n# INPUTS: x, y, bins\n\n",
+          "preview_inputs": {
+            "x": [
+              0,
+              1,
+              2
+            ],
+            "y": [
+              3,
+              1,
+              2
+            ],
+            "bins": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "x": [
+                  0,
+                  1,
+                  2
+                ],
+                "y": [
+                  3,
+                  1,
+                  2
+                ],
+                "bins": 3
+              },
+              "assertions": [
+                "panel_count==2",
+                "[a.get_title() for a in axes]==['Trajectory','Distribution']"
+              ]
+            },
+            {
+              "inputs": {
+                "x": [
+                  0,
+                  3
+                ],
+                "y": [
+                  1,
+                  5
+                ],
+                "bins": 2
+              },
+              "assertions": [
+                "len(axes[0].lines)==1",
+                "len(axes[1].patches)==2"
+              ]
+            },
+            {
+              "inputs": {
+                "x": [
+                  0
+                ],
+                "y": [
+                  5
+                ],
+                "bins": 4
+              },
+              "assertions": [
+                "panel_count==2",
+                "len(axes[1].patches)==4"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A line plot and histogram can coexist without being treated as the same statistical unit. State source and units in labels.",
+            "probe": "How could arrange comparable scientific panels mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for arrange comparable scientific panels."
+          }
+        },
+        "prove": {
+          "title": "Apply with changed data",
+          "description": "Make two panels: scatter of coordinates and observations, then histogram of observations with bin_count. Set panel_count and labels='Coordinate','Observed value' for first axes.",
+          "starter_code": "# I04-G04 | PROVE | Arrange comparable scientific panels\n# TASK: Make two panels: scatter of coordinates and observations, then histogram\n#   of observations with bin_count. Set panel_count and\n#   labels='Coordinate','Observed value' for first axes.\n# INPUTS: coordinates, observations, bin_count\n\n",
+          "preview_inputs": {
+            "coordinates": [
+              0,
+              1,
+              2
+            ],
+            "observations": [
+              2,
+              2,
+              4
+            ],
+            "bin_count": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "coordinates": [
+                  0,
+                  1,
+                  2
+                ],
+                "observations": [
+                  2,
+                  2,
+                  4
+                ],
+                "bin_count": 3
+              },
+              "assertions": [
+                "panel_count==2",
+                "axes[0].get_xlabel()=='Coordinate'",
+                "len(axes[0].collections)==1"
+              ]
+            },
+            {
+              "inputs": {
+                "coordinates": [
+                  2
+                ],
+                "observations": [
+                  6
+                ],
+                "bin_count": 2
+              },
+              "assertions": [
+                "len(axes[1].patches)==2",
+                "panel_count==2"
+              ]
+            },
+            {
+              "inputs": {
+                "coordinates": [
+                  0,
+                  1
+                ],
+                "observations": [
+                  1,
+                  3
+                ],
+                "bin_count": 4
+              },
+              "assertions": [
+                "axes[0].get_ylabel()=='Observed value'",
+                "panel_count==2"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A line plot and histogram can coexist without being treated as the same statistical unit. State source and units in labels.",
+            "probe": "How could arrange comparable scientific panels mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for arrange comparable scientific panels."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with plt.subplots(), then choose the correct axis method.",
+          "Label the actual unit and preserve source data; do not plot a hardcoded screenshot."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check Matplotlib imports and input names.",
+        "ValueError": "Check histogram bins or display limits.",
+        "TypeError": "Check plotted numeric values and missingness.",
+        "hardcoded": "Change inputs and verify plot lines, bars or image arrays change accordingly."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I04-G05",
+      "title": "Change display contrast without changing pixels",
+      "competencies": [
+        "076"
+      ],
+      "why": "Visualization limits can make a bright region appear different even when stored array values are unchanged.",
+      "explain": [
+        "`imshow(image,vmin,vmax)` adjusts display mapping; it does not rescale the underlying NumPy array.",
+        "Preserve an immutable original image and compare numerical summaries before and after changing the display range.",
+        "Rendered RGB figures do not supply calibrated fluorescence. Brightness on screen is partly a visualization choice."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\npixels=np.array([[0,100],[150,255]])\noriginal=pixels.copy()\nfig,ax=plt.subplots();handle=ax.imshow(pixels,vmin=50,vmax=200)\nprint(np.array_equal(pixels,original),handle.get_clim())",
+        "predict": "Predict the plotted data, labels and scientific limitation."
+      },
+      "prediction_answer": "A figure reflects actual Python Matplotlib objects and the input data, not a simulated picture or certified scientific result.",
+      "walkthrough": [
+        "Identify plotted data, units, sample/field identity and expected axes.",
+        "Run actual Python; inspect the figure generated in the results panel.",
+        "Change a scientific input or display limit and explain which interpretation is still unsupported."
+      ],
+      "investigate": [
+        "Try a changed label, data series or histogram bin count.",
+        "Check plot object counts against the data and unchanged source arrays.",
+        "Explain the limits of RGB rendered imagery and grouped biological evidence."
+      ],
+      "debug_task": "Find a realistic plotting or labeling mistake in change display contrast without changing pixels and demonstrate a changed-input test.",
+      "misconception": "A bright, well-styled plot is inherently a defensible biological conclusion.",
+      "scientific_boundary": "Rendered Witz/HPA notebook PNG provides authentic display pixels only, not raw calibrated fluorescence; simulated numeric values and microscope fields are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and inspect",
+          "description": "Predict the figure output and run the example.",
+          "starter_code": "# I04-G05 | LEARN | Change display contrast without changing pixels\n# TASK: Predict the figure output and run the example.\n\nimport numpy as np\nimport matplotlib.pyplot as plt\npixels=np.array([[0,100],[150,255]])\noriginal=pixels.copy()\nfig,ax=plt.subplots();handle=ax.imshow(pixels,vmin=50,vmax=200)\nprint(np.array_equal(pixels,original),handle.get_clim())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Create original NumPy array from pixel_rows. Draw im=ax.imshow(original,vmin=display_min,vmax=display_max). Set display_limits, pixel_unchanged and actual_max=int(original.max()).",
+          "starter_code": "# I04-G05 | APPLY | Change display contrast without changing pixels\n# TASK: Create original NumPy array from pixel_rows. Draw\n#   im=ax.imshow(original,vmin=display_min,vmax=display_max). Set display_limits,\n#   pixel_unchanged and actual_max=int(original.max()).\n# INPUTS: pixel_rows, display_min, display_max\n\n",
+          "preview_inputs": {
+            "pixel_rows": [
+              [
+                0,
+                100
+              ],
+              [
+                200,
+                255
+              ]
+            ],
+            "display_min": 10,
+            "display_max": 200
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixel_rows": [
+                  [
+                    0,
+                    100
+                  ],
+                  [
+                    200,
+                    255
+                  ]
+                ],
+                "display_min": 10,
+                "display_max": 200
+              },
+              "assertions": [
+                "display_limits==(10,200)",
+                "pixel_unchanged is True",
+                "actual_max==255"
+              ]
+            },
+            {
+              "inputs": {
+                "pixel_rows": [
+                  [
+                    1,
+                    2
+                  ]
+                ],
+                "display_min": 0,
+                "display_max": 10
+              },
+              "assertions": [
+                "display_limits==(0,10)",
+                "actual_max==2"
+              ]
+            },
+            {
+              "inputs": {
+                "pixel_rows": [
+                  [
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1
+                  ]
+                ],
+                "display_min": 0,
+                "display_max": 1
+              },
+              "assertions": [
+                "pixel_unchanged is True",
+                "actual_max==1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Preserve an immutable original image and compare numerical summaries before and after changing the display range.",
+            "probe": "How could change display contrast without changing pixels mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for change display contrast without changing pixels."
+          }
+        },
+        "prove": {
+          "title": "Apply with changed data",
+          "description": "Decode credited RGB figure, select component to 2D, display with vmin/vmax set by low/high; set unchanged, display_limits and data_range from original pixels. No raw fluorescence claim.",
+          "starter_code": "# I04-G05 | PROVE | Change display contrast without changing pixels\n# TASK: Decode credited RGB figure, select component to 2D, display with vmin/vmax\n#   set by low/high; set unchanged, display_limits and data_range from original\n#   pixels. No raw fluorescence claim.\n# INPUTS: image_path, component, low, high\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "component": 1,
+            "low": 0,
+            "high": 180
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "component": 1,
+                "low": 0,
+                "high": 180
+              },
+              "assertions": [
+                "unchanged is True",
+                "display_limits==(0,180)",
+                "data_range==(int(plane.min()),int(plane.max()))"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "component": 0,
+                "low": 20,
+                "high": 150
+              },
+              "assertions": [
+                "display_limits==(20,150)",
+                "unchanged is True"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "component": 2,
+                "low": 0,
+                "high": 255
+              },
+              "assertions": [
+                "data_range[0]>=0",
+                "data_range[1]<=255"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Preserve an immutable original image and compare numerical summaries before and after changing the display range.",
+            "probe": "How could change display contrast without changing pixels mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for change display contrast without changing pixels."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with plt.subplots(), then choose the correct axis method.",
+          "Label the actual unit and preserve source data; do not plot a hardcoded screenshot."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check Matplotlib imports and input names.",
+        "ValueError": "Check histogram bins or display limits.",
+        "TypeError": "Check plotted numeric values and missingness.",
+        "hardcoded": "Change inputs and verify plot lines, bars or image arrays change accordingly."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    },
+    {
+      "id": "I04-G06",
+      "title": "Inspect a real image's display-pixel histogram",
+      "competencies": [
+        "082"
+      ],
+      "why": "Histograms of displayed RGB codes cannot be substituted for raw detector intensity histograms.",
+      "explain": [
+        "NumPy's `np.histogram` counts the actual display-code values in a selected component from the credited Witz/HPA figure.",
+        "The total number of histogram counts must equal the number of pixels; bins are numerical intervals, not object labels.",
+        "Exposure correction, saturation detection and biologically meaningful intensity require original raw microscopy data and metadata."
+      ],
+      "worked_example": {
+        "code": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\ncounts,bins=np.histogram(rgb[:,:,0],bins=16,range=(0,256))\nprint(int(counts.sum()),rgb.shape[:2])",
+        "predict": "Predict the plotted data, labels and scientific limitation."
+      },
+      "prediction_answer": "A figure reflects actual Python Matplotlib objects and the input data, not a simulated picture or certified scientific result.",
+      "walkthrough": [
+        "Identify plotted data, units, sample/field identity and expected axes.",
+        "Run actual Python; inspect the figure generated in the results panel.",
+        "Change a scientific input or display limit and explain which interpretation is still unsupported."
+      ],
+      "investigate": [
+        "Try a changed label, data series or histogram bin count.",
+        "Check plot object counts against the data and unchanged source arrays.",
+        "Explain the limits of RGB rendered imagery and grouped biological evidence."
+      ],
+      "debug_task": "Find a realistic plotting or labeling mistake in inspect a real image's display-pixel histogram and demonstrate a changed-input test.",
+      "misconception": "A bright, well-styled plot is inherently a defensible biological conclusion.",
+      "scientific_boundary": "Rendered Witz/HPA notebook PNG provides authentic display pixels only, not raw calibrated fluorescence; simulated numeric values and microscope fields are not biological replicates.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and inspect",
+          "description": "Predict the figure output and run the example.",
+          "starter_code": "# I04-G06 | LEARN | Inspect a real image's display-pixel histogram\n# TASK: Predict the figure output and run the example.\n# INPUTS: image_path\n\nfrom PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\ncounts,bins=np.histogram(rgb[:,:,0],bins=16,range=(0,256))\nprint(int(counts.sum()),rgb.shape[:2])\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png"
+          }
+        },
+        "apply": {
+          "title": "Apply with changed data",
+          "description": "Decode image_path to RGB; select color_index plane; compute hist,edges=np.histogram(plane,bins=n_bins,range=(0,256)). Set hist_total and display_only=True; plot a histogram with plt.",
+          "starter_code": "# I04-G06 | APPLY | Inspect a real image's display-pixel histogram\n# TASK: Decode image_path to RGB; select color_index plane; compute\n#   hist,edges=np.histogram(plane,bins=n_bins,range=(0,256)). Set hist_total and\n#   display_only=True; plot a histogram with plt.\n# INPUTS: image_path, color_index, n_bins\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "color_index": 0,
+            "n_bins": 16
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 0,
+                "n_bins": 16
+              },
+              "assertions": [
+                "hist_total==plane.size",
+                "hist.shape==(16,)",
+                "display_only is True"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 1,
+                "n_bins": 8
+              },
+              "assertions": [
+                "hist.shape==(8,)",
+                "hist_total==plane.size"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "color_index": 2,
+                "n_bins": 32
+              },
+              "assertions": [
+                "hist.shape==(32,)",
+                "hist_total==plane.size"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The total number of histogram counts must equal the number of pixels; bins are numerical intervals, not object labels.",
+            "probe": "How could inspect a real image's display-pixel histogram mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for inspect a real image's display-pixel histogram."
+          }
+        },
+        "prove": {
+          "title": "Apply with changed data",
+          "description": "Read credited RGB figure, compute histogram for component with bins=bin_count. Set pixel_count, first_bin=int(counts[0]) and has_raw_calibration=False. Draw the bar plot.",
+          "starter_code": "# I04-G06 | PROVE | Inspect a real image's display-pixel histogram\n# TASK: Read credited RGB figure, compute histogram for component with\n#   bins=bin_count. Set pixel_count, first_bin=int(counts[0]) and\n#   has_raw_calibration=False. Draw the bar plot.\n# INPUTS: image_path, component, bin_count\n\n",
+          "preview_inputs": {
+            "image_path": "/home/pyodide/witz_published_figure.png",
+            "component": 1,
+            "bin_count": 8
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "component": 1,
+                "bin_count": 8
+              },
+              "assertions": [
+                "pixel_count==plane.size",
+                "first_bin==int(counts[0])",
+                "has_raw_calibration is False"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "component": 0,
+                "bin_count": 16
+              },
+              "assertions": [
+                "pixel_count==plane.size",
+                "len(counts)==16"
+              ]
+            },
+            {
+              "inputs": {
+                "image_path": "/home/pyodide/witz_published_figure.png",
+                "component": 2,
+                "bin_count": 4
+              },
+              "assertions": [
+                "pixel_count==int(counts.sum())",
+                "has_raw_calibration is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The total number of histogram counts must equal the number of pixels; bins are numerical intervals, not object labels.",
+            "probe": "How could inspect a real image's display-pixel histogram mislead if units, display range or biological sampling were not checked?",
+            "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for inspect a real image's display-pixel histogram."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Start with plt.subplots(), then choose the correct axis method.",
+          "Label the actual unit and preserve source data; do not plot a hardcoded screenshot."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check Matplotlib imports and input names.",
+        "ValueError": "Check histogram bins or display limits.",
+        "TypeError": "Check plotted numeric values and missingness.",
+        "hardcoded": "Change inputs and verify plot lines, bars or image arrays change accordingly."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Exploration",
+        "apply": "Public changed-input practice",
+        "prove": "Transfer, not certified mastery"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "I04-CAPSTONE",
+    "title": "Produce a traceable two-panel RGB display report",
+    "competencies": [],
+    "why": "A scientifically honest image figure shows the source pixels and their distribution while refusing invented calibration.",
+    "explain": [
+      "Build a Matplotlib two-panel figure from an actual credited Witz/HPA notebook PNG: one component image and its display-pixel histogram.",
+      "The figure should label the plotted component, histogram x-axis as RGB display code, and indicate the output is not calibrated raw microscopy.",
+      "Check that histogram totals equal source component pixel count. The bright-pixel distribution is not a validated cell count."
+    ],
+    "worked_example": {
+      "code": "from PIL import Image\nimport numpy as np\nimport matplotlib.pyplot as plt\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nfig,axes=plt.subplots(1,2)\naxes[0].imshow(rgb[:,:,1],cmap='gray')\naxes[1].hist(rgb[:,:,1].ravel(),bins=16)\nprint('Rendered RGB display, not calibrated raw fluorescence')",
+      "predict": "Predict the plotted data, labels and scientific limitation."
+    },
+    "prediction_answer": "A figure reflects actual Python Matplotlib objects and the input data, not a simulated picture or certified scientific result.",
+    "walkthrough": [
+      "Identify plotted data, units, sample/field identity and expected axes.",
+      "Run actual Python; inspect the figure generated in the results panel.",
+      "Change a scientific input or display limit and explain which interpretation is still unsupported."
+    ],
+    "investigate": [
+      "Try a changed label, data series or histogram bin count.",
+      "Check plot object counts against the data and unchanged source arrays.",
+      "Explain the limits of RGB rendered imagery and grouped biological evidence."
+    ],
+    "debug_task": "Find a realistic plotting or labeling mistake in produce a traceable two-panel rgb display report and demonstrate a changed-input test.",
+    "misconception": "A bright, well-styled plot is inherently a defensible biological conclusion.",
+    "scientific_boundary": "Rendered Witz/HPA notebook PNG provides authentic display pixels only, not raw calibrated fluorescence; simulated numeric values and microscope fields are not biological replicates.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and inspect",
+        "description": "Predict the figure output and run the example.",
+        "starter_code": "# I04-CAPSTONE | LEARN | Produce a traceable two-panel RGB display report\n# TASK: Predict the figure output and run the example.\n# INPUTS: image_path\n\nfrom PIL import Image\nimport numpy as np\nimport matplotlib.pyplot as plt\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nfig,axes=plt.subplots(1,2)\naxes[0].imshow(rgb[:,:,1],cmap='gray')\naxes[1].hist(rgb[:,:,1].ravel(),bins=16)\nprint('Rendered RGB display, not calibrated raw fluorescence')\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png"
+        }
+      },
+      "apply": {
+        "title": "Apply with changed data",
+        "description": "Decode image_path, choose color_index; make fig,axes with imshow plane and histogram (n_bins, range=(0,256)). Set report={'pixels':plane.size,'hist_total':int(counts.sum()),'raw':False,'panels':2}; label axes[1].x as 'RGB display code'.",
+        "starter_code": "# I04-CAPSTONE | APPLY | Produce a traceable two-panel RGB display report\n# TASK: Decode image_path, choose color_index; make fig,axes with imshow plane and\n#   histogram (n_bins, range=(0,256)). Set\n#   report={'pixels':plane.size,'hist_total':int(counts.sum()),'raw':False,'panels':2};\n#   label axes[1].x as 'RGB display code'.\n# INPUTS: image_path, color_index, n_bins\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "color_index": 1,
+          "n_bins": 16
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "color_index": 1,
+              "n_bins": 16
+            },
+            "assertions": [
+              "report['panels']==2",
+              "report['pixels']==report['hist_total']",
+              "report['raw'] is False",
+              "axes[1].get_xlabel()=='RGB display code'"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "color_index": 0,
+              "n_bins": 8
+            },
+            "assertions": [
+              "len(axes)==2",
+              "report['pixels']==plane.size"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "color_index": 2,
+              "n_bins": 32
+            },
+            "assertions": [
+              "report['hist_total']==plane.size",
+              "report['raw'] is False"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The figure should label the plotted component, histogram x-axis as RGB display code, and indicate the output is not calibrated raw microscopy.",
+          "probe": "How could produce a traceable two-panel rgb display report mislead if units, display range or biological sampling were not checked?",
+          "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for produce a traceable two-panel rgb display report."
+        }
+      },
+      "prove": {
+        "title": "Apply with changed data",
+        "description": "Build new figure from credited RGB image for different component. Set fig,axes two panels, a grayscale image and a histogram; summary={'n':int(hist.sum()),'n_pixels':int(plane.size),'calibrated':False}. Plot titles 'Display component' and 'Display histogram'.",
+        "starter_code": "# I04-CAPSTONE | PROVE | Produce a traceable two-panel RGB display report\n# TASK: Build new figure from credited RGB image for different component. Set\n#   fig,axes two panels, a grayscale image and a histogram;\n#   summary={'n':int(hist.sum()),'n_pixels':int(plane.size),'calibrated':False}.\n#   Plot titles 'Display component' and 'Display histogram'.\n# INPUTS: image_path, component, bins\n\n",
+        "preview_inputs": {
+          "image_path": "/home/pyodide/witz_published_figure.png",
+          "component": 2,
+          "bins": 10
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component": 2,
+              "bins": 10
+            },
+            "assertions": [
+              "summary['n']==summary['n_pixels']",
+              "summary['calibrated'] is False",
+              "[a.get_title() for a in axes]==['Display component','Display histogram']"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component": 0,
+              "bins": 4
+            },
+            "assertions": [
+              "len(fig.axes)==2",
+              "summary['n']==int(plane.size)"
+            ]
+          },
+          {
+            "inputs": {
+              "image_path": "/home/pyodide/witz_published_figure.png",
+              "component": 1,
+              "bins": 16
+            },
+            "assertions": [
+              "summary['calibrated'] is False",
+              "summary['n_pixels']>0"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The figure should label the plotted component, histogram x-axis as RGB display code, and indicate the output is not calibrated raw microscopy.",
+          "probe": "How could produce a traceable two-panel rgb display report mislead if units, display range or biological sampling were not checked?",
+          "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for produce a traceable two-panel rgb display report."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start with plt.subplots(), then choose the correct axis method.",
+        "Label the actual unit and preserve source data; do not plot a hardcoded screenshot."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "NameError": "Check Matplotlib imports and input names.",
+      "ValueError": "Check histogram bins or display limits.",
+      "TypeError": "Check plotted numeric values and missingness.",
+      "hardcoded": "Change inputs and verify plot lines, bars or image arrays change accordingly."
+    },
+    "reflection_prompts": [
+      "Which axis represents data and which is a display transformation?",
+      "Which observation represents an experimental unit?",
+      "What original source/calibration would justify quantitative fluorescence?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer, not certified mastery"
+    },
+    "build_steps": [
+      "Decode the credited source figure and inspect actual numeric RGB components.",
+      "Create labeled grayscale component and pixel-code distribution panels.",
+      "Choose binning and record data counts, not object counts.",
+      "Return figure and explicit raw_calibrated=False summary.",
+      "Rebuild on changed component and binning in independent Prove."
+    ],
+    "assessment": {
+      "code": "CHANGED_INPUT_REAL_MATPLOTLIB",
+      "scientific": "DISPLAY_ONLY",
+      "independent": "NOT_AUTO_CERTIFIED"
+    }
+  },
+  "review": {
+    "id": "I04-REVIEW",
+    "title": "Rebuild a defensible figure without guidance",
+    "competencies": [],
+    "why": "Delayed transfer should retain axis labeling, source preservation and the distinction between display and raw data.",
+    "explain": [
+      "Write the figure from changing unfamiliar data values rather than copying a first example.",
+      "Clearly label units and number of observations, and avoid interpreting a field count as biological replication.",
+      "A plotted visual is evidence of code execution, not automatically a defensible biological comparison."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the plotted data, labels and scientific limitation."
+    },
+    "prediction_answer": "A figure reflects actual Python Matplotlib objects and the input data, not a simulated picture or certified scientific result.",
+    "walkthrough": [
+      "Identify plotted data, units, sample/field identity and expected axes.",
+      "Run actual Python; inspect the figure generated in the results panel.",
+      "Change a scientific input or display limit and explain which interpretation is still unsupported."
+    ],
+    "investigate": [
+      "Try a changed label, data series or histogram bin count.",
+      "Check plot object counts against the data and unchanged source arrays.",
+      "Explain the limits of RGB rendered imagery and grouped biological evidence."
+    ],
+    "debug_task": "Find a realistic plotting or labeling mistake in rebuild a defensible figure without guidance and demonstrate a changed-input test.",
+    "misconception": "A bright, well-styled plot is inherently a defensible biological conclusion.",
+    "scientific_boundary": "Rendered Witz/HPA notebook PNG provides authentic display pixels only, not raw calibrated fluorescence; simulated numeric values and microscope fields are not biological replicates.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and inspect",
+        "description": "Recall a meaningful figure from memory.",
+        "starter_code": "# I04-REVIEW | LEARN | Rebuild a defensible figure without guidance\n# TASK: Recall a meaningful figure from memory.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with changed data",
+        "description": "Write pseudocode comments for a new figure with axes, units, data provenance and a justified chart type.",
+        "starter_code": "# I04-REVIEW | APPLY | Rebuild a defensible figure without guidance\n# TASK: Write pseudocode comments for a new figure with axes, units, data\n#   provenance and a justified chart type.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "Clearly label units and number of observations, and avoid interpreting a field count as biological replication.",
+          "probe": "How could rebuild a defensible figure without guidance mislead if units, display range or biological sampling were not checked?",
+          "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for rebuild a defensible figure without guidance."
+        }
+      },
+      "prove": {
+        "title": "Apply with changed data",
+        "description": "Create a Matplotlib histogram from data and n_bins; set total=int(heights.sum()), title=label, x='Score (a.u.)', y='Observations'; print total.",
+        "starter_code": "# I04-REVIEW | PROVE | Rebuild a defensible figure without guidance\n# TASK: Create a Matplotlib histogram from data and n_bins; set\n#   total=int(heights.sum()), title=label, x='Score (a.u.)', y='Observations';\n#   print total.\n# INPUTS: data, n_bins, label\n\n",
+        "preview_inputs": {
+          "data": [
+            1,
+            1,
+            2,
+            3
+          ],
+          "n_bins": 3,
+          "label": "Field scores"
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": [
+                1,
+                1,
+                2,
+                3
+              ],
+              "n_bins": 3,
+              "label": "Field scores"
+            },
+            "assertions": [
+              "total==4",
+              "ax.get_title()=='Field scores'",
+              "ax.get_xlabel()=='Score (a.u.)'"
+            ]
+          },
+          {
+            "inputs": {
+              "data": [
+                0,
+                1
+              ],
+              "n_bins": 2,
+              "label": "New"
+            },
+            "assertions": [
+              "total==2",
+              "ax.get_title()=='New'"
+            ]
+          },
+          {
+            "inputs": {
+              "data": [
+                5,
+                5,
+                5
+              ],
+              "n_bins": 4,
+              "label": "Repeats"
+            },
+            "assertions": [
+              "total==3",
+              "len(heights)==4"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Clearly label units and number of observations, and avoid interpreting a field count as biological replication.",
+          "probe": "How could rebuild a defensible figure without guidance mislead if units, display range or biological sampling were not checked?",
+          "check": "Run Matplotlib on actual changing data; ensure correct axes and plotted object type for rebuild a defensible figure without guidance."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "NameError": "Check Matplotlib imports and input names.",
+      "ValueError": "Check histogram bins or display limits.",
+      "TypeError": "Check plotted numeric values and missingness.",
+      "hardcoded": "Change inputs and verify plot lines, bars or image arrays change accordingly."
+    },
+    "reflection_prompts": [
+      "Which axis represents data and which is a display transformation?",
+      "Which observation represents an experimental unit?",
+      "What original source/calibration would justify quantitative fluorescence?"
+    ],
+    "learning_evidence": {
+      "learn": "Exploration",
+      "apply": "Public changed-input practice",
+      "prove": "Transfer, not certified mastery"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "interpretable_image_figure.py",
+    "brief": "Standalone real Matplotlib 2-panel credited figure and numerical histogram, with explicit display-only provenance.",
+    "status": "BROWSER_QA_PENDING"
+  }
+}
