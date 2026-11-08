@@ -2,6 +2,14 @@
 
 BioPython Studio is a personal, minimally cluttered browser IDE for learning transferable scientific Python through biological research problems. Its primary applied pathway is microscopy; sequencing/NGS and machine learning are optional later pathways.
 
+## Complete frozen v3 course — development branch
+
+The frozen v3 curriculum now has **26 implemented interactive chapters / 156 canonical competencies** (not 156 separate chapter titles): **P01–P06** (36 Python goals), **I01–I13** (91 microscopy/image-analysis goals), **N01–N04** (17 sequence/NGS goals), and **L01–L03** (12 baseline ML goals). Every chapter has Learn, Apply, independent Prove, a capstone and delayed review. There are **237 additional changed-input cases** for the seven optional sequence/ML chapters; author-side solutions stay in tests, never in Apply/Prove starter code.
+
+The existing 19-chapter progress and frozen editor/viewer shell are preserved. The **NGS** and **ML** navigation items now open genuine lessons and execute real Biopython and scikit-learn on version-pinned Pyodide. Sequence FASTA/FASTQ strings and model observations are clearly **synthetic training records**, not real reads or externally validated models. Experimental units, batch leakage, split groups and training-only fitting are explicit prerequisites.
+
+**Development only:** [Draft PR #21](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/21) builds on [Draft PR #20](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/20). Tests and initial learner trial are required before treating this as validated teaching or merging it into production. Local project reproducibility and real biological generalization need separate evidence.
+
 ## Repository and implementation status
 
 - **Curriculum authority:** the frozen v3 design in [docs/CURRICULUM_V3_FROZEN.md](https://github.com/Shrestha-Sandeep/BioPython-Studio/blob/docs/frozen-v3-curriculum/docs/CURRICULUM_V3_FROZEN.md) defines 156 distinct competencies and safe prerequisite ordering. The [Witz-first mission map](curriculum/witz_spine.json) defines 26 connected missions. These are **not 156 shipped interactive lessons**.
