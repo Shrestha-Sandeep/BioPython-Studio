@@ -305,6 +305,24 @@
     context.putImageData(filtered, 0, 0);
     $("image-preview").src = canvas.toDataURL("image/png");
   }
+  let exampleImageLoading = false;
+  async function ensureExampleImage() {
+    // Context asset only. Never overwrite an image the learner has opened.
+    if (hasImage || exampleImageLoading) return;
+    exampleImageLoading = true;
+    try {
+      const response = await fetch("./assets/witz/fluorescence-single.png", {cache:"force-cache"});
+      if (!response.ok) throw new Error("Witz/HPA credited figure HTTP " + response.status);
+      const blob = await response.blob();
+      if (!hasImage && blob.type.startsWith("image/")) {
+        openImage(new File([blob], "Witz-HPA-rendered-RGB-example.png", {type:"image/png"}));
+      }
+    } catch {
+      if (!hasImage) $("image-meta").textContent = "Credited example unavailable · Open image";
+    } finally {
+      exampleImageLoading = false;
+    }
+  }
   function openImage(file) {
     if (!file) return;
     if (!["image/png", "image/jpeg", "image/webp", "image/gif"].includes(file.type)) {
@@ -555,6 +573,7 @@
     writeCode: setCode,
     selectPhase: choosePhase,
     selectStage: chooseStage,
+    ensureExampleImage,
     expandLesson: show => openLesson(Boolean(show))
   });
   $("run-button").disabled = true;
