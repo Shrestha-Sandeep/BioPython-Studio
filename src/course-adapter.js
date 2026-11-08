@@ -287,6 +287,16 @@ function exportPython(){
  document.body.append(link);link.click();link.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
+function refreshChapterOptions(){
+ const selector=el("bps-chapter-select");if(!selector)return;
+ selector.replaceChildren();
+ for(const id of stageIds()){
+  if(!chapters[id])continue;
+  const option=document.createElement("option");option.value=id;
+  option.textContent=id+" · "+chapters[id].title;selector.append(option);
+ }
+ selector.value=activeId;
+}
 function refreshGoalOptions(selector=el("p01-goal-select")){
  if(!selector)return;
  selector.replaceChildren();
@@ -300,8 +310,9 @@ function switchChapter(next){
  if(!chapters[next]||next===activeId||busy)return;
  remember();
  activeId=next;chapter=chapters[next];state=states[next];
+ if(isImaging(next))lastI=next;else lastP=next;
  state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
- refreshGoalOptions();
+ refreshGoalOptions();refreshChapterOptions();
  bridge()?.selectPhase?.(state.phase);
  bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
  render();save();
@@ -310,7 +321,7 @@ function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
  const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Chapter";chapterLabel.className="p01-label";
  const chapterSelect=document.createElement("select");chapterSelect.id="bps-chapter-select";chapterSelect.setAttribute("aria-label","Choose Python chapter");
- for(const id of IDS){
+ for(const id of stageIds()){
    const o=document.createElement("option");o.value=id;o.textContent=id+" · "+chapters[id].title;
    chapterSelect.append(o);
  }
@@ -344,7 +355,9 @@ function mount(){
   b.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight"].includes(e.key))queueMicrotask(()=>choosePhase(document.querySelector('[data-phase][aria-selected="true"]')?.dataset.phase||"learn"));});
  });
  document.querySelectorAll("[data-stage]").forEach(b=>b.addEventListener("click",()=>{
-  syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
+  if(b.dataset.stage==="Microscopy"&&!isImaging(activeId))switchChapter(lastI);
+   if(b.dataset.stage==="Python"&&isImaging(activeId))switchChapter(lastP);
+   syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
  }));
  document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
   syncActivity();if(active())render();
@@ -364,7 +377,9 @@ async function start(){
   }
   if(!chapters[activeId])activeId="P01";
   chapter=chapters[activeId];state=states[activeId];
+  if(isImaging(activeId))lastI=activeId;else lastP=activeId;
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
+  if(isImaging(activeId))bridge()?.selectStage?.("Microscopy");
   mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
   render();syncActivity();
   el("output-placeholder").textContent="Run your code to see real Python output or traceback.";
