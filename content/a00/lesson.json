@@ -1,0 +1,1434 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "A00",
+  "version": "1.0.0",
+  "status": "OPTIONAL_ADVANCED_PILOT_NOT_LEARNER_VALIDATED",
+  "title": "Local scientific Python bridge",
+  "competencies": [
+    "A00-G01",
+    "A00-G02",
+    "A00-G03",
+    "A00-G04",
+    "A00-G05",
+    "A00-CAPSTONE",
+    "A00-REVIEW"
+  ],
+  "intro": "Move from browser code to reproducible local Python: interpreter identity, safe files, pure functions, parameterized tests, SHA-256 and clean Git/venv replay.",
+  "scientific_context": {
+    "source": "https://docs.python.org/3/library/venv.html",
+    "use": "SYNTHETIC_BROWSER_PRIMER_PLUS_REQUIRED_LOCAL_EXECUTION",
+    "caution": "The browser cannot certify a real Windows/macOS clean checkout, a Git commit or an installed microscope pipeline."
+  },
+  "chapter_method": "Predict → Run → Investigate → independent Prove → delayed review; complete the local CLI/pytest checkout.",
+  "goals": [
+    {
+      "id": "A00-G01",
+      "title": "Know which Python actually runs",
+      "competencies": [
+        "A00-G01"
+      ],
+      "why": "A Jupyter kernel can silently use a different Python environment from the terminal.",
+      "explain": [
+        "Interpreter identity is an executable path, not a notebook label.",
+        "A package installed into one Python may be absent from another.",
+        "Record sys.executable and package versions in the real local checkpoint."
+      ],
+      "worked_example": {
+        "code": "import sys,platform\nprint('Active Python:',sys.executable)\nprint('Version:',platform.python_version())",
+        "predict": "Predict how the result changes with image metadata and biological grouping."
+      },
+      "prediction_answer": "The result must reflect actual inputs and distinguish computational execution from scientifically validated measurement.",
+      "walkthrough": [
+        "Predict one relevant boundary or failure before Run.",
+        "Modify the demonstration using a changed input and explain the result.",
+        "State which local or biological evidence is not established by this practice case."
+      ],
+      "investigate": [
+        "Change an input that affects the result, not just a printed label.",
+        "Explain a mistake that could pass a numerical test yet fail scientifically."
+      ],
+      "debug_task": "Find one invalid input or assumption that a superficial single-input test would miss.",
+      "misconception": "Running code in a browser proves the local environment and independent biology are valid.",
+      "scientific_boundary": "Synthetic browser exercises. A00 completion also requires a real local interpreter, Git, pytest and clean-replay evidence; none is inferred from automatic checks.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Compare the *exact* interpreter identifiers, not Python version strings.",
+          "Use set difference to find missing packages, then sort."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute dynamically from the provided inputs; do not copy a fixed result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "A Jupyter kernel can silently use a different Python environment from the terminal.",
+          "starter_code": "# A00-G01 | LEARN | Know which Python actually runs\n# TASK: Predict, run and inspect this short example.\n\nimport sys,platform\nprint('Active Python:',sys.executable)\nprint('Version:',platform.python_version())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed scientific inputs",
+          "description": "Compare data.editor_python and data.kernel_python and list missing packages. Return result={'same_interpreter':bool,'missing_packages':sorted list}.",
+          "starter_code": "# A00-G01 | APPLY | Know which Python actually runs\n# TASK: Compare data.editor_python and data.kernel_python and list missing packages.\n#   Return result={'same_interpreter':bool,'missing_packages':sorted list}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "editor_python": "/home/a/.venv/bin/python",
+              "kernel_python": "/usr/bin/python",
+              "required_packages": [
+                "numpy",
+                "tifffile"
+              ],
+              "installed_packages": [
+                "numpy"
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "editor_python": "/home/a/.venv/bin/python",
+                  "kernel_python": "/usr/bin/python",
+                  "required_packages": [
+                    "numpy",
+                    "tifffile"
+                  ],
+                  "installed_packages": [
+                    "numpy"
+                  ]
+                }
+              },
+              "assertions": [
+                "result['same_interpreter']==(data['editor_python']==data['kernel_python'])",
+                "result['missing_packages']==sorted(set(data['required_packages'])-set(data['installed_packages']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "editor_python": "C:/venv/python.exe",
+                  "kernel_python": "C:/venv/python.exe",
+                  "required_packages": [
+                    "pytest",
+                    "numpy"
+                  ],
+                  "installed_packages": [
+                    "numpy",
+                    "pytest",
+                    "pandas"
+                  ]
+                }
+              },
+              "assertions": [
+                "result['same_interpreter']==(data['editor_python']==data['kernel_python'])",
+                "result['missing_packages']==sorted(set(data['required_packages'])-set(data['installed_packages']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A Jupyter kernel can silently use a different Python environment from the terminal.",
+            "probe": "Which local/biological evidence remains unverified?",
+            "check": "Inspect identifiers, source paths, units and input boundary conditions."
+          }
+        },
+        "prove": {
+          "title": "Independent input transfer",
+          "description": "Compare data.editor_python and data.kernel_python and list missing packages. Return result={'same_interpreter':bool,'missing_packages':sorted list}.",
+          "starter_code": "# A00-G01 | PROVE | Know which Python actually runs\n# TASK: Compare data.editor_python and data.kernel_python and list missing packages.\n#   Return result={'same_interpreter':bool,'missing_packages':sorted list}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "editor_python": "/home/user/project/.venv/bin/python",
+              "kernel_python": "/home/user/project/.venv/bin/python",
+              "required_packages": [
+                "tifffile",
+                "pytest"
+              ],
+              "installed_packages": [
+                "tifffile"
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "editor_python": "/home/user/project/.venv/bin/python",
+                  "kernel_python": "/home/user/project/.venv/bin/python",
+                  "required_packages": [
+                    "tifffile",
+                    "pytest"
+                  ],
+                  "installed_packages": [
+                    "tifffile"
+                  ]
+                }
+              },
+              "assertions": [
+                "result['same_interpreter']==(data['editor_python']==data['kernel_python'])",
+                "result['missing_packages']==sorted(set(data['required_packages'])-set(data['installed_packages']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "editor_python": "/opt/envA/python",
+                  "kernel_python": "/opt/envB/python",
+                  "required_packages": [
+                    "scikit-image",
+                    "numpy",
+                    "scipy"
+                  ],
+                  "installed_packages": [
+                    "numpy",
+                    "scipy"
+                  ]
+                }
+              },
+              "assertions": [
+                "result['same_interpreter']==(data['editor_python']==data['kernel_python'])",
+                "result['missing_packages']==sorted(set(data['required_packages'])-set(data['installed_packages']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A Jupyter kernel can silently use a different Python environment from the terminal.",
+            "probe": "Could you reproduce this after a clean checkout without browser state?",
+            "check": "Verify source provenance, computations and valid biological groupings."
+          }
+        }
+      }
+    },
+    {
+      "id": "A00-G02",
+      "title": "Reject unsafe scientific-data paths",
+      "competencies": [
+        "A00-G02"
+      ],
+      "why": "Data loaders must not follow accidental or malicious paths outside a source directory.",
+      "explain": [
+        "Use pathlib to read files, but explicitly validate relative paths first.",
+        "A component '..' can escape a dataset root even if a filename ends in .tif.",
+        "In the local project, resolve source paths and ensure they stay inside the declared root."
+      ],
+      "worked_example": {
+        "code": "from pathlib import PurePosixPath\nfor name in ['images/a.tif','../private.tif']:\n print(name, '..' in PurePosixPath(name).parts)",
+        "predict": "Predict how the result changes with image metadata and biological grouping."
+      },
+      "prediction_answer": "The result must reflect actual inputs and distinguish computational execution from scientifically validated measurement.",
+      "walkthrough": [
+        "Predict one relevant boundary or failure before Run.",
+        "Modify the demonstration using a changed input and explain the result.",
+        "State which local or biological evidence is not established by this practice case."
+      ],
+      "investigate": [
+        "Change an input that affects the result, not just a printed label.",
+        "Explain a mistake that could pass a numerical test yet fail scientifically."
+      ],
+      "debug_task": "Find one invalid input or assumption that a superficial single-input test would miss.",
+      "misconception": "Running code in a browser proves the local environment and independent biology are valid.",
+      "scientific_boundary": "Synthetic browser exercises. A00 completion also requires a real local interpreter, Git, pytest and clean-replay evidence; none is inferred from automatic checks.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Use PurePosixPath(name).parts to test traversal components.",
+          "Reject both absolute paths and names containing '..' components."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute dynamically from the provided inputs; do not copy a fixed result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Data loaders must not follow accidental or malicious paths outside a source directory.",
+          "starter_code": "# A00-G02 | LEARN | Reject unsafe scientific-data paths\n# TASK: Predict, run and inspect this short example.\n\nfrom pathlib import PurePosixPath\nfor name in ['images/a.tif','../private.tif']:\n print(name, '..' in PurePosixPath(name).parts)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed scientific inputs",
+          "description": "Separate data.paths into safe relative filenames and rejected traversal/absolute paths. Return result={'safe':list,'rejected':list}, preserving input order.",
+          "starter_code": "# A00-G02 | APPLY | Reject unsafe scientific-data paths\n# TASK: Separate data.paths into safe relative filenames and rejected\n#   traversal/absolute paths. Return result={'safe':list,'rejected':list},\n#   preserving input order.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "paths": [
+                "images/a.tif",
+                "../secrets.csv",
+                "images/b.tiff",
+                "/tmp/elsewhere.tif"
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "paths": [
+                    "images/a.tif",
+                    "../secrets.csv",
+                    "images/b.tiff",
+                    "/tmp/elsewhere.tif"
+                  ]
+                }
+              },
+              "assertions": [
+                "result['safe']==[p for p in data['paths'] if p.strip() and not __import__('pathlib').PurePosixPath(p).is_absolute() and '..' not in __import__('pathlib').PurePosixPath(p).parts]",
+                "result['rejected']==[p for p in data['paths'] if not p.strip() or __import__('pathlib').PurePosixPath(p).is_absolute() or '..' in __import__('pathlib').PurePosixPath(p).parts]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "paths": [
+                    "a/b.tif",
+                    "a/../b.tif",
+                    "",
+                    "data/field_01.tif"
+                  ]
+                }
+              },
+              "assertions": [
+                "result['safe']==[p for p in data['paths'] if p.strip() and not __import__('pathlib').PurePosixPath(p).is_absolute() and '..' not in __import__('pathlib').PurePosixPath(p).parts]",
+                "result['rejected']==[p for p in data['paths'] if not p.strip() or __import__('pathlib').PurePosixPath(p).is_absolute() or '..' in __import__('pathlib').PurePosixPath(p).parts]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Data loaders must not follow accidental or malicious paths outside a source directory.",
+            "probe": "Which local/biological evidence remains unverified?",
+            "check": "Inspect identifiers, source paths, units and input boundary conditions."
+          }
+        },
+        "prove": {
+          "title": "Independent input transfer",
+          "description": "Separate data.paths into safe relative filenames and rejected traversal/absolute paths. Return result={'safe':list,'rejected':list}, preserving input order.",
+          "starter_code": "# A00-G02 | PROVE | Reject unsafe scientific-data paths\n# TASK: Separate data.paths into safe relative filenames and rejected\n#   traversal/absolute paths. Return result={'safe':list,'rejected':list},\n#   preserving input order.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "paths": [
+                "sample.tif",
+                "folder/../../../etc/passwd",
+                "../outside",
+                "subdir/image.tif"
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "paths": [
+                    "sample.tif",
+                    "folder/../../../etc/passwd",
+                    "../outside",
+                    "subdir/image.tif"
+                  ]
+                }
+              },
+              "assertions": [
+                "result['safe']==[p for p in data['paths'] if p.strip() and not __import__('pathlib').PurePosixPath(p).is_absolute() and '..' not in __import__('pathlib').PurePosixPath(p).parts]",
+                "result['rejected']==[p for p in data['paths'] if not p.strip() or __import__('pathlib').PurePosixPath(p).is_absolute() or '..' in __import__('pathlib').PurePosixPath(p).parts]"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "paths": [
+                    "/absolute.tif",
+                    "relative/ok.tif",
+                    "another/../bad.tif",
+                    "relative/second.tiff"
+                  ]
+                }
+              },
+              "assertions": [
+                "result['safe']==[p for p in data['paths'] if p.strip() and not __import__('pathlib').PurePosixPath(p).is_absolute() and '..' not in __import__('pathlib').PurePosixPath(p).parts]",
+                "result['rejected']==[p for p in data['paths'] if not p.strip() or __import__('pathlib').PurePosixPath(p).is_absolute() or '..' in __import__('pathlib').PurePosixPath(p).parts]"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Data loaders must not follow accidental or malicious paths outside a source directory.",
+            "probe": "Could you reproduce this after a clean checkout without browser state?",
+            "check": "Verify source provenance, computations and valid biological groupings."
+          }
+        }
+      }
+    },
+    {
+      "id": "A00-G03",
+      "title": "Extract biological units with reusable functions",
+      "competencies": [
+        "A00-G03"
+      ],
+      "why": "A small pure function for animal-level aggregation is easier to test than a notebook full of hidden state.",
+      "explain": [
+        "Keep the input table unchanged and return a new result.",
+        "A named function with explicit inputs allows reusable local analysis.",
+        "Fields remain technical measurements; aggregation does not invent biological replication."
+      ],
+      "worked_example": {
+        "code": "def mean(values: list[float]) -> float:\n return sum(values)/len(values)\nprint(mean([2,4,6]))",
+        "predict": "Predict how the result changes with image metadata and biological grouping."
+      },
+      "prediction_answer": "The result must reflect actual inputs and distinguish computational execution from scientifically validated measurement.",
+      "walkthrough": [
+        "Predict one relevant boundary or failure before Run.",
+        "Modify the demonstration using a changed input and explain the result.",
+        "State which local or biological evidence is not established by this practice case."
+      ],
+      "investigate": [
+        "Change an input that affects the result, not just a printed label.",
+        "Explain a mistake that could pass a numerical test yet fail scientifically."
+      ],
+      "debug_task": "Find one invalid input or assumption that a superficial single-input test would miss.",
+      "misconception": "Running code in a browser proves the local environment and independent biology are valid.",
+      "scientific_boundary": "Synthetic browser exercises. A00 completion also requires a real local interpreter, Git, pytest and clean-replay evidence; none is inferred from automatic checks.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Group values by animal_id, never by field number.",
+          "Put the aggregation in a function accepting rows and returning a dictionary."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute dynamically from the provided inputs; do not copy a fixed result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "A small pure function for animal-level aggregation is easier to test than a notebook full of hidden state.",
+          "starter_code": "# A00-G03 | LEARN | Extract biological units with reusable functions\n# TASK: Predict, run and inspect this short example.\n\ndef mean(values: list[float]) -> float:\n return sum(values)/len(values)\nprint(mean([2,4,6]))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed scientific inputs",
+          "description": "From data.rows with animal_id and numeric value, compute per-animal means. Return result={'animal_means':dict,'field_count':int}.",
+          "starter_code": "# A00-G03 | APPLY | Extract biological units with reusable functions\n# TASK: From data.rows with animal_id and numeric value, compute per-animal means.\n#   Return result={'animal_means':dict,'field_count':int}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "rows": [
+                {
+                  "animal_id": "A",
+                  "value": 2
+                },
+                {
+                  "animal_id": "A",
+                  "value": 6
+                },
+                {
+                  "animal_id": "B",
+                  "value": 10
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "A",
+                      "value": 2
+                    },
+                    {
+                      "animal_id": "A",
+                      "value": 6
+                    },
+                    {
+                      "animal_id": "B",
+                      "value": 10
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['field_count']==len(data['rows'])",
+                "result['animal_means']=={a:sum(float(r['value']) for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows']})}"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "K1",
+                      "value": 10
+                    },
+                    {
+                      "animal_id": "K2",
+                      "value": 0
+                    },
+                    {
+                      "animal_id": "K2",
+                      "value": 4
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['field_count']==len(data['rows'])",
+                "result['animal_means']=={a:sum(float(r['value']) for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows']})}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A small pure function for animal-level aggregation is easier to test than a notebook full of hidden state.",
+            "probe": "Which local/biological evidence remains unverified?",
+            "check": "Inspect identifiers, source paths, units and input boundary conditions."
+          }
+        },
+        "prove": {
+          "title": "Independent input transfer",
+          "description": "From data.rows with animal_id and numeric value, compute per-animal means. Return result={'animal_means':dict,'field_count':int}.",
+          "starter_code": "# A00-G03 | PROVE | Extract biological units with reusable functions\n# TASK: From data.rows with animal_id and numeric value, compute per-animal means.\n#   Return result={'animal_means':dict,'field_count':int}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "rows": [
+                {
+                  "animal_id": "A",
+                  "value": 1
+                },
+                {
+                  "animal_id": "B",
+                  "value": 2
+                },
+                {
+                  "animal_id": "A",
+                  "value": 9
+                },
+                {
+                  "animal_id": "B",
+                  "value": 8
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "A",
+                      "value": 1
+                    },
+                    {
+                      "animal_id": "B",
+                      "value": 2
+                    },
+                    {
+                      "animal_id": "A",
+                      "value": 9
+                    },
+                    {
+                      "animal_id": "B",
+                      "value": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['field_count']==len(data['rows'])",
+                "result['animal_means']=={a:sum(float(r['value']) for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows']})}"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "C",
+                      "value": 50
+                    },
+                    {
+                      "animal_id": "C",
+                      "value": 10
+                    },
+                    {
+                      "animal_id": "D",
+                      "value": 3
+                    },
+                    {
+                      "animal_id": "E",
+                      "value": 7
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['field_count']==len(data['rows'])",
+                "result['animal_means']=={a:sum(float(r['value']) for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows']})}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A small pure function for animal-level aggregation is easier to test than a notebook full of hidden state.",
+            "probe": "Could you reproduce this after a clean checkout without browser state?",
+            "check": "Verify source provenance, computations and valid biological groupings."
+          }
+        }
+      }
+    },
+    {
+      "id": "A00-G04",
+      "title": "Test edge cases rather than a single happy path",
+      "competencies": [
+        "A00-G04"
+      ],
+      "why": "Small parameterized tests expose wrong comparisons and missing-case assumptions before large batch runs.",
+      "explain": [
+        "A threshold boundary must be specified as >= versus >.",
+        "Tests should cover zero, equal-to-threshold and changed samples.",
+        "Real pytest checks live in a separate local test file and run without browser state."
+      ],
+      "worked_example": {
+        "code": "def eligible(signal, minimum):return signal>=minimum\nfor value in [0,5,6]:print(value,eligible(value,5))",
+        "predict": "Predict how the result changes with image metadata and biological grouping."
+      },
+      "prediction_answer": "The result must reflect actual inputs and distinguish computational execution from scientifically validated measurement.",
+      "walkthrough": [
+        "Predict one relevant boundary or failure before Run.",
+        "Modify the demonstration using a changed input and explain the result.",
+        "State which local or biological evidence is not established by this practice case."
+      ],
+      "investigate": [
+        "Change an input that affects the result, not just a printed label.",
+        "Explain a mistake that could pass a numerical test yet fail scientifically."
+      ],
+      "debug_task": "Find one invalid input or assumption that a superficial single-input test would miss.",
+      "misconception": "Running code in a browser proves the local environment and independent biology are valid.",
+      "scientific_boundary": "Synthetic browser exercises. A00 completion also requires a real local interpreter, Git, pytest and clean-replay evidence; none is inferred from automatic checks.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Write one reusable condition describing the boundary.",
+          "Place both boundary-equal and lower-than-threshold samples in your tests."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute dynamically from the provided inputs; do not copy a fixed result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Small parameterized tests expose wrong comparisons and missing-case assumptions before large batch runs.",
+          "starter_code": "# A00-G04 | LEARN | Test edge cases rather than a single happy path\n# TASK: Predict, run and inspect this short example.\n\ndef eligible(signal, minimum):return signal>=minimum\nfor value in [0,5,6]:print(value,eligible(value,5))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed scientific inputs",
+          "description": "For data.samples (id,signal) identify values >= data.minimum. Return result={'passed':sorted IDs,'failed':sorted IDs}.",
+          "starter_code": "# A00-G04 | APPLY | Test edge cases rather than a single happy path\n# TASK: For data.samples (id,signal) identify values >= data.minimum. Return\n#   result={'passed':sorted IDs,'failed':sorted IDs}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "minimum": 5,
+              "samples": [
+                {
+                  "id": "a",
+                  "signal": 4
+                },
+                {
+                  "id": "b",
+                  "signal": 5
+                },
+                {
+                  "id": "c",
+                  "signal": 7
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "minimum": 5,
+                  "samples": [
+                    {
+                      "id": "a",
+                      "signal": 4
+                    },
+                    {
+                      "id": "b",
+                      "signal": 5
+                    },
+                    {
+                      "id": "c",
+                      "signal": 7
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['passed']==sorted(r['id'] for r in data['samples'] if r['signal']>=data['minimum'])",
+                "result['failed']==sorted(r['id'] for r in data['samples'] if r['signal']<data['minimum'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "minimum": 0,
+                  "samples": [
+                    {
+                      "id": "x",
+                      "signal": -1
+                    },
+                    {
+                      "id": "y",
+                      "signal": 0
+                    },
+                    {
+                      "id": "z",
+                      "signal": 1
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['passed']==sorted(r['id'] for r in data['samples'] if r['signal']>=data['minimum'])",
+                "result['failed']==sorted(r['id'] for r in data['samples'] if r['signal']<data['minimum'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Small parameterized tests expose wrong comparisons and missing-case assumptions before large batch runs.",
+            "probe": "Which local/biological evidence remains unverified?",
+            "check": "Inspect identifiers, source paths, units and input boundary conditions."
+          }
+        },
+        "prove": {
+          "title": "Independent input transfer",
+          "description": "For data.samples (id,signal) identify values >= data.minimum. Return result={'passed':sorted IDs,'failed':sorted IDs}.",
+          "starter_code": "# A00-G04 | PROVE | Test edge cases rather than a single happy path\n# TASK: For data.samples (id,signal) identify values >= data.minimum. Return\n#   result={'passed':sorted IDs,'failed':sorted IDs}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "minimum": 100,
+              "samples": [
+                {
+                  "id": "f1",
+                  "signal": 102
+                },
+                {
+                  "id": "f2",
+                  "signal": 100
+                },
+                {
+                  "id": "f3",
+                  "signal": 0
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "minimum": 100,
+                  "samples": [
+                    {
+                      "id": "f1",
+                      "signal": 102
+                    },
+                    {
+                      "id": "f2",
+                      "signal": 100
+                    },
+                    {
+                      "id": "f3",
+                      "signal": 0
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['passed']==sorted(r['id'] for r in data['samples'] if r['signal']>=data['minimum'])",
+                "result['failed']==sorted(r['id'] for r in data['samples'] if r['signal']<data['minimum'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "minimum": 9,
+                  "samples": [
+                    {
+                      "id": "A",
+                      "signal": 3
+                    },
+                    {
+                      "id": "B",
+                      "signal": 9
+                    },
+                    {
+                      "id": "C",
+                      "signal": 14
+                    },
+                    {
+                      "id": "D",
+                      "signal": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['passed']==sorted(r['id'] for r in data['samples'] if r['signal']>=data['minimum'])",
+                "result['failed']==sorted(r['id'] for r in data['samples'] if r['signal']<data['minimum'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Small parameterized tests expose wrong comparisons and missing-case assumptions before large batch runs.",
+            "probe": "Could you reproduce this after a clean checkout without browser state?",
+            "check": "Verify source provenance, computations and valid biological groupings."
+          }
+        }
+      }
+    },
+    {
+      "id": "A00-G05",
+      "title": "Fingerprint source and configuration",
+      "competencies": [
+        "A00-G05"
+      ],
+      "why": "Reproducibility requires an exact source and parameter fingerprint, not a filename.",
+      "explain": [
+        "Hash the original bytes before any conversion.",
+        "Sort configuration keys when constructing canonical JSON.",
+        "Record installed package versions and the Git commit separately on the desktop."
+      ],
+      "worked_example": {
+        "code": "import json,hashlib\nconfig={'threshold':10,'min_area':5}\nprint(hashlib.sha256(json.dumps(config,sort_keys=True).encode()).hexdigest()[:12])",
+        "predict": "Predict how the result changes with image metadata and biological grouping."
+      },
+      "prediction_answer": "The result must reflect actual inputs and distinguish computational execution from scientifically validated measurement.",
+      "walkthrough": [
+        "Predict one relevant boundary or failure before Run.",
+        "Modify the demonstration using a changed input and explain the result.",
+        "State which local or biological evidence is not established by this practice case."
+      ],
+      "investigate": [
+        "Change an input that affects the result, not just a printed label.",
+        "Explain a mistake that could pass a numerical test yet fail scientifically."
+      ],
+      "debug_task": "Find one invalid input or assumption that a superficial single-input test would miss.",
+      "misconception": "Running code in a browser proves the local environment and independent biology are valid.",
+      "scientific_boundary": "Synthetic browser exercises. A00 completion also requires a real local interpreter, Git, pytest and clean-replay evidence; none is inferred from automatic checks.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Hash bytes(data['raw_bytes']) unchanged.",
+          "Serialize config with sort_keys=True and separators=(',',':') before hashing."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute dynamically from the provided inputs; do not copy a fixed result."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Reproducibility requires an exact source and parameter fingerprint, not a filename.",
+          "starter_code": "# A00-G05 | LEARN | Fingerprint source and configuration\n# TASK: Predict, run and inspect this short example.\n\nimport json,hashlib\nconfig={'threshold':10,'min_area':5}\nprint(hashlib.sha256(json.dumps(config,sort_keys=True).encode()).hexdigest()[:12])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changed scientific inputs",
+          "description": "Compute SHA256 of bytes(data.raw_bytes) and canonical sorted JSON for data.config. Return result={'source_sha256':str,'config_sha256':str}.",
+          "starter_code": "# A00-G05 | APPLY | Fingerprint source and configuration\n# TASK: Compute SHA256 of bytes(data.raw_bytes) and canonical sorted JSON for\n#   data.config. Return result={'source_sha256':str,'config_sha256':str}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "raw_bytes": [
+                0,
+                255,
+                42,
+                9
+              ],
+              "config": {
+                "threshold": 30,
+                "min_area": 12
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "raw_bytes": [
+                    0,
+                    255,
+                    42,
+                    9
+                  ],
+                  "config": {
+                    "threshold": 30,
+                    "min_area": 12
+                  }
+                }
+              },
+              "assertions": [
+                "result['source_sha256']==__import__('hashlib').sha256(bytes(data['raw_bytes'])).hexdigest()",
+                "result['config_sha256']==__import__('hashlib').sha256(__import__('json').dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest()"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "raw_bytes": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "config": {
+                    "min_area": 8,
+                    "threshold": 24
+                  }
+                }
+              },
+              "assertions": [
+                "result['source_sha256']==__import__('hashlib').sha256(bytes(data['raw_bytes'])).hexdigest()",
+                "result['config_sha256']==__import__('hashlib').sha256(__import__('json').dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest()"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Reproducibility requires an exact source and parameter fingerprint, not a filename.",
+            "probe": "Which local/biological evidence remains unverified?",
+            "check": "Inspect identifiers, source paths, units and input boundary conditions."
+          }
+        },
+        "prove": {
+          "title": "Independent input transfer",
+          "description": "Compute SHA256 of bytes(data.raw_bytes) and canonical sorted JSON for data.config. Return result={'source_sha256':str,'config_sha256':str}.",
+          "starter_code": "# A00-G05 | PROVE | Fingerprint source and configuration\n# TASK: Compute SHA256 of bytes(data.raw_bytes) and canonical sorted JSON for\n#   data.config. Return result={'source_sha256':str,'config_sha256':str}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "raw_bytes": [
+                17,
+                0,
+                0,
+                7,
+                250,
+                254
+              ],
+              "config": {
+                "sigma": 1.2,
+                "mode": "otsu",
+                "threshold": null
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "raw_bytes": [
+                    17,
+                    0,
+                    0,
+                    7,
+                    250,
+                    254
+                  ],
+                  "config": {
+                    "sigma": 1.2,
+                    "mode": "otsu",
+                    "threshold": null
+                  }
+                }
+              },
+              "assertions": [
+                "result['source_sha256']==__import__('hashlib').sha256(bytes(data['raw_bytes'])).hexdigest()",
+                "result['config_sha256']==__import__('hashlib').sha256(__import__('json').dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest()"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "raw_bytes": [
+                    255,
+                    0,
+                    100
+                  ],
+                  "config": {
+                    "threshold": 4,
+                    "channel": 2,
+                    "experiment": "A"
+                  }
+                }
+              },
+              "assertions": [
+                "result['source_sha256']==__import__('hashlib').sha256(bytes(data['raw_bytes'])).hexdigest()",
+                "result['config_sha256']==__import__('hashlib').sha256(__import__('json').dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest()"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Reproducibility requires an exact source and parameter fingerprint, not a filename.",
+            "probe": "Could you reproduce this after a clean checkout without browser state?",
+            "check": "Verify source provenance, computations and valid biological groupings."
+          }
+        }
+      }
+    }
+  ],
+  "capstone": {
+    "id": "A00-CAPSTONE",
+    "title": "Independent local-analysis readiness audit",
+    "competencies": [
+      "A00-CAPSTONE"
+    ],
+    "why": "A scientifically usable local project must preserve identity and biological grouping while analyzing changing files.",
+    "explain": [
+      "A field is a measurement, not an independent animal.",
+      "Source identity and experiment metadata should be recorded with the result.",
+      "This browser task is a primer: the local gate still requires a clean venv, Git and pytest."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict how the result changes with image metadata and biological grouping."
+    },
+    "prediction_answer": "The result must reflect actual inputs and distinguish computational execution from scientifically validated measurement.",
+    "walkthrough": [
+      "Predict one relevant boundary or failure before Run.",
+      "Modify the demonstration using a changed input and explain the result.",
+      "State which local or biological evidence is not established by this practice case."
+    ],
+    "investigate": [
+      "Change an input that affects the result, not just a printed label.",
+      "Explain a mistake that could pass a numerical test yet fail scientifically."
+    ],
+    "debug_task": "Find one invalid input or assumption that a superficial single-input test would miss.",
+    "misconception": "Running code in a browser proves the local environment and independent biology are valid.",
+    "scientific_boundary": "Synthetic browser exercises. A00 completion also requires a real local interpreter, Git, pytest and clean-replay evidence; none is inferred from automatic checks.",
+    "hints": {
+      "learn": [],
+      "apply": [
+        "Group fields by independent animal before computing means.",
+        "Hash the unchanged source bytes, and record total field count separately."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Compute dynamically from the provided inputs; do not copy a fixed result."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict → Run → Investigate",
+        "description": "A scientifically usable local project must preserve identity and biological grouping while analyzing changing files.",
+        "starter_code": "# A00-CAPSTONE | LEARN | Independent local-analysis readiness audit\n# TASK: Predict, run and inspect this short example.\n\nprint('A00 capstone: inspect source, implement from blank and run locally.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed scientific inputs",
+        "description": "Given data.rows of animal_id,field_id,signal and a source digest, compute result={'animal_means':dict,'fields':int,'biological_n':int,'source_sha256':str}. Never count fields as animals.",
+        "starter_code": "# A00-CAPSTONE | APPLY | Independent local-analysis readiness audit\n# TASK: Given data.rows of animal_id,field_id,signal and a source digest, compute\n#   result={'animal_means':dict,'fields':int,'biological_n':int,'source_sha256':str}.\n#   Never count fields as animals.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "raw_bytes": [
+              0,
+              1,
+              2
+            ],
+            "rows": [
+              {
+                "animal_id": "A",
+                "field_id": "a1",
+                "signal": 1
+              },
+              {
+                "animal_id": "A",
+                "field_id": "a2",
+                "signal": 5
+              },
+              {
+                "animal_id": "B",
+                "field_id": "b1",
+                "signal": 10
+              }
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "raw_bytes": [
+                  0,
+                  1,
+                  2
+                ],
+                "rows": [
+                  {
+                    "animal_id": "A",
+                    "field_id": "a1",
+                    "signal": 1
+                  },
+                  {
+                    "animal_id": "A",
+                    "field_id": "a2",
+                    "signal": 5
+                  },
+                  {
+                    "animal_id": "B",
+                    "field_id": "b1",
+                    "signal": 10
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['biological_n']==len({r['animal_id'] for r in data['rows']})",
+              "result['fields']==len(data['rows'])",
+              "result['source_sha256']==__import__('hashlib').sha256(bytes(data['raw_bytes'])).hexdigest()",
+              "result['animal_means']=={a:sum(r['signal'] for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows']})}"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "raw_bytes": [
+                  3,
+                  4,
+                  5
+                ],
+                "rows": [
+                  {
+                    "animal_id": "C",
+                    "field_id": "c1",
+                    "signal": 10
+                  },
+                  {
+                    "animal_id": "D",
+                    "field_id": "d1",
+                    "signal": 12
+                  },
+                  {
+                    "animal_id": "D",
+                    "field_id": "d2",
+                    "signal": 16
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['biological_n']==len({r['animal_id'] for r in data['rows']})",
+              "result['fields']==len(data['rows'])",
+              "result['source_sha256']==__import__('hashlib').sha256(bytes(data['raw_bytes'])).hexdigest()",
+              "result['animal_means']=={a:sum(r['signal'] for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows']})}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A scientifically usable local project must preserve identity and biological grouping while analyzing changing files.",
+          "probe": "Which local/biological evidence remains unverified?",
+          "check": "Inspect identifiers, source paths, units and input boundary conditions."
+        }
+      },
+      "prove": {
+        "title": "Independent input transfer",
+        "description": "Given data.rows of animal_id,field_id,signal and a source digest, compute result={'animal_means':dict,'fields':int,'biological_n':int,'source_sha256':str}. Never count fields as animals.",
+        "starter_code": "# A00-CAPSTONE | PROVE | Independent local-analysis readiness audit\n# TASK: Given data.rows of animal_id,field_id,signal and a source digest, compute\n#   result={'animal_means':dict,'fields':int,'biological_n':int,'source_sha256':str}.\n#   Never count fields as animals.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "raw_bytes": [
+              17,
+              50,
+              9
+            ],
+            "rows": [
+              {
+                "animal_id": "A",
+                "field_id": "f1",
+                "signal": 2
+              },
+              {
+                "animal_id": "A",
+                "field_id": "f2",
+                "signal": 8
+              },
+              {
+                "animal_id": "C",
+                "field_id": "f3",
+                "signal": 1
+              }
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "raw_bytes": [
+                  17,
+                  50,
+                  9
+                ],
+                "rows": [
+                  {
+                    "animal_id": "A",
+                    "field_id": "f1",
+                    "signal": 2
+                  },
+                  {
+                    "animal_id": "A",
+                    "field_id": "f2",
+                    "signal": 8
+                  },
+                  {
+                    "animal_id": "C",
+                    "field_id": "f3",
+                    "signal": 1
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['biological_n']==len({r['animal_id'] for r in data['rows']})",
+              "result['fields']==len(data['rows'])",
+              "result['source_sha256']==__import__('hashlib').sha256(bytes(data['raw_bytes'])).hexdigest()",
+              "result['animal_means']=={a:sum(r['signal'] for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows']})}"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "raw_bytes": [
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "rows": [
+                  {
+                    "animal_id": "X",
+                    "field_id": "x",
+                    "signal": 3
+                  },
+                  {
+                    "animal_id": "Y",
+                    "field_id": "y",
+                    "signal": 6
+                  },
+                  {
+                    "animal_id": "Z",
+                    "field_id": "z",
+                    "signal": 9
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['biological_n']==len({r['animal_id'] for r in data['rows']})",
+              "result['fields']==len(data['rows'])",
+              "result['source_sha256']==__import__('hashlib').sha256(bytes(data['raw_bytes'])).hexdigest()",
+              "result['animal_means']=={a:sum(r['signal'] for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows']})}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A scientifically usable local project must preserve identity and biological grouping while analyzing changing files.",
+          "probe": "Could you reproduce this after a clean checkout without browser state?",
+          "check": "Verify source provenance, computations and valid biological groupings."
+        }
+      }
+    },
+    "build_steps": [
+      "Define the input, source identity and biological unit before writing code.",
+      "Build small testable functions, with useful errors for invalid values.",
+      "Run Apply then independently solve Prove from a blank script.",
+      "Recreate a local venv, run pytest and record Git/environment evidence."
+    ]
+  },
+  "review": {
+    "id": "A00-REVIEW",
+    "title": "Delayed source and interpreter transfer",
+    "competencies": [
+      "A00-REVIEW"
+    ],
+    "why": "Delayed practice checks memory, not a copied solved notebook.",
+    "explain": [
+      "Reject unsafe file paths before accessing the local filesystem.",
+      "Original byte fingerprints must be identical on a clean checkout.",
+      "The app cannot observe a real local git commit or clean desktop environment."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict how the result changes with image metadata and biological grouping."
+    },
+    "prediction_answer": "The result must reflect actual inputs and distinguish computational execution from scientifically validated measurement.",
+    "walkthrough": [
+      "Predict one relevant boundary or failure before Run.",
+      "Modify the demonstration using a changed input and explain the result.",
+      "State which local or biological evidence is not established by this practice case."
+    ],
+    "investigate": [
+      "Change an input that affects the result, not just a printed label.",
+      "Explain a mistake that could pass a numerical test yet fail scientifically."
+    ],
+    "debug_task": "Find one invalid input or assumption that a superficial single-input test would miss.",
+    "misconception": "Running code in a browser proves the local environment and independent biology are valid.",
+    "scientific_boundary": "Synthetic browser exercises. A00 completion also requires a real local interpreter, Git, pytest and clean-replay evidence; none is inferred from automatic checks.",
+    "hints": {
+      "learn": [],
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Compute dynamically from the provided inputs; do not copy a fixed result."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict → Run → Investigate",
+        "description": "Delayed practice checks memory, not a copied solved notebook.",
+        "starter_code": "# A00-REVIEW | LEARN | Delayed source and interpreter transfer\n# TASK: Predict, run and inspect this short example.\n\nprint('A00 review: solve later without reference code or AI help.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changed scientific inputs",
+        "description": "Return later: from data.paths and data.input_bytes report result={'rejected':list,'sha256':str,'requires_local_replay':True}.",
+        "starter_code": "# A00-REVIEW | APPLY | Delayed source and interpreter transfer\n# TASK: Return later: from data.paths and data.input_bytes report\n#   result={'rejected':list,'sha256':str,'requires_local_replay':True}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "paths": [
+              "data/a.tif",
+              "../bad.tif"
+            ],
+            "input_bytes": [
+              0,
+              8,
+              250
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "paths": [
+                  "data/a.tif",
+                  "../bad.tif"
+                ],
+                "input_bytes": [
+                  0,
+                  8,
+                  250
+                ]
+              }
+            },
+            "assertions": [
+              "result['rejected']==[p for p in data['paths'] if not p.strip() or __import__('pathlib').PurePosixPath(p).is_absolute() or '..' in __import__('pathlib').PurePosixPath(p).parts]",
+              "result['sha256']==__import__('hashlib').sha256(bytes(data['input_bytes'])).hexdigest()",
+              "result['requires_local_replay'] is True"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "paths": [
+                  "/tmp/b.tif",
+                  "local/a.tif"
+                ],
+                "input_bytes": [
+                  2,
+                  4,
+                  6
+                ]
+              }
+            },
+            "assertions": [
+              "result['rejected']==[p for p in data['paths'] if not p.strip() or __import__('pathlib').PurePosixPath(p).is_absolute() or '..' in __import__('pathlib').PurePosixPath(p).parts]",
+              "result['sha256']==__import__('hashlib').sha256(bytes(data['input_bytes'])).hexdigest()",
+              "result['requires_local_replay'] is True"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Delayed practice checks memory, not a copied solved notebook.",
+          "probe": "Which local/biological evidence remains unverified?",
+          "check": "Inspect identifiers, source paths, units and input boundary conditions."
+        }
+      },
+      "prove": {
+        "title": "Independent input transfer",
+        "description": "Return later: from data.paths and data.input_bytes report result={'rejected':list,'sha256':str,'requires_local_replay':True}.",
+        "starter_code": "# A00-REVIEW | PROVE | Delayed source and interpreter transfer\n# TASK: Return later: from data.paths and data.input_bytes report\n#   result={'rejected':list,'sha256':str,'requires_local_replay':True}.\n# INPUTS: data (shown in the lesson panel)\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "paths": [
+              "a/b.tif",
+              "a/../../c.tif",
+              "/outside"
+            ],
+            "input_bytes": [
+              8,
+              9,
+              10,
+              11
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "paths": [
+                  "a/b.tif",
+                  "a/../../c.tif",
+                  "/outside"
+                ],
+                "input_bytes": [
+                  8,
+                  9,
+                  10,
+                  11
+                ]
+              }
+            },
+            "assertions": [
+              "result['rejected']==[p for p in data['paths'] if not p.strip() or __import__('pathlib').PurePosixPath(p).is_absolute() or '..' in __import__('pathlib').PurePosixPath(p).parts]",
+              "result['sha256']==__import__('hashlib').sha256(bytes(data['input_bytes'])).hexdigest()",
+              "result['requires_local_replay'] is True"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "paths": [
+                  "../outside",
+                  "good.tif",
+                  ""
+                ],
+                "input_bytes": [
+                  3,
+                  4,
+                  7
+                ]
+              }
+            },
+            "assertions": [
+              "result['rejected']==[p for p in data['paths'] if not p.strip() or __import__('pathlib').PurePosixPath(p).is_absolute() or '..' in __import__('pathlib').PurePosixPath(p).parts]",
+              "result['sha256']==__import__('hashlib').sha256(bytes(data['input_bytes'])).hexdigest()",
+              "result['requires_local_replay'] is True"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Delayed practice checks memory, not a copied solved notebook.",
+          "probe": "Could you reproduce this after a clean checkout without browser state?",
+          "check": "Verify source provenance, computations and valid biological groupings."
+        }
+      }
+    }
+  },
+  "final_project": {
+    "name": "a00_local_python_bridge.py",
+    "description": "Export a source-safe analysis and reproduce it in a fresh local environment with recorded Git commit."
+  }
+}
