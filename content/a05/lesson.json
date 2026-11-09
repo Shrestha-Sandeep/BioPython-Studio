@@ -1128,7 +1128,8 @@
               "assertions": [
                 "np.isclose(result['effect'],np.mean(data['treatment'])-np.mean(data['control']))",
                 "result['ci_low']<=result['ci_high']",
-                "np.isclose(result['ci_low'],np.quantile(np.mean(np.asarray(data['treatment'])[np.random.default_rng(data['seed']).integers(0,len(data['treatment']),(data['draws'],len(data['treatment'])))],axis=1)-np.mean(np.asarray(data['control'])[np.random.default_rng(data['seed']).integers(0,len(data['control']),(data['draws'],len(data['control'])))],axis=1),.025)) if False else 0<=result['ci_low']+1e6"
+                "result['ci_low']>=min(data['treatment'])-max(data['control'])-1e-9",
+                "result['ci_high']<=max(data['treatment'])-min(data['control'])+1e-9"
               ]
             },
             {
@@ -1151,7 +1152,8 @@
               "assertions": [
                 "np.isclose(result['effect'],np.mean(data['treatment'])-np.mean(data['control']))",
                 "result['ci_low']<=result['ci_high']",
-                "np.isclose(result['ci_low'],np.quantile(np.mean(np.asarray(data['treatment'])[np.random.default_rng(data['seed']).integers(0,len(data['treatment']),(data['draws'],len(data['treatment'])))],axis=1)-np.mean(np.asarray(data['control'])[np.random.default_rng(data['seed']).integers(0,len(data['control']),(data['draws'],len(data['control'])))],axis=1),.025)) if False else 0<=result['ci_low']+1e6"
+                "result['ci_low']>=min(data['treatment'])-max(data['control'])-1e-9",
+                "result['ci_high']<=max(data['treatment'])-min(data['control'])+1e-9"
               ]
             }
           ],
@@ -1206,7 +1208,8 @@
               "assertions": [
                 "np.isclose(result['effect'],np.mean(data['treatment'])-np.mean(data['control']))",
                 "result['ci_low']<=result['ci_high']",
-                "np.isclose(result['ci_low'],np.quantile(np.mean(np.asarray(data['treatment'])[np.random.default_rng(data['seed']).integers(0,len(data['treatment']),(data['draws'],len(data['treatment'])))],axis=1)-np.mean(np.asarray(data['control'])[np.random.default_rng(data['seed']).integers(0,len(data['control']),(data['draws'],len(data['control'])))],axis=1),.025)) if False else 0<=result['ci_low']+1e6"
+                "result['ci_low']>=min(data['treatment'])-max(data['control'])-1e-9",
+                "result['ci_high']<=max(data['treatment'])-min(data['control'])+1e-9"
               ]
             },
             {
@@ -1232,7 +1235,8 @@
               "assertions": [
                 "np.isclose(result['effect'],np.mean(data['treatment'])-np.mean(data['control']))",
                 "result['ci_low']<=result['ci_high']",
-                "np.isclose(result['ci_low'],np.quantile(np.mean(np.asarray(data['treatment'])[np.random.default_rng(data['seed']).integers(0,len(data['treatment']),(data['draws'],len(data['treatment'])))],axis=1)-np.mean(np.asarray(data['control'])[np.random.default_rng(data['seed']).integers(0,len(data['control']),(data['draws'],len(data['control'])))],axis=1),.025)) if False else 0<=result['ci_low']+1e6"
+                "result['ci_low']>=min(data['treatment'])-max(data['control'])-1e-9",
+                "result['ci_high']<=max(data['treatment'])-min(data['control'])+1e-9"
               ]
             }
           ],
@@ -1595,7 +1599,7 @@
             "assertions": [
               "result['control_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']})",
               "result['treatment_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']})",
-              "abs(result['effect']- (np.mean([np.mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-np.mean([np.mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
+              "abs(result['effect']- (__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
               "result['pseudoreplication_avoided'] is True"
             ]
           },
@@ -1641,7 +1645,7 @@
             "assertions": [
               "result['control_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']})",
               "result['treatment_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']})",
-              "abs(result['effect']- (np.mean([np.mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-np.mean([np.mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
+              "abs(result['effect']- (__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
               "result['pseudoreplication_avoided'] is True"
             ]
           }
@@ -1737,7 +1741,7 @@
             "assertions": [
               "result['control_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']})",
               "result['treatment_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']})",
-              "abs(result['effect']- (np.mean([np.mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-np.mean([np.mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
+              "abs(result['effect']- (__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
               "result['pseudoreplication_avoided'] is True"
             ]
           },
@@ -1783,7 +1787,7 @@
             "assertions": [
               "result['control_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']})",
               "result['treatment_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']})",
-              "abs(result['effect']- (np.mean([np.mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-np.mean([np.mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
+              "abs(result['effect']- (__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
               "result['pseudoreplication_avoided'] is True"
             ]
           }
