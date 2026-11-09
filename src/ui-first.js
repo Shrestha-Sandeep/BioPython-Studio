@@ -170,13 +170,11 @@
     }
   }
 
+  // The selected course determines whether the workspace includes the image viewer.
   function switchMode(next, skipSave = false) {
     if (!["python", "image"].includes(next)) return;
     if (!skipSave && next !== mode) saveEditor();
     mode = next;
-    for (const button of document.querySelectorAll("[data-mode]")) {
-      button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
-    }
     const showImage = mode === "image";
     $("image-panel").hidden = !showImage;
     $("horizontal-resizer").hidden = !showImage;
@@ -525,7 +523,6 @@
     if (cm) cm.focus(); else $("code-editor").focus();
   });
   document.querySelectorAll("[data-stage]").forEach(item => item.addEventListener("click", () => chooseStage(item.dataset.stage)));
-  document.querySelectorAll("[data-mode]").forEach(item => item.addEventListener("click", () => switchMode(item.dataset.mode)));
   document.querySelectorAll("[data-phase]").forEach(item => {
     item.addEventListener("click", () => choosePhase(item.dataset.phase));
     item.addEventListener("keydown", event => {
