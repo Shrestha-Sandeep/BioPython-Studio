@@ -441,7 +441,9 @@ async function start(){
   rememberLast(activeId);
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
   if(stageOf(activeId)!=="Python")bridge()?.selectStage?.(stageOf(activeId));
-  mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
+  mount();bridge()?.selectPhase?.(state.phase);
+  // Fresh visits start with the lesson closed; the learner can expand it using the header button.
+  bridge()?.expandLesson?.(false);
   if(isImaging(activeId))bridge()?.ensureExampleImage?.();
   render();syncActivity();
   el("output-placeholder").textContent="Run your code to see real Python output or traceback.";
