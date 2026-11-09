@@ -17,23 +17,34 @@ The existing 19-chapter progress and frozen editor/viewer shell are preserved. T
 - **Production:** this is an isolated draft branch; `main` is unchanged. The frozen UI structure remains intact.
 - **Quality status:** automated browser and content tests do not establish retained learner skill, independent scientific truth, or an empirically measured 9.5+/10 learning score.
 
-## Optional advanced research lab — A01–A03 (draft)
+## Optional Advanced Research Lab — seven core chapters (draft)
 
-This development branch adds an **opt-in advanced microscopy learning track** without changing the original 26-chapter course or its saved progress. Start a local server from the repository root:
+This development branch implements an opt-in project sequence **A00 → A01 → A02 → A03 → A05 → A06 → A07**. The conditional A04 3D/time-lapse and specialization electives X01–X05 are deliberately separate. The **original 26-chapter/156-competency route remains intact**.
+
+From a checked-out branch, run:
 
 ```sh
 python -m http.server 8000
 ```
 
-Open `http://localhost:8000/?lab=advanced` to use the same CodeMirror/Pyodide IDE for **20 advanced activities** (14 goals, three capstones and three delayed reviews). The standard `http://localhost:8000/` remains the uncluttered 26-chapter course. From the standard I13 lesson, the advanced route is also linked as **A01–A03 · Advanced research lab**. The selected advanced chapter uses `biopython.advanced-selected.v1`; drafts for `A01`, `A02` and `A03` use their own `biopython.a0*.v1` keys.
+Open `http://localhost:8000/?lab=advanced` to start with A00 in the original compact CodeMirror/Pyodide workspace. The standard `http://localhost:8000/` remains unchanged. A small link from I13 offers the optional track. Advanced selected-chapter and code-draft keys are separate from the legacy progress records.
 
-- A01: native image axes, uint16 source integrity, pixel-size calibration caution and source checksums.
-- A02: candidate segmentation, polarity, morphology, seeded watershed and parameter sensitivity.
-- A03: pixel versus object accuracy, one-to-one annotation matching, biological group leakage and independent-validation reporting.
+| Advanced chapter | Focus | Learning activities |
+|---|---|---:|
+| A00 | Local Python, venv/Git, safe files, tests and hashes | 7 |
+| A01 | Native images, metadata, calibration and provenance | 6 |
+| A02 | Candidate segmentation, polarity, morphology and sensitivity | 7 |
+| A03 | Annotation matching, object F1, leakage and uncertainty | 7 |
+| A05 | Correct biological units, paired studies and bootstrap statistics | 8 |
+| A06 | Batch TIFF analysis and complete reproducibility records | 8 |
+| A07 | Independent image-research evidence and decision capstone | 9 |
+| **Total** | | **52** |
 
-Browser exercises use clearly **synthetic teaching arrays**, while original TIFF/OME-TIFF and independently annotated BBBC038/BBBC039 data are processed through [local advanced research projects](projects/advanced/) outside the browser. All 80 advanced changed-input cases pass both CPython and actual Pyodide, including capstone exports, 16-bit TIFF browser import, and 390/768/1440-pixel layouts. See the [technical QA and remaining gates](docs/ADVANCEMENT_A01_A03_RELEASE_QA.md).
+Every activity has real Python Learn/Apply/Prove, concise task comments, changed-input checks and progression; each chapter also has a capstone and a delayed-review activity. The expanded local [advanced research workflow](projects/advanced/README.md) provides source-safe TIFF audits, puncta measurements, agreement checks, animal-level statistics, reproducible batch analyses and a seven-checkpoint evidence auditor.
 
-**Draft-only status:** no production merge, no independently measured human learning success, no verified general-purpose nuclei/exopher detector, and no completed A04/A05–A07 research track. A green browser test is not a scientific detection-accuracy claim.
+**Scientific caveat:** browser checks use *synthetic learning examples*. Real BBBC038/039 source-image benchmarks are separately documented, and they do not establish exopher detection quality or independent human mastery. A07's evidence checker intentionally cannot certify biological validity. Use a real local environment for source data, Git, full TIFF processing and a reproducible capstone. See [release QA and outstanding evidence gates](docs/ADVANCEMENT_CORE_RELEASE_QA.md).
+
+**Release status:** new material is on a development branch and is not merged into `main`. Vercel previously returned a build-rate-limit failure, so a new stable hosted preview is not presumed.
 
 ## Python Foundations chapter sequence
 
