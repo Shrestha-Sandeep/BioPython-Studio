@@ -89,7 +89,7 @@ def main():
             for width,height in ((390,844),(768,920)):
                 phone=browser.new_page(viewport={"width":width,"height":height})
                 phone.goto(BASE+"?lab=advanced",wait_until="domcontentloaded")
-                phone.locator("#bps-chapter-select").wait_for(timeout=30000)
+                phone.locator("#bps-chapter-select").wait_for(state="attached",timeout=30000)
                 assert phone.locator("#bps-chapter-select").input_value()=="A00"
                 assert phone.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),width
                 phone.screenshot(path=str(images/f"advanced-core-{width}.png"),full_page=True)
