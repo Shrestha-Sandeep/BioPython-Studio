@@ -1342,7 +1342,7 @@
       "apply": {
         "title": "Apply on changed input",
         "description": "Given data.fields with field_id,animal_id,pixels, threshold, count > threshold per field and group by animal. Return result={'field_counts':dict,'animal_means':dict,'source_fields':int,'biological_n':int,'candidate_only':True}.",
-        "starter_code": "# A06-CAPSTONE | APPLY | Deterministic multi-image candidate report\n# TASK: Given data.fields with field_id,animal_id,pixels, threshold, count >\n#   threshold per field and group by animal. Return\n#   result={'field_counts':dict,'animal_means':dict,'source_fields':int,'biological_n':int,'candidate_only':True}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A06-CAPSTONE | APPLY | Deterministic multi-image candidate report\n# TASK: Given data.fields with field_id,animal_id,pixels, threshold, count >\n#   threshold per field and group by animal. Return\n#   result = {'field_counts': dict, 'animal_means': dict,\n#             'source_fields': int, 'biological_n': int,\n#             'candidate_only': True}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "threshold": 5,
@@ -1505,7 +1505,7 @@
       "prove": {
         "title": "Independent workflow transfer",
         "description": "Given data.fields with field_id,animal_id,pixels, threshold, count > threshold per field and group by animal. Return result={'field_counts':dict,'animal_means':dict,'source_fields':int,'biological_n':int,'candidate_only':True}.",
-        "starter_code": "# A06-CAPSTONE | PROVE | Deterministic multi-image candidate report\n# TASK: Given data.fields with field_id,animal_id,pixels, threshold, count >\n#   threshold per field and group by animal. Return\n#   result={'field_counts':dict,'animal_means':dict,'source_fields':int,'biological_n':int,'candidate_only':True}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "starter_code": "# A06-CAPSTONE | PROVE | Deterministic multi-image candidate report\n# TASK: Given data.fields with field_id,animal_id,pixels, threshold, count >\n#   threshold per field and group by animal. Return\n#   result = {'field_counts': dict, 'animal_means': dict,\n#             'source_fields': int, 'biological_n': int,\n#             'candidate_only': True}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
         "preview_inputs": {
           "data": {
             "threshold": 20,
