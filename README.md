@@ -1,5 +1,7 @@
 # BioPython Studio — scientific Python learning workspace
 
+> **2026-11-09 release candidate (draft):** [Consolidated PR #28](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/28) proposes the complete 26-chapter foundations/microscopy/sequence/ML course plus seven optional advanced research chapters against the older `main`. The existing interface and local learner progress remain in place. All 12 upstream CI workflows passed; the latest upstream Vercel preview reached READY, but hosted interactive verification, human learner trials and independent A07 research validation remain outstanding. **This PR is not merged or promoted to production.** See [Phase 1 release evidence](docs/PHASE1_RELEASE_CANDIDATE.md).
+
 BioPython Studio is a personal, minimally cluttered browser IDE for learning transferable scientific Python through biological research problems. Its primary applied pathway is microscopy; sequencing/NGS and machine learning are optional later pathways.
 
 ## Complete frozen v3 course — development branch
