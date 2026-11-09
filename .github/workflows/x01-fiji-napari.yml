@@ -1,0 +1,31 @@
+name: X01 local Fiji-napari interoperability QA
+
+on:
+  push:
+    branches:
+      - advancement/x01-fiji-napari-first-bridge
+  pull_request:
+    paths:
+      - 'projects/advanced/x01/**'
+      - 'tests/test_x01_fiji_napari_roundtrip.py'
+      - '.github/workflows/x01-fiji-napari.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-tiff-and-roi-roundtrip:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned scientific exchange dependencies
+        run: python -m pip install -r projects/advanced/x01/requirements.txt
+      - name: Validate Python syntax and original image/ROI invariants
+        run: |
+          python -m py_compile projects/advanced/x01/roi_roundtrip.py
+          python -m pytest -v tests/test_x01_fiji_napari_roundtrip.py
