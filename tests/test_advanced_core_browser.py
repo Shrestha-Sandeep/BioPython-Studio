@@ -36,6 +36,23 @@ def main():
             page.on("pageerror",lambda err:errors.append(str(err)))
             page.goto(BASE,wait_until="domcontentloaded")
             page.locator("#bps-chapter-select").wait_for(timeout=30000)
+            # Workspace follows the course, with no redundant mode switch.
+            assert page.locator(".mode-switch, [data-mode]").count()==0
+            assert page.locator("#image-panel").is_hidden(), "Foundations should show code only"
+            assert page.locator("#run-button").is_enabled()
+            page.locator('[data-stage="Microscopy"]').click()
+            assert page.locator("#image-panel").is_visible(), "Microscopy should show the image viewer"
+            assert "with-image" in (page.locator("#workspace-grid").get_attribute("class") or "")
+            assert page.locator("#run-button").is_enabled()
+            page.locator('[data-stage="NGS"]').click()
+            assert page.locator("#image-panel").is_hidden(), "Sequence analysis should be code-first"
+            assert page.locator("#run-button").is_enabled()
+            page.locator('[data-stage="ML"]').click()
+            assert page.locator("#image-panel").is_hidden(), "Non-image ML lessons should be code-first"
+            assert page.locator("#run-button").is_enabled()
+            page.locator('[data-stage="Python"]').click()
+            assert page.locator("#image-panel").is_hidden()
+            assert page.locator("#run-button").is_enabled()
             page.locator('[data-stage="Microscopy"]').click()
             assert page.locator("#bps-chapter-select option").count()==13
             page.locator("#bps-chapter-select").select_option("I13")
@@ -44,6 +61,9 @@ def main():
             page.goto(BASE+"?lab=advanced",wait_until="domcontentloaded")
             page.locator("#bps-chapter-select").wait_for(timeout=30000)
             assert page.locator("#bps-chapter-select").input_value()=="A00"
+            assert page.locator(".mode-switch, [data-mode]").count()==0
+            assert page.locator("#image-panel").is_visible(), "Advanced microscopy should retain image viewer"
+            assert page.locator("#run-button").is_enabled()
             assert page.locator("#phase-panel").is_hidden(), "Advanced Lab should also start collapsed"
             assert page.locator("#lesson-toggle").get_attribute("aria-expanded")=="false"
             page.locator("#lesson-toggle").click()
