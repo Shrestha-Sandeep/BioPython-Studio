@@ -1,0 +1,2052 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "A05",
+  "version": "1.0.0",
+  "status": "OPTIONAL_ADVANCED_PILOT_NOT_LEARNER_VALIDATED",
+  "title": "Biological replication, statistics and uncertainty",
+  "competencies": [
+    "A05-G01",
+    "A05-G02",
+    "A05-G03",
+    "A05-G04",
+    "A05-G05",
+    "A05-G06",
+    "A05-CAPSTONE",
+    "A05-REVIEW"
+  ],
+  "intro": "From image-level measurements to biologically defensible analysis: joins, experimental units, exclusions, matched designs, cluster bootstrap and transparent figures.",
+  "scientific_context": {
+    "source": "https://jakevdp.github.io/PythonDataScienceHandbook/",
+    "use": "SYNTHETIC_BROWSER_PRACTICE_AND_LOCAL_ANIMAL_LEVEL_CSV_ANALYSIS",
+    "caution": "A methodologically correct animal-level computation does not establish causality or effect significance in new biological experiments."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review, then real local CSV bootstrap and plots.",
+  "goals": [
+    {
+      "id": "A05-G01",
+      "title": "Join measurements to trustworthy sample metadata",
+      "competencies": [
+        "A05-G01"
+      ],
+      "why": "Invalid joins can quietly assign cells to the wrong animal or experimental condition.",
+      "explain": [
+        "Declare one-to-one field IDs rather than relying on row order.",
+        "Duplicate metadata keys must be rejected or investigated.",
+        "A complete join is necessary, but does not prove biological independence."
+      ],
+      "worked_example": {
+        "code": "measure={'f1':10,'f2':20}\nmetadata={'f2':'wormA','f1':'wormB'}\nprint([(k,metadata[k]) for k in measure])",
+        "predict": "Predict biological-unit N and how field weighting changes the estimate."
+      },
+      "prediction_answer": "First identify the independent unit; p-values or impressive cell counts do not rescue pseudoreplication.",
+      "walkthrough": [
+        "Predict the denominator or independent unit before running.",
+        "Change field counts, exclusions or paired IDs and inspect the result.",
+        "Explain what sampling, calibration and statistical assumptions remain unverified."
+      ],
+      "investigate": [
+        "Increase the number of fields from only one animal; does biological N change?",
+        "Check the effect of an exclusion or a paired sample before drawing a conclusion."
+      ],
+      "debug_task": "Find a case where technical measurements inflate apparent precision.",
+      "misconception": "Hundreds of cells or images imply hundreds of independent biological replicates.",
+      "scientific_boundary": "All browser practice data are synthetic. Independent biological replicates, exclusion pre-registration and causal interpretation must be verified in real study metadata.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Count metadata occurrences for each field_id.",
+          "A duplicate field ID is not a valid unique join even when it appears in the measurement table."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from study data and biological IDs, not a fixed number."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict and test",
+          "description": "Invalid joins can quietly assign cells to the wrong animal or experimental condition.",
+          "starter_code": "# A05-G01 | LEARN | Join measurements to trustworthy sample metadata\n# TASK: Predict output, run and modify this small example.\n\nmeasure={'f1':10,'f2':20}\nmetadata={'f2':'wormA','f1':'wormB'}\nprint([(k,metadata[k]) for k in measure])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed study inputs",
+          "description": "From data.measurements and data.metadata, match field_id values; report result={'matched':int,'missing':sorted IDs,'duplicate_metadata':sorted IDs}.",
+          "starter_code": "# A05-G01 | APPLY | Join measurements to trustworthy sample metadata\n# TASK: From data.measurements and data.metadata, match field_id values; report\n#   result={'matched':int,'missing':sorted IDs,'duplicate_metadata':sorted IDs}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "measurements": [
+                {
+                  "field_id": "f1"
+                },
+                {
+                  "field_id": "f2"
+                },
+                {
+                  "field_id": "f3"
+                }
+              ],
+              "metadata": [
+                {
+                  "field_id": "f1",
+                  "animal": "A"
+                },
+                {
+                  "field_id": "f2",
+                  "animal": "B"
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "measurements": [
+                    {
+                      "field_id": "f1"
+                    },
+                    {
+                      "field_id": "f2"
+                    },
+                    {
+                      "field_id": "f3"
+                    }
+                  ],
+                  "metadata": [
+                    {
+                      "field_id": "f1",
+                      "animal": "A"
+                    },
+                    {
+                      "field_id": "f2",
+                      "animal": "B"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['matched']==sum(sum(m['field_id']==r['field_id'] for m in data['metadata'])==1 for r in data['measurements'])",
+                "result['missing']==sorted({r['field_id'] for r in data['measurements'] if not any(m['field_id']==r['field_id'] for m in data['metadata'])})",
+                "result['duplicate_metadata']==sorted({m['field_id'] for m in data['metadata'] if sum(x['field_id']==m['field_id'] for x in data['metadata'])>1})"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "measurements": [
+                    {
+                      "field_id": "a"
+                    },
+                    {
+                      "field_id": "b"
+                    }
+                  ],
+                  "metadata": [
+                    {
+                      "field_id": "a",
+                      "animal": "A"
+                    },
+                    {
+                      "field_id": "a",
+                      "animal": "B"
+                    },
+                    {
+                      "field_id": "b",
+                      "animal": "C"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['matched']==sum(sum(m['field_id']==r['field_id'] for m in data['metadata'])==1 for r in data['measurements'])",
+                "result['missing']==sorted({r['field_id'] for r in data['measurements'] if not any(m['field_id']==r['field_id'] for m in data['metadata'])})",
+                "result['duplicate_metadata']==sorted({m['field_id'] for m in data['metadata'] if sum(x['field_id']==m['field_id'] for x in data['metadata'])>1})"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Invalid joins can quietly assign cells to the wrong animal or experimental condition.",
+            "probe": "Which study-design or annotation assumption remains unverified?",
+            "check": "Aggregate at animal/pair level; handle exclusions without altering source."
+          }
+        },
+        "prove": {
+          "title": "Independent statistical transfer",
+          "description": "From data.measurements and data.metadata, match field_id values; report result={'matched':int,'missing':sorted IDs,'duplicate_metadata':sorted IDs}.",
+          "starter_code": "# A05-G01 | PROVE | Join measurements to trustworthy sample metadata\n# TASK: From data.measurements and data.metadata, match field_id values; report\n#   result={'matched':int,'missing':sorted IDs,'duplicate_metadata':sorted IDs}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "measurements": [
+                {
+                  "field_id": "u"
+                },
+                {
+                  "field_id": "v"
+                },
+                {
+                  "field_id": "x"
+                }
+              ],
+              "metadata": [
+                {
+                  "field_id": "x",
+                  "animal": "3"
+                },
+                {
+                  "field_id": "v",
+                  "animal": "2"
+                },
+                {
+                  "field_id": "u",
+                  "animal": "1"
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "measurements": [
+                    {
+                      "field_id": "u"
+                    },
+                    {
+                      "field_id": "v"
+                    },
+                    {
+                      "field_id": "x"
+                    }
+                  ],
+                  "metadata": [
+                    {
+                      "field_id": "x",
+                      "animal": "3"
+                    },
+                    {
+                      "field_id": "v",
+                      "animal": "2"
+                    },
+                    {
+                      "field_id": "u",
+                      "animal": "1"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['matched']==sum(sum(m['field_id']==r['field_id'] for m in data['metadata'])==1 for r in data['measurements'])",
+                "result['missing']==sorted({r['field_id'] for r in data['measurements'] if not any(m['field_id']==r['field_id'] for m in data['metadata'])})",
+                "result['duplicate_metadata']==sorted({m['field_id'] for m in data['metadata'] if sum(x['field_id']==m['field_id'] for x in data['metadata'])>1})"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "measurements": [
+                    {
+                      "field_id": "j"
+                    },
+                    {
+                      "field_id": "k"
+                    },
+                    {
+                      "field_id": "m"
+                    }
+                  ],
+                  "metadata": [
+                    {
+                      "field_id": "j",
+                      "animal": "A"
+                    },
+                    {
+                      "field_id": "j",
+                      "animal": "B"
+                    },
+                    {
+                      "field_id": "m",
+                      "animal": "C"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['matched']==sum(sum(m['field_id']==r['field_id'] for m in data['metadata'])==1 for r in data['measurements'])",
+                "result['missing']==sorted({r['field_id'] for r in data['measurements'] if not any(m['field_id']==r['field_id'] for m in data['metadata'])})",
+                "result['duplicate_metadata']==sorted({m['field_id'] for m in data['metadata'] if sum(x['field_id']==m['field_id'] for x in data['metadata'])>1})"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Invalid joins can quietly assign cells to the wrong animal or experimental condition.",
+            "probe": "Can you defend experimental units and uncertainty to a reviewer?",
+            "check": "Test unequal fields, pairing, exclusions and small biological N."
+          }
+        }
+      }
+    },
+    {
+      "id": "A05-G02",
+      "title": "Expose pseudoreplication and unequal field weighting",
+      "competencies": [
+        "A05-G02"
+      ],
+      "why": "An animal with ten images must not automatically outweigh an animal with one image.",
+      "explain": [
+        "Pixels, cells, fields and animals form nested measurement levels.",
+        "First average technical fields within each independent animal.",
+        "Pooled field averages and averages of animal means can differ substantially."
+      ],
+      "worked_example": {
+        "code": "fields={'A':[2,4,6,8],'B':[10]}\nprint('animal-mean average',sum(sum(v)/len(v) for v in fields.values())/len(fields))\nprint('pooled fields',sum(sum(v) for v in fields.values())/sum(map(len,fields.values())))",
+        "predict": "Predict biological-unit N and how field weighting changes the estimate."
+      },
+      "prediction_answer": "First identify the independent unit; p-values or impressive cell counts do not rescue pseudoreplication.",
+      "walkthrough": [
+        "Predict the denominator or independent unit before running.",
+        "Change field counts, exclusions or paired IDs and inspect the result.",
+        "Explain what sampling, calibration and statistical assumptions remain unverified."
+      ],
+      "investigate": [
+        "Increase the number of fields from only one animal; does biological N change?",
+        "Check the effect of an exclusion or a paired sample before drawing a conclusion."
+      ],
+      "debug_task": "Find a case where technical measurements inflate apparent precision.",
+      "misconception": "Hundreds of cells or images imply hundreds of independent biological replicates.",
+      "scientific_boundary": "All browser practice data are synthetic. Independent biological replicates, exclusion pre-registration and causal interpretation must be verified in real study metadata.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Group signals by animal_id; compute each animal mean first.",
+          "Compute an independent field-pooled mean to show why unbalanced fields bias weighting."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from study data and biological IDs, not a fixed number."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict and test",
+          "description": "An animal with ten images must not automatically outweigh an animal with one image.",
+          "starter_code": "# A05-G02 | LEARN | Expose pseudoreplication and unequal field weighting\n# TASK: Predict output, run and modify this small example.\n\nfields={'A':[2,4,6,8],'B':[10]}\nprint('animal-mean average',sum(sum(v)/len(v) for v in fields.values())/len(fields))\nprint('pooled fields',sum(sum(v) for v in fields.values())/sum(map(len,fields.values())))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed study inputs",
+          "description": "Aggregate data.rows containing animal_id and signal. Return result={'animal_n':int,'field_n':int,'animal_mean':float,'field_pooled_mean':float}.",
+          "starter_code": "# A05-G02 | APPLY | Expose pseudoreplication and unequal field weighting\n# TASK: Aggregate data.rows containing animal_id and signal. Return\n#   result={'animal_n':int,'field_n':int,'animal_mean':float,'field_pooled_mean':float}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "rows": [
+                {
+                  "animal_id": "A",
+                  "field_id": "A_0",
+                  "signal": 1
+                },
+                {
+                  "animal_id": "A",
+                  "field_id": "A_1",
+                  "signal": 3
+                },
+                {
+                  "animal_id": "A",
+                  "field_id": "A_2",
+                  "signal": 5
+                },
+                {
+                  "animal_id": "B",
+                  "field_id": "B_0",
+                  "signal": 25
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "A",
+                      "field_id": "A_0",
+                      "signal": 1
+                    },
+                    {
+                      "animal_id": "A",
+                      "field_id": "A_1",
+                      "signal": 3
+                    },
+                    {
+                      "animal_id": "A",
+                      "field_id": "A_2",
+                      "signal": 5
+                    },
+                    {
+                      "animal_id": "B",
+                      "field_id": "B_0",
+                      "signal": 25
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['animal_n']==len({r['animal_id'] for r in data['rows']})",
+                "result['field_n']==len(data['rows'])",
+                "abs(result['animal_mean']-(sum(sum(r['signal'] for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in {r['animal_id'] for r in data['rows']})/len({r['animal_id'] for r in data['rows']})))<1e-9",
+                "abs(result['field_pooled_mean']-sum(r['signal'] for r in data['rows'])/len(data['rows']))<1e-9"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "C",
+                      "field_id": "C_0",
+                      "signal": 2
+                    },
+                    {
+                      "animal_id": "D",
+                      "field_id": "D_0",
+                      "signal": 4
+                    },
+                    {
+                      "animal_id": "D",
+                      "field_id": "D_1",
+                      "signal": 8
+                    },
+                    {
+                      "animal_id": "E",
+                      "field_id": "E_0",
+                      "signal": 10
+                    },
+                    {
+                      "animal_id": "E",
+                      "field_id": "E_1",
+                      "signal": 20
+                    },
+                    {
+                      "animal_id": "E",
+                      "field_id": "E_2",
+                      "signal": 30
+                    },
+                    {
+                      "animal_id": "E",
+                      "field_id": "E_3",
+                      "signal": 40
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['animal_n']==len({r['animal_id'] for r in data['rows']})",
+                "result['field_n']==len(data['rows'])",
+                "abs(result['animal_mean']-(sum(sum(r['signal'] for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in {r['animal_id'] for r in data['rows']})/len({r['animal_id'] for r in data['rows']})))<1e-9",
+                "abs(result['field_pooled_mean']-sum(r['signal'] for r in data['rows'])/len(data['rows']))<1e-9"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "An animal with ten images must not automatically outweigh an animal with one image.",
+            "probe": "Which study-design or annotation assumption remains unverified?",
+            "check": "Aggregate at animal/pair level; handle exclusions without altering source."
+          }
+        },
+        "prove": {
+          "title": "Independent statistical transfer",
+          "description": "Aggregate data.rows containing animal_id and signal. Return result={'animal_n':int,'field_n':int,'animal_mean':float,'field_pooled_mean':float}.",
+          "starter_code": "# A05-G02 | PROVE | Expose pseudoreplication and unequal field weighting\n# TASK: Aggregate data.rows containing animal_id and signal. Return\n#   result={'animal_n':int,'field_n':int,'animal_mean':float,'field_pooled_mean':float}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "rows": [
+                {
+                  "animal_id": "B1",
+                  "field_id": "B1_0",
+                  "signal": 5
+                },
+                {
+                  "animal_id": "B1",
+                  "field_id": "B1_1",
+                  "signal": 5
+                },
+                {
+                  "animal_id": "B2",
+                  "field_id": "B2_0",
+                  "signal": 10
+                },
+                {
+                  "animal_id": "B3",
+                  "field_id": "B3_0",
+                  "signal": 25
+                },
+                {
+                  "animal_id": "B3",
+                  "field_id": "B3_1",
+                  "signal": 45
+                },
+                {
+                  "animal_id": "B3",
+                  "field_id": "B3_2",
+                  "signal": 55
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "B1",
+                      "field_id": "B1_0",
+                      "signal": 5
+                    },
+                    {
+                      "animal_id": "B1",
+                      "field_id": "B1_1",
+                      "signal": 5
+                    },
+                    {
+                      "animal_id": "B2",
+                      "field_id": "B2_0",
+                      "signal": 10
+                    },
+                    {
+                      "animal_id": "B3",
+                      "field_id": "B3_0",
+                      "signal": 25
+                    },
+                    {
+                      "animal_id": "B3",
+                      "field_id": "B3_1",
+                      "signal": 45
+                    },
+                    {
+                      "animal_id": "B3",
+                      "field_id": "B3_2",
+                      "signal": 55
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['animal_n']==len({r['animal_id'] for r in data['rows']})",
+                "result['field_n']==len(data['rows'])",
+                "abs(result['animal_mean']-(sum(sum(r['signal'] for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in {r['animal_id'] for r in data['rows']})/len({r['animal_id'] for r in data['rows']})))<1e-9",
+                "abs(result['field_pooled_mean']-sum(r['signal'] for r in data['rows'])/len(data['rows']))<1e-9"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "W1",
+                      "field_id": "W1_0",
+                      "signal": 1
+                    },
+                    {
+                      "animal_id": "W1",
+                      "field_id": "W1_1",
+                      "signal": 2
+                    },
+                    {
+                      "animal_id": "W1",
+                      "field_id": "W1_2",
+                      "signal": 3
+                    },
+                    {
+                      "animal_id": "W1",
+                      "field_id": "W1_3",
+                      "signal": 4
+                    },
+                    {
+                      "animal_id": "W1",
+                      "field_id": "W1_4",
+                      "signal": 5
+                    },
+                    {
+                      "animal_id": "W2",
+                      "field_id": "W2_0",
+                      "signal": 30
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['animal_n']==len({r['animal_id'] for r in data['rows']})",
+                "result['field_n']==len(data['rows'])",
+                "abs(result['animal_mean']-(sum(sum(r['signal'] for r in data['rows'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['rows']) for a in {r['animal_id'] for r in data['rows']})/len({r['animal_id'] for r in data['rows']})))<1e-9",
+                "abs(result['field_pooled_mean']-sum(r['signal'] for r in data['rows'])/len(data['rows']))<1e-9"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "An animal with ten images must not automatically outweigh an animal with one image.",
+            "probe": "Can you defend experimental units and uncertainty to a reviewer?",
+            "check": "Test unequal fields, pairing, exclusions and small biological N."
+          }
+        }
+      }
+    },
+    {
+      "id": "A05-G03",
+      "title": "Audit exclusions without deleting provenance",
+      "competencies": [
+        "A05-G03"
+      ],
+      "why": "Dropping bad images without recording exclusions can produce selection bias.",
+      "explain": [
+        "QC exclusion reasons should be prespecified and recorded per field.",
+        "Excluded fields are not missing; count and report them separately.",
+        "Aggregate only retained fields, while preserving each animal as the independent unit."
+      ],
+      "worked_example": {
+        "code": "rows=[{'id':'A','signal':3,'exclude':''},{'id':'A','signal':500,'exclude':'saturated'}]\nprint([r['signal'] for r in rows if not r['exclude']])",
+        "predict": "Predict biological-unit N and how field weighting changes the estimate."
+      },
+      "prediction_answer": "First identify the independent unit; p-values or impressive cell counts do not rescue pseudoreplication.",
+      "walkthrough": [
+        "Predict the denominator or independent unit before running.",
+        "Change field counts, exclusions or paired IDs and inspect the result.",
+        "Explain what sampling, calibration and statistical assumptions remain unverified."
+      ],
+      "investigate": [
+        "Increase the number of fields from only one animal; does biological N change?",
+        "Check the effect of an exclusion or a paired sample before drawing a conclusion."
+      ],
+      "debug_task": "Find a case where technical measurements inflate apparent precision.",
+      "misconception": "Hundreds of cells or images imply hundreds of independent biological replicates.",
+      "scientific_boundary": "All browser practice data are synthetic. Independent biological replicates, exclusion pre-registration and causal interpretation must be verified in real study metadata.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Count every excluded row even though it is absent from mean calculations.",
+          "Group retained signals by animal ID and average within animal."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from study data and biological IDs, not a fixed number."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict and test",
+          "description": "Dropping bad images without recording exclusions can produce selection bias.",
+          "starter_code": "# A05-G03 | LEARN | Audit exclusions without deleting provenance\n# TASK: Predict output, run and modify this small example.\n\nrows=[{'id':'A','signal':3,'exclude':''},{'id':'A','signal':500,'exclude':'saturated'}]\nprint([r['signal'] for r in rows if not r['exclude']])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed study inputs",
+          "description": "Using data.rows with animal_id,signal and exclude_reason, compute result={'animal_means':dict,'excluded_fields':int,'included_fields':int}.",
+          "starter_code": "# A05-G03 | APPLY | Audit exclusions without deleting provenance\n# TASK: Using data.rows with animal_id,signal and exclude_reason, compute\n#   result={'animal_means':dict,'excluded_fields':int,'included_fields':int}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "rows": [
+                {
+                  "animal_id": "A",
+                  "signal": 2,
+                  "exclude_reason": ""
+                },
+                {
+                  "animal_id": "A",
+                  "signal": 99,
+                  "exclude_reason": "saturation"
+                },
+                {
+                  "animal_id": "B",
+                  "signal": 6,
+                  "exclude_reason": ""
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "A",
+                      "signal": 2,
+                      "exclude_reason": ""
+                    },
+                    {
+                      "animal_id": "A",
+                      "signal": 99,
+                      "exclude_reason": "saturation"
+                    },
+                    {
+                      "animal_id": "B",
+                      "signal": 6,
+                      "exclude_reason": ""
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['excluded_fields']==sum(bool(r['exclude_reason']) for r in data['rows'])",
+                "result['included_fields']==sum(not r['exclude_reason'] for r in data['rows'])",
+                "result['animal_means']=={a:sum(r['signal'] for r in data['rows'] if r['animal_id']==a and not r['exclude_reason'])/sum(r['animal_id']==a and not r['exclude_reason'] for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows'] if not r['exclude_reason']})}"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "W1",
+                      "signal": 10,
+                      "exclude_reason": ""
+                    },
+                    {
+                      "animal_id": "W1",
+                      "signal": 14,
+                      "exclude_reason": ""
+                    },
+                    {
+                      "animal_id": "W2",
+                      "signal": 7,
+                      "exclude_reason": "motion"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['excluded_fields']==sum(bool(r['exclude_reason']) for r in data['rows'])",
+                "result['included_fields']==sum(not r['exclude_reason'] for r in data['rows'])",
+                "result['animal_means']=={a:sum(r['signal'] for r in data['rows'] if r['animal_id']==a and not r['exclude_reason'])/sum(r['animal_id']==a and not r['exclude_reason'] for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows'] if not r['exclude_reason']})}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Dropping bad images without recording exclusions can produce selection bias.",
+            "probe": "Which study-design or annotation assumption remains unverified?",
+            "check": "Aggregate at animal/pair level; handle exclusions without altering source."
+          }
+        },
+        "prove": {
+          "title": "Independent statistical transfer",
+          "description": "Using data.rows with animal_id,signal and exclude_reason, compute result={'animal_means':dict,'excluded_fields':int,'included_fields':int}.",
+          "starter_code": "# A05-G03 | PROVE | Audit exclusions without deleting provenance\n# TASK: Using data.rows with animal_id,signal and exclude_reason, compute\n#   result={'animal_means':dict,'excluded_fields':int,'included_fields':int}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "rows": [
+                {
+                  "animal_id": "X",
+                  "signal": 5,
+                  "exclude_reason": ""
+                },
+                {
+                  "animal_id": "X",
+                  "signal": 8,
+                  "exclude_reason": "low focus"
+                },
+                {
+                  "animal_id": "Y",
+                  "signal": 9,
+                  "exclude_reason": ""
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "X",
+                      "signal": 5,
+                      "exclude_reason": ""
+                    },
+                    {
+                      "animal_id": "X",
+                      "signal": 8,
+                      "exclude_reason": "low focus"
+                    },
+                    {
+                      "animal_id": "Y",
+                      "signal": 9,
+                      "exclude_reason": ""
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['excluded_fields']==sum(bool(r['exclude_reason']) for r in data['rows'])",
+                "result['included_fields']==sum(not r['exclude_reason'] for r in data['rows'])",
+                "result['animal_means']=={a:sum(r['signal'] for r in data['rows'] if r['animal_id']==a and not r['exclude_reason'])/sum(r['animal_id']==a and not r['exclude_reason'] for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows'] if not r['exclude_reason']})}"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "rows": [
+                    {
+                      "animal_id": "P1",
+                      "signal": 20,
+                      "exclude_reason": ""
+                    },
+                    {
+                      "animal_id": "P2",
+                      "signal": 30,
+                      "exclude_reason": ""
+                    },
+                    {
+                      "animal_id": "P2",
+                      "signal": 300,
+                      "exclude_reason": "detector artifact"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['excluded_fields']==sum(bool(r['exclude_reason']) for r in data['rows'])",
+                "result['included_fields']==sum(not r['exclude_reason'] for r in data['rows'])",
+                "result['animal_means']=={a:sum(r['signal'] for r in data['rows'] if r['animal_id']==a and not r['exclude_reason'])/sum(r['animal_id']==a and not r['exclude_reason'] for r in data['rows']) for a in sorted({r['animal_id'] for r in data['rows'] if not r['exclude_reason']})}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Dropping bad images without recording exclusions can produce selection bias.",
+            "probe": "Can you defend experimental units and uncertainty to a reviewer?",
+            "check": "Test unequal fields, pairing, exclusions and small biological N."
+          }
+        }
+      }
+    },
+    {
+      "id": "A05-G04",
+      "title": "Respect matched experimental design",
+      "competencies": [
+        "A05-G04"
+      ],
+      "why": "Ignoring before/after pairing discards important information about biological variation.",
+      "explain": [
+        "Pair IDs represent a prespecified matching structure.",
+        "Compute treatment minus control separately for each pair.",
+        "Bootstrap or infer over independent pairs, not all observed cells."
+      ],
+      "worked_example": {
+        "code": "pairs=[(3,5),(20,22),(100,101)]\nprint('paired differences',[b-a for a,b in pairs])",
+        "predict": "Predict biological-unit N and how field weighting changes the estimate."
+      },
+      "prediction_answer": "First identify the independent unit; p-values or impressive cell counts do not rescue pseudoreplication.",
+      "walkthrough": [
+        "Predict the denominator or independent unit before running.",
+        "Change field counts, exclusions or paired IDs and inspect the result.",
+        "Explain what sampling, calibration and statistical assumptions remain unverified."
+      ],
+      "investigate": [
+        "Increase the number of fields from only one animal; does biological N change?",
+        "Check the effect of an exclusion or a paired sample before drawing a conclusion."
+      ],
+      "debug_task": "Find a case where technical measurements inflate apparent precision.",
+      "misconception": "Hundreds of cells or images imply hundreds of independent biological replicates.",
+      "scientific_boundary": "All browser practice data are synthetic. Independent biological replicates, exclusion pre-registration and causal interpretation must be verified in real study metadata.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Subtract each pair's control from treatment.",
+          "Average the pair differences; count independent pairs, not rows."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from study data and biological IDs, not a fixed number."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict and test",
+          "description": "Ignoring before/after pairing discards important information about biological variation.",
+          "starter_code": "# A05-G04 | LEARN | Respect matched experimental design\n# TASK: Predict output, run and modify this small example.\n\npairs=[(3,5),(20,22),(100,101)]\nprint('paired differences',[b-a for a,b in pairs])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed study inputs",
+          "description": "Given data.pairs with control and treatment values, return result={'paired_mean_difference':float,'pairs':int,'differences':list}.",
+          "starter_code": "# A05-G04 | APPLY | Respect matched experimental design\n# TASK: Given data.pairs with control and treatment values, return\n#   result={'paired_mean_difference':float,'pairs':int,'differences':list}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "pairs": [
+                {
+                  "control": 3,
+                  "treatment": 5
+                },
+                {
+                  "control": 12,
+                  "treatment": 15
+                },
+                {
+                  "control": 100,
+                  "treatment": 98
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "pairs": [
+                    {
+                      "control": 3,
+                      "treatment": 5
+                    },
+                    {
+                      "control": 12,
+                      "treatment": 15
+                    },
+                    {
+                      "control": 100,
+                      "treatment": 98
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['pairs']==len(data['pairs'])",
+                "result['differences']==[float(x['treatment']-x['control']) for x in data['pairs']]",
+                "abs(result['paired_mean_difference']-sum(x['treatment']-x['control'] for x in data['pairs'])/len(data['pairs']))<1e-9"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "pairs": [
+                    {
+                      "control": 8,
+                      "treatment": 14
+                    },
+                    {
+                      "control": 22,
+                      "treatment": 19
+                    },
+                    {
+                      "control": 7,
+                      "treatment": 8
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['pairs']==len(data['pairs'])",
+                "result['differences']==[float(x['treatment']-x['control']) for x in data['pairs']]",
+                "abs(result['paired_mean_difference']-sum(x['treatment']-x['control'] for x in data['pairs'])/len(data['pairs']))<1e-9"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Ignoring before/after pairing discards important information about biological variation.",
+            "probe": "Which study-design or annotation assumption remains unverified?",
+            "check": "Aggregate at animal/pair level; handle exclusions without altering source."
+          }
+        },
+        "prove": {
+          "title": "Independent statistical transfer",
+          "description": "Given data.pairs with control and treatment values, return result={'paired_mean_difference':float,'pairs':int,'differences':list}.",
+          "starter_code": "# A05-G04 | PROVE | Respect matched experimental design\n# TASK: Given data.pairs with control and treatment values, return\n#   result={'paired_mean_difference':float,'pairs':int,'differences':list}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "pairs": [
+                {
+                  "control": 15,
+                  "treatment": 13
+                },
+                {
+                  "control": 1,
+                  "treatment": 9
+                },
+                {
+                  "control": 5,
+                  "treatment": 5
+                },
+                {
+                  "control": 40,
+                  "treatment": 41
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "pairs": [
+                    {
+                      "control": 15,
+                      "treatment": 13
+                    },
+                    {
+                      "control": 1,
+                      "treatment": 9
+                    },
+                    {
+                      "control": 5,
+                      "treatment": 5
+                    },
+                    {
+                      "control": 40,
+                      "treatment": 41
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['pairs']==len(data['pairs'])",
+                "result['differences']==[float(x['treatment']-x['control']) for x in data['pairs']]",
+                "abs(result['paired_mean_difference']-sum(x['treatment']-x['control'] for x in data['pairs'])/len(data['pairs']))<1e-9"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "pairs": [
+                    {
+                      "control": 100,
+                      "treatment": 120
+                    },
+                    {
+                      "control": 80,
+                      "treatment": 81
+                    },
+                    {
+                      "control": 60,
+                      "treatment": 58
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['pairs']==len(data['pairs'])",
+                "result['differences']==[float(x['treatment']-x['control']) for x in data['pairs']]",
+                "abs(result['paired_mean_difference']-sum(x['treatment']-x['control'] for x in data['pairs'])/len(data['pairs']))<1e-9"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Ignoring before/after pairing discards important information about biological variation.",
+            "probe": "Can you defend experimental units and uncertainty to a reviewer?",
+            "check": "Test unequal fields, pairing, exclusions and small biological N."
+          }
+        }
+      }
+    },
+    {
+      "id": "A05-G05",
+      "title": "Bootstrap independent biological units",
+      "competencies": [
+        "A05-G05"
+      ],
+      "why": "Sampling individual fields would understate uncertainty when fields share the same animal.",
+      "explain": [
+        "Resample independent animal means within each group.",
+        "Record a random seed and a declared interval quantile.",
+        "A bootstrap interval with few animals is unstable and does not imply causality."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nx=np.array([2,4,6]);rng=np.random.default_rng(7)\nprint('resampled animal means:',x[rng.integers(0,len(x),3)].tolist())",
+        "predict": "Predict biological-unit N and how field weighting changes the estimate."
+      },
+      "prediction_answer": "First identify the independent unit; p-values or impressive cell counts do not rescue pseudoreplication.",
+      "walkthrough": [
+        "Predict the denominator or independent unit before running.",
+        "Change field counts, exclusions or paired IDs and inspect the result.",
+        "Explain what sampling, calibration and statistical assumptions remain unverified."
+      ],
+      "investigate": [
+        "Increase the number of fields from only one animal; does biological N change?",
+        "Check the effect of an exclusion or a paired sample before drawing a conclusion."
+      ],
+      "debug_task": "Find a case where technical measurements inflate apparent precision.",
+      "misconception": "Hundreds of cells or images imply hundreds of independent biological replicates.",
+      "scientific_boundary": "All browser practice data are synthetic. Independent biological replicates, exclusion pre-registration and causal interpretation must be verified in real study metadata.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Use np.random.default_rng(data['seed']) and resample whole animal means.",
+          "Draw separate integer index matrices for control and treatment; take 2.5/97.5 percentiles."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from study data and biological IDs, not a fixed number."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict and test",
+          "description": "Sampling individual fields would understate uncertainty when fields share the same animal.",
+          "starter_code": "# A05-G05 | LEARN | Bootstrap independent biological units\n# TASK: Predict output, run and modify this small example.\n\nimport numpy as np\nx=np.array([2,4,6]);rng=np.random.default_rng(7)\nprint('resampled animal means:',x[rng.integers(0,len(x),3)].tolist())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed study inputs",
+          "description": "Use data.control and data.treatment animal means with data.seed and data.draws to compute result={'effect':float,'ci_low':float,'ci_high':float} from independent-group bootstrap resampling.",
+          "starter_code": "# A05-G05 | APPLY | Bootstrap independent biological units\n# TASK: Use data.control and data.treatment animal means with data.seed and\n#   data.draws to compute result={'effect':float,'ci_low':float,'ci_high':float}\n#   from independent-group bootstrap resampling.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                2,
+                3,
+                4,
+                6
+              ],
+              "treatment": [
+                5,
+                6,
+                7,
+                10
+              ],
+              "seed": 21,
+              "draws": 400
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    2,
+                    3,
+                    4,
+                    6
+                  ],
+                  "treatment": [
+                    5,
+                    6,
+                    7,
+                    10
+                  ],
+                  "seed": 21,
+                  "draws": 400
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(data['treatment'])-np.mean(data['control']))",
+                "result['ci_low']<=result['ci_high']",
+                "result['ci_low']>=min(data['treatment'])-max(data['control'])-1e-9",
+                "result['ci_high']<=max(data['treatment'])-min(data['control'])+1e-9"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    10,
+                    11,
+                    15
+                  ],
+                  "treatment": [
+                    8,
+                    14,
+                    19
+                  ],
+                  "seed": 15,
+                  "draws": 350
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(data['treatment'])-np.mean(data['control']))",
+                "result['ci_low']<=result['ci_high']",
+                "result['ci_low']>=min(data['treatment'])-max(data['control'])-1e-9",
+                "result['ci_high']<=max(data['treatment'])-min(data['control'])+1e-9"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Sampling individual fields would understate uncertainty when fields share the same animal.",
+            "probe": "Which study-design or annotation assumption remains unverified?",
+            "check": "Aggregate at animal/pair level; handle exclusions without altering source."
+          }
+        },
+        "prove": {
+          "title": "Independent statistical transfer",
+          "description": "Use data.control and data.treatment animal means with data.seed and data.draws to compute result={'effect':float,'ci_low':float,'ci_high':float} from independent-group bootstrap resampling.",
+          "starter_code": "# A05-G05 | PROVE | Bootstrap independent biological units\n# TASK: Use data.control and data.treatment animal means with data.seed and\n#   data.draws to compute result={'effect':float,'ci_low':float,'ci_high':float}\n#   from independent-group bootstrap resampling.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "control": [
+                3,
+                4,
+                8,
+                9
+              ],
+              "treatment": [
+                12,
+                15,
+                10,
+                14
+              ],
+              "seed": 42,
+              "draws": 450
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    3,
+                    4,
+                    8,
+                    9
+                  ],
+                  "treatment": [
+                    12,
+                    15,
+                    10,
+                    14
+                  ],
+                  "seed": 42,
+                  "draws": 450
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(data['treatment'])-np.mean(data['control']))",
+                "result['ci_low']<=result['ci_high']",
+                "result['ci_low']>=min(data['treatment'])-max(data['control'])-1e-9",
+                "result['ci_high']<=max(data['treatment'])-min(data['control'])+1e-9"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "control": [
+                    3,
+                    5,
+                    7,
+                    8,
+                    9
+                  ],
+                  "treatment": [
+                    6,
+                    11,
+                    10,
+                    14
+                  ],
+                  "seed": 6,
+                  "draws": 320
+                }
+              },
+              "assertions": [
+                "np.isclose(result['effect'],np.mean(data['treatment'])-np.mean(data['control']))",
+                "result['ci_low']<=result['ci_high']",
+                "result['ci_low']>=min(data['treatment'])-max(data['control'])-1e-9",
+                "result['ci_high']<=max(data['treatment'])-min(data['control'])+1e-9"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Sampling individual fields would understate uncertainty when fields share the same animal.",
+            "probe": "Can you defend experimental units and uncertainty to a reviewer?",
+            "check": "Test unequal fields, pairing, exclusions and small biological N."
+          }
+        }
+      }
+    },
+    {
+      "id": "A05-G06",
+      "title": "Report units and excluded observations in figures",
+      "competencies": [
+        "A05-G06"
+      ],
+      "why": "Figures should display independent units and honest labels, not imply every cell is one replicate.",
+      "explain": [
+        "One point per independent animal is a defensible default.",
+        "A graph needs actual input units, a biological N and QC exclusions documented.",
+        "The local CLI produces a PNG showing independent animal points and means."
+      ],
+      "worked_example": {
+        "code": "units=[{'animal':'A','mean':3},{'animal':'B','mean':7}]\nprint('one point per animal:',len(units))",
+        "predict": "Predict biological-unit N and how field weighting changes the estimate."
+      },
+      "prediction_answer": "First identify the independent unit; p-values or impressive cell counts do not rescue pseudoreplication.",
+      "walkthrough": [
+        "Predict the denominator or independent unit before running.",
+        "Change field counts, exclusions or paired IDs and inspect the result.",
+        "Explain what sampling, calibration and statistical assumptions remain unverified."
+      ],
+      "investigate": [
+        "Increase the number of fields from only one animal; does biological N change?",
+        "Check the effect of an exclusion or a paired sample before drawing a conclusion."
+      ],
+      "debug_task": "Find a case where technical measurements inflate apparent precision.",
+      "misconception": "Hundreds of cells or images imply hundreds of independent biological replicates.",
+      "scientific_boundary": "All browser practice data are synthetic. Independent biological replicates, exclusion pre-registration and causal interpretation must be verified in real study metadata.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Use the animal-summary table rather than cell-by-cell rows.",
+          "Prepare one point per animal and label the input signal units explicitly."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from study data and biological IDs, not a fixed number."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict and test",
+          "description": "Figures should display independent units and honest labels, not imply every cell is one replicate.",
+          "starter_code": "# A05-G06 | LEARN | Report units and excluded observations in figures\n# TASK: Predict output, run and modify this small example.\n\nunits=[{'animal':'A','mean':3},{'animal':'B','mean':7}]\nprint('one point per animal:',len(units))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply with changed study inputs",
+          "description": "Prepare figure-ready animal-level values from data.units; result={'points':sorted list of [condition,animal_id,mean_signal], 'n_animals':int,'ylabel':data.ylabel}.",
+          "starter_code": "# A05-G06 | APPLY | Report units and excluded observations in figures\n# TASK: Prepare figure-ready animal-level values from data.units;\n#   result={'points':sorted list of [condition,animal_id,mean_signal],\n#   'n_animals':int,'ylabel':data.ylabel}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "units": [
+                {
+                  "condition": "control",
+                  "animal_id": "A",
+                  "mean_signal": 4
+                },
+                {
+                  "condition": "treated",
+                  "animal_id": "B",
+                  "mean_signal": 9
+                }
+              ],
+              "ylabel": "Counts per animal"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "units": [
+                    {
+                      "condition": "control",
+                      "animal_id": "A",
+                      "mean_signal": 4
+                    },
+                    {
+                      "condition": "treated",
+                      "animal_id": "B",
+                      "mean_signal": 9
+                    }
+                  ],
+                  "ylabel": "Counts per animal"
+                }
+              },
+              "assertions": [
+                "result['points']==sorted([[x['condition'],x['animal_id'],float(x['mean_signal'])] for x in data['units']])",
+                "result['n_animals']==len({x['animal_id'] for x in data['units']})",
+                "result['ylabel']==data['ylabel']"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "units": [
+                    {
+                      "condition": "drug",
+                      "animal_id": "W3",
+                      "mean_signal": 12
+                    },
+                    {
+                      "condition": "control",
+                      "animal_id": "W1",
+                      "mean_signal": 5
+                    },
+                    {
+                      "condition": "control",
+                      "animal_id": "W2",
+                      "mean_signal": 3
+                    }
+                  ],
+                  "ylabel": "Signal (AU)"
+                }
+              },
+              "assertions": [
+                "result['points']==sorted([[x['condition'],x['animal_id'],float(x['mean_signal'])] for x in data['units']])",
+                "result['n_animals']==len({x['animal_id'] for x in data['units']})",
+                "result['ylabel']==data['ylabel']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Figures should display independent units and honest labels, not imply every cell is one replicate.",
+            "probe": "Which study-design or annotation assumption remains unverified?",
+            "check": "Aggregate at animal/pair level; handle exclusions without altering source."
+          }
+        },
+        "prove": {
+          "title": "Independent statistical transfer",
+          "description": "Prepare figure-ready animal-level values from data.units; result={'points':sorted list of [condition,animal_id,mean_signal], 'n_animals':int,'ylabel':data.ylabel}.",
+          "starter_code": "# A05-G06 | PROVE | Report units and excluded observations in figures\n# TASK: Prepare figure-ready animal-level values from data.units;\n#   result={'points':sorted list of [condition,animal_id,mean_signal],\n#   'n_animals':int,'ylabel':data.ylabel}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "units": [
+                {
+                  "condition": "vehicle",
+                  "animal_id": "A",
+                  "mean_signal": 1
+                },
+                {
+                  "condition": "vehicle",
+                  "animal_id": "B",
+                  "mean_signal": 2
+                },
+                {
+                  "condition": "treatment",
+                  "animal_id": "C",
+                  "mean_signal": 3
+                }
+              ],
+              "ylabel": "Puncta per worm"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "units": [
+                    {
+                      "condition": "vehicle",
+                      "animal_id": "A",
+                      "mean_signal": 1
+                    },
+                    {
+                      "condition": "vehicle",
+                      "animal_id": "B",
+                      "mean_signal": 2
+                    },
+                    {
+                      "condition": "treatment",
+                      "animal_id": "C",
+                      "mean_signal": 3
+                    }
+                  ],
+                  "ylabel": "Puncta per worm"
+                }
+              },
+              "assertions": [
+                "result['points']==sorted([[x['condition'],x['animal_id'],float(x['mean_signal'])] for x in data['units']])",
+                "result['n_animals']==len({x['animal_id'] for x in data['units']})",
+                "result['ylabel']==data['ylabel']"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "units": [
+                    {
+                      "condition": "control",
+                      "animal_id": "M01",
+                      "mean_signal": 2.4
+                    },
+                    {
+                      "condition": "test",
+                      "animal_id": "M02",
+                      "mean_signal": 4.5
+                    }
+                  ],
+                  "ylabel": "Mean image intensity (uncalibrated)"
+                }
+              },
+              "assertions": [
+                "result['points']==sorted([[x['condition'],x['animal_id'],float(x['mean_signal'])] for x in data['units']])",
+                "result['n_animals']==len({x['animal_id'] for x in data['units']})",
+                "result['ylabel']==data['ylabel']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Figures should display independent units and honest labels, not imply every cell is one replicate.",
+            "probe": "Can you defend experimental units and uncertainty to a reviewer?",
+            "check": "Test unequal fields, pairing, exclusions and small biological N."
+          }
+        }
+      }
+    }
+  ],
+  "capstone": {
+    "id": "A05-CAPSTONE",
+    "title": "Design-correct endpoint and biological N",
+    "competencies": [
+      "A05-CAPSTONE"
+    ],
+    "why": "A result can be computationally reproducible yet invalid if field/cell measurements are used as biological replicates.",
+    "explain": [
+      "Aggregate technical measurements at the declared biological unit.",
+      "Estimate an effect as treatment mean minus control mean across animals.",
+      "A correct browser result cannot certify uncertainty or real experiments."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict biological-unit N and how field weighting changes the estimate."
+    },
+    "prediction_answer": "First identify the independent unit; p-values or impressive cell counts do not rescue pseudoreplication.",
+    "walkthrough": [
+      "Predict the denominator or independent unit before running.",
+      "Change field counts, exclusions or paired IDs and inspect the result.",
+      "Explain what sampling, calibration and statistical assumptions remain unverified."
+    ],
+    "investigate": [
+      "Increase the number of fields from only one animal; does biological N change?",
+      "Check the effect of an exclusion or a paired sample before drawing a conclusion."
+    ],
+    "debug_task": "Find a case where technical measurements inflate apparent precision.",
+    "misconception": "Hundreds of cells or images imply hundreds of independent biological replicates.",
+    "scientific_boundary": "All browser practice data are synthetic. Independent biological replicates, exclusion pre-registration and causal interpretation must be verified in real study metadata.",
+    "hints": {
+      "learn": [],
+      "apply": [
+        "Aggregate multiple fields within each animal before comparing conditions.",
+        "Reject excluded field rows but retain animal-level N."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Compute from study data and biological IDs, not a fixed number."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict and test",
+        "description": "A result can be computationally reproducible yet invalid if field/cell measurements are used as biological replicates.",
+        "starter_code": "# A05-CAPSTONE | LEARN | Design-correct endpoint and biological N\n# TASK: Predict output, run and modify this small example.\n\nprint('A05 capstone: write animal-level analysis without a prepared solution.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with changed study inputs",
+        "description": "Given data.rows with condition,animal_id,signal and exclude_reason, compute per-animal means; return result={'control_n':int,'treatment_n':int,'effect':float,'pseudoreplication_avoided':True}.",
+        "starter_code": "# A05-CAPSTONE | APPLY | Design-correct endpoint and biological N\n# TASK: Given data.rows with condition,animal_id,signal and exclude_reason,\n#   compute per-animal means; return\n#   result={'control_n':int,'treatment_n':int,'effect':float,'pseudoreplication_avoided':True}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "control": "C",
+            "treatment": "T",
+            "rows": [
+              {
+                "condition": "C",
+                "animal_id": "A",
+                "signal": 1,
+                "exclude_reason": ""
+              },
+              {
+                "condition": "C",
+                "animal_id": "A",
+                "signal": 3,
+                "exclude_reason": ""
+              },
+              {
+                "condition": "C",
+                "animal_id": "B",
+                "signal": 5,
+                "exclude_reason": ""
+              },
+              {
+                "condition": "T",
+                "animal_id": "X",
+                "signal": 8,
+                "exclude_reason": ""
+              },
+              {
+                "condition": "T",
+                "animal_id": "Y",
+                "signal": 12,
+                "exclude_reason": ""
+              }
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "control": "C",
+                "treatment": "T",
+                "rows": [
+                  {
+                    "condition": "C",
+                    "animal_id": "A",
+                    "signal": 1,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "C",
+                    "animal_id": "A",
+                    "signal": 3,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "C",
+                    "animal_id": "B",
+                    "signal": 5,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "T",
+                    "animal_id": "X",
+                    "signal": 8,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "T",
+                    "animal_id": "Y",
+                    "signal": 12,
+                    "exclude_reason": ""
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['control_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']})",
+              "result['treatment_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']})",
+              "abs(result['effect']- (__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
+              "result['pseudoreplication_avoided'] is True"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "control": "control",
+                "treatment": "treat",
+                "rows": [
+                  {
+                    "condition": "control",
+                    "animal_id": "A",
+                    "signal": 5,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "control",
+                    "animal_id": "B",
+                    "signal": 7,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "treat",
+                    "animal_id": "X",
+                    "signal": 16,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "treat",
+                    "animal_id": "Y",
+                    "signal": 200,
+                    "exclude_reason": "saturated"
+                  },
+                  {
+                    "condition": "treat",
+                    "animal_id": "Y",
+                    "signal": 9,
+                    "exclude_reason": ""
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['control_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']})",
+              "result['treatment_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']})",
+              "abs(result['effect']- (__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
+              "result['pseudoreplication_avoided'] is True"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A result can be computationally reproducible yet invalid if field/cell measurements are used as biological replicates.",
+          "probe": "Which study-design or annotation assumption remains unverified?",
+          "check": "Aggregate at animal/pair level; handle exclusions without altering source."
+        }
+      },
+      "prove": {
+        "title": "Independent statistical transfer",
+        "description": "Given data.rows with condition,animal_id,signal and exclude_reason, compute per-animal means; return result={'control_n':int,'treatment_n':int,'effect':float,'pseudoreplication_avoided':True}.",
+        "starter_code": "# A05-CAPSTONE | PROVE | Design-correct endpoint and biological N\n# TASK: Given data.rows with condition,animal_id,signal and exclude_reason,\n#   compute per-animal means; return\n#   result={'control_n':int,'treatment_n':int,'effect':float,'pseudoreplication_avoided':True}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "control": "WT",
+            "treatment": "KO",
+            "rows": [
+              {
+                "condition": "WT",
+                "animal_id": "A",
+                "signal": 3,
+                "exclude_reason": ""
+              },
+              {
+                "condition": "WT",
+                "animal_id": "A",
+                "signal": 5,
+                "exclude_reason": ""
+              },
+              {
+                "condition": "WT",
+                "animal_id": "B",
+                "signal": 1,
+                "exclude_reason": ""
+              },
+              {
+                "condition": "KO",
+                "animal_id": "X",
+                "signal": 6,
+                "exclude_reason": ""
+              },
+              {
+                "condition": "KO",
+                "animal_id": "Y",
+                "signal": 8,
+                "exclude_reason": ""
+              }
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "control": "WT",
+                "treatment": "KO",
+                "rows": [
+                  {
+                    "condition": "WT",
+                    "animal_id": "A",
+                    "signal": 3,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "WT",
+                    "animal_id": "A",
+                    "signal": 5,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "WT",
+                    "animal_id": "B",
+                    "signal": 1,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "KO",
+                    "animal_id": "X",
+                    "signal": 6,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "KO",
+                    "animal_id": "Y",
+                    "signal": 8,
+                    "exclude_reason": ""
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['control_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']})",
+              "result['treatment_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']})",
+              "abs(result['effect']- (__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
+              "result['pseudoreplication_avoided'] is True"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "control": "vehicle",
+                "treatment": "drug",
+                "rows": [
+                  {
+                    "condition": "vehicle",
+                    "animal_id": "A",
+                    "signal": 20,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "vehicle",
+                    "animal_id": "B",
+                    "signal": 10,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "drug",
+                    "animal_id": "Q",
+                    "signal": 7,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "drug",
+                    "animal_id": "R",
+                    "signal": 15,
+                    "exclude_reason": ""
+                  },
+                  {
+                    "condition": "drug",
+                    "animal_id": "R",
+                    "signal": 100,
+                    "exclude_reason": "motion"
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['control_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']})",
+              "result['treatment_n']==len({r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']})",
+              "abs(result['effect']- (__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['treatment'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['treatment'] and not r['exclude_reason']}])-__import__('numpy').mean([__import__('numpy').mean([r['signal'] for r in data['rows'] if r['condition']==data['control'] and r['animal_id']==a and not r['exclude_reason']]) for a in {r['animal_id'] for r in data['rows'] if r['condition']==data['control'] and not r['exclude_reason']}])) )<1e-9",
+              "result['pseudoreplication_avoided'] is True"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A result can be computationally reproducible yet invalid if field/cell measurements are used as biological replicates.",
+          "probe": "Can you defend experimental units and uncertainty to a reviewer?",
+          "check": "Test unequal fields, pairing, exclusions and small biological N."
+        }
+      }
+    },
+    "build_steps": [
+      "Write the independent experimental unit and pairing explicitly.",
+      "Validate joins and exclusions before deriving biological-unit means.",
+      "Estimate the effect only from biological-unit summaries.",
+      "Report the limitations of uncertainty estimation and export for local reproduction."
+    ]
+  },
+  "review": {
+    "id": "A05-REVIEW",
+    "title": "Delayed biological replication audit",
+    "competencies": [
+      "A05-REVIEW"
+    ],
+    "why": "Returning unaided reveals whether the distinction between animal and field has been retained.",
+    "explain": [
+      "Technical measurements do not increase independent biological N.",
+      "Equal weighting of animals is explicit and may differ from pooling.",
+      "No significance test is justified by one example table alone."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict biological-unit N and how field weighting changes the estimate."
+    },
+    "prediction_answer": "First identify the independent unit; p-values or impressive cell counts do not rescue pseudoreplication.",
+    "walkthrough": [
+      "Predict the denominator or independent unit before running.",
+      "Change field counts, exclusions or paired IDs and inspect the result.",
+      "Explain what sampling, calibration and statistical assumptions remain unverified."
+    ],
+    "investigate": [
+      "Increase the number of fields from only one animal; does biological N change?",
+      "Check the effect of an exclusion or a paired sample before drawing a conclusion."
+    ],
+    "debug_task": "Find a case where technical measurements inflate apparent precision.",
+    "misconception": "Hundreds of cells or images imply hundreds of independent biological replicates.",
+    "scientific_boundary": "All browser practice data are synthetic. Independent biological replicates, exclusion pre-registration and causal interpretation must be verified in real study metadata.",
+    "hints": {
+      "learn": [],
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Compute from study data and biological IDs, not a fixed number."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict and test",
+        "description": "Returning unaided reveals whether the distinction between animal and field has been retained.",
+        "starter_code": "# A05-REVIEW | LEARN | Delayed biological replication audit\n# TASK: Predict output, run and modify this small example.\n\nprint('A05 review: return later and solve without the capstone solution.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply with changed study inputs",
+        "description": "Given data.rows with animal,field,signal, compute result={'biological_n':int,'technical_n':int,'animal_mean_overall':float} without prior code.",
+        "starter_code": "# A05-REVIEW | APPLY | Delayed biological replication audit\n# TASK: Given data.rows with animal,field,signal, compute\n#   result={'biological_n':int,'technical_n':int,'animal_mean_overall':float}\n#   without prior code.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "rows": [
+              {
+                "animal": "a",
+                "field": "1",
+                "signal": 1
+              },
+              {
+                "animal": "a",
+                "field": "2",
+                "signal": 3
+              },
+              {
+                "animal": "b",
+                "field": "1",
+                "signal": 10
+              }
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "rows": [
+                  {
+                    "animal": "a",
+                    "field": "1",
+                    "signal": 1
+                  },
+                  {
+                    "animal": "a",
+                    "field": "2",
+                    "signal": 3
+                  },
+                  {
+                    "animal": "b",
+                    "field": "1",
+                    "signal": 10
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['biological_n']==len({r['animal'] for r in data['rows']})",
+              "result['technical_n']==len(data['rows'])",
+              "abs(result['animal_mean_overall']-sum(sum(r['signal'] for r in data['rows'] if r['animal']==x)/sum(r['animal']==x for r in data['rows']) for x in {r['animal'] for r in data['rows']})/len({r['animal'] for r in data['rows']}))<1e-9"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "rows": [
+                  {
+                    "animal": "x",
+                    "field": "1",
+                    "signal": 4
+                  },
+                  {
+                    "animal": "y",
+                    "field": "1",
+                    "signal": 20
+                  },
+                  {
+                    "animal": "y",
+                    "field": "2",
+                    "signal": 22
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['biological_n']==len({r['animal'] for r in data['rows']})",
+              "result['technical_n']==len(data['rows'])",
+              "abs(result['animal_mean_overall']-sum(sum(r['signal'] for r in data['rows'] if r['animal']==x)/sum(r['animal']==x for r in data['rows']) for x in {r['animal'] for r in data['rows']})/len({r['animal'] for r in data['rows']}))<1e-9"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Returning unaided reveals whether the distinction between animal and field has been retained.",
+          "probe": "Which study-design or annotation assumption remains unverified?",
+          "check": "Aggregate at animal/pair level; handle exclusions without altering source."
+        }
+      },
+      "prove": {
+        "title": "Independent statistical transfer",
+        "description": "Given data.rows with animal,field,signal, compute result={'biological_n':int,'technical_n':int,'animal_mean_overall':float} without prior code.",
+        "starter_code": "# A05-REVIEW | PROVE | Delayed biological replication audit\n# TASK: Given data.rows with animal,field,signal, compute\n#   result={'biological_n':int,'technical_n':int,'animal_mean_overall':float}\n#   without prior code.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "rows": [
+              {
+                "animal": "X",
+                "field": "a",
+                "signal": 5
+              },
+              {
+                "animal": "X",
+                "field": "b",
+                "signal": 7
+              },
+              {
+                "animal": "Y",
+                "field": "a",
+                "signal": 15
+              },
+              {
+                "animal": "Z",
+                "field": "a",
+                "signal": 20
+              }
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "rows": [
+                  {
+                    "animal": "X",
+                    "field": "a",
+                    "signal": 5
+                  },
+                  {
+                    "animal": "X",
+                    "field": "b",
+                    "signal": 7
+                  },
+                  {
+                    "animal": "Y",
+                    "field": "a",
+                    "signal": 15
+                  },
+                  {
+                    "animal": "Z",
+                    "field": "a",
+                    "signal": 20
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['biological_n']==len({r['animal'] for r in data['rows']})",
+              "result['technical_n']==len(data['rows'])",
+              "abs(result['animal_mean_overall']-sum(sum(r['signal'] for r in data['rows'] if r['animal']==x)/sum(r['animal']==x for r in data['rows']) for x in {r['animal'] for r in data['rows']})/len({r['animal'] for r in data['rows']}))<1e-9"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "rows": [
+                  {
+                    "animal": "K1",
+                    "field": "1",
+                    "signal": 0
+                  },
+                  {
+                    "animal": "K2",
+                    "field": "1",
+                    "signal": 8
+                  },
+                  {
+                    "animal": "K2",
+                    "field": "2",
+                    "signal": 12
+                  },
+                  {
+                    "animal": "K2",
+                    "field": "3",
+                    "signal": 16
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['biological_n']==len({r['animal'] for r in data['rows']})",
+              "result['technical_n']==len(data['rows'])",
+              "abs(result['animal_mean_overall']-sum(sum(r['signal'] for r in data['rows'] if r['animal']==x)/sum(r['animal']==x for r in data['rows']) for x in {r['animal'] for r in data['rows']})/len({r['animal'] for r in data['rows']}))<1e-9"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Returning unaided reveals whether the distinction between animal and field has been retained.",
+          "probe": "Can you defend experimental units and uncertainty to a reviewer?",
+          "check": "Test unequal fields, pairing, exclusions and small biological N."
+        }
+      }
+    }
+  },
+  "final_project": {
+    "name": "a05_biological_statistics.py",
+    "description": "Export animal-level analysis and validate against the original local A05 bootstrap CLI."
+  }
+}

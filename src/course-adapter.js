@@ -7,10 +7,10 @@ const I_IDS=["I01","I02","I03","I04","I05","I06","I07","I08","I09","I10","I11","
 const N_IDS=["N01","N02","N03","N04"];
 const L_IDS=["L01","L02","L03"];
 // Optional: the frozen 26-chapter course and its navigation remain unchanged by default.
-const A_IDS=["A01","A02","A03"];
+const A_IDS=["A00","A01","A02","A03","A05","A06","A07"];
 const advancedLab=new URLSearchParams(window.location.search).get("lab")==="advanced";
 const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...(advancedLab?A_IDS:[])];
-const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I05:6,I06:7,I07:7,I08:8,I09:6,I10:6,I11:7,I12:9,I13:5,N01:4,N02:4,N03:4,N04:5,L01:4,L02:4,L03:4,A01:4,A02:5,A03:5};
+const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I05:6,I06:7,I07:7,I08:8,I09:6,I10:6,I11:7,I12:9,I13:5,N01:4,N02:4,N03:4,N04:5,L01:4,L02:4,L03:4,A00:5,A01:4,A02:5,A03:5,A05:6,A06:6,A07:7};
 const KEYS=Object.fromEntries(IDS.map(id=>[id,"biopython."+id.toLowerCase()+".v1"]));
 const SELECT_KEY=advancedLab?"biopython.advanced-selected.v1":"biopython.course-selected.v1";
 const chapters={},states={};
@@ -32,26 +32,25 @@ function loadState(id){
  }catch{}
  return next;
 }
-let activeId=advancedLab?"A01":"P01",chapter=null,state=fresh(),worker=null,pending=null,busy=false,seq=0;
+let activeId=advancedLab?"A00":"P01",chapter=null,state=fresh(),worker=null,pending=null,busy=false,seq=0;
 try{const selected=localStorage.getItem(SELECT_KEY);if(KEYS[selected])activeId=selected;}catch{}
 const selectedStage=()=>document.querySelector('[data-stage][aria-current="page"]')?.dataset.stage||"Python";
 const stageOf=id=>P_IDS.includes(id)?"Python":(I_IDS.includes(id)||A_IDS.includes(id))?"Microscopy":N_IDS.includes(id)?"NGS":"ML";
 const isImaging=id=>I_IDS.includes(id)||A_IDS.includes(id);
 const stageIds=()=>({Python:P_IDS,Microscopy:advancedLab?[...I_IDS,...A_IDS]:I_IDS,NGS:N_IDS,ML:L_IDS})[selectedStage()]||P_IDS;
-let lastP="P01",lastI=advancedLab?"A01":"I01",lastN="N01",lastL="L01";
+let lastP="P01",lastI=advancedLab?"A00":"I01",lastN="N01",lastL="L01";
 function rememberLast(id){
  if(P_IDS.includes(id))lastP=id;
  else if(I_IDS.includes(id)||A_IDS.includes(id))lastI=id;
  else if(N_IDS.includes(id))lastN=id;
  else lastL=id;
 }
-const codeSelected=()=>document.querySelector('[data-mode="python"]')?.getAttribute("aria-pressed")==="true";
 const bridge=()=>window.BioPythonStudioBridge;
 const goals=()=>chapter?[...chapter.goals,chapter.capstone,chapter.review].filter(Boolean):[];
 const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
-const active=()=>!!chapter && stageOf(activeId)===selectedStage() && (isImaging(activeId)||codeSelected());
+const active=()=>!!chapter && stageOf(activeId)===selectedStage();
 const newerChapter=()=>["P04","P05","P06"].includes(activeId)||!P_IDS.includes(activeId);
 function preferEditorWhenCoding(){if(newerChapter())bridge()?.expandLesson?.(state.phase==="learn");}
 // Task comments are not an attempt. Keep actual Python separate from the prompt.
@@ -280,7 +279,7 @@ function syncActivity(){
  el("run-button").disabled=!visible||busy;
  const checkButton=el("p01-check");
  if(checkButton)checkButton.disabled=!visible||busy;
- if(!visible)el("run-button").title="Python execution is available in the Python Code workspace.";
+ if(!visible)el("run-button").title="Select a course chapter to run Python.";
 }
 function pyLiteral(value){
  if(value===null)return "None";
@@ -391,11 +390,11 @@ function mount(){
  // Optional opt-in entry: no new sidebar stage or editor clutter in standard mode.
  const advancedEntry=document.createElement("a");
  advancedEntry.id="bps-advanced-entry";advancedEntry.href="./?lab=advanced";
- advancedEntry.textContent="A01–A03 · Advanced research lab";
+ advancedEntry.textContent="Advanced research lab";
  advancedEntry.title="Open optional applied research projects in the same Python IDE";
  advancedEntry.hidden=activeId!=="I13"||advancedLab;
  const advancedDocs=document.createElement("a");advancedDocs.id="bps-advanced-docs";
- advancedDocs.href="./projects/advanced/a01/README.md";advancedDocs.target="_blank";
+ advancedDocs.href="./projects/advanced/"+activeId.toLowerCase()+"/README.md";advancedDocs.target="_blank";
  advancedDocs.rel="noopener noreferrer";advancedDocs.textContent="Advanced project · local data guide";
  advancedDocs.hidden=!A_IDS.includes(activeId);
  const standardReturn=document.createElement("a");standardReturn.id="bps-standard-return";
@@ -419,9 +418,6 @@ function mount(){
    if(target && stageOf(activeId)!==b.dataset.stage)switchChapter(target);
    syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
  }));
- document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
-  syncActivity();if(active())render();
- }));
  document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();run();}});
  window.addEventListener("beforeunload",remember);
 }
@@ -436,12 +432,14 @@ async function start(){
    chapters[id]=data;states[id]=loadState(id);
   }
   if(!chapters[activeId])activeId="P01";
-  if(advancedLab && !A_IDS.includes(activeId))activeId="A01";
+  if(advancedLab && !A_IDS.includes(activeId))activeId="A00";
   chapter=chapters[activeId];state=states[activeId];
   rememberLast(activeId);
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
   if(stageOf(activeId)!=="Python")bridge()?.selectStage?.(stageOf(activeId));
-  mount();bridge()?.selectPhase?.(state.phase);bridge()?.expandLesson?.(!newerChapter()||state.phase==="learn");
+  mount();bridge()?.selectPhase?.(state.phase);
+  // Fresh visits start with the lesson closed; the learner can expand it using the header button.
+  bridge()?.expandLesson?.(false);
   if(isImaging(activeId))bridge()?.ensureExampleImage?.();
   render();syncActivity();
   el("output-placeholder").textContent="Run your code to see real Python output or traceback.";

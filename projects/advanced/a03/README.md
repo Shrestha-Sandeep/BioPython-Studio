@@ -96,3 +96,17 @@ Before G3 can be considered scientifically validated:
 6. Run a blind, delayed transfer on new annotated data and reproduce outputs on another machine.
 
 Software CI currently uses **synthetic** image/mask fixtures to test code behavior only. No claim of high sensitivity, research-grade segmentation or held-out biological performance follows from a green CI run.
+
+
+## Supplemental annotation reliability — compare annotators
+
+[`annotator_agreement.py`](annotator_agreement.py) evaluates two independent instance-label maps at the *same original pixel coordinates*, with one-to-one matched objects, foreground pixel Dice/IoU and unmatched-object counts. It uses [A03's existing instance matching](metrics.py) and always marks **human review required**.
+
+```python
+from projects.advanced.a03.annotator_agreement import annotator_agreement
+# annotation_a and annotation_b must be real integer YX masks.
+agreement = annotator_agreement(annotation_a, annotation_b, min_iou=0.5)
+print(agreement["object_f1"], agreement["warning"])
+```
+
+For genuine annotation disagreement, use a written target-object rule and independent repeated annotations; examine touching, faint, partially visible, ambiguous and excluded structures. Agreement between annotators is **not** proof either annotation is biologically true. Never use held-out reference annotations to change thresholds and still call them untouched.

@@ -22,9 +22,14 @@ def main():
             page.on("pageerror", lambda err: errors.append(str(err)))
             page.add_init_script("""localStorage.setItem('biopython.ui-first.v1',
               JSON.stringify({drafts:{'Python:python':'# ORIGINAL_UNTOUCHED_DRAFT'},
-              theme:'dark',layout:{editorShare:54,consoleHeight:160,lessonOpen:false}}));""")
+              theme:'dark',layout:{editorShare:54,consoleHeight:160,lessonOpen:true}}));""")
             page.goto(URL, wait_until="domcontentloaded")
             page.locator("#p01-goal-select").wait_for(timeout=20000)
+            # The legacy saved expanded preference must not override the new default.
+            assert page.locator("#phase-panel").is_hidden(), "Learn panel should start collapsed"
+            assert page.locator("#lesson-toggle").get_attribute("aria-expanded") == "false"
+            page.locator("#lesson-toggle").click()
+            assert page.locator("#phase-panel").is_visible(), "Learner must be able to expand the panel"
             assert page.locator("#run-button").is_enabled(), "Python Run button must be enabled by P01 adapter"
             assert page.locator("#lesson-summary").inner_text().startswith("P01")
             page.locator("#run-button").click()
@@ -77,6 +82,9 @@ def main():
             assert "saved P01-G01 apply" in page.evaluate(
                 "() => document.querySelector('.CodeMirror').CodeMirror.getValue()"), "Reload lost draft"
             assert page.locator("#tab-apply").get_attribute("aria-selected") == "true", "Reload lost phase"
+            assert page.locator("#phase-panel").is_hidden(), "Reload should collapse lesson, without losing learner progress"
+            page.locator("#lesson-toggle").click()
+            assert page.locator("#phase-panel").is_visible()
 
             # New chapter: the full concept, prediction feedback and authentic source figure
             page.locator("#p01-goal-select").select_option("0")
@@ -185,6 +193,8 @@ def main():
                 if width <= 720:
                     mobile.locator("#nav-toggle").click()
                 mobile.locator("#tab-prove").click()
+                assert mobile.locator("#phase-panel").is_hidden(), "Mobile lesson must also start collapsed"
+                mobile.locator("#lesson-toggle").click()
                 mobile.locator("#p01-reflection").fill("Units, calibration and biological independence require interpretation.")
                 assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), ("Capstone overflow",width)
                 editor_box=mobile.locator("#code-wrapper").bounding_box()

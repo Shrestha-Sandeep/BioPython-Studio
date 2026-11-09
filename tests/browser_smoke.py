@@ -90,7 +90,10 @@ def main():
                 page.get_by_role("button", name="Collapse lesson").click()
                 assert not page.locator("#phase-panel").is_visible()
 
-                page.get_by_role("button", name="Image analysis").click()
+                assert page.locator(".mode-switch, [data-mode]").count()==0
+                if width <= 720:
+                    page.get_by_role("button", name="Open navigation").click()
+                page.locator('[data-stage="Microscopy"]').click()
                 assert page.locator("#image-panel").is_visible()
                 assert not page.locator("#horizontal-resizer").is_visible() if width <= 1050 else page.locator("#horizontal-resizer").is_visible()
                 assert page.locator("#z-plane").is_disabled()
@@ -170,7 +173,10 @@ def main():
                 page.get_by_role("button", name="Exit focus").click()
                 assert page.locator("#lesson").is_visible()
 
-                page.get_by_role("button", name="Code", exact=True).click()
+                if width <= 720:
+                    page.get_by_role("button", name="Open navigation").click()
+                page.locator('[data-stage="Python"]').click()
+                assert page.locator("#image-panel").is_hidden()
                 assert code_value(page) == "sample = 5\nprint(sample)"
                 page.get_by_role("button", name="Switch to light theme").click()
                 assert page.locator("body").get_attribute("data-theme") == "light"

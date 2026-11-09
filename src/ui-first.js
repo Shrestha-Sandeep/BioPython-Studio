@@ -13,7 +13,7 @@
       if (saved.layout && typeof saved.layout === "object") {
         if (Number.isFinite(saved.layout.editorShare)) memory.layout.editorShare = Math.min(75, Math.max(30, saved.layout.editorShare));
         if (Number.isFinite(saved.layout.consoleHeight)) memory.layout.consoleHeight = Math.min(380, Math.max(100, saved.layout.consoleHeight));
-        if (typeof saved.layout.lessonOpen === "boolean") memory.layout.lessonOpen = saved.layout.lessonOpen;
+        // Lesson visibility is intentionally per-visit; start collapsed even after a previously expanded session.
       }
     }
   } catch { /* The workspace still works when storage is blocked. */ }
@@ -170,13 +170,11 @@
     }
   }
 
+  // The selected course determines whether the workspace includes the image viewer.
   function switchMode(next, skipSave = false) {
     if (!["python", "image"].includes(next)) return;
     if (!skipSave && next !== mode) saveEditor();
     mode = next;
-    for (const button of document.querySelectorAll("[data-mode]")) {
-      button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
-    }
     const showImage = mode === "image";
     $("image-panel").hidden = !showImage;
     $("horizontal-resizer").hidden = !showImage;
@@ -514,7 +512,7 @@
   theme(memory.theme);
   setEditorShare(memory.layout.editorShare);
   setConsoleHeight(memory.layout.consoleHeight);
-  openLesson(memory.layout.lessonOpen, false);
+  openLesson(false, false);
   chooseStage("Python");
   choosePhase("learn");
   chooseResult("output");
@@ -525,7 +523,6 @@
     if (cm) cm.focus(); else $("code-editor").focus();
   });
   document.querySelectorAll("[data-stage]").forEach(item => item.addEventListener("click", () => chooseStage(item.dataset.stage)));
-  document.querySelectorAll("[data-mode]").forEach(item => item.addEventListener("click", () => switchMode(item.dataset.mode)));
   document.querySelectorAll("[data-phase]").forEach(item => {
     item.addEventListener("click", () => choosePhase(item.dataset.phase));
     item.addEventListener("keydown", event => {

@@ -1,0 +1,65 @@
+name: Advanced A00 A05-A07 complete real Pyodide learner QA
+
+on:
+  push:
+    branches: ['advancement/a00-a05-a07-core-and-qa']
+    paths:
+      - '.github/workflows/advanced-core-browser.yml'
+      - 'content/a00/**'
+      - 'content/a05/**'
+      - 'content/a06/**'
+      - 'content/a07/**'
+      - 'src/course-adapter.js'
+      - 'tests/test_advanced_core_browser.py'
+      - 'tests/test_advanced_core_learning.py'
+      - 'tests/reference_a0*_advanced.json'
+  pull_request:
+    paths:
+      - '.github/workflows/advanced-core-browser.yml'
+      - 'content/a00/**'
+      - 'content/a05/**'
+      - 'content/a06/**'
+      - 'content/a07/**'
+      - 'src/course-adapter.js'
+      - 'tests/test_advanced_core_browser.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  core-pyodide-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install local scientific packages and Chromium
+        run: |
+          python -m pip install -r projects/advanced/requirements.txt playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Original JavaScript shell and 128 real Python cases
+        run: |
+          node --check src/course-adapter.js
+          node --check src/ui-first.js
+          node --test tests/preview.test.mjs tests/witz_sources.test.mjs
+          python -m pytest -q tests/test_advanced_core_learning.py tests/test_advanced_a00_a05_a06_a07.py
+      - name: Real-browser Pyodide — A00 A05 A06 A07
+        run: python tests/test_advanced_core_browser.py
+      - name: Existing A01 A02 A03 browser and native uint16 source regressions
+        run: python tests/test_advanced_learning_browser.py
+      - name: Preserve screenshots for manual UI audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: advanced-seven-chapter-browser-qa
+          path: |
+            artifacts/advanced-core/*.png
+            artifacts/advanced-learning/*.png
+          retention-days: 30
+          if-no-files-found: ignore

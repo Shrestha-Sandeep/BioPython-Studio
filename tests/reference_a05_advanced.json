@@ -1,0 +1,34 @@
+{
+  "A05-G01": {
+    "apply": "from collections import Counter\ncounts=Counter(r['field_id'] for r in data['metadata'])\nmissing=sorted({r['field_id'] for r in data['measurements'] if r['field_id'] not in counts})\nresult={'matched':sum(counts[r['field_id']]==1 for r in data['measurements']),'missing':missing,'duplicate_metadata':sorted(k for k,v in counts.items() if v>1)}\nprint(result)",
+    "prove": "from collections import Counter\ncounts=Counter(r['field_id'] for r in data['metadata'])\nmissing=sorted({r['field_id'] for r in data['measurements'] if r['field_id'] not in counts})\nresult={'matched':sum(counts[r['field_id']]==1 for r in data['measurements']),'missing':missing,'duplicate_metadata':sorted(k for k,v in counts.items() if v>1)}\nprint(result)"
+  },
+  "A05-G02": {
+    "apply": "from collections import defaultdict\nfrom statistics import mean\nanimals=defaultdict(list)\nfor row in data['rows']:animals[row['animal_id']].append(float(row['signal']))\nresult={'animal_n':len(animals),'field_n':len(data['rows']),'animal_mean':float(mean(mean(v) for v in animals.values())),'field_pooled_mean':float(mean(float(r['signal']) for r in data['rows']))}\nprint(result)",
+    "prove": "from collections import defaultdict\nfrom statistics import mean\nanimals=defaultdict(list)\nfor row in data['rows']:animals[row['animal_id']].append(float(row['signal']))\nresult={'animal_n':len(animals),'field_n':len(data['rows']),'animal_mean':float(mean(mean(v) for v in animals.values())),'field_pooled_mean':float(mean(float(r['signal']) for r in data['rows']))}\nprint(result)"
+  },
+  "A05-G03": {
+    "apply": "from collections import defaultdict\nx=defaultdict(list)\nfor row in data['rows']:\n if not row['exclude_reason']:x[row['animal_id']].append(float(row['signal']))\nresult={'animal_means':{a:sum(v)/len(v) for a,v in sorted(x.items())},'excluded_fields':sum(bool(r['exclude_reason']) for r in data['rows']),'included_fields':sum(not r['exclude_reason'] for r in data['rows'])}\nprint(result)",
+    "prove": "from collections import defaultdict\nx=defaultdict(list)\nfor row in data['rows']:\n if not row['exclude_reason']:x[row['animal_id']].append(float(row['signal']))\nresult={'animal_means':{a:sum(v)/len(v) for a,v in sorted(x.items())},'excluded_fields':sum(bool(r['exclude_reason']) for r in data['rows']),'included_fields':sum(not r['exclude_reason'] for r in data['rows'])}\nprint(result)"
+  },
+  "A05-G04": {
+    "apply": "differences=[float(r['treatment']-r['control']) for r in data['pairs']]\nresult={'paired_mean_difference':sum(differences)/len(differences),'pairs':len(differences),'differences':differences}\nprint(result)",
+    "prove": "differences=[float(r['treatment']-r['control']) for r in data['pairs']]\nresult={'paired_mean_difference':sum(differences)/len(differences),'pairs':len(differences),'differences':differences}\nprint(result)"
+  },
+  "A05-G05": {
+    "apply": "import numpy as np\nc=np.asarray(data['control'],float);t=np.asarray(data['treatment'],float)\nrng=np.random.default_rng(data['seed'])\nci=rng.integers(0,len(c),(data['draws'],len(c)))\nti=rng.integers(0,len(t),(data['draws'],len(t)))\ndiff=t[ti].mean(axis=1)-c[ci].mean(axis=1)\nlow,high=np.quantile(diff,[.025,.975])\nresult={'effect':float(t.mean()-c.mean()),'ci_low':float(low),'ci_high':float(high)}\nprint(result)",
+    "prove": "import numpy as np\nc=np.asarray(data['control'],float);t=np.asarray(data['treatment'],float)\nrng=np.random.default_rng(data['seed'])\nci=rng.integers(0,len(c),(data['draws'],len(c)))\nti=rng.integers(0,len(t),(data['draws'],len(t)))\ndiff=t[ti].mean(axis=1)-c[ci].mean(axis=1)\nlow,high=np.quantile(diff,[.025,.975])\nresult={'effect':float(t.mean()-c.mean()),'ci_low':float(low),'ci_high':float(high)}\nprint(result)"
+  },
+  "A05-G06": {
+    "apply": "points=sorted([[x['condition'],x['animal_id'],float(x['mean_signal'])] for x in data['units']])\nresult={'points':points,'n_animals':len({x['animal_id'] for x in data['units']}),'ylabel':data['ylabel']}\nprint(result)",
+    "prove": "points=sorted([[x['condition'],x['animal_id'],float(x['mean_signal'])] for x in data['units']])\nresult={'points':points,'n_animals':len({x['animal_id'] for x in data['units']}),'ylabel':data['ylabel']}\nprint(result)"
+  },
+  "A05-CAPSTONE": {
+    "apply": "from collections import defaultdict\nvalues=defaultdict(list)\nfor r in data['rows']:\n if not r['exclude_reason']:values[(r['condition'],r['animal_id'])].append(float(r['signal']))\nanimals={k:sum(v)/len(v) for k,v in values.items()}\nc=[v for (group,_),v in animals.items() if group==data['control']]\nt=[v for (group,_),v in animals.items() if group==data['treatment']]\nresult={'control_n':len(c),'treatment_n':len(t),'effect':sum(t)/len(t)-sum(c)/len(c),'pseudoreplication_avoided':True}\nprint(result)",
+    "prove": "from collections import defaultdict\nvalues=defaultdict(list)\nfor r in data['rows']:\n if not r['exclude_reason']:values[(r['condition'],r['animal_id'])].append(float(r['signal']))\nanimals={k:sum(v)/len(v) for k,v in values.items()}\nc=[v for (group,_),v in animals.items() if group==data['control']]\nt=[v for (group,_),v in animals.items() if group==data['treatment']]\nresult={'control_n':len(c),'treatment_n':len(t),'effect':sum(t)/len(t)-sum(c)/len(c),'pseudoreplication_avoided':True}\nprint(result)"
+  },
+  "A05-REVIEW": {
+    "apply": "from collections import defaultdict\na=defaultdict(list)\nfor r in data['rows']:a[r['animal']].append(r['signal'])\nresult={'biological_n':len(a),'technical_n':len(data['rows']),'animal_mean_overall':sum(sum(v)/len(v) for v in a.values())/len(a)}\nprint(result)",
+    "prove": "from collections import defaultdict\na=defaultdict(list)\nfor r in data['rows']:a[r['animal']].append(r['signal'])\nresult={'biological_n':len(a),'technical_n':len(data['rows']),'animal_mean_overall':sum(sum(v)/len(v) for v in a.values())/len(a)}\nprint(result)"
+  }
+}

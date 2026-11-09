@@ -4,3 +4,4 @@ scikit-image>=0.24,<1
 pillow>=10,<13
 tifffile>=2024.9
 pytest>=8,<10
+matplotlib>=3.8,<4

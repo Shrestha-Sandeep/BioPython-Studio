@@ -31,3 +31,18 @@ Omit `--channel`, `--time` or `--z` when that axis is absent or length 1. The to
 ### Next project
 
 After actual learner testing and data-source review, A02/A03 will add independently annotated images, object definitions and matched-error metrics. The Witz HPA JPEG-derived TIFFs are appropriate demonstrations of file handling, **not** substitutes for native microscope sources or independent segmentation reference masks.
+
+
+## Supplemental scientific controls — native quality, optics and sampling
+
+The locally executable [`quality.py`](quality.py) adds conservative diagnostics for digital saturation at the original integer dtype maximum, finite/nonfinite pixels, border and spatial-tile median variation, and **pixels per verified PSF FWHM** only when optical PSF and pixel scale are both independently verified. This is an artifact screening aid; neither the dye, PSF nor native camera gain is inferred from a TIFF extension.
+
+```python
+import tifffile
+from projects.advanced.a01.quality import inspect_quality
+native = tifffile.imread("/path/to/original.tif")
+q = inspect_quality(native, scale_verified=False)
+print(q["at_dtype_max"], q["optical_scale_verified"])
+```
+
+Learning checkpoint: explain detector saturation vs digital dtype maximum, illumination gradient vs real biological structure, spatial sampling relative to the PSF, photobleaching across time and channel bleed-through. No colocalization or absolute molecular concentration conclusion follows from an uncalibrated single field. Source reading: [Pete Bankhead, Introduction to Bioimage Analysis](https://bioimagebook.github.io/), [OME metadata specifications](https://docs.openmicroscopy.org/ome-model/).
