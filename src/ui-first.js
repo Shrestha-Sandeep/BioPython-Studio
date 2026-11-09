@@ -13,7 +13,7 @@
       if (saved.layout && typeof saved.layout === "object") {
         if (Number.isFinite(saved.layout.editorShare)) memory.layout.editorShare = Math.min(75, Math.max(30, saved.layout.editorShare));
         if (Number.isFinite(saved.layout.consoleHeight)) memory.layout.consoleHeight = Math.min(380, Math.max(100, saved.layout.consoleHeight));
-        if (typeof saved.layout.lessonOpen === "boolean") memory.layout.lessonOpen = saved.layout.lessonOpen;
+        // Lesson visibility is intentionally per-visit; start collapsed even after a previously expanded session.
       }
     }
   } catch { /* The workspace still works when storage is blocked. */ }
@@ -514,7 +514,7 @@
   theme(memory.theme);
   setEditorShare(memory.layout.editorShare);
   setConsoleHeight(memory.layout.consoleHeight);
-  openLesson(memory.layout.lessonOpen, false);
+  openLesson(false, false);
   chooseStage("Python");
   choosePhase("learn");
   chooseResult("output");
