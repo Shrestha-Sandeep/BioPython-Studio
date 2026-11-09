@@ -1,0 +1,40 @@
+name: Consolidated BioPython Studio release contract
+
+on:
+  push:
+    branches:
+      - release/phase1-consolidated-candidate
+  pull_request:
+    paths:
+      - 'content/**'
+      - 'curriculum/**'
+      - 'src/course-adapter.js'
+      - 'src/ui-first.js'
+      - 'index.html'
+      - 'tests/test_release_candidate_contract.py'
+      - '.github/workflows/release-candidate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inventory-ui-and-progress-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: All 26 core chapters, seven advanced modules and 156 competency IDs
+        run: python tests/test_release_candidate_contract.py -v
+      - name: Verify frozen browser shell and sources
+        run: |
+          node --check src/ui-first.js
+          node --check src/course-adapter.js
+          node --check src/course-teaching.js
+          node --test tests/preview.test.mjs tests/witz_sources.test.mjs
