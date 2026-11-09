@@ -6,7 +6,7 @@ const read = path => fs.readFileSync(new URL("../" + path, import.meta.url), "ut
 test("IDE-first shell has compact learning controls, real editor integration and viewer regions", () => {
  const html = read("index.html");
  for (const id of [
-   "sidebar", "course-nav", "mode-python", "mode-image", "phase-panel", "lesson-toggle",
+   "sidebar", "course-nav", "phase-panel", "lesson-toggle",
    "code-editor", "line-numbers", "run-button", "image-panel", "image-upload", "image-preview",
    "image-zoom", "pixel-readout", "preview-channel", "z-plane", "time-point",
    "horizontal-resizer", "vertical-resizer", "focus-toggle", "output-body", "reference", "theme-toggle",
@@ -14,6 +14,9 @@ test("IDE-first shell has compact learning controls, real editor integration and
  ]) assert.ok(html.includes('id="' + id + '"'), "Missing " + id);
  for (const stage of ["Python foundations", "Microscopy", "Sequence analysis", "Machine learning"])
    assert.match(html, new RegExp(stage));
+ assert.doesNotMatch(html, /id="mode-(?:python|image)"/, "Workspace switches automatically with the selected course");
+ assert.doesNotMatch(html, /class="mode-switch"/, "No redundant header mode selector");
+ assert.match(read("src/ui-first.js"), /switchMode\(info\.mode, true\)/, "Course stage must select code/image viewer automatically");
  assert.match(html, /id="run-button"[^>]*disabled/);
  assert.match(html, /id="phase-panel"[^>]*hidden/);
  assert.match(html, /id="z-plane"[^>]*disabled/);
