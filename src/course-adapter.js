@@ -395,7 +395,7 @@ function mount(){
  advancedEntry.title="Open optional applied research projects in the same Python IDE";
  advancedEntry.hidden=activeId!=="I13"||advancedLab;
  const advancedDocs=document.createElement("a");advancedDocs.id="bps-advanced-docs";
- advancedDocs.href="./projects/advanced/a01/README.md";advancedDocs.target="_blank";
+ advancedDocs.href="./projects/advanced/"+activeId.toLowerCase()+"/README.md";advancedDocs.target="_blank";
  advancedDocs.rel="noopener noreferrer";advancedDocs.textContent="Advanced project · local data guide";
  advancedDocs.hidden=!A_IDS.includes(activeId);
  const standardReturn=document.createElement("a");standardReturn.id="bps-standard-return";
