@@ -128,9 +128,9 @@ def test_optional_url_route_and_course_state_are_separate():
     assert 'new URLSearchParams(window.location.search).get("lab")==="advanced"' in adapter
     assert 'const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...(advancedLab?A_IDS:[])];' in adapter
     assert 'advancedLab?"biopython.advanced-selected.v1":"biopython.course-selected.v1"' in adapter
-    assert 'advancedLab?"A01":"P01"' in adapter
+    assert 'advancedLab?"A00":"P01"' in adapter
     assert 'advancedLab?[...I_IDS,...A_IDS]:I_IDS' in adapter
-    assert 'A01:4,A02:5,A03:5' in adapter
+    assert 'A00:5,A01:4,A02:5,A03:5,A05:6,A06:6,A07:7' in adapter
     assert 'href="./?lab=advanced"' in adapter
     assert 'href="./"' in adapter
     assert 'isImaging=id=>I_IDS.includes(id)||A_IDS.includes(id)' in adapter
