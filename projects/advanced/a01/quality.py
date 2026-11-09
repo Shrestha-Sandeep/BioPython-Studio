@@ -14,7 +14,7 @@ def inspect_quality(image: np.ndarray, *, pixel_size_um: float | None = None,
                     scale_verified: bool = False) -> dict:
     arr = np.asarray(image)
     if arr.ndim != 2 or not arr.size or arr.dtype.kind not in "uif":
-        raise ValueError("A01 quality check expects native 2D numeric YX image")
+        raise ValueError("A01 quality check expects nonempty native 2D numeric YX image")
     finite=np.isfinite(arr)
     if not np.any(finite):
         raise ValueError("Image has no finite values")
