@@ -45,13 +45,12 @@ function rememberLast(id){
  else if(N_IDS.includes(id))lastN=id;
  else lastL=id;
 }
-const codeSelected=()=>document.querySelector('[data-mode="python"]')?.getAttribute("aria-pressed")==="true";
 const bridge=()=>window.BioPythonStudioBridge;
 const goals=()=>chapter?[...chapter.goals,chapter.capstone,chapter.review].filter(Boolean):[];
 const goal=()=>goals()[state.goal];
 const task=()=>goal()?.phases[state.phase];
 const key=()=>String(goal()?.id)+":"+state.phase;
-const active=()=>!!chapter && stageOf(activeId)===selectedStage() && (isImaging(activeId)||codeSelected());
+const active=()=>!!chapter && stageOf(activeId)===selectedStage();
 const newerChapter=()=>["P04","P05","P06"].includes(activeId)||!P_IDS.includes(activeId);
 function preferEditorWhenCoding(){if(newerChapter())bridge()?.expandLesson?.(state.phase==="learn");}
 // Task comments are not an attempt. Keep actual Python separate from the prompt.
@@ -280,7 +279,7 @@ function syncActivity(){
  el("run-button").disabled=!visible||busy;
  const checkButton=el("p01-check");
  if(checkButton)checkButton.disabled=!visible||busy;
- if(!visible)el("run-button").title="Python execution is available in the Python Code workspace.";
+ if(!visible)el("run-button").title="Select a course chapter to run Python.";
 }
 function pyLiteral(value){
  if(value===null)return "None";
@@ -418,9 +417,6 @@ function mount(){
   const target=({Python:lastP,Microscopy:lastI,NGS:lastN,ML:lastL})[b.dataset.stage];
    if(target && stageOf(activeId)!==b.dataset.stage)switchChapter(target);
    syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
- }));
- document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
-  syncActivity();if(active())render();
  }));
  document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();run();}});
  window.addEventListener("beforeunload",remember);
