@@ -62,3 +62,18 @@ Pass only with original-source preservation, documented parameters, readable mas
 The `segment` function can also run on explicitly selected 2D NumPy arrays from other readers; that does not validate unknown vendor metadata.
 
 **Next:** A03 annotation-based one-to-one matching with a locked holdout.
+
+
+## Supplemental biological image features — puncta and core/rim
+
+The new [`puncta.py`](puncta.py) provides normalized negative-Laplacian-of-Gaussian local maxima with explicit sigma/response threshold, source-intensity and ROI handling, and object-specific **core/rim** intensity features in pixel space. Synthetic tests verify that known bright spots are located without converting original uint16 data.
+
+```python
+import tifffile
+from projects.advanced.a02.puncta import candidate_puncta
+image = tifffile.imread("/path/to/single_YX_plane.tif")
+report = candidate_puncta(image, sigma=1.5, response_threshold=250)
+print(report["candidate_count"], report["warnings"])
+```
+
+This is intentionally **not an exopher or protein aggregate detector**. Puncta, debris, organelles, vesicles and aggregates require a biological object definition and independent annotations. Mean core/rim intensities depend on source units, segmentation masks, optical blur, detector saturation, and bleed-through; apparent two-channel proximity is not proof of molecular interaction. Compare mask sensitivity, single-label controls, bleed-through controls and negative biological controls before making any colocalization inference.
