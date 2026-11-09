@@ -44,6 +44,12 @@ def main():
             page.goto(BASE+"?lab=advanced",wait_until="domcontentloaded")
             page.locator("#bps-chapter-select").wait_for(timeout=30000)
             assert page.locator("#bps-chapter-select").input_value()=="A00"
+            assert page.locator("#phase-panel").is_hidden(), "Advanced Lab should also start collapsed"
+            assert page.locator("#lesson-toggle").get_attribute("aria-expanded")=="false"
+            page.locator("#lesson-toggle").click()
+            assert page.locator("#phase-panel").is_visible(), "Advanced lesson should expand manually"
+            page.locator("#lesson-toggle").click()
+            assert page.locator("#phase-panel").is_hidden(), "Advanced lesson should collapse manually"
             assert page.locator("#bps-chapter-select option").count()==20
             assert page.locator("#bps-advanced-docs").get_attribute("href").endswith("/a00/README.md")
             assert page.evaluate("localStorage.getItem('biopython.course-selected.v1')")==legacy
@@ -91,6 +97,7 @@ def main():
                 phone.goto(BASE+"?lab=advanced",wait_until="domcontentloaded")
                 phone.locator("#bps-chapter-select").wait_for(state="attached",timeout=30000)
                 assert phone.locator("#bps-chapter-select").input_value()=="A00"
+                assert phone.locator("#phase-panel").is_hidden(), "Advanced mobile must start collapsed"
                 assert phone.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),width
                 phone.screenshot(path=str(images/f"advanced-core-{width}.png"),full_page=True)
                 phone.close()
