@@ -1,0 +1,38 @@
+{
+  "A07-G01": {
+    "apply": "required=['target_definition','biological_unit','primary_endpoint','exclusion_rules']\nmissing=sorted(k for k in required if not data['plan'].get(k))\nresult={'missing':missing,'ready_to_annotate':not bool(missing)}\nprint(result)",
+    "prove": "required=['target_definition','biological_unit','primary_endpoint','exclusion_rules']\nmissing=sorted(k for k in required if not data['plan'].get(k))\nresult={'missing':missing,'ready_to_annotate':not bool(missing)}\nprint(result)"
+  },
+  "A07-G02": {
+    "apply": "axes=data['axes'];shape=data['shape']\nresult={'yx':[shape[axes.index('Y')],shape[axes.index('X')]],'nonspatial_axes':[a for a in axes if a not in 'YX'],'calibration_known':bool(data['scale_verified'])}\nprint(result)",
+    "prove": "axes=data['axes'];shape=data['shape']\nresult={'yx':[shape[axes.index('Y')],shape[axes.index('X')]],'nonspatial_axes':[a for a in axes if a not in 'YX'],'calibration_known':bool(data['scale_verified'])}\nprint(result)"
+  },
+  "A07-G03": {
+    "apply": "kind=data['annotation_type']\nresult={'pixel_iou_allowed':kind in ('pixel_masks','instance_masks'),'object_matching_allowed':kind=='instance_masks' and bool(data['has_object_ids']),'count_error_allowed':True}\nprint(result)",
+    "prove": "kind=data['annotation_type']\nresult={'pixel_iou_allowed':kind in ('pixel_masks','instance_masks'),'object_matching_allowed':kind=='instance_masks' and bool(data['has_object_ids']),'count_error_allowed':True}\nprint(result)"
+  },
+  "A07-G04": {
+    "apply": "dev={r['biological_group'] for r in data['images'] if r['split']=='development'}\nhold={r['biological_group'] for r in data['images'] if r['split']=='holdout'}\nresult={'leaking_groups':sorted(dev&hold),'development_n':sum(r['split']=='development' for r in data['images']),'holdout_n':sum(r['split']=='holdout' for r in data['images'])}\nprint(result)",
+    "prove": "dev={r['biological_group'] for r in data['images'] if r['split']=='development'}\nhold={r['biological_group'] for r in data['images'] if r['split']=='holdout'}\nresult={'leaking_groups':sorted(dev&hold),'development_n':sum(r['split']=='development' for r in data['images']),'holdout_n':sum(r['split']=='holdout' for r in data['images'])}\nprint(result)"
+  },
+  "A07-G05": {
+    "apply": "tp=sum(r['tp'] for r in data['images']);fp=sum(r['fp'] for r in data['images']);fn=sum(r['fn'] for r in data['images'])\nf1=2*tp/(2*tp+fp+fn) if 2*tp+fp+fn else 1.0\nerrors=[abs((r['tp']+r['fp'])-(r['tp']+r['fn'])) for r in data['images']]\nresult={'micro_f1':float(f1),'mean_abs_count_error':sum(errors)/len(errors),'n_images':len(errors)}\nprint(result)",
+    "prove": "tp=sum(r['tp'] for r in data['images']);fp=sum(r['fp'] for r in data['images']);fn=sum(r['fn'] for r in data['images'])\nf1=2*tp/(2*tp+fp+fn) if 2*tp+fp+fn else 1.0\nerrors=[abs((r['tp']+r['fp'])-(r['tp']+r['fn'])) for r in data['images']]\nresult={'micro_f1':float(f1),'mean_abs_count_error':sum(errors)/len(errors),'n_images':len(errors)}\nprint(result)"
+  },
+  "A07-G06": {
+    "apply": "keys=['source_sha','config_sha','output_sha']\nagree=all(data['expected'][k]==data['observed'][k] for k in keys)\nfresh=bool(data['clean_checkout'])\nresult={'hash_match':agree,'fresh_reproduction_declared':fresh,'ready_for_review':agree and fresh}\nprint(result)",
+    "prove": "keys=['source_sha','config_sha','output_sha']\nagree=all(data['expected'][k]==data['observed'][k] for k in keys)\nfresh=bool(data['clean_checkout'])\nresult={'hash_match':agree,'fresh_reproduction_declared':fresh,'ready_for_review':agree and fresh}\nprint(result)"
+  },
+  "A07-G07": {
+    "apply": "d=data\nif not d['group_disjoint'] or not d['reproducible']:choice='NO_GO'\nelif not d['annotation_sufficient']:choice='MORE_ANNOTATION'\nelif d['object_f1']<d['threshold']:choice='IMPROVE_METHOD'\nelse:choice='REVIEW'\nresult={'recommendation':choice,'scientifically_certified':False}\nprint(result)",
+    "prove": "d=data\nif not d['group_disjoint'] or not d['reproducible']:choice='NO_GO'\nelif not d['annotation_sufficient']:choice='MORE_ANNOTATION'\nelif d['object_f1']<d['threshold']:choice='IMPROVE_METHOD'\nelse:choice='REVIEW'\nresult={'recommendation':choice,'scientifically_certified':False}\nprint(result)"
+  },
+  "A07-CAPSTONE": {
+    "apply": "dev={r['group'] for r in data['images'] if r['split']=='development'}\nhold=[r for r in data['images'] if r['split']=='holdout']\nleak=sorted(dev&{r['group'] for r in hold})\ntp=sum(r['tp'] for r in hold);fp=sum(r['fp'] for r in hold);fn=sum(r['fn'] for r in hold)\nresult={'holdout_images':len(hold),'leaking_groups':leak,'holdout_micro_f1':2*tp/(2*tp+fp+fn) if 2*tp+fp+fn else 1.0,'method_frozen':bool(data['frozen']),'human_review_required':True}\nprint(result)",
+    "prove": "dev={r['group'] for r in data['images'] if r['split']=='development'}\nhold=[r for r in data['images'] if r['split']=='holdout']\nleak=sorted(dev&{r['group'] for r in hold})\ntp=sum(r['tp'] for r in hold);fp=sum(r['fp'] for r in hold);fn=sum(r['fn'] for r in hold)\nresult={'holdout_images':len(hold),'leaking_groups':leak,'holdout_micro_f1':2*tp/(2*tp+fp+fn) if 2*tp+fp+fn else 1.0,'method_frozen':bool(data['frozen']),'human_review_required':True}\nprint(result)"
+  },
+  "A07-REVIEW": {
+    "apply": "d=data['evidence'];issues=[]\nif not d['annotations']:issues.append('missing_annotation')\nif not d['disjoint_groups']:issues.append('group_leakage')\nif not d['hashes_match']:issues.append('hash_mismatch')\nif d['object_f1']<d['min_f1']:issues.append('low_f1')\nresult={'needs_human_review':True,'blocking_issues':sorted(issues)}\nprint(result)",
+    "prove": "d=data['evidence'];issues=[]\nif not d['annotations']:issues.append('missing_annotation')\nif not d['disjoint_groups']:issues.append('group_leakage')\nif not d['hashes_match']:issues.append('hash_mismatch')\nif d['object_f1']<d['min_f1']:issues.append('low_f1')\nresult={'needs_human_review':True,'blocking_issues':sorted(issues)}\nprint(result)"
+  }
+}
