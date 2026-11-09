@@ -1,0 +1,34 @@
+{
+  "A06-G01": {
+    "apply": "import numpy as np\ndef correct(values,background):\n return np.maximum(np.asarray(values,dtype=np.uint16).astype(float)-background,0)\npixels=correct(data['pixels'],data['background'])\nresult={'candidate_pixels':int(np.count_nonzero(pixels>data['threshold'])),'max_corrected':float(pixels.max())}\nprint(result)",
+    "prove": "import numpy as np\ndef correct(values,background):\n return np.maximum(np.asarray(values,dtype=np.uint16).astype(float)-background,0)\npixels=correct(data['pixels'],data['background'])\nresult={'candidate_pixels':int(np.count_nonzero(pixels>data['threshold'])),'max_corrected':float(pixels.max())}\nprint(result)"
+  },
+  "A06-G02": {
+    "apply": "axes=data['axes'];shape=data['shape'];sel=data['selection']\nmissing=sorted(a for a,n in zip(axes,shape) if a not in 'YX' and n>1 and a not in sel)\nresult={'selected_shape':[shape[axes.index('Y')],shape[axes.index('X')]],'missing_non_singleton':missing}\nprint(result)",
+    "prove": "axes=data['axes'];shape=data['shape'];sel=data['selection']\nmissing=sorted(a for a,n in zip(axes,shape) if a not in 'YX' and n>1 and a not in sel)\nresult={'selected_shape':[shape[axes.index('Y')],shape[axes.index('X')]],'missing_non_singleton':missing}\nprint(result)"
+  },
+  "A06-G03": {
+    "apply": "from collections import Counter\ncounts=Counter(r['image_id'] for r in data['records'])\ndups=sorted(k for k,v in counts.items() if v>1)\nmissing=sorted(r['image_id'] for r in data['records'] if not r['exists'])\nresult={'duplicates':dups,'missing_sources':missing,'can_start':not bool(dups or missing)}\nprint(result)",
+    "prove": "from collections import Counter\ncounts=Counter(r['image_id'] for r in data['records'])\ndups=sorted(k for k,v in counts.items() if v>1)\nmissing=sorted(r['image_id'] for r in data['records'] if not r['exists'])\nresult={'duplicates':dups,'missing_sources':missing,'can_start':not bool(dups or missing)}\nprint(result)"
+  },
+  "A06-G04": {
+    "apply": "import hashlib,json\nresult={'source_sha256':hashlib.sha256(bytes(data['source_bytes'])).hexdigest(),'config_sha256':hashlib.sha256(json.dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest(),'environment':data['environment']}\nprint(result)",
+    "prove": "import hashlib,json\nresult={'source_sha256':hashlib.sha256(bytes(data['source_bytes'])).hexdigest(),'config_sha256':hashlib.sha256(json.dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest(),'environment':data['environment']}\nprint(result)"
+  },
+  "A06-G05": {
+    "apply": "passed=[];failed=[]\nfor item in data['cases']:\n actual=sum(bool(x) for row in item['mask'] for x in row)\n (passed if actual==item['expected_pixels'] else failed).append(item['id'])\nresult={'passed':sorted(passed),'failed':sorted(failed)}\nprint(result)",
+    "prove": "passed=[];failed=[]\nfor item in data['cases']:\n actual=sum(bool(x) for row in item['mask'] for x in row)\n (passed if actual==item['expected_pixels'] else failed).append(item['id'])\nresult={'passed':sorted(passed),'failed':sorted(failed)}\nprint(result)"
+  },
+  "A06-G06": {
+    "apply": "keys=['source_hash','config_hash','output_hash']\ndiff=sorted(k for k in keys if data['first'][k]!=data['second'][k])\nresult={'equivalent':not bool(diff),'differing_fields':diff}\nprint(result)",
+    "prove": "keys=['source_hash','config_hash','output_hash']\ndiff=sorted(k for k in keys if data['first'][k]!=data['second'][k])\nresult={'equivalent':not bool(diff),'differing_fields':diff}\nprint(result)"
+  },
+  "A06-CAPSTONE": {
+    "apply": "from collections import defaultdict\nper_field={};per_animal=defaultdict(list)\nfor row in data['fields']:\n count=sum(float(x)>data['threshold'] for line in row['pixels'] for x in line)\n per_field[row['field_id']]=int(count)\n per_animal[row['animal_id']].append(int(count))\nresult={'field_counts':per_field,'animal_means':{a:sum(v)/len(v) for a,v in sorted(per_animal.items())},'source_fields':len(data['fields']),'biological_n':len(per_animal),'candidate_only':True}\nprint(result)",
+    "prove": "from collections import defaultdict\nper_field={};per_animal=defaultdict(list)\nfor row in data['fields']:\n count=sum(float(x)>data['threshold'] for line in row['pixels'] for x in line)\n per_field[row['field_id']]=int(count)\n per_animal[row['animal_id']].append(int(count))\nresult={'field_counts':per_field,'animal_means':{a:sum(v)/len(v) for a,v in sorted(per_animal.items())},'source_fields':len(data['fields']),'biological_n':len(per_animal),'candidate_only':True}\nprint(result)"
+  },
+  "A06-REVIEW": {
+    "apply": "a=data['first'];b=data['second']\nresult={'exact_result_match':a['source_hash']==b['source_hash'] and a['parameter_hash']==b['parameter_hash'] and a['result_hash']==b['result_hash'],'source_match':a['source_hash']==b['source_hash'],'environment_changed':a['environment']!=b['environment']}\nprint(result)",
+    "prove": "a=data['first'];b=data['second']\nresult={'exact_result_match':a['source_hash']==b['source_hash'] and a['parameter_hash']==b['parameter_hash'] and a['result_hash']==b['result_hash'],'source_match':a['source_hash']==b['source_hash'],'environment_changed':a['environment']!=b['environment']}\nprint(result)"
+  }
+}
