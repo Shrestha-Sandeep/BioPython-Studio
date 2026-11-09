@@ -77,10 +77,10 @@ def main():
 
                 page.goto(BASE+"?lab=advanced",wait_until="domcontentloaded")
                 page.locator("#bps-chapter-select").wait_for(timeout=30000)
-                assert page.locator("#bps-chapter-select").input_value()=="A01"
-                assert page.locator("#bps-chapter-select option").count()==16
+                assert page.locator("#bps-chapter-select").input_value()=="A00"
+                assert page.locator("#bps-chapter-select option").count()==20
                 assert page.locator("#bps-standard-return").get_attribute("href")=="./"
-                assert page.locator("#bps-advanced-docs").get_attribute("href").endswith("/a01/README.md")
+                assert page.locator("#bps-advanced-docs").get_attribute("href").endswith("/a00/README.md")
                 assert page.evaluate("localStorage.getItem('biopython.course-selected.v1')")==original
 
                 for cid in IDS:
@@ -149,7 +149,7 @@ def main():
                     mobile=browser.new_page(viewport={"width":width,"height":height})
                     mobile.goto(BASE+"?lab=advanced",wait_until="domcontentloaded")
                     mobile.locator("#bps-chapter-select").wait_for(state="attached",timeout=30000)
-                    assert mobile.locator("#bps-chapter-select").input_value()=="A01"
+                    assert mobile.locator("#bps-chapter-select").input_value()=="A00"
                     assert mobile.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),width
                     mobile.screenshot(path=str(art/f"advanced-{width}.png"),full_page=True)
                     mobile.close()
