@@ -1,0 +1,1888 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "A06",
+  "version": "1.0.0",
+  "status": "OPTIONAL_ADVANCED_PILOT_NOT_LEARNER_VALIDATED",
+  "title": "Reproducible batch-image software",
+  "competencies": [
+    "A06-G01",
+    "A06-G02",
+    "A06-G03",
+    "A06-G04",
+    "A06-G05",
+    "A06-G06",
+    "A06-CAPSTONE",
+    "A06-REVIEW"
+  ],
+  "intro": "Turn a source-verified segmentation prototype into a deterministic and auditable multi-image pipeline with tests, explicit axes, metadata, output manifests and clean reruns.",
+  "scientific_context": {
+    "source": "https://docs.pytest.org/en/stable/",
+    "use": "SYNTHETIC_BROWSER_PRACTICE_PLUS_REAL_LOCAL_NATIVE_TIFF_BATCH",
+    "caution": "Candidate masks are unvalidated biological objects. A reproducible program is not by itself a reliable detector."
+  },
+  "chapter_method": "Predict → Run → Investigate → independent Prove → delayed review; run local A06 batch CLI and source-safe reproduction.",
+  "goals": [
+    {
+      "id": "A06-G01",
+      "title": "Separate pure processing from file I/O",
+      "competencies": [
+        "A06-G01"
+      ],
+      "why": "A pure transformation can be tested without a microscope, filesystem, GUI or hidden notebook state.",
+      "explain": [
+        "An array-processing function should take inputs and return values without modifying source data.",
+        "Convert unsigned source arrays to float before background subtraction.",
+        "The exported count remains a candidate pixel count, not biologically validated cells."
+      ],
+      "worked_example": {
+        "code": "import numpy as np\nraw=np.array([0,40000],dtype=np.uint16)\nprint(np.maximum(raw.astype(float)-100,0))",
+        "predict": "Predict what changes when source, parameters or biological identity changes."
+      },
+      "prediction_answer": "Require source data, configuration and experimental-unit identity before comparing derived outputs.",
+      "walkthrough": [
+        "Predict a failure condition before running the example.",
+        "Change one dimension, source value or manifest entry and inspect output.",
+        "Explain which scientific interpretation requires external annotation or a fresh local run."
+      ],
+      "investigate": [
+        "Try a missing file, repeated ID or alternate parameter value.",
+        "Separate reproducible candidate masks from validated target detection."
+      ],
+      "debug_task": "Identify one failure where a script runs successfully but reports a misleading scientific result.",
+      "misconception": "A successful Python run implies every biological label and sample unit is correct.",
+      "scientific_boundary": "Synthetic browser inputs. Source integrity, full TIFF batch execution and fresh-environment reproducibility require A06 local Python; candidate masks are not validated nuclei.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Write a pure function: raw input + background → corrected float array.",
+          "Count strictly greater-than threshold, and return maximal corrected signal."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from changing input metadata and image values; never hardcode fixtures."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "A pure transformation can be tested without a microscope, filesystem, GUI or hidden notebook state.",
+          "starter_code": "# A06-G01 | LEARN | Separate pure processing from file I/O\n# TASK: Predict, run and inspect this miniature example.\n\nimport numpy as np\nraw=np.array([0,40000],dtype=np.uint16)\nprint(np.maximum(raw.astype(float)-100,0))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply on changed input",
+          "description": "From data.pixels,data.background,data.threshold, compute source-preserving corrected pixel count and max. Return result={'candidate_pixels':int,'max_corrected':float}.",
+          "starter_code": "# A06-G01 | APPLY | Separate pure processing from file I/O\n# TASK: From data.pixels,data.background,data.threshold, compute\n#   source-preserving corrected pixel count and max. Return\n#   result={'candidate_pixels':int,'max_corrected':float}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "pixels": [
+                [
+                  0,
+                  25000
+                ],
+                [
+                  65535,
+                  100
+                ]
+              ],
+              "background": 200,
+              "threshold": 1000
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "pixels": [
+                    [
+                      0,
+                      25000
+                    ],
+                    [
+                      65535,
+                      100
+                    ]
+                  ],
+                  "background": 200,
+                  "threshold": 1000
+                }
+              },
+              "assertions": [
+                "result['candidate_pixels']==int(np.count_nonzero(np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0)>data['threshold']))",
+                "np.isclose(result['max_corrected'],np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0).max())"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "pixels": [
+                    [
+                      99,
+                      100
+                    ],
+                    [
+                      1000,
+                      5000
+                    ]
+                  ],
+                  "background": 100,
+                  "threshold": 300
+                }
+              },
+              "assertions": [
+                "result['candidate_pixels']==int(np.count_nonzero(np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0)>data['threshold']))",
+                "np.isclose(result['max_corrected'],np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0).max())"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A pure transformation can be tested without a microscope, filesystem, GUI or hidden notebook state.",
+            "probe": "Could this output be reproduced with original TIFF and metadata?",
+            "check": "Verify source IDs, axes and source/config hashes; distinguish candidates from biological truth."
+          }
+        },
+        "prove": {
+          "title": "Independent workflow transfer",
+          "description": "From data.pixels,data.background,data.threshold, compute source-preserving corrected pixel count and max. Return result={'candidate_pixels':int,'max_corrected':float}.",
+          "starter_code": "# A06-G01 | PROVE | Separate pure processing from file I/O\n# TASK: From data.pixels,data.background,data.threshold, compute\n#   source-preserving corrected pixel count and max. Return\n#   result={'candidate_pixels':int,'max_corrected':float}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "pixels": [
+                [
+                  0,
+                  65535,
+                  32000
+                ],
+                [
+                  5,
+                  7,
+                  12000
+                ]
+              ],
+              "background": 1200,
+              "threshold": 10000
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "pixels": [
+                    [
+                      0,
+                      65535,
+                      32000
+                    ],
+                    [
+                      5,
+                      7,
+                      12000
+                    ]
+                  ],
+                  "background": 1200,
+                  "threshold": 10000
+                }
+              },
+              "assertions": [
+                "result['candidate_pixels']==int(np.count_nonzero(np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0)>data['threshold']))",
+                "np.isclose(result['max_corrected'],np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0).max())"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "pixels": [
+                    [
+                      400,
+                      0
+                    ],
+                    [
+                      800,
+                      900
+                    ]
+                  ],
+                  "background": 250,
+                  "threshold": 150
+                }
+              },
+              "assertions": [
+                "result['candidate_pixels']==int(np.count_nonzero(np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0)>data['threshold']))",
+                "np.isclose(result['max_corrected'],np.maximum(np.asarray(data['pixels'],dtype=np.uint16).astype(float)-data['background'],0).max())"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A pure transformation can be tested without a microscope, filesystem, GUI or hidden notebook state.",
+            "probe": "Can a colleague reproduce source-safe output from a clean checkout?",
+            "check": "Test missing/changed source files, source-safe path decisions and biological grouping."
+          }
+        }
+      }
+    },
+    {
+      "id": "A06-G02",
+      "title": "Validate axes and channel selection before batch runs",
+      "competencies": [
+        "A06-G02"
+      ],
+      "why": "Blindly squeezing a multidimensional image can silently analyze the wrong time, channel or plane.",
+      "explain": [
+        "Treat C, Z and T as meaningful source axes; each non-singleton axis needs explicit selection.",
+        "Keep spatial Y/X dimensions untouched in a 2-D analysis.",
+        "Reject ambiguous dimensions rather than choosing channel zero without a reason."
+      ],
+      "worked_example": {
+        "code": "axes='ZCYX';shape=[3,2,6,8]\nprint('axes / dimensions:',list(zip(axes,shape)))",
+        "predict": "Predict what changes when source, parameters or biological identity changes."
+      },
+      "prediction_answer": "Require source data, configuration and experimental-unit identity before comparing derived outputs.",
+      "walkthrough": [
+        "Predict a failure condition before running the example.",
+        "Change one dimension, source value or manifest entry and inspect output.",
+        "Explain which scientific interpretation requires external annotation or a fresh local run."
+      ],
+      "investigate": [
+        "Try a missing file, repeated ID or alternate parameter value.",
+        "Separate reproducible candidate masks from validated target detection."
+      ],
+      "debug_task": "Identify one failure where a script runs successfully but reports a misleading scientific result.",
+      "misconception": "A successful Python run implies every biological label and sample unit is correct.",
+      "scientific_boundary": "Synthetic browser inputs. Source integrity, full TIFF batch execution and fresh-environment reproducibility require A06 local Python; candidate masks are not validated nuclei.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Loop over axes and sizes; ignore Y/X as selected spatial axes.",
+          "Flag non-singleton C/Z/T unless the user explicitly supplied their selection."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from changing input metadata and image values; never hardcode fixtures."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Blindly squeezing a multidimensional image can silently analyze the wrong time, channel or plane.",
+          "starter_code": "# A06-G02 | LEARN | Validate axes and channel selection before batch runs\n# TASK: Predict, run and inspect this miniature example.\n\naxes='ZCYX';shape=[3,2,6,8]\nprint('axes / dimensions:',list(zip(axes,shape)))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply on changed input",
+          "description": "Given data.axes, data.shape and data.selection mapping, report result={'selected_shape':list,'missing_non_singleton':sorted axis letters} without guessing unselected C/Z/T.",
+          "starter_code": "# A06-G02 | APPLY | Validate axes and channel selection before batch runs\n# TASK: Given data.axes, data.shape and data.selection mapping, report\n#   result={'selected_shape':list,'missing_non_singleton':sorted axis letters}\n#   without guessing unselected C/Z/T.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "axes": "ZCYX",
+              "shape": [
+                3,
+                2,
+                8,
+                9
+              ],
+              "selection": {
+                "C": 1
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "axes": "ZCYX",
+                  "shape": [
+                    3,
+                    2,
+                    8,
+                    9
+                  ],
+                  "selection": {
+                    "C": 1
+                  }
+                }
+              },
+              "assertions": [
+                "result['selected_shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['missing_non_singleton']==sorted(a for a,n in zip(data['axes'],data['shape']) if a not in 'YX' and n>1 and a not in data['selection'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "axes": "TCZYX",
+                  "shape": [
+                    2,
+                    1,
+                    3,
+                    6,
+                    7
+                  ],
+                  "selection": {
+                    "T": 1,
+                    "Z": 2
+                  }
+                }
+              },
+              "assertions": [
+                "result['selected_shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['missing_non_singleton']==sorted(a for a,n in zip(data['axes'],data['shape']) if a not in 'YX' and n>1 and a not in data['selection'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Blindly squeezing a multidimensional image can silently analyze the wrong time, channel or plane.",
+            "probe": "Could this output be reproduced with original TIFF and metadata?",
+            "check": "Verify source IDs, axes and source/config hashes; distinguish candidates from biological truth."
+          }
+        },
+        "prove": {
+          "title": "Independent workflow transfer",
+          "description": "Given data.axes, data.shape and data.selection mapping, report result={'selected_shape':list,'missing_non_singleton':sorted axis letters} without guessing unselected C/Z/T.",
+          "starter_code": "# A06-G02 | PROVE | Validate axes and channel selection before batch runs\n# TASK: Given data.axes, data.shape and data.selection mapping, report\n#   result={'selected_shape':list,'missing_non_singleton':sorted axis letters}\n#   without guessing unselected C/Z/T.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "axes": "CZYX",
+              "shape": [
+                2,
+                3,
+                5,
+                7
+              ],
+              "selection": {
+                "Z": 2
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "axes": "CZYX",
+                  "shape": [
+                    2,
+                    3,
+                    5,
+                    7
+                  ],
+                  "selection": {
+                    "Z": 2
+                  }
+                }
+              },
+              "assertions": [
+                "result['selected_shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['missing_non_singleton']==sorted(a for a,n in zip(data['axes'],data['shape']) if a not in 'YX' and n>1 and a not in data['selection'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "axes": "TZCYX",
+                  "shape": [
+                    1,
+                    2,
+                    1,
+                    9,
+                    9
+                  ],
+                  "selection": {
+                    "Z": 1
+                  }
+                }
+              },
+              "assertions": [
+                "result['selected_shape']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['missing_non_singleton']==sorted(a for a,n in zip(data['axes'],data['shape']) if a not in 'YX' and n>1 and a not in data['selection'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Blindly squeezing a multidimensional image can silently analyze the wrong time, channel or plane.",
+            "probe": "Can a colleague reproduce source-safe output from a clean checkout?",
+            "check": "Test missing/changed source files, source-safe path decisions and biological grouping."
+          }
+        }
+      }
+    },
+    {
+      "id": "A06-G03",
+      "title": "Preflight a batch manifest",
+      "competencies": [
+        "A06-G03"
+      ],
+      "why": "An experiment with missing images or duplicate IDs should fail before partial biological results are exported.",
+      "explain": [
+        "Image IDs must be unique independent of filenames.",
+        "Missing source data are errors or documented exclusions, never silent zeros.",
+        "Preflight validation prevents a partially processed experiment being reported as complete."
+      ],
+      "worked_example": {
+        "code": "rows=[{'id':'field1','exists':True},{'id':'field1','exists':False}]\nprint('IDs unique:',len({x['id'] for x in rows})==len(rows))",
+        "predict": "Predict what changes when source, parameters or biological identity changes."
+      },
+      "prediction_answer": "Require source data, configuration and experimental-unit identity before comparing derived outputs.",
+      "walkthrough": [
+        "Predict a failure condition before running the example.",
+        "Change one dimension, source value or manifest entry and inspect output.",
+        "Explain which scientific interpretation requires external annotation or a fresh local run."
+      ],
+      "investigate": [
+        "Try a missing file, repeated ID or alternate parameter value.",
+        "Separate reproducible candidate masks from validated target detection."
+      ],
+      "debug_task": "Identify one failure where a script runs successfully but reports a misleading scientific result.",
+      "misconception": "A successful Python run implies every biological label and sample unit is correct.",
+      "scientific_boundary": "Synthetic browser inputs. Source integrity, full TIFF batch execution and fresh-environment reproducibility require A06 local Python; candidate masks are not validated nuclei.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Check unique image_id values and missing sources separately.",
+          "Do not run the pipeline when either list is nonempty."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from changing input metadata and image values; never hardcode fixtures."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "An experiment with missing images or duplicate IDs should fail before partial biological results are exported.",
+          "starter_code": "# A06-G03 | LEARN | Preflight a batch manifest\n# TASK: Predict, run and inspect this miniature example.\n\nrows=[{'id':'field1','exists':True},{'id':'field1','exists':False}]\nprint('IDs unique:',len({x['id'] for x in rows})==len(rows))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply on changed input",
+          "description": "Check data.records with image_id,source_path and exists flag. Return result={'duplicates':sorted IDs,'missing_sources':sorted IDs,'can_start':boolean}.",
+          "starter_code": "# A06-G03 | APPLY | Preflight a batch manifest\n# TASK: Check data.records with image_id,source_path and exists flag. Return\n#   result={'duplicates':sorted IDs,'missing_sources':sorted\n#   IDs,'can_start':boolean}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "records": [
+                {
+                  "image_id": "f1",
+                  "source_path": "f1.tif",
+                  "exists": true
+                },
+                {
+                  "image_id": "f2",
+                  "source_path": "f2.tif",
+                  "exists": false
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "records": [
+                    {
+                      "image_id": "f1",
+                      "source_path": "f1.tif",
+                      "exists": true
+                    },
+                    {
+                      "image_id": "f2",
+                      "source_path": "f2.tif",
+                      "exists": false
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['duplicates']==sorted(k for k in {r['image_id'] for r in data['records']} if sum(x['image_id']==k for x in data['records'])>1)",
+                "result['missing_sources']==sorted(r['image_id'] for r in data['records'] if not r['exists'])",
+                "result['can_start']==(len(result['duplicates'])==0 and len(result['missing_sources'])==0)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "records": [
+                    {
+                      "image_id": "f1",
+                      "source_path": "a.tif",
+                      "exists": true
+                    },
+                    {
+                      "image_id": "f1",
+                      "source_path": "b.tif",
+                      "exists": true
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['duplicates']==sorted(k for k in {r['image_id'] for r in data['records']} if sum(x['image_id']==k for x in data['records'])>1)",
+                "result['missing_sources']==sorted(r['image_id'] for r in data['records'] if not r['exists'])",
+                "result['can_start']==(len(result['duplicates'])==0 and len(result['missing_sources'])==0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "An experiment with missing images or duplicate IDs should fail before partial biological results are exported.",
+            "probe": "Could this output be reproduced with original TIFF and metadata?",
+            "check": "Verify source IDs, axes and source/config hashes; distinguish candidates from biological truth."
+          }
+        },
+        "prove": {
+          "title": "Independent workflow transfer",
+          "description": "Check data.records with image_id,source_path and exists flag. Return result={'duplicates':sorted IDs,'missing_sources':sorted IDs,'can_start':boolean}.",
+          "starter_code": "# A06-G03 | PROVE | Preflight a batch manifest\n# TASK: Check data.records with image_id,source_path and exists flag. Return\n#   result={'duplicates':sorted IDs,'missing_sources':sorted\n#   IDs,'can_start':boolean}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "records": [
+                {
+                  "image_id": "a",
+                  "source_path": "a.tif",
+                  "exists": true
+                },
+                {
+                  "image_id": "b",
+                  "source_path": "b.tif",
+                  "exists": true
+                },
+                {
+                  "image_id": "c",
+                  "source_path": "c.tif",
+                  "exists": true
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "records": [
+                    {
+                      "image_id": "a",
+                      "source_path": "a.tif",
+                      "exists": true
+                    },
+                    {
+                      "image_id": "b",
+                      "source_path": "b.tif",
+                      "exists": true
+                    },
+                    {
+                      "image_id": "c",
+                      "source_path": "c.tif",
+                      "exists": true
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['duplicates']==sorted(k for k in {r['image_id'] for r in data['records']} if sum(x['image_id']==k for x in data['records'])>1)",
+                "result['missing_sources']==sorted(r['image_id'] for r in data['records'] if not r['exists'])",
+                "result['can_start']==(len(result['duplicates'])==0 and len(result['missing_sources'])==0)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "records": [
+                    {
+                      "image_id": "z",
+                      "source_path": "a.tif",
+                      "exists": false
+                    },
+                    {
+                      "image_id": "z",
+                      "source_path": "b.tif",
+                      "exists": false
+                    },
+                    {
+                      "image_id": "q",
+                      "source_path": "q.tif",
+                      "exists": true
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['duplicates']==sorted(k for k in {r['image_id'] for r in data['records']} if sum(x['image_id']==k for x in data['records'])>1)",
+                "result['missing_sources']==sorted(r['image_id'] for r in data['records'] if not r['exists'])",
+                "result['can_start']==(len(result['duplicates'])==0 and len(result['missing_sources'])==0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "An experiment with missing images or duplicate IDs should fail before partial biological results are exported.",
+            "probe": "Can a colleague reproduce source-safe output from a clean checkout?",
+            "check": "Test missing/changed source files, source-safe path decisions and biological grouping."
+          }
+        }
+      }
+    },
+    {
+      "id": "A06-G04",
+      "title": "Record source, config and environment fingerprints",
+      "competencies": [
+        "A06-G04"
+      ],
+      "why": "Reproducibility needs a complete parameter identity and environment, not a screenshot of plausible masks.",
+      "explain": [
+        "Preserve source SHA-256 independently from output-mask hashes.",
+        "Canonical JSON avoids accidental differences from key order.",
+        "Environment strings document versions; they do not guarantee equivalent behavior."
+      ],
+      "worked_example": {
+        "code": "import json,hashlib\nprint(hashlib.sha256(json.dumps({'sigma':1},sort_keys=True).encode()).hexdigest()[:12])",
+        "predict": "Predict what changes when source, parameters or biological identity changes."
+      },
+      "prediction_answer": "Require source data, configuration and experimental-unit identity before comparing derived outputs.",
+      "walkthrough": [
+        "Predict a failure condition before running the example.",
+        "Change one dimension, source value or manifest entry and inspect output.",
+        "Explain which scientific interpretation requires external annotation or a fresh local run."
+      ],
+      "investigate": [
+        "Try a missing file, repeated ID or alternate parameter value.",
+        "Separate reproducible candidate masks from validated target detection."
+      ],
+      "debug_task": "Identify one failure where a script runs successfully but reports a misleading scientific result.",
+      "misconception": "A successful Python run implies every biological label and sample unit is correct.",
+      "scientific_boundary": "Synthetic browser inputs. Source integrity, full TIFF batch execution and fresh-environment reproducibility require A06 local Python; candidate masks are not validated nuclei.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Use hashlib.sha256 on the original bytes.",
+          "Serialize parameters with sort_keys=True and compact separators; never omit environment identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from changing input metadata and image values; never hardcode fixtures."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Reproducibility needs a complete parameter identity and environment, not a screenshot of plausible masks.",
+          "starter_code": "# A06-G04 | LEARN | Record source, config and environment fingerprints\n# TASK: Predict, run and inspect this miniature example.\n\nimport json,hashlib\nprint(hashlib.sha256(json.dumps({'sigma':1},sort_keys=True).encode()).hexdigest()[:12])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply on changed input",
+          "description": "Hash data.source_bytes and sorted compact JSON of data.config; record data.environment. Return result={'source_sha256':str,'config_sha256':str,'environment':str}.",
+          "starter_code": "# A06-G04 | APPLY | Record source, config and environment fingerprints\n# TASK: Hash data.source_bytes and sorted compact JSON of data.config; record\n#   data.environment. Return\n#   result={'source_sha256':str,'config_sha256':str,'environment':str}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "source_bytes": [
+                0,
+                200,
+                250
+              ],
+              "config": {
+                "threshold": 100,
+                "min_area": 5
+              },
+              "environment": "python3.12/numpy2"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "source_bytes": [
+                    0,
+                    200,
+                    250
+                  ],
+                  "config": {
+                    "threshold": 100,
+                    "min_area": 5
+                  },
+                  "environment": "python3.12/numpy2"
+                }
+              },
+              "assertions": [
+                "result['source_sha256']==__import__('hashlib').sha256(bytes(data['source_bytes'])).hexdigest()",
+                "result['config_sha256']==__import__('hashlib').sha256(__import__('json').dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest()",
+                "result['environment']==data['environment']"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "source_bytes": [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  "config": {
+                    "min_area": 12,
+                    "polarity": "bright"
+                  },
+                  "environment": "python3.12/scikit-image0.25"
+                }
+              },
+              "assertions": [
+                "result['source_sha256']==__import__('hashlib').sha256(bytes(data['source_bytes'])).hexdigest()",
+                "result['config_sha256']==__import__('hashlib').sha256(__import__('json').dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest()",
+                "result['environment']==data['environment']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Reproducibility needs a complete parameter identity and environment, not a screenshot of plausible masks.",
+            "probe": "Could this output be reproduced with original TIFF and metadata?",
+            "check": "Verify source IDs, axes and source/config hashes; distinguish candidates from biological truth."
+          }
+        },
+        "prove": {
+          "title": "Independent workflow transfer",
+          "description": "Hash data.source_bytes and sorted compact JSON of data.config; record data.environment. Return result={'source_sha256':str,'config_sha256':str,'environment':str}.",
+          "starter_code": "# A06-G04 | PROVE | Record source, config and environment fingerprints\n# TASK: Hash data.source_bytes and sorted compact JSON of data.config; record\n#   data.environment. Return\n#   result={'source_sha256':str,'config_sha256':str,'environment':str}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "source_bytes": [
+                255,
+                0,
+                17,
+                22
+              ],
+              "config": {
+                "channel": 1,
+                "z": 2,
+                "sigma": 0.5
+              },
+              "environment": "3.12/pyodide"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "source_bytes": [
+                    255,
+                    0,
+                    17,
+                    22
+                  ],
+                  "config": {
+                    "channel": 1,
+                    "z": 2,
+                    "sigma": 0.5
+                  },
+                  "environment": "3.12/pyodide"
+                }
+              },
+              "assertions": [
+                "result['source_sha256']==__import__('hashlib').sha256(bytes(data['source_bytes'])).hexdigest()",
+                "result['config_sha256']==__import__('hashlib').sha256(__import__('json').dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest()",
+                "result['environment']==data['environment']"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "source_bytes": [
+                    4,
+                    8,
+                    12,
+                    16
+                  ],
+                  "config": {
+                    "mode": "manual",
+                    "value": 42
+                  },
+                  "environment": "venv2026"
+                }
+              },
+              "assertions": [
+                "result['source_sha256']==__import__('hashlib').sha256(bytes(data['source_bytes'])).hexdigest()",
+                "result['config_sha256']==__import__('hashlib').sha256(__import__('json').dumps(data['config'],sort_keys=True,separators=(',',':')).encode()).hexdigest()",
+                "result['environment']==data['environment']"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Reproducibility needs a complete parameter identity and environment, not a screenshot of plausible masks.",
+            "probe": "Can a colleague reproduce source-safe output from a clean checkout?",
+            "check": "Test missing/changed source files, source-safe path decisions and biological grouping."
+          }
+        }
+      }
+    },
+    {
+      "id": "A06-G05",
+      "title": "Run invariant regression tests across changed inputs",
+      "competencies": [
+        "A06-G05"
+      ],
+      "why": "A smoke test should fail when array processing changes unexpectedly after a refactor.",
+      "explain": [
+        "An invariant regression test compares output against a known behavior on changed fixtures.",
+        "Include empty masks and positive masks, not only ideal bright objects.",
+        "A known output fixture proves software behavior but not biological accuracy."
+      ],
+      "worked_example": {
+        "code": "cases=[{'id':'blank','pixels':[0,0],'expected':0},{'id':'one','pixels':[1,0],'expected':1}]\nprint([r['id'] for r in cases if sum(r['pixels'])==r['expected']])",
+        "predict": "Predict what changes when source, parameters or biological identity changes."
+      },
+      "prediction_answer": "Require source data, configuration and experimental-unit identity before comparing derived outputs.",
+      "walkthrough": [
+        "Predict a failure condition before running the example.",
+        "Change one dimension, source value or manifest entry and inspect output.",
+        "Explain which scientific interpretation requires external annotation or a fresh local run."
+      ],
+      "investigate": [
+        "Try a missing file, repeated ID or alternate parameter value.",
+        "Separate reproducible candidate masks from validated target detection."
+      ],
+      "debug_task": "Identify one failure where a script runs successfully but reports a misleading scientific result.",
+      "misconception": "A successful Python run implies every biological label and sample unit is correct.",
+      "scientific_boundary": "Synthetic browser inputs. Source integrity, full TIFF batch execution and fresh-environment reproducibility require A06 local Python; candidate masks are not validated nuclei.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Count nonzero pixels for every fixture separately.",
+          "Compare each count to its expected_pixels and return sorted pass/fail IDs."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from changing input metadata and image values; never hardcode fixtures."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "A smoke test should fail when array processing changes unexpectedly after a refactor.",
+          "starter_code": "# A06-G05 | LEARN | Run invariant regression tests across changed inputs\n# TASK: Predict, run and inspect this miniature example.\n\ncases=[{'id':'blank','pixels':[0,0],'expected':0},{'id':'one','pixels':[1,0],'expected':1}]\nprint([r['id'] for r in cases if sum(r['pixels'])==r['expected']])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply on changed input",
+          "description": "For data.cases of mask,expected_pixel_count, verify expected foreground pixels. Return result={'passed':sorted IDs,'failed':sorted IDs}.",
+          "starter_code": "# A06-G05 | APPLY | Run invariant regression tests across changed inputs\n# TASK: For data.cases of mask,expected_pixel_count, verify expected foreground\n#   pixels. Return result={'passed':sorted IDs,'failed':sorted IDs}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "cases": [
+                {
+                  "id": "empty",
+                  "mask": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0
+                    ]
+                  ],
+                  "expected_pixels": 0
+                },
+                {
+                  "id": "small",
+                  "mask": [
+                    [
+                      1,
+                      1
+                    ],
+                    [
+                      0,
+                      0
+                    ]
+                  ],
+                  "expected_pixels": 2
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "cases": [
+                    {
+                      "id": "empty",
+                      "mask": [
+                        [
+                          0,
+                          0
+                        ],
+                        [
+                          0,
+                          0
+                        ]
+                      ],
+                      "expected_pixels": 0
+                    },
+                    {
+                      "id": "small",
+                      "mask": [
+                        [
+                          1,
+                          1
+                        ],
+                        [
+                          0,
+                          0
+                        ]
+                      ],
+                      "expected_pixels": 2
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['passed']==sorted(r['id'] for r in data['cases'] if sum(bool(x) for row in r['mask'] for x in row)==r['expected_pixels'])",
+                "result['failed']==sorted(r['id'] for r in data['cases'] if sum(bool(x) for row in r['mask'] for x in row)!=r['expected_pixels'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "cases": [
+                    {
+                      "id": "broken",
+                      "mask": [
+                        [
+                          1,
+                          1
+                        ],
+                        [
+                          1,
+                          0
+                        ]
+                      ],
+                      "expected_pixels": 2
+                    },
+                    {
+                      "id": "okay",
+                      "mask": [
+                        [
+                          1,
+                          0
+                        ],
+                        [
+                          0,
+                          1
+                        ]
+                      ],
+                      "expected_pixels": 2
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['passed']==sorted(r['id'] for r in data['cases'] if sum(bool(x) for row in r['mask'] for x in row)==r['expected_pixels'])",
+                "result['failed']==sorted(r['id'] for r in data['cases'] if sum(bool(x) for row in r['mask'] for x in row)!=r['expected_pixels'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A smoke test should fail when array processing changes unexpectedly after a refactor.",
+            "probe": "Could this output be reproduced with original TIFF and metadata?",
+            "check": "Verify source IDs, axes and source/config hashes; distinguish candidates from biological truth."
+          }
+        },
+        "prove": {
+          "title": "Independent workflow transfer",
+          "description": "For data.cases of mask,expected_pixel_count, verify expected foreground pixels. Return result={'passed':sorted IDs,'failed':sorted IDs}.",
+          "starter_code": "# A06-G05 | PROVE | Run invariant regression tests across changed inputs\n# TASK: For data.cases of mask,expected_pixel_count, verify expected foreground\n#   pixels. Return result={'passed':sorted IDs,'failed':sorted IDs}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "cases": [
+                {
+                  "id": "p",
+                  "mask": [
+                    [
+                      1,
+                      1,
+                      1
+                    ]
+                  ],
+                  "expected_pixels": 3
+                },
+                {
+                  "id": "q",
+                  "mask": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      1,
+                      0
+                    ]
+                  ],
+                  "expected_pixels": 3
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "cases": [
+                    {
+                      "id": "p",
+                      "mask": [
+                        [
+                          1,
+                          1,
+                          1
+                        ]
+                      ],
+                      "expected_pixels": 3
+                    },
+                    {
+                      "id": "q",
+                      "mask": [
+                        [
+                          0,
+                          1
+                        ],
+                        [
+                          1,
+                          0
+                        ]
+                      ],
+                      "expected_pixels": 3
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['passed']==sorted(r['id'] for r in data['cases'] if sum(bool(x) for row in r['mask'] for x in row)==r['expected_pixels'])",
+                "result['failed']==sorted(r['id'] for r in data['cases'] if sum(bool(x) for row in r['mask'] for x in row)!=r['expected_pixels'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "cases": [
+                    {
+                      "id": "X",
+                      "mask": [
+                        [
+                          1,
+                          1
+                        ],
+                        [
+                          1,
+                          1
+                        ]
+                      ],
+                      "expected_pixels": 4
+                    },
+                    {
+                      "id": "Y",
+                      "mask": [
+                        [
+                          0,
+                          0
+                        ],
+                        [
+                          0,
+                          0
+                        ]
+                      ],
+                      "expected_pixels": 1
+                    },
+                    {
+                      "id": "Z",
+                      "mask": [
+                        [
+                          1
+                        ]
+                      ],
+                      "expected_pixels": 1
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['passed']==sorted(r['id'] for r in data['cases'] if sum(bool(x) for row in r['mask'] for x in row)==r['expected_pixels'])",
+                "result['failed']==sorted(r['id'] for r in data['cases'] if sum(bool(x) for row in r['mask'] for x in row)!=r['expected_pixels'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A smoke test should fail when array processing changes unexpectedly after a refactor.",
+            "probe": "Can a colleague reproduce source-safe output from a clean checkout?",
+            "check": "Test missing/changed source files, source-safe path decisions and biological grouping."
+          }
+        }
+      }
+    },
+    {
+      "id": "A06-G06",
+      "title": "Compare clean-run outputs without hidden notebook state",
+      "competencies": [
+        "A06-G06"
+      ],
+      "why": "Two successful executions may differ because input files, parameters or package state changed.",
+      "explain": [
+        "Compare explicit source, config and output hashes.",
+        "A changed environment should be recorded even when current numeric outputs match.",
+        "Replaying on a clean checkout is an external requirement, not a browser badge."
+      ],
+      "worked_example": {
+        "code": "a={'source':'abc','output':'xyz'};b={'source':'abc','output':'xzz'}\nprint('changed keys:',[k for k in a if a[k]!=b[k]])",
+        "predict": "Predict what changes when source, parameters or biological identity changes."
+      },
+      "prediction_answer": "Require source data, configuration and experimental-unit identity before comparing derived outputs.",
+      "walkthrough": [
+        "Predict a failure condition before running the example.",
+        "Change one dimension, source value or manifest entry and inspect output.",
+        "Explain which scientific interpretation requires external annotation or a fresh local run."
+      ],
+      "investigate": [
+        "Try a missing file, repeated ID or alternate parameter value.",
+        "Separate reproducible candidate masks from validated target detection."
+      ],
+      "debug_task": "Identify one failure where a script runs successfully but reports a misleading scientific result.",
+      "misconception": "A successful Python run implies every biological label and sample unit is correct.",
+      "scientific_boundary": "Synthetic browser inputs. Source integrity, full TIFF batch execution and fresh-environment reproducibility require A06 local Python; candidate masks are not validated nuclei.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Compare each declared fingerprint field rather than whole-dictionary ordering.",
+          "A mismatch must be reported, not silently normalized away."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Compute from changing input metadata and image values; never hardcode fixtures."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Two successful executions may differ because input files, parameters or package state changed.",
+          "starter_code": "# A06-G06 | LEARN | Compare clean-run outputs without hidden notebook state\n# TASK: Predict, run and inspect this miniature example.\n\na={'source':'abc','output':'xyz'};b={'source':'abc','output':'xzz'}\nprint('changed keys:',[k for k in a if a[k]!=b[k]])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply on changed input",
+          "description": "Compare data.first and data.second manifests (matching source_hash/config_hash/output_hash). Return result={'equivalent':bool,'differing_fields':sorted list}.",
+          "starter_code": "# A06-G06 | APPLY | Compare clean-run outputs without hidden notebook state\n# TASK: Compare data.first and data.second manifests (matching\n#   source_hash/config_hash/output_hash). Return\n#   result={'equivalent':bool,'differing_fields':sorted list}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "first": {
+                "source_hash": "aa",
+                "config_hash": "bb",
+                "output_hash": "cc"
+              },
+              "second": {
+                "source_hash": "aa",
+                "config_hash": "bb",
+                "output_hash": "cc"
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "first": {
+                    "source_hash": "aa",
+                    "config_hash": "bb",
+                    "output_hash": "cc"
+                  },
+                  "second": {
+                    "source_hash": "aa",
+                    "config_hash": "bb",
+                    "output_hash": "cc"
+                  }
+                }
+              },
+              "assertions": [
+                "result['differing_fields']==sorted(k for k in ('source_hash','config_hash','output_hash') if data['first'][k]!=data['second'][k])",
+                "result['equivalent']==(len(result['differing_fields'])==0)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "first": {
+                    "source_hash": "aa",
+                    "config_hash": "bb",
+                    "output_hash": "cc"
+                  },
+                  "second": {
+                    "source_hash": "bb",
+                    "config_hash": "bb",
+                    "output_hash": "xx"
+                  }
+                }
+              },
+              "assertions": [
+                "result['differing_fields']==sorted(k for k in ('source_hash','config_hash','output_hash') if data['first'][k]!=data['second'][k])",
+                "result['equivalent']==(len(result['differing_fields'])==0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Two successful executions may differ because input files, parameters or package state changed.",
+            "probe": "Could this output be reproduced with original TIFF and metadata?",
+            "check": "Verify source IDs, axes and source/config hashes; distinguish candidates from biological truth."
+          }
+        },
+        "prove": {
+          "title": "Independent workflow transfer",
+          "description": "Compare data.first and data.second manifests (matching source_hash/config_hash/output_hash). Return result={'equivalent':bool,'differing_fields':sorted list}.",
+          "starter_code": "# A06-G06 | PROVE | Compare clean-run outputs without hidden notebook state\n# TASK: Compare data.first and data.second manifests (matching\n#   source_hash/config_hash/output_hash). Return\n#   result={'equivalent':bool,'differing_fields':sorted list}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "first": {
+                "source_hash": "s1",
+                "config_hash": "c1",
+                "output_hash": "o1"
+              },
+              "second": {
+                "source_hash": "s1",
+                "config_hash": "c2",
+                "output_hash": "o1"
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "first": {
+                    "source_hash": "s1",
+                    "config_hash": "c1",
+                    "output_hash": "o1"
+                  },
+                  "second": {
+                    "source_hash": "s1",
+                    "config_hash": "c2",
+                    "output_hash": "o1"
+                  }
+                }
+              },
+              "assertions": [
+                "result['differing_fields']==sorted(k for k in ('source_hash','config_hash','output_hash') if data['first'][k]!=data['second'][k])",
+                "result['equivalent']==(len(result['differing_fields'])==0)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "first": {
+                    "source_hash": "p",
+                    "config_hash": "q",
+                    "output_hash": "r"
+                  },
+                  "second": {
+                    "source_hash": "p",
+                    "config_hash": "q",
+                    "output_hash": "r"
+                  }
+                }
+              },
+              "assertions": [
+                "result['differing_fields']==sorted(k for k in ('source_hash','config_hash','output_hash') if data['first'][k]!=data['second'][k])",
+                "result['equivalent']==(len(result['differing_fields'])==0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Two successful executions may differ because input files, parameters or package state changed.",
+            "probe": "Can a colleague reproduce source-safe output from a clean checkout?",
+            "check": "Test missing/changed source files, source-safe path decisions and biological grouping."
+          }
+        }
+      }
+    }
+  ],
+  "capstone": {
+    "id": "A06-CAPSTONE",
+    "title": "Deterministic multi-image candidate report",
+    "competencies": [
+      "A06-CAPSTONE"
+    ],
+    "why": "A useful scientific batch export must retain every field, its parent animal and an honest candidate-only label.",
+    "explain": [
+      "Field counts are derived from fixed source pixels and configuration.",
+      "Animal means are aggregated only after field identities are preserved.",
+      "No biological target identity can be inferred without annotation review."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict what changes when source, parameters or biological identity changes."
+    },
+    "prediction_answer": "Require source data, configuration and experimental-unit identity before comparing derived outputs.",
+    "walkthrough": [
+      "Predict a failure condition before running the example.",
+      "Change one dimension, source value or manifest entry and inspect output.",
+      "Explain which scientific interpretation requires external annotation or a fresh local run."
+    ],
+    "investigate": [
+      "Try a missing file, repeated ID or alternate parameter value.",
+      "Separate reproducible candidate masks from validated target detection."
+    ],
+    "debug_task": "Identify one failure where a script runs successfully but reports a misleading scientific result.",
+    "misconception": "A successful Python run implies every biological label and sample unit is correct.",
+    "scientific_boundary": "Synthetic browser inputs. Source integrity, full TIFF batch execution and fresh-environment reproducibility require A06 local Python; candidate masks are not validated nuclei.",
+    "hints": {
+      "learn": [],
+      "apply": [
+        "Compute thresholded pixel count per source field.",
+        "Aggregate counts by parent animal, keeping field counts and biological N separate."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Compute from changing input metadata and image values; never hardcode fixtures."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict → Run → Investigate",
+        "description": "A useful scientific batch export must retain every field, its parent animal and an honest candidate-only label.",
+        "starter_code": "# A06-CAPSTONE | LEARN | Deterministic multi-image candidate report\n# TASK: Predict, run and inspect this miniature example.\n\nprint('A06 capstone: implement batch stages, explicit metadata and source-safe outputs.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply on changed input",
+        "description": "Given data.fields with field_id,animal_id,pixels, threshold, count > threshold per field and group by animal. Return result={'field_counts':dict,'animal_means':dict,'source_fields':int,'biological_n':int,'candidate_only':True}.",
+        "starter_code": "# A06-CAPSTONE | APPLY | Deterministic multi-image candidate report\n# TASK: Given data.fields with field_id,animal_id,pixels, threshold, count >\n#   threshold per field and group by animal. Return\n#   result={'field_counts':dict,'animal_means':dict,'source_fields':int,'biological_n':int,'candidate_only':True}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "threshold": 5,
+            "fields": [
+              {
+                "field_id": "a1",
+                "animal_id": "A",
+                "pixels": [
+                  [
+                    1,
+                    8
+                  ],
+                  [
+                    6,
+                    0
+                  ]
+                ]
+              },
+              {
+                "field_id": "a2",
+                "animal_id": "A",
+                "pixels": [
+                  [
+                    2,
+                    9
+                  ],
+                  [
+                    3,
+                    12
+                  ]
+                ]
+              },
+              {
+                "field_id": "b1",
+                "animal_id": "B",
+                "pixels": [
+                  [
+                    10,
+                    15
+                  ],
+                  [
+                    1,
+                    0
+                  ]
+                ]
+              }
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "threshold": 5,
+                "fields": [
+                  {
+                    "field_id": "a1",
+                    "animal_id": "A",
+                    "pixels": [
+                      [
+                        1,
+                        8
+                      ],
+                      [
+                        6,
+                        0
+                      ]
+                    ]
+                  },
+                  {
+                    "field_id": "a2",
+                    "animal_id": "A",
+                    "pixels": [
+                      [
+                        2,
+                        9
+                      ],
+                      [
+                        3,
+                        12
+                      ]
+                    ]
+                  },
+                  {
+                    "field_id": "b1",
+                    "animal_id": "B",
+                    "pixels": [
+                      [
+                        10,
+                        15
+                      ],
+                      [
+                        1,
+                        0
+                      ]
+                    ]
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['source_fields']==len(data['fields'])",
+              "result['biological_n']==len({x['animal_id'] for x in data['fields']})",
+              "result['field_counts']=={r['field_id']:sum(v>data['threshold'] for line in r['pixels'] for v in line) for r in data['fields']}",
+              "result['animal_means']=={a:sum(result['field_counts'][r['field_id']] for r in data['fields'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['fields']) for a in sorted({r['animal_id'] for r in data['fields']})}",
+              "result['candidate_only'] is True"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "threshold": 0,
+                "fields": [
+                  {
+                    "field_id": "x",
+                    "animal_id": "X",
+                    "pixels": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        2,
+                        3
+                      ]
+                    ]
+                  },
+                  {
+                    "field_id": "y",
+                    "animal_id": "Y",
+                    "pixels": [
+                      [
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        9
+                      ]
+                    ]
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['source_fields']==len(data['fields'])",
+              "result['biological_n']==len({x['animal_id'] for x in data['fields']})",
+              "result['field_counts']=={r['field_id']:sum(v>data['threshold'] for line in r['pixels'] for v in line) for r in data['fields']}",
+              "result['animal_means']=={a:sum(result['field_counts'][r['field_id']] for r in data['fields'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['fields']) for a in sorted({r['animal_id'] for r in data['fields']})}",
+              "result['candidate_only'] is True"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A useful scientific batch export must retain every field, its parent animal and an honest candidate-only label.",
+          "probe": "Could this output be reproduced with original TIFF and metadata?",
+          "check": "Verify source IDs, axes and source/config hashes; distinguish candidates from biological truth."
+        }
+      },
+      "prove": {
+        "title": "Independent workflow transfer",
+        "description": "Given data.fields with field_id,animal_id,pixels, threshold, count > threshold per field and group by animal. Return result={'field_counts':dict,'animal_means':dict,'source_fields':int,'biological_n':int,'candidate_only':True}.",
+        "starter_code": "# A06-CAPSTONE | PROVE | Deterministic multi-image candidate report\n# TASK: Given data.fields with field_id,animal_id,pixels, threshold, count >\n#   threshold per field and group by animal. Return\n#   result={'field_counts':dict,'animal_means':dict,'source_fields':int,'biological_n':int,'candidate_only':True}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "threshold": 20,
+            "fields": [
+              {
+                "field_id": "w1",
+                "animal_id": "worm1",
+                "pixels": [
+                  [
+                    10,
+                    25
+                  ],
+                  [
+                    30,
+                    0
+                  ]
+                ]
+              },
+              {
+                "field_id": "w2",
+                "animal_id": "worm1",
+                "pixels": [
+                  [
+                    40,
+                    50
+                  ],
+                  [
+                    0,
+                    0
+                  ]
+                ]
+              },
+              {
+                "field_id": "w3",
+                "animal_id": "worm2",
+                "pixels": [
+                  [
+                    7,
+                    8
+                  ],
+                  [
+                    9,
+                    10
+                  ]
+                ]
+              }
+            ]
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "threshold": 20,
+                "fields": [
+                  {
+                    "field_id": "w1",
+                    "animal_id": "worm1",
+                    "pixels": [
+                      [
+                        10,
+                        25
+                      ],
+                      [
+                        30,
+                        0
+                      ]
+                    ]
+                  },
+                  {
+                    "field_id": "w2",
+                    "animal_id": "worm1",
+                    "pixels": [
+                      [
+                        40,
+                        50
+                      ],
+                      [
+                        0,
+                        0
+                      ]
+                    ]
+                  },
+                  {
+                    "field_id": "w3",
+                    "animal_id": "worm2",
+                    "pixels": [
+                      [
+                        7,
+                        8
+                      ],
+                      [
+                        9,
+                        10
+                      ]
+                    ]
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['source_fields']==len(data['fields'])",
+              "result['biological_n']==len({x['animal_id'] for x in data['fields']})",
+              "result['field_counts']=={r['field_id']:sum(v>data['threshold'] for line in r['pixels'] for v in line) for r in data['fields']}",
+              "result['animal_means']=={a:sum(result['field_counts'][r['field_id']] for r in data['fields'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['fields']) for a in sorted({r['animal_id'] for r in data['fields']})}",
+              "result['candidate_only'] is True"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "threshold": 100,
+                "fields": [
+                  {
+                    "field_id": "a",
+                    "animal_id": "C",
+                    "pixels": [
+                      [
+                        150,
+                        80
+                      ],
+                      [
+                        110,
+                        90
+                      ]
+                    ]
+                  },
+                  {
+                    "field_id": "b",
+                    "animal_id": "D",
+                    "pixels": [
+                      [
+                        100,
+                        99
+                      ],
+                      [
+                        101,
+                        102
+                      ]
+                    ]
+                  },
+                  {
+                    "field_id": "c",
+                    "animal_id": "D",
+                    "pixels": [
+                      [
+                        0,
+                        200
+                      ],
+                      [
+                        300,
+                        40
+                      ]
+                    ]
+                  }
+                ]
+              }
+            },
+            "assertions": [
+              "result['source_fields']==len(data['fields'])",
+              "result['biological_n']==len({x['animal_id'] for x in data['fields']})",
+              "result['field_counts']=={r['field_id']:sum(v>data['threshold'] for line in r['pixels'] for v in line) for r in data['fields']}",
+              "result['animal_means']=={a:sum(result['field_counts'][r['field_id']] for r in data['fields'] if r['animal_id']==a)/sum(r['animal_id']==a for r in data['fields']) for a in sorted({r['animal_id'] for r in data['fields']})}",
+              "result['candidate_only'] is True"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A useful scientific batch export must retain every field, its parent animal and an honest candidate-only label.",
+          "probe": "Can a colleague reproduce source-safe output from a clean checkout?",
+          "check": "Test missing/changed source files, source-safe path decisions and biological grouping."
+        }
+      }
+    },
+    "build_steps": [
+      "Prespecify input source metadata, format and full segmentation parameters.",
+      "Keep pure array transformations separate from file I/O.",
+      "Generate one auditable per-field record and biological-unit summary.",
+      "Reproduce locally in A06 CLI and inspect source hashes and failure-handling."
+    ]
+  },
+  "review": {
+    "id": "A06-REVIEW",
+    "title": "Delayed reproducibility and provenance audit",
+    "competencies": [
+      "A06-REVIEW"
+    ],
+    "why": "A successful rerun without identical source and configuration is not exact reproducibility.",
+    "explain": [
+      "Check all data/process identity fields before interpreting output differences.",
+      "Environment drift may not alter numeric outputs but must be recorded.",
+      "A clean checkout and fresh execution are still required outside the browser."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict what changes when source, parameters or biological identity changes."
+    },
+    "prediction_answer": "Require source data, configuration and experimental-unit identity before comparing derived outputs.",
+    "walkthrough": [
+      "Predict a failure condition before running the example.",
+      "Change one dimension, source value or manifest entry and inspect output.",
+      "Explain which scientific interpretation requires external annotation or a fresh local run."
+    ],
+    "investigate": [
+      "Try a missing file, repeated ID or alternate parameter value.",
+      "Separate reproducible candidate masks from validated target detection."
+    ],
+    "debug_task": "Identify one failure where a script runs successfully but reports a misleading scientific result.",
+    "misconception": "A successful Python run implies every biological label and sample unit is correct.",
+    "scientific_boundary": "Synthetic browser inputs. Source integrity, full TIFF batch execution and fresh-environment reproducibility require A06 local Python; candidate masks are not validated nuclei.",
+    "hints": {
+      "learn": [],
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Compute from changing input metadata and image values; never hardcode fixtures."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict → Run → Investigate",
+        "description": "A successful rerun without identical source and configuration is not exact reproducibility.",
+        "starter_code": "# A06-REVIEW | LEARN | Delayed reproducibility and provenance audit\n# TASK: Predict, run and inspect this miniature example.\n\nprint('A06 review: verify source, configuration, output and environment unaided.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply on changed input",
+        "description": "From data.first and data.second (source_hash,parameter_hash,result_hash,environment), return result={'exact_result_match':bool,'source_match':bool,'environment_changed':bool}.",
+        "starter_code": "# A06-REVIEW | APPLY | Delayed reproducibility and provenance audit\n# TASK: From data.first and data.second\n#   (source_hash,parameter_hash,result_hash,environment), return\n#   result={'exact_result_match':bool,'source_match':bool,'environment_changed':bool}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "first": {
+              "source_hash": "a",
+              "parameter_hash": "b",
+              "result_hash": "c",
+              "environment": "py312"
+            },
+            "second": {
+              "source_hash": "a",
+              "parameter_hash": "b",
+              "result_hash": "c",
+              "environment": "py313"
+            }
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "first": {
+                  "source_hash": "a",
+                  "parameter_hash": "b",
+                  "result_hash": "c",
+                  "environment": "py312"
+                },
+                "second": {
+                  "source_hash": "a",
+                  "parameter_hash": "b",
+                  "result_hash": "c",
+                  "environment": "py313"
+                }
+              }
+            },
+            "assertions": [
+              "result['source_match']==(data['first']['source_hash']==data['second']['source_hash'])",
+              "result['environment_changed']==(data['first']['environment']!=data['second']['environment'])",
+              "result['exact_result_match']==all(data['first'][k]==data['second'][k] for k in ('source_hash','parameter_hash','result_hash'))"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "first": {
+                  "source_hash": "a",
+                  "parameter_hash": "b",
+                  "result_hash": "c",
+                  "environment": "py312"
+                },
+                "second": {
+                  "source_hash": "x",
+                  "parameter_hash": "b",
+                  "result_hash": "c",
+                  "environment": "py312"
+                }
+              }
+            },
+            "assertions": [
+              "result['source_match']==(data['first']['source_hash']==data['second']['source_hash'])",
+              "result['environment_changed']==(data['first']['environment']!=data['second']['environment'])",
+              "result['exact_result_match']==all(data['first'][k]==data['second'][k] for k in ('source_hash','parameter_hash','result_hash'))"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A successful rerun without identical source and configuration is not exact reproducibility.",
+          "probe": "Could this output be reproduced with original TIFF and metadata?",
+          "check": "Verify source IDs, axes and source/config hashes; distinguish candidates from biological truth."
+        }
+      },
+      "prove": {
+        "title": "Independent workflow transfer",
+        "description": "From data.first and data.second (source_hash,parameter_hash,result_hash,environment), return result={'exact_result_match':bool,'source_match':bool,'environment_changed':bool}.",
+        "starter_code": "# A06-REVIEW | PROVE | Delayed reproducibility and provenance audit\n# TASK: From data.first and data.second\n#   (source_hash,parameter_hash,result_hash,environment), return\n#   result={'exact_result_match':bool,'source_match':bool,'environment_changed':bool}.\n# INPUTS: data from lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "first": {
+              "source_hash": "s",
+              "parameter_hash": "p",
+              "result_hash": "r",
+              "environment": "venvA"
+            },
+            "second": {
+              "source_hash": "s",
+              "parameter_hash": "q",
+              "result_hash": "r",
+              "environment": "venvA"
+            }
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "first": {
+                  "source_hash": "s",
+                  "parameter_hash": "p",
+                  "result_hash": "r",
+                  "environment": "venvA"
+                },
+                "second": {
+                  "source_hash": "s",
+                  "parameter_hash": "q",
+                  "result_hash": "r",
+                  "environment": "venvA"
+                }
+              }
+            },
+            "assertions": [
+              "result['source_match']==(data['first']['source_hash']==data['second']['source_hash'])",
+              "result['environment_changed']==(data['first']['environment']!=data['second']['environment'])",
+              "result['exact_result_match']==all(data['first'][k]==data['second'][k] for k in ('source_hash','parameter_hash','result_hash'))"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "first": {
+                  "source_hash": "a1",
+                  "parameter_hash": "b1",
+                  "result_hash": "c1",
+                  "environment": "A"
+                },
+                "second": {
+                  "source_hash": "a1",
+                  "parameter_hash": "b1",
+                  "result_hash": "c1",
+                  "environment": "A"
+                }
+              }
+            },
+            "assertions": [
+              "result['source_match']==(data['first']['source_hash']==data['second']['source_hash'])",
+              "result['environment_changed']==(data['first']['environment']!=data['second']['environment'])",
+              "result['exact_result_match']==all(data['first'][k]==data['second'][k] for k in ('source_hash','parameter_hash','result_hash'))"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "A successful rerun without identical source and configuration is not exact reproducibility.",
+          "probe": "Can a colleague reproduce source-safe output from a clean checkout?",
+          "check": "Test missing/changed source files, source-safe path decisions and biological grouping."
+        }
+      }
+    }
+  },
+  "final_project": {
+    "name": "a06_batch_analysis.py",
+    "description": "Reproduce a multi-image TIFF analysis with a manifest, source hashes, tests and per-animal export."
+  }
+}
