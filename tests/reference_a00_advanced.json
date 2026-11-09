@@ -1,0 +1,30 @@
+{
+  "A00-G01": {
+    "apply": "result={'same_interpreter':data['editor_python']==data['kernel_python'],'missing_packages':sorted(set(data['required_packages'])-set(data['installed_packages']))}\nprint(result)",
+    "prove": "result={'same_interpreter':data['editor_python']==data['kernel_python'],'missing_packages':sorted(set(data['required_packages'])-set(data['installed_packages']))}\nprint(result)"
+  },
+  "A00-G02": {
+    "apply": "from pathlib import PurePosixPath\nsafe=[];rejected=[]\nfor name in data['paths']:\n p=PurePosixPath(name)\n (rejected if p.is_absolute() or '..' in p.parts or not name.strip() else safe).append(name)\nresult={'safe':safe,'rejected':rejected}\nprint(result)",
+    "prove": "from pathlib import PurePosixPath\nsafe=[];rejected=[]\nfor name in data['paths']:\n p=PurePosixPath(name)\n (rejected if p.is_absolute() or '..' in p.parts or not name.strip() else safe).append(name)\nresult={'safe':safe,'rejected':rejected}\nprint(result)"
+  },
+  "A00-G03": {
+    "apply": "from collections import defaultdict\ndef animal_average(rows):\n groups=defaultdict(list)\n for row in rows:groups[row['animal_id']].append(float(row['value']))\n return {animal:sum(values)/len(values) for animal,values in sorted(groups.items())}\nresult={'animal_means':animal_average(data['rows']),'field_count':len(data['rows'])}\nprint(result)",
+    "prove": "from collections import defaultdict\ndef animal_average(rows):\n groups=defaultdict(list)\n for row in rows:groups[row['animal_id']].append(float(row['value']))\n return {animal:sum(values)/len(values) for animal,values in sorted(groups.items())}\nresult={'animal_means':animal_average(data['rows']),'field_count':len(data['rows'])}\nprint(result)"
+  },
+  "A00-G04": {
+    "apply": "passed=sorted(r['id'] for r in data['samples'] if r['signal']>=data['minimum'])\nfailed=sorted(r['id'] for r in data['samples'] if r['signal']<data['minimum'])\nresult={'passed':passed,'failed':failed}\nprint(result)",
+    "prove": "passed=sorted(r['id'] for r in data['samples'] if r['signal']>=data['minimum'])\nfailed=sorted(r['id'] for r in data['samples'] if r['signal']<data['minimum'])\nresult={'passed':passed,'failed':failed}\nprint(result)"
+  },
+  "A00-G05": {
+    "apply": "import hashlib,json\nsource=bytes(data['raw_bytes'])\nconfig=json.dumps(data['config'],sort_keys=True,separators=(',',':')).encode()\nresult={'source_sha256':hashlib.sha256(source).hexdigest(),'config_sha256':hashlib.sha256(config).hexdigest()}\nprint(result)",
+    "prove": "import hashlib,json\nsource=bytes(data['raw_bytes'])\nconfig=json.dumps(data['config'],sort_keys=True,separators=(',',':')).encode()\nresult={'source_sha256':hashlib.sha256(source).hexdigest(),'config_sha256':hashlib.sha256(config).hexdigest()}\nprint(result)"
+  },
+  "A00-CAPSTONE": {
+    "apply": "import hashlib\nfrom collections import defaultdict\ngroups=defaultdict(list)\nfor row in data['rows']:groups[row['animal_id']].append(float(row['signal']))\nresult={'animal_means':{a:sum(v)/len(v) for a,v in sorted(groups.items())},'fields':len(data['rows']),'biological_n':len(groups),'source_sha256':hashlib.sha256(bytes(data['raw_bytes'])).hexdigest()}\nprint(result)",
+    "prove": "import hashlib\nfrom collections import defaultdict\ngroups=defaultdict(list)\nfor row in data['rows']:groups[row['animal_id']].append(float(row['signal']))\nresult={'animal_means':{a:sum(v)/len(v) for a,v in sorted(groups.items())},'fields':len(data['rows']),'biological_n':len(groups),'source_sha256':hashlib.sha256(bytes(data['raw_bytes'])).hexdigest()}\nprint(result)"
+  },
+  "A00-REVIEW": {
+    "apply": "from pathlib import PurePosixPath\nimport hashlib\nbad=[p for p in data['paths'] if not p.strip() or PurePosixPath(p).is_absolute() or '..' in PurePosixPath(p).parts]\nresult={'rejected':bad,'sha256':hashlib.sha256(bytes(data['input_bytes'])).hexdigest(),'requires_local_replay':True}\nprint(result)",
+    "prove": "from pathlib import PurePosixPath\nimport hashlib\nbad=[p for p in data['paths'] if not p.strip() or PurePosixPath(p).is_absolute() or '..' in PurePosixPath(p).parts]\nresult={'rejected':bad,'sha256':hashlib.sha256(bytes(data['input_bytes'])).hexdigest(),'requires_local_replay':True}\nprint(result)"
+  }
+}
