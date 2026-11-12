@@ -25,13 +25,11 @@ def main():
               theme:'dark',layout:{editorShare:54,consoleHeight:160,lessonOpen:true}}));""")
             page.goto(URL, wait_until="domcontentloaded")
             page.locator("#p01-goal-select").wait_for(timeout=20000)
-            # The legacy saved expanded preference must not override the new default.
-            assert page.locator("#phase-panel").is_hidden(), "Learn panel should start collapsed"
-            assert page.locator("#lesson-toggle").get_attribute("aria-expanded") == "false"
-            page.locator("#lesson-toggle").click()
-            assert page.locator("#phase-panel").is_visible(), "Learner must be able to expand the panel"
+            # Learning-first UI opens the real task directly; Explore removes the teaching pane.
+            assert page.locator("#phase-panel").is_visible(), "Learning task must open by default"
+            assert page.locator("#view-learn").get_attribute("aria-pressed") == "true"
             assert page.locator("#run-button").is_enabled(), "Python Run button must be enabled by P01 adapter"
-            assert page.locator("#lesson-summary").inner_text().startswith("P01")
+            assert page.locator("#bps-chapter-select").input_value() == "P01"
             page.locator("#run-button").click()
             page.wait_for_function("document.querySelector('#output-body').innerText.includes('N2_P03 6')",
                                    timeout=100000)
@@ -82,9 +80,7 @@ def main():
             assert "saved P01-G01 apply" in page.evaluate(
                 "() => document.querySelector('.CodeMirror').CodeMirror.getValue()"), "Reload lost draft"
             assert page.locator("#tab-apply").get_attribute("aria-selected") == "true", "Reload lost phase"
-            assert page.locator("#phase-panel").is_hidden(), "Reload should collapse lesson, without losing learner progress"
-            page.locator("#lesson-toggle").click()
-            assert page.locator("#phase-panel").is_visible()
+            assert page.locator("#phase-panel").is_visible(), "Reload must show the current task while keeping learner progress"
 
             # New chapter: the full concept, prediction feedback and authentic source figure
             page.locator("#p01-goal-select").select_option("0")
@@ -99,7 +95,7 @@ def main():
             # Full capstone must execute as genuine Python, not a static expected output.
             page.locator("#p01-goal-select").select_option("7")
             page.locator("#tab-apply").click()
-            assert page.locator("#lesson-summary").inner_text().startswith("P01")
+            assert page.locator("#bps-chapter-select").input_value() == "P01"
             assert "Available example inputs" in page.locator("#p01-detail-root").inner_text()
             page.evaluate("""code => document.querySelector('.CodeMirror').CodeMirror.setValue(code)""",
                 "width_um = width_pixels / pixels_per_um\n"
@@ -193,8 +189,7 @@ def main():
                 if width <= 720:
                     mobile.locator("#nav-toggle").click()
                 mobile.locator("#tab-prove").click()
-                assert mobile.locator("#phase-panel").is_hidden(), "Mobile lesson must also start collapsed"
-                mobile.locator("#lesson-toggle").click()
+                assert mobile.locator("#phase-panel").is_visible(), "Mobile must show one task at a time"
                 mobile.locator("#p01-reflection").fill("Units, calibration and biological independence require interpretation.")
                 assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), ("Capstone overflow",width)
                 editor_box=mobile.locator("#code-wrapper").bounding_box()
