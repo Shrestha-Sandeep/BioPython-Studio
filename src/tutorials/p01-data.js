@@ -1,187 +1,174 @@
-/* Science-first P01 narrated examples.
- * Every tutorial: see a genuine future capability → understand today's
- * Python building block → change an input → transfer independently.
- * Future microscopy figures are published teaching outputs, not computed by
- * the introductory code or substitutes for raw quantitative image data.
+/* One science-first P01 chapter tutorial.
+ * A single coherent workflow, not seven isolated syntax videos.
+ * Witz/HPA figure previews show future capability, NOT an analysis
+ * performed by the Python snippets. All measurements are hypothetical.
  */
 "use strict";
-window.BioPythonP01Tutorials = Object.freeze([
-  {
-    id:"p01-values",title:"Variables and output",short:"Variables",minutes:"2–3 min",
-    goals:["P01-G01","P01-G02"],
-    parameter:{label:"Cells counted manually",min:5,max:50,step:1,value:25,token:"CELLS"},
+(() => {
+  const id='specimen = "S01"';
+  const count=id+"\ncells = {CELLS}";
+  const firstPrint=count+"\nprint(specimen)";
+  const bothPrint=firstPrint+"\nprint(cells)";
+  const inputs=count+"\npixels = 40\npixel_size_um = 0.2";
+  const length=inputs+"\nlength_um = pixels * pixel_size_um";
+  const report=length+'\nprint(f"{specimen}: {cells} cells")\nprint(f"Length: {length_um:.1f} µm")';
+  const finalOutput="S01: {CELLS} cells\nLength: 8.0 µm";
+  const preview={image:"labeled-nuclei",label:"Where this leads: labeled nuclei from a published Witz tutorial"};
+  const scene=(title,say,code,focus,visual,output,note,extras={})=>({
+    title,say,code,focus,visual,output,note,...extras
+  });
+  window.BioPythonP01Tutorials=Object.freeze([{
+    id:"p01-chapter",
+    chapter:"P01",
+    title:"From a microscope field to a trustworthy report",
+    short:"One chapter example",
+    minutes:"5–8 min",
+    goals:[
+      "P01-G01","P01-G02","P01-G03","P01-G04",
+      "P01-G05","P01-G06","P01-G07","P01-CAPSTONE"
+    ],
+    parameter:{label:"Manually counted cells",min:5,max:50,step:1,value:25,token:"CELLS"},
     steps:[
-      {title:"Where this leads: counting cells",
-       say:"Imagine analyzing hundreds of microscopy fields and receiving a table of cell counts, one row per specimen. Python can eventually help make that possible. The image shown here is a published example of segmented nuclei, not a result from the simple program we will write today.",
-       code:"",focus:[],visual:[["Future result","Cell counts per image"],["Today's tool","Store and display one count"]],
-       output:"",preview:{image:"labeled-nuclei",label:"A glimpse of later image analysis"},
-       note:"Future work requires image loading, segmentation, validation and iteration. Today's code does not detect cells."},
-      {title:"Start with the specimen identifier",
-       say:"Before analyzing an image, we must keep track of which specimen the data belongs to. The name specimen refers to the text S zero one. Because this value is text in quotation marks, Python calls it a string.",
-       code:'specimen = "S01"',focus:[1],visual:[["Variable name","specimen"],["Value","S01"],["Python type","str"]],
-       output:"",note:"The equals sign assigns a reference to a value; it does not compare two values."},
-      {title:"Store one observed count",
-       say:"Suppose we manually count some cells in this field. Assign the number to a variable called cells. Python treats this whole number as an integer. In later lessons, a function could calculate the count and assign its result to the same name.",
-       code:'specimen = "S01"\ncells = {CELLS}',focus:[2],visual:[["specimen","S01"],["cells","{CELLS}"],["Python type","int"]],
-       output:"",note:"A manually entered value is not an automatic cell count. Data provenance matters."},
-      {title:"Ask Python to display the label",
-       say:"The print function shows the value of a variable in the output. Notice that we write print specimen without quotation marks around specimen. Python looks up the variable and displays its stored text.",
-       code:'specimen = "S01"\ncells = {CELLS}\nprint(specimen)',focus:[3],
-       visual:[["Variable requested","specimen"],["Value displayed","S01"]],output:"S01",
-       note:"print(specimen) displays S01; print('specimen') would display the literal word specimen."},
-      {title:"Display the measurement",
-       say:"Add a second print statement. Python executes these lines from top to bottom. We now have a sample identifier and a cell count in the output, which is the simplest form of a traceable measurement report.",
-       code:'specimen = "S01"\ncells = {CELLS}\nprint(specimen)\nprint(cells)',
-       focus:[4],visual:[["Specimen","S01"],["Count","{CELLS} cells"]],output:"S01\n{CELLS}",
-       note:"Printing reports a stored count. It does not calculate or validate the count."},
-      {title:"Change the input, not the program",
-       say:"Now move the cell count slider. The code structure stays the same, yet the output changes. This is a useful idea for scientific scripts: separate the input data from the instructions that process it.",
-       code:'specimen = "S01"\ncells = {CELLS}\nprint(specimen)\nprint(cells)',
-       focus:[2,4],visual:[["Manual input","{CELLS} cells"],["Printed output","{CELLS}"]],
-       output:"S01\n{CELLS}",note:"Observe which output changes, and which stays the same."},
-      {title:"The connection to image analysis",
-       say:"Later, an image processing pipeline may find objects in a fluorescence image and return a count for each field. That future pipeline still relies on familiar basics: variable names, numerical values, labels, and output. You are learning the vocabulary that lets you understand its results.",
-       code:'# A later image-analysis program might compute cells\n# For now, we supply the count ourselves\nspecimen = "S01"\ncells = {CELLS}\nprint(specimen)\nprint(cells)',
-       focus:[3,4,5],visual:[["Later","Image → detected objects"],["Today","Measured count → variable → output"]],
-       output:"S01\n{CELLS}",preview:{image:"labeled-nuclei",label:"Future capability, not current code"},
-       note:"Published segmentation figure from Witz/HPA. Segmented objects still require biological validation."},
-      {title:"Transfer: identify another field",
-       say:"In the real Python editor, introduce a variable called field for the microscope field number. Print it on another line. Then change specimen and cells, predict the output, and run the program to check your prediction.",
-       code:'specimen = "S01"\ncells = {CELLS}\nprint(specimen)\nprint(cells)',
-       focus:[1,2,3,4],visual:[["Next input","field number"],["Your task","Add and print a variable"]],
-       output:"S01\n{CELLS}",note:"Independent task: add field = 2 and print its value. Try without copying a complete solution."}
+      scene(
+        "The destination: a whole experiment",
+        "Imagine finishing a microscopy experiment with hundreds of fields. Instead of manually copying numbers, a Python workflow could organize specimen identifiers, count candidate objects, measure their dimensions, and create a report. This published image shows labeled nuclei from an advanced image processing lesson. Our code today will not segment this image.",
+        "",[],[["Future capability","Image analysis + traceable reports"],["Today's goal","One trustworthy specimen report"]],"",
+        "A labeled-nuclei image is an illustration of future capability, not evidence that today's code detects cells.",
+        {preview,goal:"P01-G01"}
+      ),
+      scene(
+        "What we can really build today",
+        "We begin with one microscope field. Someone has manually counted twenty five cells, and measured a hypothetical forty pixel distance. We also have an illustrative calibration of zero point two micrometres per pixel. We will store these inputs, calculate one length, and print a clear report.",
+        "",[],[["Specimen","S01"],["Manual count","{CELLS} cells"],["Distance","40 px"],["Example calibration","0.2 µm/px"]],"",
+        "These are invented training inputs; no counts, distances or calibration are inferred from the published picture.",
+        {preview:{image:"fluorescence-single",label:"Microscopy context: published fluorescence image"},goal:"P01-G01"}
+      ),
+      scene(
+        "Give the sample a name",
+        "First, Python assigns the text S zero one to a variable called specimen. The quotation marks mean we are storing a string, not a number. Without a reliable sample identifier, even a perfect image measurement can become impossible to interpret.",
+        id,[1],[["Variable","specimen"],["Value","S01"],["Type","str"]],"",
+        "The equals sign assigns a value. A variable name is how later instructions refer to that value.",
+        {goal:"P01-G02"}
+      ),
+      scene(
+        "Record an observation",
+        "Next we assign the manually counted value to cells. Whole numbers are called integers. The same variable could later receive a count produced by an image analysis function, but for now we supply the number ourselves.",
+        count,[2],[["Specimen","S01"],["cells","{CELLS}"],["Type","int"]],"",
+        "A stored manually counted number is not the same as an automated or independently verified count.",
+        {goal:"P01-G02"}
+      ),
+      scene(
+        "Run a small scientific script",
+        "Python follows instructions in order. Print specimen writes the sample identifier. Print cells writes the observed count. Notice that Python prints the values stored under those names, not the variable names themselves.",
+        bothPrint,[3,4],[["First print","S01"],["Second print","{CELLS}"]],"S01\n{CELLS}",
+        "Each print starts a new line. Try this exact script using the real editor's Run button.",
+        {goal:"P01-G01"}
+      ),
+      scene(
+        "Predict before seeing the answer",
+        "Now think before we continue. If the cell count changed from twenty five to thirty one, which line of the output should change? What about the specimen identifier? Make a prediction. When ready, press Reveal to continue.",
+        bothPrint,[2],[["Question","Change cells only"],["Prediction","Which output line changes?"]],"",
+        "Stop and predict. The answer follows after you press Reveal. The same reasoning will later help you test analysis parameters.",
+        {checkpoint:true,goal:"P01-G02"}
+      ),
+      scene(
+        "Reveal: the input controls the output",
+        "Only the second output line depends on cells. The first line still displays S zero one. Move the count slider to thirty one and watch that change. You have just separated the input data from the code that reports it.",
+        bothPrint,[2,4],[["Unchanged specimen","S01"],["Changing count","{CELLS}"]],"S01\n{CELLS}",
+        "Changing an input can change part of an output without changing the program's instructions.",
+        {goal:"P01-G02"}
+      ),
+      scene(
+        "Pixels are not physical length",
+        "Now add a second measurement: forty pixels. A distance in pixels becomes a real-world length only when it is multiplied by the appropriate, verified image calibration. This is a frequent source of mistakes in quantitative microscopy.",
+        inputs,[3,4],[["Distance","40 pixels"],["Example scale","0.2 µm per pixel"]],"",
+        "The 0.2 micrometres per pixel calibration is hypothetical and does NOT apply to the image preview.",
+        {goal:"P01-G03"}
+      ),
+      scene(
+        "Two different number types",
+        "Pixels is an integer: forty. Pixel size is a float, a decimal value. A string stores a label, an integer stores a whole number, and a float stores a decimal number. Python uses these types when it evaluates expressions.",
+        inputs,[2,3,4],[["specimen","string"],["cells, pixels","integers"],["pixel_size_um","float"]],"",
+        "Types describe how Python represents values. The variable name, not the type alone, documents scientific units.",
+        {goal:"P01-G04"}
+      ),
+      scene(
+        "Calculate the length",
+        "We multiply forty pixels by zero point two micrometres per pixel, obtaining eight micrometres. Python assigns the calculated value to length underscore u m. The units of pixels cancel, leaving micrometres.",
+        length,[5],[["40 px × 0.2 µm/px","8.0 µm"],["Variable","length_um"]],"",
+        "In real measurements, verify that calibration and measured pixels refer to the same image and axis.",
+        {goal:"P01-G03"}
+      ),
+      scene(
+        "A useful logical result",
+        "Python can also ask questions. Here, is the length at least five micrometres? The comparison returns True, a Boolean value. Later, comparisons will help us flag values for review. This five micrometre cutoff is only for learning, not a validated biological quality rule.",
+        length+"\nprint(length_um >= 5)",[6],[["Length","8.0 µm"],["Illustrative condition","at least 5 µm"],["Boolean result","True"]],"True",
+        "A comparison is only as scientifically meaningful as its defined criterion.",
+        {goal:"P01-G04"}
+      ),
+      scene(
+        "Not all mistakes cause errors",
+        "Now imagine somebody accidentally types zero point four instead of the correct calibration, zero point two. The program still runs but reports sixteen micrometres instead of eight. Python cannot know that the input calibration is wrong. Reliable analysis requires checking provenance and units.",
+        'pixels = 40\npixel_size_um = 0.4\nlength_um = pixels * pixel_size_um\nprint(round(length_um, 1))',
+        [2,3,4],[["Wrong assumed scale","0.4 µm/px"],["Printed length","16.0 µm"],["With 0.2 µm/px","8.0 µm"]],"16.0",
+        "A silent scientific error can be more dangerous than an obvious traceback; this comparison is hypothetical.",
+        {goal:"P01-G05"}
+      ),
+      scene(
+        "An error Python does catch",
+        "Here is a visible error. We define a variable called cells but try to print cell without the final s. Python raises NameError. The final line of a traceback tells us which name it could not find.",
+        "cells = 25\nprint(cell)",[2],[["Defined name","cells"],["Used name","cell"],["Error","NameError"]],
+        "NameError: name 'cell' is not defined",
+        "The preview shows a shortened error message; a full traceback includes file and line context.",
+        {goal:"P01-G05"}
+      ),
+      scene(
+        "Repair the underlying cause",
+        "When we change cell to cells, the program prints twenty five again. Python variable names must match exactly. In a larger workflow, the same error might appear when an analysis refers to a misspelled column or image channel.",
+        "cells = 25\nprint(cells)",[2],[["Fixed name","cells"],["Value","25"]],"25",
+        "Fix the code and rerun it. Never confuse fixing a traceback with validating the underlying scientific measurement.",
+        {goal:"P01-G05"}
+      ),
+      scene(
+        "You can ask Python for help",
+        "You will not remember every function and argument. The built-in help function gives documentation. For example, help of len explains how to retrieve the number of items in a sequence or another collection.",
+        "help(len)",[1],[["Ask Python about","len"],["Meaning","Number of items"]],
+        "Help on built-in function len …",
+        "This documentation excerpt is deliberately abbreviated rather than an exact copy of full Python help output.",
+        {goal:"P01-G06"}
+      ),
+      scene(
+        "Make your work reproducible",
+        "Notebook variables can survive from earlier cells, even if the code is no longer visible. Printing cells in a new interpreter fails unless the variable has been defined. Reproducible scripts work from a clean start and make all required inputs explicit.",
+        "print(cells)",[1],[["Fresh session","cells not defined"],["Outcome","NameError"]],
+        "NameError: name 'cells' is not defined",
+        "A script that works only because of hidden notebook state is not safely reproducible.",
+        {goal:"P01-G07"}
+      ),
+      scene(
+        "Put it all together",
+        "Now we have a complete small scientific report. First, record the specimen identifier, manual cell count, pixel length, and hypothetical calibration. Then calculate length. Finally, f strings insert values into readable output, and dot one f displays the length to one decimal place.",
+        report,[1,2,3,4,5,6,7],[["Count","{CELLS} cells"],["Computed length","8.0 µm"]],
+        finalOutput,
+        "A real specimen report also needs image identifiers, replicate labels, source metadata, and validated measurements.",
+        {goal:"P01-CAPSTONE"}
+      ),
+      scene(
+        "See the bigger picture again",
+        "This tiny report is a first building block. Later, loops will handle many fields, dictionaries will connect metadata, functions will perform repeated calculations, and image analysis can supply candidate-object measurements. The advanced image is a preview, not something this beginner script produced.",
+        report,[2,5,6,7],[["Now","One report from supplied numbers"],["Later","Images → validated measurements → dataset"]],
+        finalOutput,
+        "Future image segmentation requires independent validation. The beginner report only processes supplied inputs.",
+        {preview,goal:"P01-CAPSTONE"}
+      ),
+      scene(
+        "Your turn: transfer the idea",
+        "Return to the real editor. Add a variable for microscope field number and print it. Then change pixels from forty to sixty five, predict the new length in micrometres, and run the entire script from a clean start. Explain why changing the cell count does not change the measured length.",
+        report,[2,3,4,5,6,7],[["Challenge A","Add a field number"],["Challenge B","Predict 65-pixel length"],["Challenge C","Run from the top"]],
+        finalOutput,
+        "Independent challenge: write the changes in the editor without copying a completed solution.",
+        {goal:"P01-CAPSTONE"}
+      )
     ]
-  },
-  {
-    id:"p01-calculations",title:"Measurements and Python types",short:"Calculations",minutes:"2–3 min",
-    goals:["P01-G03","P01-G04"],
-    parameter:{label:"Hypothetical calibration (µm/pixel)",min:0.1,max:0.8,step:0.1,value:0.2,token:"PIXEL_SIZE"},
-    steps:[
-      {title:"Where this leads: measuring structures",
-       say:"A fluorescent structure may be forty pixels long in an image. But how many micrometres is that? Python can convert pixel measurements into physical units when the image calibration is known. This is the foundation of quantitative microscopy, not just arithmetic for its own sake.",
-       code:"",focus:[],visual:[["Observed extent","40 pixels"],["Missing information","µm per pixel"]],
-       output:"",preview:{image:"fluorescence-single",label:"Microscopy context: real published figure"},
-       note:"The shown Witz/HPA image is not calibrated raw data. The 40-pixel measurement is hypothetical."},
-      {title:"Two kinds of numbers",
-       say:"We store the measured extent as an integer, pixels equals forty. We also store the hypothetical calibration as a decimal number, which Python calls a float. We choose names that make the physical meaning clear.",
-       code:"pixels = 40\npixel_size_um = {PIXEL_SIZE}",focus:[1,2],
-       visual:[["pixels (int)","40"],["pixel_size_um (float)","{PIXEL_SIZE}"]],
-       output:"",note:"The number 0.2 is an example, not the calibration of the displayed microscopy image."},
-      {title:"Compute a physical length",
-       say:"Multiply the pixel count by the calibrated micrometres per pixel. The pixel units cancel, leaving micrometres. Python evaluates this expression and assigns the result to length underscore u m.",
-       code:"pixels = 40\npixel_size_um = {PIXEL_SIZE}\nlength_um = pixels * pixel_size_um",
-       focus:[3],visual:[["Extent","40 px"],["Calibration","{PIXEL_SIZE} µm/px"],["Physical length","{LENGTH} µm"]],
-       output:"",note:"Dimensional check: pixels × (µm/pixel) = µm. Wrong calibration gives a wrong length."},
-      {title:"Print a result with sensible precision",
-       say:"The print function now displays the computed length. We round the display to one decimal place, but the value assigned to length underscore u m is still available for further calculation.",
-       code:"pixels = 40\npixel_size_um = {PIXEL_SIZE}\nlength_um = pixels * pixel_size_um\nprint(round(length_um, 1))",
-       focus:[4],visual:[["Length","{LENGTH} µm"],["Display","1 decimal place"]],
-       output:"{LENGTH}",note:"round changes the displayed numeric result here; it does not add the physical unit automatically."},
-      {title:"A third kind of value: True or False",
-       say:"Not every result is a number. A comparison such as pixels greater than or equal to thirty produces a Boolean, either True or False. Comparisons later help us check conditions and flag measurements.",
-       code:"pixels = 40\npixel_size_um = {PIXEL_SIZE}\nlong_enough = pixels >= 30\nprint(type(pixels).__name__)\nprint(type(pixel_size_um).__name__)\nprint(long_enough)",
-       focus:[3,4,5,6],visual:[["Integer","40"],["Float","{PIXEL_SIZE}"],["Boolean","True"]],
-       output:"int\nfloat\nTrue",note:"The cut-off of 30 pixels is only an example, not a biological acceptance criterion."},
-      {title:"See how a parameter changes the answer",
-       say:"Move the calibration slider. Forty pixels remains forty pixels, yet the calculated physical length changes. This is precisely why metadata and image calibration must be checked before interpreting biological size differences.",
-       code:"pixels = 40\npixel_size_um = {PIXEL_SIZE}\nlength_um = pixels * pixel_size_um\nprint(round(length_um, 1))",
-       focus:[2,3,4],visual:[["Same image distance","40 px"],["Changed calibration","{PIXEL_SIZE} µm/px"],["New answer","{LENGTH} µm"]],
-       output:"{LENGTH}",note:"Changing calibration changes the inferred real-world size, not the original pixels."},
-      {title:"Where the same idea becomes powerful",
-       say:"Later, Python can measure hundreds of segmented cells, convert every area or length using image metadata, and summarize the distributions. That requires arrays, image processing, and validation. Today, practice changing pixels from forty to sixty-five and calculating the new physical length.",
-       code:"pixels = 40\npixel_size_um = {PIXEL_SIZE}\nlength_um = pixels * pixel_size_um\nprint(round(length_um, 1))",
-       focus:[1,2,3,4],visual:[["Future","Batch measurements"],["Today","One correct calibrated calculation"]],
-       output:"{LENGTH}",preview:{image:"labeled-nuclei",label:"An example of objects for future measurements"},
-       note:"Independent challenge: calculate a 65-pixel length. Use real calibration only with its own image."}
-    ]
-  },
-  {
-    id:"p01-debugging",title:"Errors, help, and clean runs",short:"Debugging",minutes:"2–3 min",
-    goals:["P01-G05","P01-G06","P01-G07"],
-    steps:[
-      {title:"Where this leads: trust your analysis",
-       say:"Imagine a script processing a hundred microscope images. One misspelled variable may stop the analysis, while incorrect calibration may quietly give believable but wrong measurements. Learning to debug means learning to recognize both visible errors and questionable scientific results.",
-       code:"",focus:[],visual:[["Visible failure","Code stops"],["Silent failure","Plausible but wrong result"]],
-       output:"",preview:{image:"otsu-nuclei-mask",label:"A future automated image-analysis result"},
-       note:"A successful run is not proof that an image-analysis result is scientifically valid."},
-      {title:"A mistake with a useful message",
-       say:"Here, we defined cells with an s, but asked Python to print cell without the s. Python cannot find a variable named cell and raises a NameError. Read the last line of the traceback first.",
-       code:"cells = 25\nprint(cell)",focus:[2],visual:[["Defined","cells"],["Requested","cell"],["Error","NameError"]],
-       output:"NameError: name 'cell' is not defined",note:"This preview omits traceback file and line details; real Python gives additional context."},
-      {title:"Fix the cause, not the message",
-       say:"Use the exact variable name we defined. Now Python prints twenty-five. The same debugging method applies later when a complex analysis script uses the wrong image channel name or measurement column.",
-       code:"cells = 25\nprint(cells)",focus:[1,2],visual:[["Corrected name","cells"],["Displayed count","25"]],
-       output:"25",note:"Variable names must match exactly, including capitalization."},
-      {title:"Ask the interpreter for help",
-       say:"You do not need to memorize every Python function. The built-in help function can describe how a function works. Here, help of len explains a way to count items in a collection.",
-       code:"help(len)",focus:[1],visual:[["Function","len"],["Meaning","Number of items"]],
-       output:"Help on built-in function len …",note:"Help output is intentionally abbreviated in this preview."},
-      {title:"Watch out for invisible history",
-       say:"A notebook can remember variables from previous cells. In a fresh Python session, print cells alone fails if cells was never defined. A reproducible script must declare its inputs before it uses them.",
-       code:"print(cells)",focus:[1],visual:[["Fresh Python session","No cells variable"],["Result","NameError"]],
-       output:"NameError: name 'cells' is not defined",note:"A result that only works because of hidden notebook state is hard to reproduce."},
-      {title:"Run cleanly from the top",
-       say:"Define cells, then print cells in the same script. This runs even after restarting the interpreter. Re-running from a clean state is a simple check before sharing an analysis with another scientist.",
-       code:"cells = 25\nprint(cells)",focus:[1,2],visual:[["Declared input","25"],["Fresh-run output","25"]],
-       output:"25",note:"A clean run tests execution order, not whether the biological input is correct."},
-      {title:"A silent scientific mistake",
-       say:"Now consider a more dangerous problem. If the true calibration is zero point two micrometres per pixel but we type zero point four, the program still runs. It returns sixteen micrometres instead of eight. No Python exception can detect a wrong calibration by itself.",
-       code:"pixels = 40\npixel_size_um = 0.4\nlength_um = pixels * pixel_size_um\nprint(round(length_um, 1))",
-       focus:[2,3,4],visual:[["Assumed calibration","0.4 µm/px"],["Printed","16.0 µm"],["If true size = 0.2 µm/px","8.0 µm"]],
-       output:"16.0",note:"The 0.2 µm/px comparison is hypothetical. Verify metadata, acquisition settings, and units."},
-      {title:"Transfer: make a script reliable",
-       say:"In the real editor, deliberately misspell one variable, read the traceback and repair it. Next, restart from the beginning and check that the result makes scientific sense. Later you will use automated tests for entire microscopy workflows.",
-       code:'specimen = "S01"\ncells = 25\nprint(specimen)\nprint(cells)',
-       focus:[1,2,3,4],visual:[["Check one","Fix NameError"],["Check two","Run from scratch"],["Check three","Verify inputs and units"]],
-       output:"S01\n25",note:"Independent task: rename specimen to sample_id everywhere without breaking the script."}
-    ]
-  },
-  {
-    id:"p01-report",title:"Complete example: specimen report",short:"Complete example",minutes:"3–4 min",
-    goals:["P01-CAPSTONE"],
-    parameter:{label:"Cells counted manually",min:5,max:50,step:1,value:25,token:"CELLS"},
-    steps:[
-      {title:"The destination: a reproducible report",
-       say:"Imagine a microscope experiment with many specimens. A useful output would pair each sample identifier with its cell count, calibrated measurements, and acquisition metadata. Later Python can build such tables automatically. Today we will make one tiny, correct report with variables and arithmetic.",
-       code:"",focus:[],visual:[["Future","Table of measurements"],["Today's deliverable","One specimen report"]],
-       output:"",preview:{image:"fluorescence-examples",label:"The larger microscopy problem"},
-       note:"The Witz/HPA image is a published illustrative figure, not data measured by this code."},
-      {title:"Start with traceability",
-       say:"First, define a specimen identifier. Without labels, even a correct measurement may be impossible to interpret later. We store S zero one as a string.",
-       code:'specimen = "S01"',focus:[1],visual:[["Sample identifier","S01"],["Data type","String"]],
-       output:"",note:"A real analysis also records image provenance, acquisition details and units."},
-      {title:"Store observations and calibration",
-       say:"Next, store the manually counted cells, a forty-pixel distance, and an illustrative calibration of zero point two micrometres per pixel. Each variable has one clear purpose.",
-       code:'specimen = "S01"\ncells = {CELLS}\npixels = 40\npixel_size_um = 0.2',
-       focus:[2,3,4],visual:[["Count","{CELLS} cells"],["Distance","40 px"],["Calibration","0.2 µm/px"]],
-       output:"",note:"These numbers are invented training inputs; do not apply this calibration to the figure."},
-      {title:"Calculate the length",
-       say:"Python multiplies forty pixels by zero point two micrometres per pixel. The result is eight micrometres. We store it as length underscore u m so the meaning is clear when the report is expanded.",
-       code:'specimen = "S01"\ncells = {CELLS}\npixels = 40\npixel_size_um = 0.2\nlength_um = pixels * pixel_size_um',
-       focus:[5],visual:[["40 pixels × 0.2 µm/px","8.0 µm"],["Variable","length_um"]],
-       output:"",note:"The pixel count and calibration must belong to the same image and spatial axis."},
-      {title:"Turn numbers into readable information",
-       say:"An f string lets us insert variable values into text without manually copying numbers. The colon dot one f tells Python to display the length with one decimal place. This is the beginning of automated reporting.",
-       code:'specimen = "S01"\ncells = {CELLS}\npixels = 40\npixel_size_um = 0.2\nlength_um = pixels * pixel_size_um\nprint(f"{specimen}: {cells} cells")\nprint(f"Length: {length_um:.1f} µm")',
-       focus:[6,7],visual:[["Specimen","S01"],["Cells","{CELLS}"],["Physical length","8.0 µm"]],
-       output:"S01: {CELLS} cells\nLength: 8.0 µm",note:"Formatting changes how a value is displayed, not how the original measurement was acquired."},
-      {title:"Run the complete report",
-       say:"Here is the finished program. It produces the specimen label, the counted cells, and the calculated physical length. These are only a few lines, but they already separate data, calculations and presentation.",
-       code:'specimen = "S01"\ncells = {CELLS}\npixels = 40\npixel_size_um = 0.2\nlength_um = pixels * pixel_size_um\nprint(f"{specimen}: {cells} cells")\nprint(f"Length: {length_um:.1f} µm")',
-       focus:[1,2,3,4,5,6,7],visual:[["Input count","{CELLS}"],["Computed length","8.0 µm"]],
-       output:"S01: {CELLS} cells\nLength: 8.0 µm",note:"The report is created by the displayed Python code and can be reproduced in the real editor."},
-      {title:"Test how the report responds to new data",
-       say:"Move the cell-count slider. The reported count changes, but the length remains eight micrometres. That is correct: length depends on pixels and calibration, not on cell count. Understanding these dependencies makes scientific code easier to trust.",
-       code:'specimen = "S01"\ncells = {CELLS}\npixels = 40\npixel_size_um = 0.2\nlength_um = pixels * pixel_size_um\nprint(f"{specimen}: {cells} cells")\nprint(f"Length: {length_um:.1f} µm")',
-       focus:[2,5,6,7],visual:[["Variable count","{CELLS} cells"],["Unchanged length","8.0 µm"]],
-       output:"S01: {CELLS} cells\nLength: 8.0 µm",note:"Prediction: what would change if pixels changed instead? What must stay the same?"},
-      {title:"What this small program grows into",
-       say:"In future chapters, lists and loops will handle multiple fields. Functions will reuse the same calculation. Image processing can supply object measurements, and tables can preserve the metadata. That is the path from a simple variable to a reproducible scientific workflow.",
-       code:'# Today: one manually counted field\nspecimen = "S01"\ncells = {CELLS}\npixels = 40\npixel_size_um = 0.2\nlength_um = pixels * pixel_size_um\nprint(f"{specimen}: {cells} cells")\nprint(f"Length: {length_um:.1f} µm")',
-       focus:[2,3,4,5,6,7,8],visual:[["Today","One reproducible report"],["Later","Many fields → validated dataset"]],
-       output:"S01: {CELLS} cells\nLength: 8.0 µm",
-       preview:{image:"labeled-nuclei",label:"Later: processing segmented objects"},
-       note:"This code does not process the displayed segmentation. Independent challenge: change pixels to 65, predict the new length, then run."}
-    ]
-  }
-]);
+  }]);
+})();
