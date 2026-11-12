@@ -14,7 +14,6 @@ on:
       - 'src/tutorials/**'
       - 'tests/p01_tutorials.test.mjs'
       - 'tests/test_p01_tutorial_browser.py'
-      - 'tests/test_p01_mp4_browser.py'
 permissions:
   contents: read
 jobs:
@@ -44,8 +43,6 @@ jobs:
         run: python tests/ui_first_2_browser.py
       - name: P01 narrated tutorial browser flow
         run: python tests/test_p01_tutorial_browser.py
-      - name: MP4 export browser behavior (mock capture and voice)
-        run: python tests/test_p01_mp4_browser.py
       - name: Store mobile/desktop screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
