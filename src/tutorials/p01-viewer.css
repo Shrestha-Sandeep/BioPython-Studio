@@ -81,3 +81,12 @@ body[data-ui-view="explore"] #bps-example-trigger{display:none!important}
 @media(max-width:720px){
  .bps-example-dialog.bps-exporting{height:100dvh;max-width:100vw;border-radius:0}
 }
+
+/* MP4 export: keep an explicit save link after the async recorder stops. */
+.bps-example-download{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:6px 11px;border:1px solid var(--green,#2c8b6b);border-radius:8px;color:var(--text,#fff);background:rgba(35,140,103,.2);text-decoration:none;font-size:12px;font-weight:700;cursor:pointer}
+.bps-example-download[hidden],#bps-example-record-actions[hidden]{display:none!important}
+#bps-example-record-actions{width:100%;display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:7px;padding:8px 0}
+#bps-example-record-actions button{font-size:12px;font-weight:650;min-height:35px;padding:7px 12px;border-radius:8px;background:var(--surface2,#202938);color:var(--text,#fafafa);border:1px solid var(--line,#374151);cursor:pointer}
+#bps-example-finish{border-color:var(--green,#2c8b6b)!important;background:rgba(35,140,103,.2)!important}
+.bps-example-dialog.bps-exporting .bps-example-footer{align-items:center;flex-direction:column;text-align:center;gap:5px}
+.bps-example-dialog.bps-exporting .bps-example-footer #bps-example-status{display:block}
