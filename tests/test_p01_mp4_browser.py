@@ -53,8 +53,10 @@ MOCKS = r"""
   },configurable:true});
   class FakeAudioContext{
     createMediaStreamSource(){return {connect(){}};}
+    createGain(){return {gain:{value:1},connect(){}};}
     createAnalyser(){return {
       fftSize:1024,
+      connect(){},
       getByteTimeDomainData(samples){samples.fill(window.__mockSilent ? 128 : 152);}
     };}
     resume(){return Promise.resolve();}
@@ -87,15 +89,28 @@ def check():
             samples = page.evaluate("() => window.__voiceCalls")
             assert len(samples) == 6, len(samples)
             assert all(row["rate"]==0.85 and row["voice"]=="David Example" for row in samples)
-            assert "MP4 download created" in page.locator("#bps-example-status").inner_text()
+            assert "Download requested" in page.locator("#bps-example-status").inner_text()
+            assert page.locator("#bps-example-download").is_visible()
             # Silent capture must not produce an MP4 download.
             page.evaluate("() => { window.__mockSilent=true;window.__voiceCalls=[]; }")
             page.locator("#bps-example-record").click()
             page.wait_for_function(
-                "() => document.getElementById('bps-example-status').textContent.includes('captured audio was silent')",
+                "() => document.getElementById('bps-example-status').textContent.includes('NO AUDIO was detected')",
                 timeout=18000
             )
             assert page.evaluate("() => window.__voiceCalls.length") == 6
+            assert page.locator("#bps-example-download").is_visible()
+            with page.expect_download(timeout=12000) as saved:
+                page.locator("#bps-example-download").click()
+            assert saved.value.suggested_filename.endswith(".mp4")
+            # If speechSynthesis fails to call onend, manual Finish & save must work.
+            page.evaluate("() => { window.__mockSilent=false;window.__voiceCalls=[]; }")
+            page.locator("#bps-example-record").click()
+            page.locator("#bps-example-finish").wait_for(state="visible")
+            page.wait_for_function("() => window.__voiceCalls.length >= 1")
+            page.locator("#bps-example-finish").click()
+            page.wait_for_function("() => document.getElementById('bps-example-download').hidden === false")
+            assert page.locator("#bps-example-download").is_visible()
             assert not errors, errors
             browser.close()
     finally:
