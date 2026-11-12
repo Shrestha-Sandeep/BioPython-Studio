@@ -60,7 +60,7 @@ def main():
 
             for cid in IDS:
                 page.locator("#bps-chapter-select").select_option(cid)
-                assert page.locator("#lesson-summary").inner_text().startswith(cid)
+                assert page.locator("#bps-chapter-select").input_value() == cid
                 assert page.locator("#bps-chapter-link").get_attribute("href")==f"./content/chapters/{cid}_COMPLETE.md"
                 lesson=json.loads((ROOT/"content"/cid.lower()/"lesson.json").read_text(encoding="utf8"))
                 refs=json.loads((ROOT/"tests"/f"reference_{cid.lower()}.json").read_text(encoding="utf8"))
