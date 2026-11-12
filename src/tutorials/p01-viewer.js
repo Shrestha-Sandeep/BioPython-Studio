@@ -80,13 +80,13 @@
   function values(){
     const param=state.tutorial?.parameter;
     const v=state.param===null?param?.value:state.param;
-    const replacements={CELLS:String(v??25),PIXEL_SIZE:Number(v??0.2).toFixed(1),LENGTH:(40*Number(v??0.2)).toFixed(2).replace(/0+$/,"").replace(/\\.$/,"")};
+    const replacements={CELLS:String(v??25),PIXEL_SIZE:Number(v??0.2).toFixed(1),LENGTH:(40*Number(v??0.2)).toFixed(1)};
     return replacements;
   }
   function interpolate(source){
     if(source===null||source===undefined)return "";
     const m=values();
-    return String(source).replace(/\\{(CELLS|PIXEL_SIZE|LENGTH)\\}/g,(_,name)=>m[name]);
+    return String(source).replace(/\{(CELLS|PIXEL_SIZE|LENGTH)\}/g,(_,name)=>m[name]);
   }
   function setStatus(message){$("bps-example-status").textContent=message;}
   function renderCode(step){
@@ -197,7 +197,7 @@
     voiceSelect.replaceChildren();
     const fallback=new Option("System default","");voiceSelect.add(fallback);
     state.voices.forEach(v=>voiceSelect.add(new Option(v.name+" · "+v.lang,v.voiceURI)));
-    const maleLike=v=>/\\b(david|daniel|george|james|ryan|mark|matthew|thomas|paul|robert|fred|alex|male)\\b/i.test(v.name);
+    const maleLike=v=>/\b(david|daniel|george|james|ryan|mark|matthew|thomas|paul|robert|fred|alex|male)\b/i.test(v.name);
     const preferred=state.voices.find(v=>v.voiceURI===chosen)||state.voices.find(maleLike)||state.voices[0];
     voiceSelect.value=preferred?.voiceURI||"";
     state.preferredVoice=voiceSelect.value;
