@@ -54,6 +54,7 @@
           <div class="bps-example-right">
             <section class="bps-example-card" aria-label="Values in the example">
               <div class="bps-example-card-heading">WHAT CHANGES</div>
+              <div id="bps-example-illustration-box" class="bps-example-illustration-box" hidden></div>
               <figure id="bps-example-image-preview" class="bps-example-image-preview" hidden>
               <figcaption id="bps-example-image-label"></figcaption>
               <img id="bps-example-image" alt="" loading="lazy" />
@@ -122,6 +123,14 @@
       img.alt=image.alt;
       $("bps-example-image-label").textContent=step.preview.label;
     }else{img.removeAttribute("src");img.alt="";}
+    // Show a single original diagram when no credited microscopy preview is present.
+    // The illustration is tied to this exact chapter step and updates with inputs.
+    const illustrationBox=$("bps-example-illustration-box");
+    const hasTeachingImage=!image&&Boolean(window.BioPythonTutorialIllustrations?.render(
+      illustrationBox,state.tutorial?.chapter,state.step,{cells:values().CELLS}
+    ));
+    if(!hasTeachingImage)illustrationBox.replaceChildren();
+    illustrationBox.hidden=!hasTeachingImage;
     const target=$("bps-example-visual");
     target.replaceChildren();
     for(const [label,value] of step.visual){
