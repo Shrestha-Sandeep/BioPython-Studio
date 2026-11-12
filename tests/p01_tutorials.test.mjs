@@ -76,3 +76,15 @@ test("all displayed final runnable code agrees with fresh Python stdout",{
     }
   }
 });
+
+test("MP4 experiment keeps selected voice and speed and refuses silent capture",()=>{
+  assert.match(viewerSource,/navigator\.mediaDevices\.getDisplayMedia/);
+  assert.match(viewerSource,/MediaRecorder\.isTypeSupported/);
+  assert.match(viewerSource,/video\/mp4/);
+  assert.match(viewerSource,/const chosen=findVoice\(\)/);
+  assert.match(viewerSource,/session\.speed=rateSelect\.value|speed:rateSelect\.value/);
+  assert.match(viewerSource,/if\(!session\.detected\)/);
+  assert.match(viewerSource,/Voice playback could not start|The narrator stopped unexpectedly/);
+  assert.match(viewerSource,/bps-example-record/);
+  assert.doesNotMatch(viewerSource,/https:\/\/.*tts/);
+});
