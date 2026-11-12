@@ -1,8 +1,8 @@
-# Science-first narrated tutorial standard — P01 pilot
+# Science-first narrated tutorial standard — Python foundations P01–P06
 
-**Branch:** feature/p01-science-first-narrated-tutorials
-**Base:** draft P01 narration PR #32 (feature/p01-narrated-examples)
-**Status:** P01 content and evidence-led demonstration implemented in branch; P02–P06 below are an implementation plan, not implemented narrated tutorials.
+**Branch:** feature/foundation-six-chapter-tutorials
+**Base:** draft one-chapter P01 PR #35
+**Status:** All six Python foundation chapter tutorials implemented and awaiting user review. This does not mean mastery or production release.
 
 ## The rule
 
@@ -41,13 +41,13 @@ Instead of four separate narrated clips with 31 scenes, P01 now has **one narrat
 
 **Learning mechanics:** the single existing Play button becomes Reveal at the prediction break. A user-selected browser TTS voice and narration rate remain supported. The count slider appears only where changes have a useful visible effect. Witz/HPA figures are credited and remain explicitly separate from actual numeric input data.
 
-**Decision gate:** Do not automatically scale this to five more chapters until the learner confirms the consolidated format is better than the earlier four-tutorial pilot. More content does not by itself improve mastery.
+**Scope:** the one-chapter approach has now been extended to all foundation chapters at the user's request. These remain optional narrated demonstrations, not substitutes for independent coding.
 
-## Extension roadmap (not implemented)
+## Implemented foundation tutorials
 
-Create **one coherent evolving scientific example per chapter**, following the actual existing goals, not a new syllabus:
+One connected microscopy analysis pipeline follows the canonical chapter order:
 
-| Chapter | Existing goals | Scientific destination to preview | How the new concepts contribute |
+| Chapter | Existing goals | Scientific destination demonstrated | How the concepts contribute |
 |---|---|---|---|
 | **P02: sample labels** | Build/parse identifiers, numerical QC, conditions | Prevent incorrect treatment-group assignments; issue auditable field accept/reject reports | String manipulation, parsing, comparisons and conditional logic |
 | **P03: recorded microscope fields** | Index/slice, copying, tuples, loops, enumerate, bounded while, skip/stop | Inspect dozens of fields without copy-paste; log omitted fields and reasons | Collections and iteration |
@@ -55,15 +55,29 @@ Create **one coherent evolving scientific example per chapter**, following the a
 | **P05: reusable analysis** | Functions, parameters, scope, typing/docstrings, errors, imports | Reuse identical calibrated measurements across specimens; reject invalid calibration | Composable, testable functions |
 | **P06: reproducibility** | Files, environments, JSON, assertions, standalone script, Git | Produce a documented and repeatable field-analysis artifact | Read, validate, save, test, and track analysis |
 
-For each chapter: create one carefully structured narrated tutorial showing one evolving workflow. Retain short written help and independent exercises for each individual learning goal. Do not turn every minor concept into a separate video. Introduce richer previews only where grounded in the core concept and the relevant licensing.
+Each chapter now has one carefully structured narrated tutorial showing one evolving workflow. The original short written help and independent exercises for each individual learning goal remain. Do not turn every minor concept into a separate video. Introduce richer previews only where grounded in the core concept and the relevant licensing.
+
+## Tutorial inventory
+
+| Chapter | Scenes | Prediction pause | Independent coding challenge |
+|---|---:|---|---|
+| P01 | 19 | Changing a cell count | Extend a specimen report |
+| P02 | 14 | Inclusive versus exclusive QC threshold | Diagnose malformed labels and boundary scores |
+| P03 | 15 | Field processing after STOP | Audit new invalid, missing and unvisited fields |
+| P04 | 15 | Whether missing focus passes a filter | Duplicate and missing-metadata audit |
+| P05 | 14 | State leaking through shared mutable lists | Test calibration and new field widths |
+| P06 | 14 | Assertion detecting incorrect unit conversion | Save/test JSON with changed observations |
+| **Total** | **91** | **6 learner prediction moments** | **6 chapter-level transfer challenges** |
+
+Each scene has browser TTS narration, readable captions, code focus, value/output explanation, and published microscopy previews where appropriate. These are explanatory views; the real code interpreter remains in the existing learning editor.
 
 ## QA gates
 
-- Preserve all 7 P01 learning goals, capstone and independent delayed review mapping.
+- Preserve all 36 foundation learning goals (P01 7, P02 4, P03 7, P04 6, P05 6, P06 6), six capstones, and six independent delayed reviews.
 - Verify genuine microscopy images are available locally and show source/limitations.
-- Verify output and tracebacks using a fresh interpreter, plus varied calibration and manual counts.
+- Verify output and tracebacks using a fresh interpreter across all six tutorials, including changed labels, thresholds, calibration, and missing data.
 - Pass mobile and desktop browser tests; ensure images are visible in introductory scenes, lesson state is untouched, and no MP4 functionality exists.
 - Browser voice quality/pace must still be assessed on the learner's device; CI cannot validate installed voices.
 - Have the learner test whether the end-of-lesson transfer question is independently doable. Failing to answer that is more informative than the beauty of an animation.
 
-**Do not merge or promote to production until the user has reviewed P01 and found the learning content genuinely useful.**
+**Do not merge or promote to production until the user has reviewed the full P01–P06 experience and confirmed that the larger-picture approach improves their actual learning.**
