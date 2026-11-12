@@ -59,7 +59,7 @@ window.BioPythonP01Tutorials = Object.freeze([
     steps:[
       {title:"Where this leads: measuring structures",
        say:"A fluorescent structure may be forty pixels long in an image. But how many micrometres is that? Python can convert pixel measurements into physical units when the image calibration is known. This is the foundation of quantitative microscopy, not just arithmetic for its own sake.",
-       code:"pixels = 40",focus:[1],visual:[["Observed extent","40 pixels"],["Missing information","µm per pixel"]],
+       code:"",focus:[],visual:[["Observed extent","40 pixels"],["Missing information","µm per pixel"]],
        output:"",preview:{image:"fluorescence-single",label:"Microscopy context: real published figure"},
        note:"The shown Witz/HPA image is not calibrated raw data. The 40-pixel measurement is hypothetical."},
       {title:"Two kinds of numbers",
