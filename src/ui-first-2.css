@@ -94,8 +94,8 @@ body[data-ui-view=explore] .app-layout.reference-open { grid-template-columns:mi
 body[data-ui-view=explore] .sidebar { display:none; }
 body[data-ui-view=explore] .sidebar.open { display:flex; position:fixed; left:0; top:54px; bottom:0; width:min(290px,88vw); z-index:35; overflow-y:auto; box-shadow:15px 4px 38px #0008; }
 body[data-ui-view=explore] .lesson,body[data-ui-view=explore] .guided-nav { display:none!important; }
-body[data-ui-view=explore] .page-top { margin-bottom:8px; }
-body[data-ui-view=explore] .page-copy h1 { font-size:18px; }
+body[data-ui-view=explore] .page-top { margin-bottom:8px; justify-content:flex-end; }
+body[data-ui-view=explore] .page-copy { display:none; }
 body[data-ui-view=explore] .main { max-width:1800px; }
 body[data-ui-view=explore] .code-wrapper { min-height:var(--work-height); }
 body.nav-collapsed .app-layout { grid-template-columns:minmax(0,1fr); }
@@ -133,6 +133,7 @@ body.nav-collapsed .app-layout.reference-open { grid-template-columns:minmax(0,1
   .main { padding:14px 11px 25px; }
   .page-top { min-height:26px; margin-bottom:8px; }
   .page-copy h1 { font-size:19px; }
+  body[data-ui-view=explore] .page-top { display:none; }
   .lesson { margin-bottom:9px; }
   .lesson-strip { min-height:40px; padding:4px 9px; }
   .phase-tabs button { padding:6px 12px; min-height:31px; }
