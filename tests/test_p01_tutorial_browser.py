@@ -27,6 +27,14 @@ def serve():
     process.terminate()
     raise RuntimeError("Could not start local server")
 
+def change_selection(page, element_id, value):
+    # The selector is intentionally inside a closed mobile drawer.
+    # Dispatch its native change event without overriding the frozen navigation UI.
+    page.locator(f"#{element_id}").evaluate(
+        "(element, value) => { element.value=value; element.dispatchEvent(new Event('change',{bubbles:true})); }",
+        value
+    )
+
 def check():
     process, url = serve()
     try:
@@ -67,24 +75,24 @@ def check():
                 assert page.evaluate("() => document.querySelector('.CodeMirror').CodeMirror.getValue()") == before_code
                 assert page.evaluate("() => localStorage.getItem('biopython.p01.v1')") == before_state
 
-                page.locator("#p01-goal-select").select_option("4")
+                change_selection(page,"p01-goal-select","4")
                 assert trigger.is_visible()
                 trigger.click()
                 assert page.locator("#bps-example-title").inner_text() == "Errors, help, and clean runs"
                 page.locator("#bps-example-close").click()
-                page.locator("#p01-goal-select").select_option("7")
+                change_selection(page,"p01-goal-select","7")
                 assert "Complete example" in trigger.inner_text()
                 trigger.click()
                 assert page.locator("#bps-example-title").inner_text() == "Complete example: specimen report"
                 page.locator("#bps-example-close").click()
-                page.locator("#p01-goal-select").select_option("8")
+                change_selection(page,"p01-goal-select","8")
                 assert trigger.is_hidden(), "Delayed review must not reveal a worked example"
-                page.locator("#p01-goal-select").select_option("0")
+                change_selection(page,"p01-goal-select","0")
                 page.locator("#tab-apply").click()
                 assert trigger.is_hidden(), "Apply must remain independent"
                 page.locator("#tab-prove").click()
                 assert trigger.is_hidden(), "Prove must remain independent"
-                page.locator("#bps-chapter-select").select_option("P02")
+                change_selection(page,"bps-chapter-select","P02")
                 assert trigger.is_hidden(), "The pilot must remain scoped to P01"
                 assert not errors, f"Browser errors at {width}px: {errors}"
                 page.close()
