@@ -114,7 +114,7 @@ def main():
                 mobile.locator("#p01-goal-select").select_option("6")
                 if width<=720:mobile.locator("#nav-toggle").click()
                 mobile.locator("#tab-prove").click()
-                assert mobile.locator("#lesson-toggle").get_attribute("aria-expanded") == "false"
+                assert mobile.locator("#phase-panel").is_visible()
                 assert mobile.evaluate("document.querySelector(\'.CodeMirror\').CodeMirror.getOption(\'lineWrapping\')") == (width <= 900)
                 assert mobile.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),width
                 rect=mobile.locator("#code-wrapper").bounding_box()
