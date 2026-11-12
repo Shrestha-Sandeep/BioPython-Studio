@@ -87,7 +87,7 @@ def main():
                     page.locator("#bps-chapter-select").select_option(cid)
                     lesson=json.loads((ROOT/"content"/cid.lower()/"lesson.json").read_text(encoding="utf-8"))
                     references=json.loads((ROOT/"tests"/f"reference_{cid.lower()}_advanced.json").read_text(encoding="utf-8"))
-                    assert page.locator("#lesson-summary").inner_text().startswith(cid),cid
+                    assert page.locator("#bps-chapter-select").input_value() == cid,cid
                     assert page.locator("#bps-advanced-docs").get_attribute("href").endswith("/"+cid.lower()+"/README.md")
                     for idx,goal in enumerate([*lesson["goals"],lesson["capstone"],lesson["review"]]):
                         page.locator("#p01-goal-select").select_option(str(idx))
