@@ -76,7 +76,7 @@
         "Only the second output line depends on cells. The first line still displays S zero one. Move the count slider to thirty one and watch that change. You have just separated the input data from the code that reports it.",
         bothPrint,[2,4],[["Unchanged specimen","S01"],["Changing count","{CELLS}"]],"S01\n{CELLS}",
         "Changing an input can change part of an output without changing the program's instructions.",
-        {goal:"P01-G02"}
+        {goal:"P01-G02",interactive:true}
       ),
       scene(
         "Pixels are not physical length",
@@ -151,7 +151,7 @@
         report,[1,2,3,4,5,6,7],[["Count","{CELLS} cells"],["Computed length","8.0 µm"]],
         finalOutput,
         "A real specimen report also needs image identifiers, replicate labels, source metadata, and validated measurements.",
-        {goal:"P01-CAPSTONE"}
+        {goal:"P01-CAPSTONE",interactive:true}
       ),
       scene(
         "See the bigger picture again",
