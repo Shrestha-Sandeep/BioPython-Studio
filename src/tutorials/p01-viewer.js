@@ -304,6 +304,9 @@
       stopSpeech();state.step=0;state.playing=true;state.paused=false;
       render();
       recorder.start(250);
+      // A new successful recording invalidates the previous download.
+      // This avoids offering an old video after changing voice or speed.
+      clearSavedRecording();
       setStatus("Recording with your selected narrator at "+session.speed+"×. Keep the tab visible. Use Finish & save if the recording does not end automatically.");
       // Start only after the browser's share dialog disappears.
       setTimeout(()=>{
