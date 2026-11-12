@@ -64,12 +64,8 @@ def main():
             assert page.locator(".mode-switch, [data-mode]").count()==0
             assert page.locator("#image-panel").is_visible(), "Advanced microscopy should retain image viewer"
             assert page.locator("#run-button").is_enabled()
-            assert page.locator("#phase-panel").is_hidden(), "Advanced Lab should also start collapsed"
-            assert page.locator("#lesson-toggle").get_attribute("aria-expanded")=="false"
-            page.locator("#lesson-toggle").click()
-            assert page.locator("#phase-panel").is_visible(), "Advanced lesson should expand manually"
-            page.locator("#lesson-toggle").click()
-            assert page.locator("#phase-panel").is_hidden(), "Advanced lesson should collapse manually"
+            assert page.locator("#phase-panel").is_visible(), "Advanced task opens directly in Learn"
+            assert page.locator("#lesson-toggle").get_attribute("aria-expanded")=="true"
             assert page.locator("#bps-chapter-select option").count()==20
             assert page.locator("#bps-advanced-docs").get_attribute("href").endswith("/a00/README.md")
             assert page.evaluate("localStorage.getItem('biopython.course-selected.v1')")==legacy
@@ -78,7 +74,7 @@ def main():
                 page.locator("#bps-chapter-select").select_option(cid)
                 lesson=json.loads((ROOT/"content"/cid.lower()/"lesson.json").read_text(encoding="utf-8"))
                 refs=json.loads((ROOT/"tests"/f"reference_{cid.lower()}_advanced.json").read_text(encoding="utf-8"))
-                assert page.locator("#lesson-summary").inner_text().startswith(cid)
+                assert page.locator("#bps-chapter-select").input_value() == cid
                 assert page.locator("#bps-advanced-docs").get_attribute("href").endswith("/"+cid.lower()+"/README.md")
                 items=[*lesson["goals"],lesson["capstone"],lesson["review"]]
                 for index,g in enumerate(items):
@@ -117,7 +113,7 @@ def main():
                 phone.goto(BASE+"?lab=advanced",wait_until="domcontentloaded")
                 phone.locator("#bps-chapter-select").wait_for(state="attached",timeout=30000)
                 assert phone.locator("#bps-chapter-select").input_value()=="A00"
-                assert phone.locator("#phase-panel").is_hidden(), "Advanced mobile must start collapsed"
+                assert phone.locator("#phase-panel").is_visible(), "Advanced mobile task should open"
                 assert phone.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),width
                 phone.screenshot(path=str(images/f"advanced-core-{width}.png"),full_page=True)
                 phone.close()
