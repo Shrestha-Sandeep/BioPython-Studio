@@ -53,7 +53,12 @@
           <div class="bps-example-right">
             <section class="bps-example-card" aria-label="Values in the example">
               <div class="bps-example-card-heading">WHAT CHANGES</div>
-              <div id="bps-example-visual" class="bps-example-visual"></div>
+              <figure id="bps-example-image-preview" class="bps-example-image-preview" hidden>
+              <figcaption id="bps-example-image-label"></figcaption>
+              <img id="bps-example-image" alt="" loading="lazy" />
+              <small>Published course figure: Witz / Human Protein Atlas. Illustrative, not raw calibrated data. <a href="./assets/witz/CREDITS.md" target="_blank" rel="noopener noreferrer">Credits</a></small>
+            </figure>
+            <div id="bps-example-visual" class="bps-example-visual"></div>
             </section>
             <section class="bps-example-card" aria-label="Illustrative Python output">
               <div class="bps-example-card-heading">OUTPUT <span>Illustrative preview</span></div>
@@ -102,7 +107,20 @@
       code.append(span);
     });
   }
+  const previewImages=Object.freeze({
+    "labeled-nuclei":{src:"./assets/witz/labeled-nuclei.png",alt:"Published labeled fluorescence nuclei output from the Witz image-processing tutorial."},
+    "fluorescence-single":{src:"./assets/witz/fluorescence-single.png",alt:"Published Witz teaching figure of fluorescence microscopy from Human Protein Atlas imagery."},
+    "fluorescence-examples":{src:"./assets/witz/fluorescence-examples.png",alt:"Published set of Witz fluorescence microscopy example images from Human Protein Atlas imagery."},
+    "otsu-nuclei-mask":{src:"./assets/witz/otsu-nuclei-mask.png",alt:"Published Witz example showing an image-thresholding mask, not made by the beginner program."}
+  });
   function renderVisual(step){
+    const figure=$("bps-example-image-preview"),img=$("bps-example-image"),image=previewImages[step.preview?.image];
+    figure.hidden=!image;
+    if(image){
+      if(img.getAttribute("src")!==image.src)img.src=image.src;
+      img.alt=image.alt;
+      $("bps-example-image-label").textContent=step.preview.label;
+    }else{img.removeAttribute("src");img.alt="";}
     const target=$("bps-example-visual");
     target.replaceChildren();
     for(const [label,value] of step.visual){
