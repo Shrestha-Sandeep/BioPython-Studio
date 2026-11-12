@@ -11,7 +11,7 @@
   let view = "learn";
   let mobilePane = "code";
   let current = null;
-  let lastGoal = null;
+  let lastTask = null;
 
   try {
     const saved = JSON.parse(localStorage.getItem(KEY) || "null");
@@ -98,14 +98,14 @@
   function onLessonChange(event) {
     const next = event.detail;
     if (!next || typeof next.title !== "string") return;
-    const goal = next.chapterId + ":" + next.goalIndex;
+    const task = next.chapterId + ":" + next.goalIndex + ":" + next.phase;
     current = next;
     setTitle();
     syncProgress();
     syncMobileViews();
-    // A new task should start in the editor, not in the previous task's output.
-    if (lastGoal && lastGoal !== goal && view === "learn") setMobilePane("code");
-    lastGoal = goal;
+    // Every new phase/task starts with its code, not the previous phase's output.
+    if (lastTask && lastTask !== task && view === "learn") setMobilePane("code");
+    lastTask = task;
   }
   function move(direction) {
     if (!current || !["learn", "apply", "prove"].includes(current.phase)) return;
