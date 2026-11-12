@@ -43,6 +43,54 @@ test("each narration step has aligned highlights, captions and valid visual data
   }
 });
 
+test("science-first lessons show the destination without attributing it to introductory code",()=>{
+  const imageFiles=new Map([
+    ["labeled-nuclei","labeled-nuclei.png"],
+    ["fluorescence-single","fluorescence-single.png"],
+    ["fluorescence-examples","fluorescence-examples.png"],
+    ["otsu-nuclei-mask","otsu-nuclei-mask.png"]
+  ]);
+  let previewCount=0;
+  for(const t of tutorials){
+    assert.ok(t.steps[0].preview?.image,t.id+" requires a concrete future-capability preview");
+    assert.match(t.steps[0].note,/not|future|today|real|result/i,t.id);
+    assert.match(t.steps.at(-1).note,/independent/i,t.id+" requires transfer");
+    for(const [i,step] of t.steps.entries()){
+      if(!step.preview)continue;
+      previewCount++;
+      const name=imageFiles.get(step.preview.image);
+      assert.ok(name,t.id+":"+i+" unapproved course figure");
+      assert.ok(readFileSync(new URL("assets/witz/"+name,root)).byteLength>1000,name);
+      assert.ok(step.preview.label,t.id+":"+i);
+    }
+  }
+  assert.ok(previewCount>=7,"The core scientific outcome must be shown, not merely asserted");
+  assert.match(viewerSource,/P01Tutorials|BioPythonP01Tutorials/);
+  assert.match(viewerSource,/CREDITS.md/);
+  assert.doesNotMatch(viewerSource,/bps-example-record|MediaRecorder|Save MP4/);
+});
+
+test("changing scientific inputs changes expected outputs, not code structure",()=>{
+  const cases=[
+    {id:"p01-values",changes:[{cells:25},{cells:31}]},
+    {id:"p01-calculations",changes:[{pixelSize:0.2},{pixelSize:0.3},{pixelSize:0.6}]},
+    {id:"p01-report",changes:[{cells:25},{cells:31}]}
+  ];
+  for(const {id,changes} of cases){
+    const tutorial=tutorials.find(t=>t.id===id);
+    const last=tutorial.steps.findLast(s=>s.output&&s.code);
+    for(const values of changes){
+      const cells=values.cells??25,pixelSize=values.pixelSize??0.2;
+      const replace=(v)=>String(v).replaceAll("{CELLS}",String(cells))
+        .replaceAll("{PIXEL_SIZE}",pixelSize.toFixed(1))
+        .replaceAll("{LENGTH}",(40*pixelSize).toFixed(1));
+      const result=spawnSync("python3",["-c",replace(last.code)],{encoding:"utf8",timeout:3000});
+      assert.equal(result.status,0,id+":"+JSON.stringify(values)+":"+result.stderr);
+      assert.equal(result.stdout.trimEnd(),replace(last.output),id+":"+JSON.stringify(values));
+    }
+  }
+});
+
 test("viewer syntax and optional integration do not change core course state",()=>{
   assert.doesNotThrow(()=>new Function(viewerSource));
   assert.match(viewerSource,/bps:lesson-change/);

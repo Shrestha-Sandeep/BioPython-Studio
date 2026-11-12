@@ -45,7 +45,7 @@
           <h3 id="bps-example-step-title"></h3>
           <p id="bps-example-caption" aria-live="polite"></p>
         </div>
-        <div class="bps-example-grid">
+        <div id="bps-example-grid" class="bps-example-grid">
           <section class="bps-example-card bps-example-code" aria-label="Highlighted example code">
             <div class="bps-example-card-heading">PYTHON CODE <span>Illustrative trace</span></div>
             <pre id="bps-example-code" aria-label="Code highlighted at this step"></pre>
@@ -53,7 +53,12 @@
           <div class="bps-example-right">
             <section class="bps-example-card" aria-label="Values in the example">
               <div class="bps-example-card-heading">WHAT CHANGES</div>
-              <div id="bps-example-visual" class="bps-example-visual"></div>
+              <figure id="bps-example-image-preview" class="bps-example-image-preview" hidden>
+              <figcaption id="bps-example-image-label"></figcaption>
+              <img id="bps-example-image" alt="" loading="lazy" />
+              <small>Published course figure: Witz / Human Protein Atlas. Illustrative, not raw calibrated data. <a href="./assets/witz/CREDITS.md" target="_blank" rel="noopener noreferrer">Credits</a></small>
+            </figure>
+            <div id="bps-example-visual" class="bps-example-visual"></div>
             </section>
             <section class="bps-example-card" aria-label="Illustrative Python output">
               <div class="bps-example-card-heading">OUTPUT <span>Illustrative preview</span></div>
@@ -102,7 +107,20 @@
       code.append(span);
     });
   }
+  const previewImages=Object.freeze({
+    "labeled-nuclei":{src:"./assets/witz/labeled-nuclei.png",alt:"Published labeled fluorescence nuclei output from the Witz image-processing tutorial."},
+    "fluorescence-single":{src:"./assets/witz/fluorescence-single.png",alt:"Published Witz teaching figure of fluorescence microscopy from Human Protein Atlas imagery."},
+    "fluorescence-examples":{src:"./assets/witz/fluorescence-examples.png",alt:"Published set of Witz fluorescence microscopy example images from Human Protein Atlas imagery."},
+    "otsu-nuclei-mask":{src:"./assets/witz/otsu-nuclei-mask.png",alt:"Published Witz example showing an image-thresholding mask, not made by the beginner program."}
+  });
   function renderVisual(step){
+    const figure=$("bps-example-image-preview"),img=$("bps-example-image"),image=previewImages[step.preview?.image];
+    figure.hidden=!image;
+    if(image){
+      if(img.getAttribute("src")!==image.src)img.src=image.src;
+      img.alt=image.alt;
+      $("bps-example-image-label").textContent=step.preview.label;
+    }else{img.removeAttribute("src");img.alt="";}
     const target=$("bps-example-visual");
     target.replaceChildren();
     for(const [label,value] of step.visual){
@@ -123,6 +141,7 @@
     $("bps-example-caption").textContent=interpolate(step.say);
     $("bps-example-output").textContent=interpolate(step.output)||"—";
     $("bps-example-tip").textContent=step.note;
+    $("bps-example-grid").classList.toggle("is-preview-first",Boolean(step.preview&&!step.code));
     previous.disabled=state.step===0;next.disabled=state.step===tutorial.steps.length-1;
     const param=tutorial.parameter;
     $("bps-example-parameter-box").hidden=!param;

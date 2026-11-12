@@ -55,7 +55,15 @@ def check():
                 dialog = page.locator("#bps-example-dialog")
                 assert dialog.is_visible()
                 assert page.locator("#bps-example-title").inner_text() == "Variables and output"
-                assert page.locator("#bps-example-progress").get_attribute("max") == "6"
+                assert page.locator("#bps-example-progress").get_attribute("max") == "8"
+                assert "counting cells" in page.locator("#bps-example-step-title").inner_text().lower()
+                preview = page.locator("#bps-example-image-preview")
+                assert preview.is_visible(), "The future-capability image must be visible in scene one"
+                page.wait_for_function(
+                    "() => document.getElementById('bps-example-image').naturalWidth > 0",
+                    timeout=10000
+                )
+                assert "Human Protein Atlas" in preview.inner_text()
                 assert page.locator("#bps-example-caption").inner_text()
                 assert page.locator("#bps-example-voice").count() == 1
                 assert page.locator("#bps-example-rate").count() == 1
