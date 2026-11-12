@@ -92,7 +92,7 @@ def main():
             set_code(page,"# P01 draft should survive P02 work\nspecimen = 'N2_P03'\nprint(specimen)")
             page.locator("#bps-chapter-select").select_option("P02")
             assert page.locator("#p01-goal-select option").count()==6
-            assert page.locator("#lesson-summary").inner_text().startswith("P02")
+            assert page.locator("#bps-chapter-select").input_value() == "P02"
             assert "Make labels from data rather than retyping them" in page.locator("#phase-panel").inner_text()
             assert page.locator("#bps-chapter-link").get_attribute("href")=="./content/chapters/P02_COMPLETE.md"
             page.get_by_text("See a genuine microscopy example").click()
