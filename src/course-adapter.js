@@ -111,7 +111,7 @@ function showHints(){
 function render(){
  if(!active())return;
  const g=goal(),t=task();
- el("lesson-summary").textContent=activeId+" · "+g.title+" · "+(state.goal+1)+"/"+goals().length;
+ el("lesson-summary").textContent=g.title;
  el("phase-title").textContent=t.title;
  el("phase-description").textContent=t.description;
  el("phase-caption").textContent=state.phase.toUpperCase();
@@ -119,10 +119,10 @@ function render(){
  el("p01-predict").hidden=state.phase!=="learn";
  el("p01-context").textContent=g.why+" Scientific boundary: "+g.scientific_boundary;
  el("bps-chapter-link").href="./content/chapters/"+activeId+"_COMPLETE.md";
- el("bps-chapter-link").textContent="Full "+activeId+" chapter (Markdown)";
+ el("bps-chapter-link").textContent="Read more";
  el("p01-goal-select").value=String(state.goal);
  el("bps-chapter-select").value=activeId;
- el("p01-goal-label").textContent=activeId+" · Mini-goal";
+ el("p01-goal-label").textContent="Task";
  el("p01-check").hidden=state.phase==="learn"||!(t.public_checks?.length);
  el("p01-check").disabled=busy;
  el("run-button").disabled=busy;
@@ -155,9 +155,10 @@ function render(){
   }
   bridge()?.writeCode?.(value);
  el("crumb").textContent=({Python:"Python foundations",Microscopy:"Microscopy",NGS:"Sequence analysis",ML:"Machine learning"})[stageOf(activeId)]+" · "+activeId;
- el("page-title").textContent=({Python:"Python workspace",Microscopy:"Image analysis workspace",NGS:"Sequence analysis workspace",ML:"Machine learning workspace"})[stageOf(activeId)];
- el("page-subtitle").textContent=g.why;
+ el("page-title").textContent=g.title;
+ el("page-subtitle").textContent="";
  save();
+ document.dispatchEvent(new CustomEvent("bps:lesson-change",{detail:{title:g.title,phase:state.phase,goalIndex:state.goal,goalCount:goals().length,chapterId:activeId,stage:stageOf(activeId)}}));
 }
 function chooseGoal(n){
  if(!chapter||n<0||n>=goals().length)return;
@@ -326,7 +327,7 @@ function refreshChapterOptions(){
  for(const id of stageIds()){
   if(!chapters[id])continue;
   const option=document.createElement("option");option.value=id;
-  option.textContent=id+" · "+chapters[id].title;selector.append(option);
+  option.textContent=chapters[id].title;selector.append(option);
  }
  selector.value=activeId;
 }
@@ -357,14 +358,14 @@ function switchChapter(next){
 }
 function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
- const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Chapter";chapterLabel.className="p01-label";
+ const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Lesson";chapterLabel.className="p01-label";
  const chapterSelect=document.createElement("select");chapterSelect.id="bps-chapter-select";chapterSelect.setAttribute("aria-label","Choose Python chapter");
  for(const id of stageIds()){
-   const o=document.createElement("option");o.value=id;o.textContent=id+" · "+chapters[id].title;
+   const o=document.createElement("option");o.value=id;o.textContent=chapters[id].title;
    chapterSelect.append(o);
  }
  chapterSelect.addEventListener("change",()=>switchChapter(chapterSelect.value));
- const label=document.createElement("label");label.id="p01-goal-label";label.htmlFor="p01-goal-select";label.textContent=activeId+" · Mini-goal";label.className="p01-label";
+ const label=document.createElement("label");label.id="p01-goal-label";label.htmlFor="p01-goal-select";label.textContent="Task";label.className="p01-label";
  const select=document.createElement("select");select.id="p01-goal-select";select.setAttribute("aria-label","P01 mini-goal");
  refreshGoalOptions(select);
  select.addEventListener("change",()=>chooseGoal(Number(select.value)));
@@ -377,7 +378,7 @@ function mount(){
  hint.addEventListener("click",()=>{const options=goal()?.hints[state.phase]||[];const count=state.hints[key()]||0;if(count<options.length){state.hints[key()]=count+1;showHints();save();}});
  const details=document.createElement("details");const summary=document.createElement("summary");summary.textContent="Scientific context";
  const caution=document.createElement("p");caution.id="p01-context";details.append(summary,caution);
- const link=document.createElement("a");link.id="bps-chapter-link";link.href="./content/chapters/"+activeId+"_COMPLETE.md";link.target="_blank";link.rel="noopener";link.textContent="Full "+activeId+" chapter (Markdown)";
+ const link=document.createElement("a");link.id="bps-chapter-link";link.href="./content/chapters/"+activeId+"_COMPLETE.md";link.target="_blank";link.rel="noopener";link.textContent="Read more";
  const teaching=document.createElement("div");teaching.id="p01-detail-root";
  pane.append(prediction,teaching,hint,hintText,details,link);
  const projectLink=document.createElement("a");
@@ -442,7 +443,7 @@ async function start(){
   bridge()?.expandLesson?.(false);
   if(isImaging(activeId))bridge()?.ensureExampleImage?.();
   render();syncActivity();
-  el("output-placeholder").textContent="Run your code to see real Python output or traceback.";
+  el("output-placeholder").textContent="Run to see the result."
   status("Python ready to load on first Run");
  }catch(e){
   el("lesson-summary").textContent="Chapter loading failed";
