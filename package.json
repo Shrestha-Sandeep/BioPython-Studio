@@ -4,6 +4,6 @@
   "type": "module",
   "description": "Interface-only responsive Python and microscopy IDE preview",
   "scripts": {
-    "test": "node --test tests/preview.test.mjs tests/witz_sources.test.mjs"
+    "test": "node --test tests/preview.test.mjs tests/witz_sources.test.mjs tests/p01_tutorials.test.mjs"
   }
 }
