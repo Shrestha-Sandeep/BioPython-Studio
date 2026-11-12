@@ -1,0 +1,1691 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "A07",
+  "version": "1.0.0",
+  "status": "OPTIONAL_ADVANCED_PILOT_NOT_LEARNER_VALIDATED",
+  "title": "Independent annotated microscopy research capstone",
+  "competencies": [
+    "A07-G01",
+    "A07-G02",
+    "A07-G03",
+    "A07-G04",
+    "A07-G05",
+    "A07-G06",
+    "A07-G07",
+    "A07-CAPSTONE",
+    "A07-REVIEW"
+  ],
+  "intro": "Specify and audit an unfamiliar microscopy problem from first principles, with independent reference annotations, group-safe validation, source integrity, biological endpoints and a defensible go/no-go memo.",
+  "scientific_context": {
+    "source": "https://bbbc.broadinstitute.org/",
+    "use": "SYNTHETIC_BROWSER_DECISION_PRIMER_PLUS_EXTERNAL_UNSEEN_DATASET_REQUIRED",
+    "caution": "Public browser checks do not certify hidden biological ground truth, independent research ability, source-disjointness or exopher identity."
+  },
+  "chapter_method": "Predict → Run → independent Apply/Prove → capstone evidence checkpoints → delayed independent review and human judgment.",
+  "goals": [
+    {
+      "id": "A07-G01",
+      "title": "Prespecify the biological question and endpoint",
+      "competencies": [
+        "A07-G01"
+      ],
+      "why": "Segmentation cannot be assessed until the intended biological object and primary measurement are defined.",
+      "explain": [
+        "Nuclei, fluorescent aggregates and exophers are different biological entities.",
+        "Prespecify ambiguous and border cases before looking at holdout annotations.",
+        "A complete document is necessary but human review must assess whether definitions are biologically appropriate."
+      ],
+      "worked_example": {
+        "code": "plan={'target_definition':'nuclear interior','primary_endpoint':'count per animal'}\nprint('Target:',plan['target_definition'])",
+        "predict": "Predict the biological decision and potential error when assumptions fail."
+      },
+      "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+      "walkthrough": [
+        "Define the primary scientific question and intended object before computing.",
+        "Test a changed annotation, source, group or metric assumption.",
+        "Explain the independent experimental and human validation still required."
+      ],
+      "investigate": [
+        "Find a case where a numerical pass coexists with biological leakage.",
+        "State the correct decision for missing or ambiguous reference data."
+      ],
+      "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+      "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+      "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Check each mandatory field for a nonempty value.",
+          "Do not equate a filled text field with a scientifically correct object definition."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Segmentation cannot be assessed until the intended biological object and primary measurement are defined.",
+          "starter_code": "# A07-G01 | LEARN | Prespecify the biological question and endpoint\n# TASK: Predict and inspect the research-audit example.\n\nplan={'target_definition':'nuclear interior','primary_endpoint':'count per animal'}\nprint('Target:',plan['target_definition'])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply the evidence rule",
+          "description": "Inspect data.plan for target_definition, biological_unit, primary_endpoint and exclusion_rules. Return result={'missing':sorted missing keys,'ready_to_annotate':bool}.",
+          "starter_code": "# A07-G01 | APPLY | Prespecify the biological question and endpoint\n# TASK: Inspect data.plan for target_definition, biological_unit,\n#   primary_endpoint and exclusion_rules. Return result={'missing':sorted missing\n#   keys,'ready_to_annotate':bool}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "plan": {
+                "target_definition": "nuclei",
+                "biological_unit": "animal",
+                "primary_endpoint": "objects per animal",
+                "exclusion_rules": "blurred fields excluded"
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "plan": {
+                    "target_definition": "nuclei",
+                    "biological_unit": "animal",
+                    "primary_endpoint": "objects per animal",
+                    "exclusion_rules": "blurred fields excluded"
+                  }
+                }
+              },
+              "assertions": [
+                "result['missing']==sorted(k for k in ('target_definition','biological_unit','primary_endpoint','exclusion_rules') if not data['plan'].get(k))",
+                "result['ready_to_annotate']==(len(result['missing'])==0)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "plan": {
+                    "target_definition": "",
+                    "biological_unit": "animal",
+                    "primary_endpoint": "count",
+                    "exclusion_rules": ""
+                  }
+                }
+              },
+              "assertions": [
+                "result['missing']==sorted(k for k in ('target_definition','biological_unit','primary_endpoint','exclusion_rules') if not data['plan'].get(k))",
+                "result['ready_to_annotate']==(len(result['missing'])==0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Segmentation cannot be assessed until the intended biological object and primary measurement are defined.",
+            "probe": "What genuinely independent biological evidence would be required?",
+            "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+          }
+        },
+        "prove": {
+          "title": "Independent scientific transfer",
+          "description": "Inspect data.plan for target_definition, biological_unit, primary_endpoint and exclusion_rules. Return result={'missing':sorted missing keys,'ready_to_annotate':bool}.",
+          "starter_code": "# A07-G01 | PROVE | Prespecify the biological question and endpoint\n# TASK: Inspect data.plan for target_definition, biological_unit,\n#   primary_endpoint and exclusion_rules. Return result={'missing':sorted missing\n#   keys,'ready_to_annotate':bool}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "plan": {
+                "target_definition": "exopher",
+                "biological_unit": "worm",
+                "primary_endpoint": "count per worm",
+                "exclusion_rules": "no reference mask"
+              }
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "plan": {
+                    "target_definition": "exopher",
+                    "biological_unit": "worm",
+                    "primary_endpoint": "count per worm",
+                    "exclusion_rules": "no reference mask"
+                  }
+                }
+              },
+              "assertions": [
+                "result['missing']==sorted(k for k in ('target_definition','biological_unit','primary_endpoint','exclusion_rules') if not data['plan'].get(k))",
+                "result['ready_to_annotate']==(len(result['missing'])==0)"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "plan": {
+                    "target_definition": "aggregates",
+                    "biological_unit": "worm",
+                    "primary_endpoint": "",
+                    "exclusion_rules": "saturated images"
+                  }
+                }
+              },
+              "assertions": [
+                "result['missing']==sorted(k for k in ('target_definition','biological_unit','primary_endpoint','exclusion_rules') if not data['plan'].get(k))",
+                "result['ready_to_annotate']==(len(result['missing'])==0)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Segmentation cannot be assessed until the intended biological object and primary measurement are defined.",
+            "probe": "Could you defend the decision on an unseen real study without prior hints?",
+            "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+          }
+        }
+      }
+    },
+    {
+      "id": "A07-G02",
+      "title": "Audit unknown original image metadata",
+      "competencies": [
+        "A07-G02"
+      ],
+      "why": "A native-looking TIFF may contain misinterpreted Z/C/T axes or an unverified physical pixel scale.",
+      "explain": [
+        "Identify Y and X explicitly and preserve nonspatial dimensions.",
+        "Declared OME scale may not be independently verified.",
+        "Unknown calibration should remain unknown rather than invented from an image."
+      ],
+      "worked_example": {
+        "code": "axes='TCZYX';shape=[2,3,4,256,256]\nprint('Source axes:',list(zip(axes,shape)))",
+        "predict": "Predict the biological decision and potential error when assumptions fail."
+      },
+      "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+      "walkthrough": [
+        "Define the primary scientific question and intended object before computing.",
+        "Test a changed annotation, source, group or metric assumption.",
+        "Explain the independent experimental and human validation still required."
+      ],
+      "investigate": [
+        "Find a case where a numerical pass coexists with biological leakage.",
+        "State the correct decision for missing or ambiguous reference data."
+      ],
+      "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+      "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+      "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Read axis names, do not infer from dimension positions alone.",
+          "Only a verified scale can be treated as calibrated physical area."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "A native-looking TIFF may contain misinterpreted Z/C/T axes or an unverified physical pixel scale.",
+          "starter_code": "# A07-G02 | LEARN | Audit unknown original image metadata\n# TASK: Predict and inspect the research-audit example.\n\naxes='TCZYX';shape=[2,3,4,256,256]\nprint('Source axes:',list(zip(axes,shape)))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply the evidence rule",
+          "description": "For data.axes,data.shape,data.dtype,data.scale_verified, return result={'yx':[Y,X],'nonspatial_axes':list,'calibration_known':bool}.",
+          "starter_code": "# A07-G02 | APPLY | Audit unknown original image metadata\n# TASK: For data.axes,data.shape,data.dtype,data.scale_verified, return\n#   result={'yx':[Y,X],'nonspatial_axes':list,'calibration_known':bool}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "axes": "ZCYX",
+              "shape": [
+                3,
+                2,
+                512,
+                512
+              ],
+              "dtype": "uint16",
+              "scale_verified": false
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "axes": "ZCYX",
+                  "shape": [
+                    3,
+                    2,
+                    512,
+                    512
+                  ],
+                  "dtype": "uint16",
+                  "scale_verified": false
+                }
+              },
+              "assertions": [
+                "result['yx']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['nonspatial_axes']==[a for a in data['axes'] if a not in 'YX']",
+                "result['calibration_known']==bool(data['scale_verified'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "axes": "TCZYX",
+                  "shape": [
+                    2,
+                    2,
+                    3,
+                    128,
+                    256
+                  ],
+                  "dtype": "uint16",
+                  "scale_verified": true
+                }
+              },
+              "assertions": [
+                "result['yx']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['nonspatial_axes']==[a for a in data['axes'] if a not in 'YX']",
+                "result['calibration_known']==bool(data['scale_verified'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A native-looking TIFF may contain misinterpreted Z/C/T axes or an unverified physical pixel scale.",
+            "probe": "What genuinely independent biological evidence would be required?",
+            "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+          }
+        },
+        "prove": {
+          "title": "Independent scientific transfer",
+          "description": "For data.axes,data.shape,data.dtype,data.scale_verified, return result={'yx':[Y,X],'nonspatial_axes':list,'calibration_known':bool}.",
+          "starter_code": "# A07-G02 | PROVE | Audit unknown original image metadata\n# TASK: For data.axes,data.shape,data.dtype,data.scale_verified, return\n#   result={'yx':[Y,X],'nonspatial_axes':list,'calibration_known':bool}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "axes": "CZYX",
+              "shape": [
+                2,
+                5,
+                300,
+                420
+              ],
+              "dtype": "float32",
+              "scale_verified": false
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "axes": "CZYX",
+                  "shape": [
+                    2,
+                    5,
+                    300,
+                    420
+                  ],
+                  "dtype": "float32",
+                  "scale_verified": false
+                }
+              },
+              "assertions": [
+                "result['yx']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['nonspatial_axes']==[a for a in data['axes'] if a not in 'YX']",
+                "result['calibration_known']==bool(data['scale_verified'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "axes": "YX",
+                  "shape": [
+                    320,
+                    480
+                  ],
+                  "dtype": "uint16",
+                  "scale_verified": true
+                }
+              },
+              "assertions": [
+                "result['yx']==[data['shape'][data['axes'].index('Y')],data['shape'][data['axes'].index('X')]]",
+                "result['nonspatial_axes']==[a for a in data['axes'] if a not in 'YX']",
+                "result['calibration_known']==bool(data['scale_verified'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A native-looking TIFF may contain misinterpreted Z/C/T axes or an unverified physical pixel scale.",
+            "probe": "Could you defend the decision on an unseen real study without prior hints?",
+            "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+          }
+        }
+      }
+    },
+    {
+      "id": "A07-G03",
+      "title": "Check annotation type before selecting metrics",
+      "competencies": [
+        "A07-G03"
+      ],
+      "why": "A manual count reference cannot justify pixel-mask IoU or one-to-one instance matching.",
+      "explain": [
+        "Count-only labels support count error, not spatial overlap.",
+        "Pixel mask annotations support binary IoU; distinct object IDs permit matching.",
+        "Review ambiguous reference objects and annotator reliability separately."
+      ],
+      "worked_example": {
+        "code": "for type_ in ['counts','pixel_masks','instance_masks']:\n print(type_,'pixel IoU:',type_!='counts')",
+        "predict": "Predict the biological decision and potential error when assumptions fail."
+      },
+      "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+      "walkthrough": [
+        "Define the primary scientific question and intended object before computing.",
+        "Test a changed annotation, source, group or metric assumption.",
+        "Explain the independent experimental and human validation still required."
+      ],
+      "investigate": [
+        "Find a case where a numerical pass coexists with biological leakage.",
+        "State the correct decision for missing or ambiguous reference data."
+      ],
+      "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+      "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+      "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Separate count labels, foreground masks and instance ID masks.",
+          "Only instance masks with object IDs allow one-to-one matching."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "A manual count reference cannot justify pixel-mask IoU or one-to-one instance matching.",
+          "starter_code": "# A07-G03 | LEARN | Check annotation type before selecting metrics\n# TASK: Predict and inspect the research-audit example.\n\nfor type_ in ['counts','pixel_masks','instance_masks']:\n print(type_,'pixel IoU:',type_!='counts')\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply the evidence rule",
+          "description": "Given data.annotation_type and data.has_object_ids, return result={'pixel_iou_allowed':bool,'object_matching_allowed':bool,'count_error_allowed':True}.",
+          "starter_code": "# A07-G03 | APPLY | Check annotation type before selecting metrics\n# TASK: Given data.annotation_type and data.has_object_ids, return\n#   result={'pixel_iou_allowed':bool,'object_matching_allowed':bool,'count_error_allowed':True}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "annotation_type": "counts",
+              "has_object_ids": false
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "annotation_type": "counts",
+                  "has_object_ids": false
+                }
+              },
+              "assertions": [
+                "result['pixel_iou_allowed']==(data['annotation_type'] in ('pixel_masks','instance_masks'))",
+                "result['object_matching_allowed']==(data['annotation_type']=='instance_masks' and bool(data['has_object_ids']))",
+                "result['count_error_allowed'] is True"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "annotation_type": "instance_masks",
+                  "has_object_ids": true
+                }
+              },
+              "assertions": [
+                "result['pixel_iou_allowed']==(data['annotation_type'] in ('pixel_masks','instance_masks'))",
+                "result['object_matching_allowed']==(data['annotation_type']=='instance_masks' and bool(data['has_object_ids']))",
+                "result['count_error_allowed'] is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A manual count reference cannot justify pixel-mask IoU or one-to-one instance matching.",
+            "probe": "What genuinely independent biological evidence would be required?",
+            "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+          }
+        },
+        "prove": {
+          "title": "Independent scientific transfer",
+          "description": "Given data.annotation_type and data.has_object_ids, return result={'pixel_iou_allowed':bool,'object_matching_allowed':bool,'count_error_allowed':True}.",
+          "starter_code": "# A07-G03 | PROVE | Check annotation type before selecting metrics\n# TASK: Given data.annotation_type and data.has_object_ids, return\n#   result={'pixel_iou_allowed':bool,'object_matching_allowed':bool,'count_error_allowed':True}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "annotation_type": "pixel_masks",
+              "has_object_ids": false
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "annotation_type": "pixel_masks",
+                  "has_object_ids": false
+                }
+              },
+              "assertions": [
+                "result['pixel_iou_allowed']==(data['annotation_type'] in ('pixel_masks','instance_masks'))",
+                "result['object_matching_allowed']==(data['annotation_type']=='instance_masks' and bool(data['has_object_ids']))",
+                "result['count_error_allowed'] is True"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "annotation_type": "instance_masks",
+                  "has_object_ids": false
+                }
+              },
+              "assertions": [
+                "result['pixel_iou_allowed']==(data['annotation_type'] in ('pixel_masks','instance_masks'))",
+                "result['object_matching_allowed']==(data['annotation_type']=='instance_masks' and bool(data['has_object_ids']))",
+                "result['count_error_allowed'] is True"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A manual count reference cannot justify pixel-mask IoU or one-to-one instance matching.",
+            "probe": "Could you defend the decision on an unseen real study without prior hints?",
+            "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+          }
+        }
+      }
+    },
+    {
+      "id": "A07-G04",
+      "title": "Freeze a group-disjoint development/test split",
+      "competencies": [
+        "A07-G04"
+      ],
+      "why": "Training on one field and testing on another from the same animal may overstate generalization.",
+      "explain": [
+        "Split by independent animal, acquisition session or experiment as appropriate.",
+        "A sample ID alone does not establish independent biological origin.",
+        "Freeze the partition before tuning segmentation hyperparameters."
+      ],
+      "worked_example": {
+        "code": "rows=[('animalA','development'),('animalA','holdout')]\nprint('shared group:',len({x for x,s in rows if s=='development'}&{x for x,s in rows if s=='holdout'}))",
+        "predict": "Predict the biological decision and potential error when assumptions fail."
+      },
+      "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+      "walkthrough": [
+        "Define the primary scientific question and intended object before computing.",
+        "Test a changed annotation, source, group or metric assumption.",
+        "Explain the independent experimental and human validation still required."
+      ],
+      "investigate": [
+        "Find a case where a numerical pass coexists with biological leakage.",
+        "State the correct decision for missing or ambiguous reference data."
+      ],
+      "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+      "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+      "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Construct separate sets of development and holdout group IDs.",
+          "Report the intersection; never hide leaks by renaming the same animal."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Training on one field and testing on another from the same animal may overstate generalization.",
+          "starter_code": "# A07-G04 | LEARN | Freeze a group-disjoint development/test split\n# TASK: Predict and inspect the research-audit example.\n\nrows=[('animalA','development'),('animalA','holdout')]\nprint('shared group:',len({x for x,s in rows if s=='development'}&{x for x,s in rows if s=='holdout'}))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply the evidence rule",
+          "description": "Given data.images with biological_group and split labels, return result={'leaking_groups':sorted list,'development_n':int,'holdout_n':int}.",
+          "starter_code": "# A07-G04 | APPLY | Freeze a group-disjoint development/test split\n# TASK: Given data.images with biological_group and split labels, return\n#   result={'leaking_groups':sorted list,'development_n':int,'holdout_n':int}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "images": [
+                {
+                  "biological_group": "A",
+                  "split": "development"
+                },
+                {
+                  "biological_group": "B",
+                  "split": "holdout"
+                },
+                {
+                  "biological_group": "A",
+                  "split": "holdout"
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "images": [
+                    {
+                      "biological_group": "A",
+                      "split": "development"
+                    },
+                    {
+                      "biological_group": "B",
+                      "split": "holdout"
+                    },
+                    {
+                      "biological_group": "A",
+                      "split": "holdout"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['leaking_groups']==sorted({r['biological_group'] for r in data['images'] if r['split']=='development'}&{r['biological_group'] for r in data['images'] if r['split']=='holdout'})",
+                "result['development_n']==sum(r['split']=='development' for r in data['images'])",
+                "result['holdout_n']==sum(r['split']=='holdout' for r in data['images'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "images": [
+                    {
+                      "biological_group": "A",
+                      "split": "development"
+                    },
+                    {
+                      "biological_group": "B",
+                      "split": "holdout"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['leaking_groups']==sorted({r['biological_group'] for r in data['images'] if r['split']=='development'}&{r['biological_group'] for r in data['images'] if r['split']=='holdout'})",
+                "result['development_n']==sum(r['split']=='development' for r in data['images'])",
+                "result['holdout_n']==sum(r['split']=='holdout' for r in data['images'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Training on one field and testing on another from the same animal may overstate generalization.",
+            "probe": "What genuinely independent biological evidence would be required?",
+            "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+          }
+        },
+        "prove": {
+          "title": "Independent scientific transfer",
+          "description": "Given data.images with biological_group and split labels, return result={'leaking_groups':sorted list,'development_n':int,'holdout_n':int}.",
+          "starter_code": "# A07-G04 | PROVE | Freeze a group-disjoint development/test split\n# TASK: Given data.images with biological_group and split labels, return\n#   result={'leaking_groups':sorted list,'development_n':int,'holdout_n':int}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "images": [
+                {
+                  "biological_group": "A",
+                  "split": "development"
+                },
+                {
+                  "biological_group": "A",
+                  "split": "development"
+                },
+                {
+                  "biological_group": "C",
+                  "split": "holdout"
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "images": [
+                    {
+                      "biological_group": "A",
+                      "split": "development"
+                    },
+                    {
+                      "biological_group": "A",
+                      "split": "development"
+                    },
+                    {
+                      "biological_group": "C",
+                      "split": "holdout"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['leaking_groups']==sorted({r['biological_group'] for r in data['images'] if r['split']=='development'}&{r['biological_group'] for r in data['images'] if r['split']=='holdout'})",
+                "result['development_n']==sum(r['split']=='development' for r in data['images'])",
+                "result['holdout_n']==sum(r['split']=='holdout' for r in data['images'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "images": [
+                    {
+                      "biological_group": "batch1",
+                      "split": "development"
+                    },
+                    {
+                      "biological_group": "batch2",
+                      "split": "holdout"
+                    },
+                    {
+                      "biological_group": "batch2",
+                      "split": "development"
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "result['leaking_groups']==sorted({r['biological_group'] for r in data['images'] if r['split']=='development'}&{r['biological_group'] for r in data['images'] if r['split']=='holdout'})",
+                "result['development_n']==sum(r['split']=='development' for r in data['images'])",
+                "result['holdout_n']==sum(r['split']=='holdout' for r in data['images'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Training on one field and testing on another from the same animal may overstate generalization.",
+            "probe": "Could you defend the decision on an unseen real study without prior hints?",
+            "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+          }
+        }
+      }
+    },
+    {
+      "id": "A07-G05",
+      "title": "Evaluate real object errors against annotations",
+      "competencies": [
+        "A07-G05"
+      ],
+      "why": "A mask can look plausible while many annotated objects are missing, merged or spuriously split.",
+      "explain": [
+        "Match individual objects one-to-one at a prespecified IoU threshold.",
+        "Aggregate TP/FP/FN only after scoring each held-out image against its reference.",
+        "Pixel overlap does not replace detection F1 or biological unit uncertainty."
+      ],
+      "worked_example": {
+        "code": "tp,fp,fn=4,2,3\nprint('object F1:',2*tp/(2*tp+fp+fn))",
+        "predict": "Predict the biological decision and potential error when assumptions fail."
+      },
+      "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+      "walkthrough": [
+        "Define the primary scientific question and intended object before computing.",
+        "Test a changed annotation, source, group or metric assumption.",
+        "Explain the independent experimental and human validation still required."
+      ],
+      "investigate": [
+        "Find a case where a numerical pass coexists with biological leakage.",
+        "State the correct decision for missing or ambiguous reference data."
+      ],
+      "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+      "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+      "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Sum TP/FP/FN across images for micro F1, with the empty-case policy.",
+          "Count error per image equals |FP−FN|; do not confuse that with detection accuracy."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "A mask can look plausible while many annotated objects are missing, merged or spuriously split.",
+          "starter_code": "# A07-G05 | LEARN | Evaluate real object errors against annotations\n# TASK: Predict and inspect the research-audit example.\n\ntp,fp,fn=4,2,3\nprint('object F1:',2*tp/(2*tp+fp+fn))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply the evidence rule",
+          "description": "From data.images TP/FP/FN counts, compute pooled micro object F1 and mean absolute count error. Return result={'micro_f1':float,'mean_abs_count_error':float,'n_images':int}.",
+          "starter_code": "# A07-G05 | APPLY | Evaluate real object errors against annotations\n# TASK: From data.images TP/FP/FN counts, compute pooled micro object F1 and mean\n#   absolute count error. Return\n#   result={'micro_f1':float,'mean_abs_count_error':float,'n_images':int}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "images": [
+                {
+                  "tp": 3,
+                  "fp": 2,
+                  "fn": 1
+                },
+                {
+                  "tp": 8,
+                  "fp": 0,
+                  "fn": 1
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "images": [
+                    {
+                      "tp": 3,
+                      "fp": 2,
+                      "fn": 1
+                    },
+                    {
+                      "tp": 8,
+                      "fp": 0,
+                      "fn": 1
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "abs(result['micro_f1']-(2*sum(r['tp'] for r in data['images'])/(2*sum(r['tp'] for r in data['images'])+sum(r['fp'] for r in data['images'])+sum(r['fn'] for r in data['images'])) if 2*sum(r['tp'] for r in data['images'])+sum(r['fp'] for r in data['images'])+sum(r['fn'] for r in data['images']) else 1.0))<1e-9",
+                "abs(result['mean_abs_count_error']-sum(abs(r['fp']-r['fn']) for r in data['images'])/len(data['images']))<1e-9",
+                "result['n_images']==len(data['images'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "images": [
+                    {
+                      "tp": 0,
+                      "fp": 2,
+                      "fn": 3
+                    },
+                    {
+                      "tp": 2,
+                      "fp": 2,
+                      "fn": 3
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "abs(result['micro_f1']-(2*sum(r['tp'] for r in data['images'])/(2*sum(r['tp'] for r in data['images'])+sum(r['fp'] for r in data['images'])+sum(r['fn'] for r in data['images'])) if 2*sum(r['tp'] for r in data['images'])+sum(r['fp'] for r in data['images'])+sum(r['fn'] for r in data['images']) else 1.0))<1e-9",
+                "abs(result['mean_abs_count_error']-sum(abs(r['fp']-r['fn']) for r in data['images'])/len(data['images']))<1e-9",
+                "result['n_images']==len(data['images'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A mask can look plausible while many annotated objects are missing, merged or spuriously split.",
+            "probe": "What genuinely independent biological evidence would be required?",
+            "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+          }
+        },
+        "prove": {
+          "title": "Independent scientific transfer",
+          "description": "From data.images TP/FP/FN counts, compute pooled micro object F1 and mean absolute count error. Return result={'micro_f1':float,'mean_abs_count_error':float,'n_images':int}.",
+          "starter_code": "# A07-G05 | PROVE | Evaluate real object errors against annotations\n# TASK: From data.images TP/FP/FN counts, compute pooled micro object F1 and mean\n#   absolute count error. Return\n#   result={'micro_f1':float,'mean_abs_count_error':float,'n_images':int}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "images": [
+                {
+                  "tp": 12,
+                  "fp": 3,
+                  "fn": 5
+                },
+                {
+                  "tp": 2,
+                  "fp": 0,
+                  "fn": 4
+                },
+                {
+                  "tp": 7,
+                  "fp": 1,
+                  "fn": 0
+                }
+              ]
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "images": [
+                    {
+                      "tp": 12,
+                      "fp": 3,
+                      "fn": 5
+                    },
+                    {
+                      "tp": 2,
+                      "fp": 0,
+                      "fn": 4
+                    },
+                    {
+                      "tp": 7,
+                      "fp": 1,
+                      "fn": 0
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "abs(result['micro_f1']-(2*sum(r['tp'] for r in data['images'])/(2*sum(r['tp'] for r in data['images'])+sum(r['fp'] for r in data['images'])+sum(r['fn'] for r in data['images'])) if 2*sum(r['tp'] for r in data['images'])+sum(r['fp'] for r in data['images'])+sum(r['fn'] for r in data['images']) else 1.0))<1e-9",
+                "abs(result['mean_abs_count_error']-sum(abs(r['fp']-r['fn']) for r in data['images'])/len(data['images']))<1e-9",
+                "result['n_images']==len(data['images'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "images": [
+                    {
+                      "tp": 0,
+                      "fp": 0,
+                      "fn": 0
+                    },
+                    {
+                      "tp": 5,
+                      "fp": 10,
+                      "fn": 5
+                    }
+                  ]
+                }
+              },
+              "assertions": [
+                "abs(result['micro_f1']-(2*sum(r['tp'] for r in data['images'])/(2*sum(r['tp'] for r in data['images'])+sum(r['fp'] for r in data['images'])+sum(r['fn'] for r in data['images'])) if 2*sum(r['tp'] for r in data['images'])+sum(r['fp'] for r in data['images'])+sum(r['fn'] for r in data['images']) else 1.0))<1e-9",
+                "abs(result['mean_abs_count_error']-sum(abs(r['fp']-r['fn']) for r in data['images'])/len(data['images']))<1e-9",
+                "result['n_images']==len(data['images'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A mask can look plausible while many annotated objects are missing, merged or spuriously split.",
+            "probe": "Could you defend the decision on an unseen real study without prior hints?",
+            "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+          }
+        }
+      }
+    },
+    {
+      "id": "A07-G06",
+      "title": "Audit clean-environment reproduction evidence",
+      "competencies": [
+        "A07-G06"
+      ],
+      "why": "A screenshot of a notebook running once is not an independently reproducible analysis.",
+      "explain": [
+        "Equivalent results require source and configuration identity.",
+        "A clean-checkout flag must come from a real environment replay.",
+        "Programmatic verification can only check declared evidence, not human independence."
+      ],
+      "worked_example": {
+        "code": "expected={'source':'abc','config':'def','output':'ghi'}\nprint('all fields agree:',len(set(expected))==3)",
+        "predict": "Predict the biological decision and potential error when assumptions fail."
+      },
+      "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+      "walkthrough": [
+        "Define the primary scientific question and intended object before computing.",
+        "Test a changed annotation, source, group or metric assumption.",
+        "Explain the independent experimental and human validation still required."
+      ],
+      "investigate": [
+        "Find a case where a numerical pass coexists with biological leakage.",
+        "State the correct decision for missing or ambiguous reference data."
+      ],
+      "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+      "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+      "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Compare the three SHA fingerprints individually.",
+          "A hash match without fresh-checkout evidence is still incomplete."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "A screenshot of a notebook running once is not an independently reproducible analysis.",
+          "starter_code": "# A07-G06 | LEARN | Audit clean-environment reproduction evidence\n# TASK: Predict and inspect the research-audit example.\n\nexpected={'source':'abc','config':'def','output':'ghi'}\nprint('all fields agree:',len(set(expected))==3)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply the evidence rule",
+          "description": "Compare data.expected and data.observed source/config/output SHA strings and data.clean_checkout. Return result={'hash_match':bool,'fresh_reproduction_declared':bool,'ready_for_review':bool}.",
+          "starter_code": "# A07-G06 | APPLY | Audit clean-environment reproduction evidence\n# TASK: Compare data.expected and data.observed source/config/output SHA strings\n#   and data.clean_checkout. Return\n#   result={'hash_match':bool,'fresh_reproduction_declared':bool,'ready_for_review':bool}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "expected": {
+                "source_sha": "s",
+                "config_sha": "c",
+                "output_sha": "o"
+              },
+              "observed": {
+                "source_sha": "s",
+                "config_sha": "c",
+                "output_sha": "o"
+              },
+              "clean_checkout": true
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "expected": {
+                    "source_sha": "s",
+                    "config_sha": "c",
+                    "output_sha": "o"
+                  },
+                  "observed": {
+                    "source_sha": "s",
+                    "config_sha": "c",
+                    "output_sha": "o"
+                  },
+                  "clean_checkout": true
+                }
+              },
+              "assertions": [
+                "result['hash_match']==all(data['expected'][k]==data['observed'][k] for k in ('source_sha','config_sha','output_sha'))",
+                "result['fresh_reproduction_declared']==bool(data['clean_checkout'])",
+                "result['ready_for_review']==(result['hash_match'] and result['fresh_reproduction_declared'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "expected": {
+                    "source_sha": "a",
+                    "config_sha": "b",
+                    "output_sha": "c"
+                  },
+                  "observed": {
+                    "source_sha": "a",
+                    "config_sha": "x",
+                    "output_sha": "c"
+                  },
+                  "clean_checkout": true
+                }
+              },
+              "assertions": [
+                "result['hash_match']==all(data['expected'][k]==data['observed'][k] for k in ('source_sha','config_sha','output_sha'))",
+                "result['fresh_reproduction_declared']==bool(data['clean_checkout'])",
+                "result['ready_for_review']==(result['hash_match'] and result['fresh_reproduction_declared'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A screenshot of a notebook running once is not an independently reproducible analysis.",
+            "probe": "What genuinely independent biological evidence would be required?",
+            "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+          }
+        },
+        "prove": {
+          "title": "Independent scientific transfer",
+          "description": "Compare data.expected and data.observed source/config/output SHA strings and data.clean_checkout. Return result={'hash_match':bool,'fresh_reproduction_declared':bool,'ready_for_review':bool}.",
+          "starter_code": "# A07-G06 | PROVE | Audit clean-environment reproduction evidence\n# TASK: Compare data.expected and data.observed source/config/output SHA strings\n#   and data.clean_checkout. Return\n#   result={'hash_match':bool,'fresh_reproduction_declared':bool,'ready_for_review':bool}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "expected": {
+                "source_sha": "s",
+                "config_sha": "c",
+                "output_sha": "o"
+              },
+              "observed": {
+                "source_sha": "s",
+                "config_sha": "c",
+                "output_sha": "o"
+              },
+              "clean_checkout": false
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "expected": {
+                    "source_sha": "s",
+                    "config_sha": "c",
+                    "output_sha": "o"
+                  },
+                  "observed": {
+                    "source_sha": "s",
+                    "config_sha": "c",
+                    "output_sha": "o"
+                  },
+                  "clean_checkout": false
+                }
+              },
+              "assertions": [
+                "result['hash_match']==all(data['expected'][k]==data['observed'][k] for k in ('source_sha','config_sha','output_sha'))",
+                "result['fresh_reproduction_declared']==bool(data['clean_checkout'])",
+                "result['ready_for_review']==(result['hash_match'] and result['fresh_reproduction_declared'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "expected": {
+                    "source_sha": "AA",
+                    "config_sha": "BB",
+                    "output_sha": "CC"
+                  },
+                  "observed": {
+                    "source_sha": "AA",
+                    "config_sha": "BB",
+                    "output_sha": "CC"
+                  },
+                  "clean_checkout": true
+                }
+              },
+              "assertions": [
+                "result['hash_match']==all(data['expected'][k]==data['observed'][k] for k in ('source_sha','config_sha','output_sha'))",
+                "result['fresh_reproduction_declared']==bool(data['clean_checkout'])",
+                "result['ready_for_review']==(result['hash_match'] and result['fresh_reproduction_declared'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "A screenshot of a notebook running once is not an independently reproducible analysis.",
+            "probe": "Could you defend the decision on an unseen real study without prior hints?",
+            "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+          }
+        }
+      }
+    },
+    {
+      "id": "A07-G07",
+      "title": "Choose GO, MORE ANNOTATION or NO-GO",
+      "competencies": [
+        "A07-G07"
+      ],
+      "why": "Scientific judgment sometimes means stopping a technically working pipeline rather than optimizing another filter.",
+      "explain": [
+        "Predeclare decision criteria from the intended biological endpoint.",
+        "A numerical score is not reliable when annotations leak or source data are unverifiable.",
+        "Even a passing score requires human scientific review, not automatic certification."
+      ],
+      "worked_example": {
+        "code": "score=.4;minimum=.7\nprint('Needs model improvement:',score<minimum)",
+        "predict": "Predict the biological decision and potential error when assumptions fail."
+      },
+      "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+      "walkthrough": [
+        "Define the primary scientific question and intended object before computing.",
+        "Test a changed annotation, source, group or metric assumption.",
+        "Explain the independent experimental and human validation still required."
+      ],
+      "investigate": [
+        "Find a case where a numerical pass coexists with biological leakage.",
+        "State the correct decision for missing or ambiguous reference data."
+      ],
+      "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+      "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+      "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+      "hints": {
+        "learn": [],
+        "apply": [
+          "Prioritize integrity problems over the apparent F1 score.",
+          "Even REVIEW means human assessment, not automatic biological validity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+      },
+      "phases": {
+        "learn": {
+          "title": "Predict → Run → Investigate",
+          "description": "Scientific judgment sometimes means stopping a technically working pipeline rather than optimizing another filter.",
+          "starter_code": "# A07-G07 | LEARN | Choose GO, MORE ANNOTATION or NO-GO\n# TASK: Predict and inspect the research-audit example.\n\nscore=.4;minimum=.7\nprint('Needs model improvement:',score<minimum)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply the evidence rule",
+          "description": "From data.annotation_sufficient,group_disjoint,reproducible,object_f1,threshold return result={'recommendation':str,'scientifically_certified':False}; priority NO_GO if leakage or irreproducible, MORE_ANNOTATION if reference insufficient, IMPROVE_METHOD if F1 too low, else REVIEW.",
+          "starter_code": "# A07-G07 | APPLY | Choose GO, MORE ANNOTATION or NO-GO\n# TASK: From\n#   data.annotation_sufficient,group_disjoint,reproducible,object_f1,threshold\n#   return result={'recommendation':str,'scientifically_certified':False};\n#   priority NO_GO if leakage or irreproducible, MORE_ANNOTATION if reference\n#   insufficient, IMPROVE_METHOD if F1 too low, else REVIEW.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "annotation_sufficient": false,
+              "group_disjoint": true,
+              "reproducible": true,
+              "object_f1": 0.8,
+              "threshold": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "annotation_sufficient": false,
+                  "group_disjoint": true,
+                  "reproducible": true,
+                  "object_f1": 0.8,
+                  "threshold": 0.7
+                }
+              },
+              "assertions": [
+                "result['recommendation']==('NO_GO' if not data['group_disjoint'] or not data['reproducible'] else 'MORE_ANNOTATION' if not data['annotation_sufficient'] else 'IMPROVE_METHOD' if data['object_f1']<data['threshold'] else 'REVIEW')",
+                "result['scientifically_certified'] is False"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "annotation_sufficient": true,
+                  "group_disjoint": false,
+                  "reproducible": true,
+                  "object_f1": 0.9,
+                  "threshold": 0.7
+                }
+              },
+              "assertions": [
+                "result['recommendation']==('NO_GO' if not data['group_disjoint'] or not data['reproducible'] else 'MORE_ANNOTATION' if not data['annotation_sufficient'] else 'IMPROVE_METHOD' if data['object_f1']<data['threshold'] else 'REVIEW')",
+                "result['scientifically_certified'] is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Scientific judgment sometimes means stopping a technically working pipeline rather than optimizing another filter.",
+            "probe": "What genuinely independent biological evidence would be required?",
+            "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+          }
+        },
+        "prove": {
+          "title": "Independent scientific transfer",
+          "description": "From data.annotation_sufficient,group_disjoint,reproducible,object_f1,threshold return result={'recommendation':str,'scientifically_certified':False}; priority NO_GO if leakage or irreproducible, MORE_ANNOTATION if reference insufficient, IMPROVE_METHOD if F1 too low, else REVIEW.",
+          "starter_code": "# A07-G07 | PROVE | Choose GO, MORE ANNOTATION or NO-GO\n# TASK: From\n#   data.annotation_sufficient,group_disjoint,reproducible,object_f1,threshold\n#   return result={'recommendation':str,'scientifically_certified':False};\n#   priority NO_GO if leakage or irreproducible, MORE_ANNOTATION if reference\n#   insufficient, IMPROVE_METHOD if F1 too low, else REVIEW.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "annotation_sufficient": true,
+              "group_disjoint": true,
+              "reproducible": true,
+              "object_f1": 0.35,
+              "threshold": 0.7
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "annotation_sufficient": true,
+                  "group_disjoint": true,
+                  "reproducible": true,
+                  "object_f1": 0.35,
+                  "threshold": 0.7
+                }
+              },
+              "assertions": [
+                "result['recommendation']==('NO_GO' if not data['group_disjoint'] or not data['reproducible'] else 'MORE_ANNOTATION' if not data['annotation_sufficient'] else 'IMPROVE_METHOD' if data['object_f1']<data['threshold'] else 'REVIEW')",
+                "result['scientifically_certified'] is False"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "annotation_sufficient": true,
+                  "group_disjoint": true,
+                  "reproducible": true,
+                  "object_f1": 0.82,
+                  "threshold": 0.7
+                }
+              },
+              "assertions": [
+                "result['recommendation']==('NO_GO' if not data['group_disjoint'] or not data['reproducible'] else 'MORE_ANNOTATION' if not data['annotation_sufficient'] else 'IMPROVE_METHOD' if data['object_f1']<data['threshold'] else 'REVIEW')",
+                "result['scientifically_certified'] is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Scientific judgment sometimes means stopping a technically working pipeline rather than optimizing another filter.",
+            "probe": "Could you defend the decision on an unseen real study without prior hints?",
+            "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+          }
+        }
+      }
+    }
+  ],
+  "capstone": {
+    "id": "A07-CAPSTONE",
+    "title": "Independent unfamiliar-dataset evidence audit",
+    "competencies": [
+      "A07-CAPSTONE"
+    ],
+    "why": "The final research decision must integrate source identity, study split, errors, reproducibility and biological interpretation.",
+    "explain": [
+      "Do not use test images to tune a method before freezing it.",
+      "Report independent group leakage and object errors rather than a single performance score.",
+      "The full A07 real-data evidence packet has seven checkpoints and must receive human review."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the biological decision and potential error when assumptions fail."
+    },
+    "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+    "walkthrough": [
+      "Define the primary scientific question and intended object before computing.",
+      "Test a changed annotation, source, group or metric assumption.",
+      "Explain the independent experimental and human validation still required."
+    ],
+    "investigate": [
+      "Find a case where a numerical pass coexists with biological leakage.",
+      "State the correct decision for missing or ambiguous reference data."
+    ],
+    "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+    "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+    "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+    "hints": {
+      "learn": [],
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict → Run → Investigate",
+        "description": "The final research decision must integrate source identity, study split, errors, reproducibility and biological interpretation.",
+        "starter_code": "# A07-CAPSTONE | LEARN | Independent unfamiliar-dataset evidence audit\n# TASK: Predict and inspect the research-audit example.\n\nprint('A07 capstone: analyze unfamiliar evidence from scratch; no worked method is supplied.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply the evidence rule",
+        "description": "Using data.images with image_id,group,split,tp,fp,fn and data.frozen, return result={'holdout_images':int,'leaking_groups':sorted list,'holdout_micro_f1':float,'method_frozen':bool,'human_review_required':True}.",
+        "starter_code": "# A07-CAPSTONE | APPLY | Independent unfamiliar-dataset evidence audit\n# TASK: Using data.images with image_id,group,split,tp,fp,fn and data.frozen,\n#   return result={'holdout_images':int,'leaking_groups':sorted\n#   list,'holdout_micro_f1':float,'method_frozen':bool,'human_review_required':True}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "images": [
+              {
+                "image_id": "a",
+                "group": "A",
+                "split": "development",
+                "tp": 1,
+                "fp": 0,
+                "fn": 0
+              },
+              {
+                "image_id": "b",
+                "group": "B",
+                "split": "holdout",
+                "tp": 5,
+                "fp": 1,
+                "fn": 2
+              }
+            ],
+            "frozen": true
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "images": [
+                  {
+                    "image_id": "a",
+                    "group": "A",
+                    "split": "development",
+                    "tp": 1,
+                    "fp": 0,
+                    "fn": 0
+                  },
+                  {
+                    "image_id": "b",
+                    "group": "B",
+                    "split": "holdout",
+                    "tp": 5,
+                    "fp": 1,
+                    "fn": 2
+                  }
+                ],
+                "frozen": true
+              }
+            },
+            "assertions": [
+              "result['holdout_images']==sum(r['split']=='holdout' for r in data['images'])",
+              "result['leaking_groups']==sorted({r['group'] for r in data['images'] if r['split']=='development'}&{r['group'] for r in data['images'] if r['split']=='holdout'})",
+              "abs(result['holdout_micro_f1']-(2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')/(2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')+sum(r['fp'] for r in data['images'] if r['split']=='holdout')+sum(r['fn'] for r in data['images'] if r['split']=='holdout')) if 2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')+sum(r['fp'] for r in data['images'] if r['split']=='holdout')+sum(r['fn'] for r in data['images'] if r['split']=='holdout') else 1.0))<1e-9",
+              "result['method_frozen']==bool(data['frozen'])",
+              "result['human_review_required'] is True"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "images": [
+                  {
+                    "image_id": "c",
+                    "group": "A",
+                    "split": "development",
+                    "tp": 2,
+                    "fp": 1,
+                    "fn": 0
+                  },
+                  {
+                    "image_id": "d",
+                    "group": "A",
+                    "split": "holdout",
+                    "tp": 3,
+                    "fp": 0,
+                    "fn": 4
+                  }
+                ],
+                "frozen": false
+              }
+            },
+            "assertions": [
+              "result['holdout_images']==sum(r['split']=='holdout' for r in data['images'])",
+              "result['leaking_groups']==sorted({r['group'] for r in data['images'] if r['split']=='development'}&{r['group'] for r in data['images'] if r['split']=='holdout'})",
+              "abs(result['holdout_micro_f1']-(2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')/(2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')+sum(r['fp'] for r in data['images'] if r['split']=='holdout')+sum(r['fn'] for r in data['images'] if r['split']=='holdout')) if 2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')+sum(r['fp'] for r in data['images'] if r['split']=='holdout')+sum(r['fn'] for r in data['images'] if r['split']=='holdout') else 1.0))<1e-9",
+              "result['method_frozen']==bool(data['frozen'])",
+              "result['human_review_required'] is True"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The final research decision must integrate source identity, study split, errors, reproducibility and biological interpretation.",
+          "probe": "What genuinely independent biological evidence would be required?",
+          "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+        }
+      },
+      "prove": {
+        "title": "Independent scientific transfer",
+        "description": "Using data.images with image_id,group,split,tp,fp,fn and data.frozen, return result={'holdout_images':int,'leaking_groups':sorted list,'holdout_micro_f1':float,'method_frozen':bool,'human_review_required':True}.",
+        "starter_code": "# A07-CAPSTONE | PROVE | Independent unfamiliar-dataset evidence audit\n# TASK: Using data.images with image_id,group,split,tp,fp,fn and data.frozen,\n#   return result={'holdout_images':int,'leaking_groups':sorted\n#   list,'holdout_micro_f1':float,'method_frozen':bool,'human_review_required':True}.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "images": [
+              {
+                "image_id": "dev",
+                "group": "animal1",
+                "split": "development",
+                "tp": 1,
+                "fp": 1,
+                "fn": 2
+              },
+              {
+                "image_id": "test1",
+                "group": "animal2",
+                "split": "holdout",
+                "tp": 8,
+                "fp": 3,
+                "fn": 2
+              },
+              {
+                "image_id": "test2",
+                "group": "animal3",
+                "split": "holdout",
+                "tp": 4,
+                "fp": 1,
+                "fn": 6
+              }
+            ],
+            "frozen": true
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "images": [
+                  {
+                    "image_id": "dev",
+                    "group": "animal1",
+                    "split": "development",
+                    "tp": 1,
+                    "fp": 1,
+                    "fn": 2
+                  },
+                  {
+                    "image_id": "test1",
+                    "group": "animal2",
+                    "split": "holdout",
+                    "tp": 8,
+                    "fp": 3,
+                    "fn": 2
+                  },
+                  {
+                    "image_id": "test2",
+                    "group": "animal3",
+                    "split": "holdout",
+                    "tp": 4,
+                    "fp": 1,
+                    "fn": 6
+                  }
+                ],
+                "frozen": true
+              }
+            },
+            "assertions": [
+              "result['holdout_images']==sum(r['split']=='holdout' for r in data['images'])",
+              "result['leaking_groups']==sorted({r['group'] for r in data['images'] if r['split']=='development'}&{r['group'] for r in data['images'] if r['split']=='holdout'})",
+              "abs(result['holdout_micro_f1']-(2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')/(2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')+sum(r['fp'] for r in data['images'] if r['split']=='holdout')+sum(r['fn'] for r in data['images'] if r['split']=='holdout')) if 2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')+sum(r['fp'] for r in data['images'] if r['split']=='holdout')+sum(r['fn'] for r in data['images'] if r['split']=='holdout') else 1.0))<1e-9",
+              "result['method_frozen']==bool(data['frozen'])",
+              "result['human_review_required'] is True"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "images": [
+                  {
+                    "image_id": "a",
+                    "group": "plate1",
+                    "split": "development",
+                    "tp": 1,
+                    "fp": 2,
+                    "fn": 3
+                  },
+                  {
+                    "image_id": "b",
+                    "group": "plate2",
+                    "split": "holdout",
+                    "tp": 0,
+                    "fp": 0,
+                    "fn": 0
+                  },
+                  {
+                    "image_id": "c",
+                    "group": "plate1",
+                    "split": "holdout",
+                    "tp": 4,
+                    "fp": 5,
+                    "fn": 1
+                  }
+                ],
+                "frozen": false
+              }
+            },
+            "assertions": [
+              "result['holdout_images']==sum(r['split']=='holdout' for r in data['images'])",
+              "result['leaking_groups']==sorted({r['group'] for r in data['images'] if r['split']=='development'}&{r['group'] for r in data['images'] if r['split']=='holdout'})",
+              "abs(result['holdout_micro_f1']-(2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')/(2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')+sum(r['fp'] for r in data['images'] if r['split']=='holdout')+sum(r['fn'] for r in data['images'] if r['split']=='holdout')) if 2*sum(r['tp'] for r in data['images'] if r['split']=='holdout')+sum(r['fp'] for r in data['images'] if r['split']=='holdout')+sum(r['fn'] for r in data['images'] if r['split']=='holdout') else 1.0))<1e-9",
+              "result['method_frozen']==bool(data['frozen'])",
+              "result['human_review_required'] is True"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The final research decision must integrate source identity, study split, errors, reproducibility and biological interpretation.",
+          "probe": "Could you defend the decision on an unseen real study without prior hints?",
+          "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+        }
+      }
+    },
+    "build_steps": [
+      "Define the target structure, biological units, exclusions and endpoint independently.",
+      "Audit source metadata and annotated object definitions before analysis.",
+      "Freeze group-wise split and evaluate object-level errors on a true held-out dataset.",
+      "Reproduce from clean environment and write a methods/limitations decision memo; no automatic science badge."
+    ]
+  },
+  "review": {
+    "id": "A07-REVIEW",
+    "title": "Delayed independent scientific decision",
+    "competencies": [
+      "A07-REVIEW"
+    ],
+    "why": "Independent judgment is retained only when the learner can diagnose a new dataset without reopening solved code.",
+    "explain": [
+      "Recognize missing annotation and biological leakage before interpreting F1.",
+      "Source fingerprint discrepancies invalidate clean reproduction.",
+      "A delayed automated check still does not certify actual scientific judgment."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the biological decision and potential error when assumptions fail."
+    },
+    "prediction_answer": "Test information integrity, source provenance and annotation quality before interpreting numerical accuracy.",
+    "walkthrough": [
+      "Define the primary scientific question and intended object before computing.",
+      "Test a changed annotation, source, group or metric assumption.",
+      "Explain the independent experimental and human validation still required."
+    ],
+    "investigate": [
+      "Find a case where a numerical pass coexists with biological leakage.",
+      "State the correct decision for missing or ambiguous reference data."
+    ],
+    "debug_task": "Identify one dataset that should fail scientific acceptance despite clean software tests.",
+    "misconception": "Passing code or a single public benchmark certifies universal microscopy or exopher detection.",
+    "scientific_boundary": "The browser contains synthetic audit records, not unknown real annotations. Real A07 requires an externally sourced dataset, independently frozen methods, a fresh local run and critical human review.",
+    "hints": {
+      "learn": [],
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "hardcoded": "Read independent scientific evidence from data rather than copying a verdict."
+    },
+    "phases": {
+      "learn": {
+        "title": "Predict → Run → Investigate",
+        "description": "Independent judgment is retained only when the learner can diagnose a new dataset without reopening solved code.",
+        "starter_code": "# A07-REVIEW | LEARN | Delayed independent scientific decision\n# TASK: Predict and inspect the research-audit example.\n\nprint('A07 review: return on another day and decide without a model answer.')\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply the evidence rule",
+        "description": "Given data.evidence (annotations,groups,hashes,metrics) output result={'needs_human_review':True,'blocking_issues':sorted list} where blockers are missing_annotation,group_leakage,hash_mismatch,low_f1.",
+        "starter_code": "# A07-REVIEW | APPLY | Delayed independent scientific decision\n# TASK: Given data.evidence (annotations,groups,hashes,metrics) output\n#   result={'needs_human_review':True,'blocking_issues':sorted list} where\n#   blockers are missing_annotation,group_leakage,hash_mismatch,low_f1.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "evidence": {
+              "annotations": true,
+              "disjoint_groups": true,
+              "hashes_match": false,
+              "object_f1": 0.6,
+              "min_f1": 0.7
+            }
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "evidence": {
+                  "annotations": true,
+                  "disjoint_groups": true,
+                  "hashes_match": false,
+                  "object_f1": 0.6,
+                  "min_f1": 0.7
+                }
+              }
+            },
+            "assertions": [
+              "result['needs_human_review'] is True",
+              "result['blocking_issues']==sorted((['missing_annotation'] if not data['evidence']['annotations'] else [])+(['group_leakage'] if not data['evidence']['disjoint_groups'] else [])+(['hash_mismatch'] if not data['evidence']['hashes_match'] else [])+(['low_f1'] if data['evidence']['object_f1']<data['evidence']['min_f1'] else []))"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "evidence": {
+                  "annotations": true,
+                  "disjoint_groups": true,
+                  "hashes_match": true,
+                  "object_f1": 0.9,
+                  "min_f1": 0.7
+                }
+              }
+            },
+            "assertions": [
+              "result['needs_human_review'] is True",
+              "result['blocking_issues']==sorted((['missing_annotation'] if not data['evidence']['annotations'] else [])+(['group_leakage'] if not data['evidence']['disjoint_groups'] else [])+(['hash_mismatch'] if not data['evidence']['hashes_match'] else [])+(['low_f1'] if data['evidence']['object_f1']<data['evidence']['min_f1'] else []))"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Independent judgment is retained only when the learner can diagnose a new dataset without reopening solved code.",
+          "probe": "What genuinely independent biological evidence would be required?",
+          "check": "Check annotations, groups, source hashes, prespecified acceptance and organism-level N."
+        }
+      },
+      "prove": {
+        "title": "Independent scientific transfer",
+        "description": "Given data.evidence (annotations,groups,hashes,metrics) output result={'needs_human_review':True,'blocking_issues':sorted list} where blockers are missing_annotation,group_leakage,hash_mismatch,low_f1.",
+        "starter_code": "# A07-REVIEW | PROVE | Delayed independent scientific decision\n# TASK: Given data.evidence (annotations,groups,hashes,metrics) output\n#   result={'needs_human_review':True,'blocking_issues':sorted list} where\n#   blockers are missing_annotation,group_leakage,hash_mismatch,low_f1.\n# INPUTS: data in lesson panel\n# OUTPUT: assign your answer to result\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "evidence": {
+              "annotations": false,
+              "disjoint_groups": false,
+              "hashes_match": true,
+              "object_f1": 0.8,
+              "min_f1": 0.7
+            }
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "evidence": {
+                  "annotations": false,
+                  "disjoint_groups": false,
+                  "hashes_match": true,
+                  "object_f1": 0.8,
+                  "min_f1": 0.7
+                }
+              }
+            },
+            "assertions": [
+              "result['needs_human_review'] is True",
+              "result['blocking_issues']==sorted((['missing_annotation'] if not data['evidence']['annotations'] else [])+(['group_leakage'] if not data['evidence']['disjoint_groups'] else [])+(['hash_mismatch'] if not data['evidence']['hashes_match'] else [])+(['low_f1'] if data['evidence']['object_f1']<data['evidence']['min_f1'] else []))"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "evidence": {
+                  "annotations": true,
+                  "disjoint_groups": true,
+                  "hashes_match": true,
+                  "object_f1": 0.2,
+                  "min_f1": 0.65
+                }
+              }
+            },
+            "assertions": [
+              "result['needs_human_review'] is True",
+              "result['blocking_issues']==sorted((['missing_annotation'] if not data['evidence']['annotations'] else [])+(['group_leakage'] if not data['evidence']['disjoint_groups'] else [])+(['hash_mismatch'] if not data['evidence']['hashes_match'] else [])+(['low_f1'] if data['evidence']['object_f1']<data['evidence']['min_f1'] else []))"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Independent judgment is retained only when the learner can diagnose a new dataset without reopening solved code.",
+          "probe": "Could you defend the decision on an unseen real study without prior hints?",
+          "check": "Reject leakage, mismatched files and unsupported claims even if F1 looks good."
+        }
+      }
+    }
+  },
+  "final_project": {
+    "name": "a07_independent_evidence.py",
+    "description": "Independent evidence assessment; full real dataset packet is reviewed using A07 evidence_check CLI and human scientific decision."
+  }
+}

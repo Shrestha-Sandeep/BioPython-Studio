@@ -1,0 +1,46 @@
+{
+  "I12-G01": {
+    "apply": "import numpy as np\nx=np.asarray(data['treated'],float);sd=float(x.std(ddof=1))\nresult={'n':len(x),'sd':sd,'sem':sd/np.sqrt(len(x))}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nd=np.asarray(sample['treated'],float)-np.asarray(sample['control'],float)\nresult=float(d.std(ddof=1)/np.sqrt(len(d)))\nprint(str(result)[:450])"
+  },
+  "I12-G02": {
+    "apply": "import numpy as np\nx=np.asarray(data['treated'],float)\nresult={'median':float(np.median(x)),'iqr':float(np.percentile(x,75)-np.percentile(x,25))}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nx=np.asarray(sample['treated'],float)\nresult=float(np.median(np.abs(x-np.median(x))))\nprint(str(result)[:450])"
+  },
+  "I12-G03": {
+    "apply": "import numpy as np\nfrom scipy.stats import t\nx=np.asarray(data['treated'],float);n=len(x);mu=float(x.mean());sem=float(x.std(ddof=1)/np.sqrt(n))\nh=float(t.ppf(1-data['alpha']/2,df=n-1)*sem)\nresult={'mean':mu,'lower':mu-h,'upper':mu+h}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nfrom scipy.stats import t\nd=np.asarray(sample['treated'],float)-np.asarray(sample['control'],float);n=len(d)\nmu=float(d.mean());h=float(t.ppf(1-sample['alpha']/2,n-1)*d.std(ddof=1)/np.sqrt(n))\nresult=(mu-h,mu+h)\nprint(str(result)[:450])"
+  },
+  "I12-G04": {
+    "apply": "import numpy as np\nx=np.asarray(data['treated'],float);rng=np.random.default_rng(data['seed'])\nmeans=rng.choice(x,size=(300,len(x)),replace=True).mean(axis=1)\nresult=tuple(float(v) for v in np.percentile(means,[2.5,97.5]))\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nd=np.asarray(sample['treated'],float)-np.asarray(sample['control'],float)\nrng=np.random.default_rng(sample['seed']);means=rng.choice(d,size=(500,len(d)),replace=True).mean(axis=1)\nresult=tuple(float(v) for v in np.percentile(means,[5,95]))\nprint(str(result)[:450])"
+  },
+  "I12-G05": {
+    "apply": "import numpy as np\nfrom scipy.stats import ttest_rel,ttest_ind\nx=np.asarray(data['treated'],float);y=np.asarray(data['control'],float)\nresult={'method':'paired' if data['paired'] else 'welch','pvalue':float((ttest_rel(x,y) if data['paired'] else ttest_ind(x,y,equal_var=False)).pvalue)}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nfrom scipy.stats import ttest_rel,ttest_ind\nx=np.asarray(sample['treated'],float);y=np.asarray(sample['control'],float)\np=ttest_rel(x,y).pvalue if sample['paired'] else ttest_ind(x,y,equal_var=False).pvalue\nresult={'effect':float(x.mean()-y.mean()),'pvalue':float(p)}\nprint(str(result)[:450])"
+  },
+  "I12-G06": {
+    "apply": "import numpy as np\np=np.asarray(data['pvalues'],float);order=np.argsort(p);n=len(p)\nv=np.maximum.accumulate(np.minimum(1,p[order]*(n-np.arange(n))))\na=np.empty_like(v);a[order]=v\nresult={'effect':float(np.mean(data['treated'])-np.mean(data['control'])),'adjusted':a.tolist()}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\np=np.asarray(sample['pvalues'],float)\nresult=np.minimum(1,len(p)*p).tolist()\nprint(str(result)[:450])"
+  },
+  "I12-G07": {
+    "apply": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.scatter([0]*len(data['control']),data['control'],label='Control')\nax.scatter([1]*len(data['treated']),data['treated'],label='Treated')\nax.set(xlabel='Condition',ylabel='Biological replicate measurement (a.u.)');ax.legend()\nresult={'n_control':len(data['control']),'n_treated':len(data['treated'])}\nprint(str(result)[:450])",
+    "prove": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nfor a,b in zip(sample['control'],sample['treated']):ax.plot([0,1],[a,b],marker='o')\nax.set(xlabel='Matched condition',ylabel='Per-biological-replicate measurement (a.u.)')\nresult=len(sample['control'])\nprint(str(result)[:450])"
+  },
+  "I12-G08": {
+    "apply": "import json\nimport numpy as np\nresult={'unit':'biological replicate','n_control':len(data['control']),'n_treated':len(data['treated']),'effect':float(np.mean(data['treated'])-np.mean(data['control'])),'seed':data['seed'],'alpha':data['alpha']}\nreport_json=json.dumps(result,sort_keys=True)\nprint(str(result)[:450])",
+    "prove": "import io,csv\nbuf=io.StringIO();writer=csv.DictWriter(buf,fieldnames=['replicate','condition','value']);writer.writeheader()\nfor condition in ('control','treated'):\n    for k,v in enumerate(sample[condition],1):writer.writerow({'replicate':k,'condition':condition,'value':v})\nresult=buf.getvalue()\nprint(str(result)[:450])"
+  },
+  "I12-G09": {
+    "apply": "import numpy as np\nimport matplotlib.pyplot as plt\nx=[np.asarray(data[k],float) for k in ('control','treated')]\nfig,ax=plt.subplots();ax.errorbar([0,1],[a.mean() for a in x],yerr=[a.std(ddof=1) for a in x],fmt='o',capsize=4)\nax.set(xlabel='Condition',ylabel='Mean ± SD (a.u.)')\nresult={'kind':'SD','n':[len(a) for a in x]}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nimport matplotlib.pyplot as plt\nd=np.asarray(sample['treated'],float)-np.asarray(sample['control'],float)\nfig,ax=plt.subplots();ax.errorbar([0],[float(d.mean())],yerr=[float(d.std(ddof=1)/np.sqrt(len(d)))],fmt='o',capsize=4)\nax.set(xlabel='Paired change',ylabel='Mean difference ± SEM (a.u.)')\nresult={'kind':'SEM','n':len(d)}\nprint(str(result)[:450])"
+  },
+  "I12-CAPSTONE": {
+    "apply": "import numpy as np\nimport matplotlib.pyplot as plt\nrng=np.random.default_rng(data['seed']);c=np.asarray(data['control'],float);t=np.asarray(data['treated'],float)\nif data['paired']:\n    diff=t-c;means=rng.choice(diff,size=(300,len(diff)),replace=True).mean(axis=1)\nelse:\n    means=rng.choice(t,size=(300,len(t)),replace=True).mean(axis=1)-rng.choice(c,size=(300,len(c)),replace=True).mean(axis=1)\nresult={'effect':float(t.mean()-c.mean()),'interval':tuple(float(v) for v in np.percentile(means,[2.5,97.5])),'n_bio':[len(c),len(t)],'paired':bool(data['paired'])}\nfig,ax=plt.subplots();ax.scatter([0]*len(c),c);ax.scatter([1]*len(t),t);ax.set(xlabel='Biological replicate group',ylabel='Measurement (a.u.)')\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy.stats import t\nd=np.asarray(sample['treated'],float)-np.asarray(sample['control'],float)\nn=len(d);mu=float(d.mean());h=float(t.ppf(.975,n-1)*d.std(ddof=1)/np.sqrt(n))\nresult={'effect':mu,'ci95':[mu-h,mu+h],'n_bio':n,'calibrated':False}\nprint(result)"
+  },
+  "I12-REVIEW": {
+    "apply": "",
+    "prove": "import numpy as np\nd=np.asarray(sample['treated'],float)-np.asarray(sample['control'],float)\nrng=np.random.default_rng(sample['seed']);means=rng.choice(d,size=(300,len(d)),replace=True).mean(axis=1)\nresult=tuple(float(v) for v in np.percentile(means,[2.5,97.5]))\nprint(result)"
+  }
+}

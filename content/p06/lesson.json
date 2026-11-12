@@ -1,0 +1,1470 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "P06",
+  "version": "1.0.0",
+  "status": "BROWSER_LESSONS_LOCAL_HANDOFF_REQUIRED",
+  "title": "Save and reproduce a real script",
+  "competencies": [
+    "031",
+    "032",
+    "033",
+    "034",
+    "035",
+    "036"
+  ],
+  "intro": "Learn real text-file IO, JSON, testing and script composition in Python, then complete actual local .venv and Git handoff. Do not confuse a printed shell command with local execution.",
+  "scientific_context": {
+    "source": "https://github.com/guiwitz/PyImageCourse_beginner/blob/master/07-Pipeline.ipynb",
+    "asset": "assets/witz/fluorescence-examples.png",
+    "credited_in": "assets/witz/CREDITS.md",
+    "use": "CONTEXT_ONLY",
+    "caution": "Local shell/Git operations require separate manual evidence; synthetic data are not quantitative microscopy."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → Prove, with local reproduction after export.",
+  "goals": [
+    {
+      "id": "P06-G01",
+      "title": "Read and write UTF-8 text files",
+      "competencies": [
+        "031"
+      ],
+      "why": "Learn read and write utf-8 text files through traceable biological programming exercises.",
+      "explain": [
+        "`Path.write_text(..., encoding='utf-8')` and `Path.read_text(...)` perform genuine Python filesystem operations. A temporary directory prevents leftover files from contaminating the next attempt.",
+        "`splitlines()` turns newline-delimited text into records without inventing an extra specimen from the final newline. UTF-8 matters for non-ASCII acquisition IDs; use an explicit encoding rather than relying on the host default.",
+        "Pyodide's filesystem belongs to its browser runtime, not your laptop's project folder. The independent transfer exports a script and tests local file access separately.",
+        "A temporary Python file is created, read back, and removed after the context manager exits."
+      ],
+      "worked_example": {
+        "code": "from pathlib import Path\nimport tempfile\nwith tempfile.TemporaryDirectory() as folder:\n    p = Path(folder) / 'ids.txt'\n    p.write_text('F1\\nF2\\n', encoding='utf-8')\n    print(p.read_text(encoding='utf-8').splitlines())",
+        "predict": "Which field IDs reappear after the file is read?"
+      },
+      "prediction_answer": "F1 and F2. The file is real inside the Python runtime, not a file saved to your computer's Documents folder.",
+      "walkthrough": [
+        "Read the stated input and output contract for read and write utf-8 text files.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
+      ],
+      "investigate": [
+        "Change one parameter in read and write utf-8 text files and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
+      ],
+      "debug_task": "Identify a real failure mode in read and write utf-8 text files: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "A browser result proves that local software and scientifically valid data were used.",
+      "scientific_boundary": "Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict the working example; run and change the input.",
+          "starter_code": "# P06-G01 | LEARN | Read and write UTF-8 text files\n# TASK: Predict the working example; run and change the input.\n\nfrom pathlib import Path\nimport tempfile\nwith tempfile.TemporaryDirectory() as folder:\n    p = Path(folder) / 'ids.txt'\n    p.write_text('F1\\nF2\\n', encoding='utf-8')\n    print(p.read_text(encoding='utf-8').splitlines())\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing inputs",
+          "description": "Use tempfile.TemporaryDirectory and pathlib.Path to write newline-delimited field_ids as UTF-8, read them as recovered_ids and set total_ids. Do not include a trailing empty record.",
+          "starter_code": "# P06-G01 | APPLY | Read and write UTF-8 text files\n# TASK: Use tempfile.TemporaryDirectory and pathlib.Path to write newline-delimited\n#   field_ids as UTF-8, read them as recovered_ids and set total_ids. Do not\n#   include a trailing empty record.\n# INPUTS: field_ids\n\n",
+          "preview_inputs": {
+            "field_ids": [
+              "F1",
+              "F2"
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "field_ids": [
+                  "F1",
+                  "F2"
+                ]
+              },
+              "assertions": [
+                "recovered_ids == field_ids",
+                "total_ids == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": []
+              },
+              "assertions": [
+                "recovered_ids == []",
+                "total_ids == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "field_ids": [
+                  "μ1",
+                  "F3"
+                ]
+              },
+              "assertions": [
+                "recovered_ids == field_ids",
+                "total_ids == 2"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Pyodide's filesystem belongs to its browser runtime, not your laptop's project folder. The independent transfer exports a script and tests local file access separately.",
+            "probe": "Which part of read and write utf-8 text files can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. `splitlines()` turns newline-delimited text into records without inventing an extra specimen from the final newline. UTF-8 matters for non-ASCII acquisition IDs; use an explicit encoding rather than relying on the host default."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Write observations [ID,channel] to a temporary UTF-8 file, one 'ID,channel' per line; read and parse into recovered_rows, row_count. Inputs contain no commas.",
+          "starter_code": "# P06-G01 | PROVE | Read and write UTF-8 text files\n# TASK: Write observations [ID,channel] to a temporary UTF-8 file, one 'ID,channel'\n#   per line; read and parse into recovered_rows, row_count. Inputs contain no\n#   commas.\n# INPUTS: observations\n\n",
+          "preview_inputs": {
+            "observations": [
+              [
+                "F1",
+                "GFP"
+              ],
+              [
+                "F2",
+                "DAPI"
+              ]
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "observations": [
+                  [
+                    "F1",
+                    "GFP"
+                  ],
+                  [
+                    "F2",
+                    "DAPI"
+                  ]
+                ]
+              },
+              "assertions": [
+                "recovered_rows == observations",
+                "row_count == 2"
+              ]
+            },
+            {
+              "inputs": {
+                "observations": []
+              },
+              "assertions": [
+                "recovered_rows == []",
+                "row_count == 0"
+              ]
+            },
+            {
+              "inputs": {
+                "observations": [
+                  [
+                    "μ1",
+                    "GFP"
+                  ]
+                ]
+              },
+              "assertions": [
+                "recovered_rows == observations",
+                "row_count == 1"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Pyodide's filesystem belongs to its browser runtime, not your laptop's project folder. The independent transfer exports a script and tests local file access separately.",
+            "probe": "Which part of read and write utf-8 text files can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. `splitlines()` turns newline-delimited text into records without inventing an extra specimen from the final newline. UTF-8 matters for non-ASCII acquisition IDs; use an explicit encoding rather than relying on the host default."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Separate the Python operation from any shell-only steps before building the output.",
+          "Preserve input records and explicit missingness; verify the exact requested output names."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check import and variable names.",
+        "TypeError": "Handle None explicitly before arithmetic.",
+        "ValueError": "Review file and calibration assumptions.",
+        "hardcoded": "Use the changing input rather than a pasted expected output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Browser exploration",
+        "apply": "Changed-input practice",
+        "prove": "Transfer; offline steps remain manual"
+      }
+    },
+    {
+      "id": "P06-G02",
+      "title": "Plan a local virtual environment",
+      "competencies": [
+        "032"
+      ],
+      "why": "Learn plan a local virtual environment through traceable biological programming exercises.",
+      "explain": [
+        "`python -m venv .venv` is a terminal command that creates an isolated environment when executed on your computer. Printing the text inside Pyodide has no such effect.",
+        "On Linux/macOS the activation command generally uses `source .venv/bin/activate`. On Windows PowerShell the executable path uses `.\\.venv\\Scripts\\Activate.ps1`. Activation is optional if you directly invoke the environment's interpreter.",
+        "The verification evidence is the local interpreter path and version plus a successfully executed script in a fresh process. Browser checks must never claim you created or activated a local `.venv`.",
+        "The browser can prepare a command plan, but cannot execute it in your machine's terminal."
+      ],
+      "worked_example": {
+        "code": "python_cmd='python3'\ncommands=[f'{python_cmd} -m venv .venv','source .venv/bin/activate','python -m pip install -r requirements.txt']\nprint('\\n'.join(commands))",
+        "predict": "Does printing python3 -m venv .venv create a folder on your computer?"
+      },
+      "prediction_answer": "No. The text is an instruction; perform it in a local terminal and verify its interpreter.",
+      "walkthrough": [
+        "Read the stated input and output contract for plan a local virtual environment.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
+      ],
+      "investigate": [
+        "Change one parameter in plan a local virtual environment and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
+      ],
+      "debug_task": "Identify a real failure mode in plan a local virtual environment: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "A browser result proves that local software and scientifically valid data were used.",
+      "scientific_boundary": "Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict the working example; run and change the input.",
+          "starter_code": "# P06-G02 | LEARN | Plan a local virtual environment\n# TASK: Predict the working example; run and change the input.\n\npython_cmd='python3'\ncommands=[f'{python_cmd} -m venv .venv','source .venv/bin/activate','python -m pip install -r requirements.txt']\nprint('\\n'.join(commands))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing inputs",
+          "description": "Build commands containing '<python_cmd> -m venv .venv', 'source .venv/bin/activate', 'python -m pip install -r requirements.txt', in order. Set executed_locally=False.",
+          "starter_code": "# P06-G02 | APPLY | Plan a local virtual environment\n# TASK: Build commands containing '<python_cmd> -m venv .venv', 'source\n#   .venv/bin/activate', 'python -m pip install -r requirements.txt', in order. Set\n#   executed_locally=False.\n# INPUTS: python_cmd\n\n",
+          "preview_inputs": {
+            "python_cmd": "python3"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "python_cmd": "python3"
+              },
+              "assertions": [
+                "commands == ['python3 -m venv .venv','source .venv/bin/activate','python -m pip install -r requirements.txt']",
+                "executed_locally is False"
+              ]
+            },
+            {
+              "inputs": {
+                "python_cmd": "python"
+              },
+              "assertions": [
+                "commands[0] == 'python -m venv .venv'",
+                "executed_locally is False"
+              ]
+            },
+            {
+              "inputs": {
+                "python_cmd": "py -3"
+              },
+              "assertions": [
+                "commands[0] == 'py -3 -m venv .venv'",
+                "executed_locally is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The verification evidence is the local interpreter path and version plus a successfully executed script in a fresh process. Browser checks must never claim you created or activated a local `.venv`.",
+            "probe": "Which part of plan a local virtual environment can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. On Linux/macOS the activation command generally uses `source .venv/bin/activate`. On Windows PowerShell the executable path uses `.venv\\Scripts\\Activate.ps1`. Activation is optional if you directly invoke the environment's interpreter."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For target_os 'windows' or 'posix', return activate_command '.\\.venv\\Scripts\\Activate.ps1' for Windows PowerShell or 'source .venv/bin/activate' for POSIX. Set verification='NOT_RUN_LOCALLY'. These are textual instructions, not execution.",
+          "starter_code": "# P06-G02 | PROVE | Plan a local virtual environment\n# TASK: For target_os 'windows' or 'posix', return activate_command\n#   '.\\.venv\\Scripts\\Activate.ps1' for Windows PowerShell or 'source\n#   .venv/bin/activate' for POSIX. Set verification='NOT_RUN_LOCALLY'. These are\n#   textual instructions, not execution.\n# INPUTS: target_os\n\n",
+          "preview_inputs": {
+            "target_os": "windows"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "target_os": "windows"
+              },
+              "assertions": [
+                "activate_command.replace(chr(92),'/') == './.venv/Scripts/Activate.ps1'",
+                "verification == 'NOT_RUN_LOCALLY'"
+              ]
+            },
+            {
+              "inputs": {
+                "target_os": "posix"
+              },
+              "assertions": [
+                "activate_command == 'source .venv/bin/activate'",
+                "verification == 'NOT_RUN_LOCALLY'"
+              ]
+            },
+            {
+              "inputs": {
+                "target_os": "windows"
+              },
+              "assertions": [
+                "activate_command.endswith('Activate.ps1')",
+                "verification == 'NOT_RUN_LOCALLY'"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The verification evidence is the local interpreter path and version plus a successfully executed script in a fresh process. Browser checks must never claim you created or activated a local `.venv`.",
+            "probe": "Which part of plan a local virtual environment can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Use '.\\.venv\\Scripts\\Activate.ps1' in PowerShell or 'source .venv/bin/activate' on POSIX. Running these in the browser does not create a local environment."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Separate the Python operation from any shell-only steps before building the output.",
+          "Preserve input records and explicit missingness; verify the exact requested output names."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check import and variable names.",
+        "TypeError": "Handle None explicitly before arithmetic.",
+        "ValueError": "Review file and calibration assumptions.",
+        "hardcoded": "Use the changing input rather than a pasted expected output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Browser exploration",
+        "apply": "Changed-input practice",
+        "prove": "Transfer; offline steps remain manual"
+      }
+    },
+    {
+      "id": "P06-G03",
+      "title": "Serialize specimen metadata with JSON",
+      "competencies": [
+        "033"
+      ],
+      "why": "Learn serialize specimen metadata with json through traceable biological programming exercises.",
+      "explain": [
+        "`json.dumps` converts Python dictionaries into JSON text for exchange or persistence, and `json.loads` reconstructs compatible Python data from the text.",
+        "Python `None`, `True`, and `False` become JSON `null`, `true`, and `false`, then return as their Python counterparts on decoding. A JSON string is text, not a live dictionary until parsed.",
+        "Use sorted keys for deterministic serializations when comparing training outputs; this is not a cryptographic data-integrity guarantee. Preserve source IDs, numeric types and documented missingness.",
+        "The JSON wire representation differs from Python object syntax even when the data round-trips."
+      ],
+      "worked_example": {
+        "code": "import json\nrecord={'id':'F1','focus':None,'valid':False}\nprint(json.dumps(record,sort_keys=True))\nprint(json.loads(json.dumps(record))==record)",
+        "predict": "Which JSON words represent Python None and False, and what does loads recover?"
+      },
+      "prediction_answer": "null and false are JSON values. `json.loads` reconstructs Python None and False.",
+      "walkthrough": [
+        "Read the stated input and output contract for serialize specimen metadata with json.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
+      ],
+      "investigate": [
+        "Change one parameter in serialize specimen metadata with json and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
+      ],
+      "debug_task": "Identify a real failure mode in serialize specimen metadata with json: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "A browser result proves that local software and scientifically valid data were used.",
+      "scientific_boundary": "Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict the working example; run and change the input.",
+          "starter_code": "# P06-G03 | LEARN | Serialize specimen metadata with JSON\n# TASK: Predict the working example; run and change the input.\n\nimport json\nrecord={'id':'F1','focus':None,'valid':False}\nprint(json.dumps(record,sort_keys=True))\nprint(json.loads(json.dumps(record))==record)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing inputs",
+          "description": "Import json; create record={'id':sample_id,'fields':field_count,'channel':channel}, then json_text=json.dumps(record,sort_keys=True) and restored=json.loads(json_text).",
+          "starter_code": "# P06-G03 | APPLY | Serialize specimen metadata with JSON\n# TASK: Import json; create\n#   record={'id':sample_id,'fields':field_count,'channel':channel}, then\n#   json_text=json.dumps(record,sort_keys=True) and restored=json.loads(json_text).\n# INPUTS: sample_id, field_count, channel\n\n",
+          "preview_inputs": {
+            "sample_id": "WT",
+            "field_count": 3,
+            "channel": "GFP"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample_id": "WT",
+                "field_count": 3,
+                "channel": "GFP"
+              },
+              "assertions": [
+                "restored == {'id':'WT','fields':3,'channel':'GFP'}",
+                "json.loads(json_text)==restored"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_id": "A",
+                "field_count": 0,
+                "channel": "DAPI"
+              },
+              "assertions": [
+                "restored['fields']==0",
+                "isinstance(restored['fields'],int)"
+              ]
+            },
+            {
+              "inputs": {
+                "sample_id": "mut",
+                "field_count": 12,
+                "channel": "mCherry"
+              },
+              "assertions": [
+                "restored['channel']=='mCherry'",
+                "json_text==json.dumps(restored,sort_keys=True)"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use sorted keys for deterministic serializations when comparing training outputs; this is not a cryptographic data-integrity guarantee. Preserve source IDs, numeric types and documented missingness.",
+            "probe": "Which part of serialize specimen metadata with json can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. Python `None`, `True`, and `False` become JSON `null`, `true`, and `false`, then return as their Python counterparts on decoding. A JSON string is text, not a live dictionary until parsed."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Import json; encode specimen={'sample':sample,'focus':focus,'passed':passed} with sort_keys=True into payload and recover roundtrip; preserve None and booleans.",
+          "starter_code": "# P06-G03 | PROVE | Serialize specimen metadata with JSON\n# TASK: Import json; encode\n#   specimen={'sample':sample,'focus':focus,'passed':passed} with sort_keys=True\n#   into payload and recover roundtrip; preserve None and booleans.\n# INPUTS: sample, focus, passed\n\n",
+          "preview_inputs": {
+            "sample": "F1",
+            "focus": null,
+            "passed": false
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": "F1",
+                "focus": null,
+                "passed": false
+              },
+              "assertions": [
+                "roundtrip == {'sample':'F1','focus':None,'passed':False}",
+                "json.loads(payload)==roundtrip"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": "F2",
+                "focus": 0,
+                "passed": true
+              },
+              "assertions": [
+                "roundtrip['focus']==0",
+                "roundtrip['passed'] is True"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": "μ",
+                "focus": 0.9,
+                "passed": true
+              },
+              "assertions": [
+                "roundtrip['focus']==0.9",
+                "'true' in payload"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use sorted keys for deterministic serializations when comparing training outputs; this is not a cryptographic data-integrity guarantee. Preserve source IDs, numeric types and documented missingness.",
+            "probe": "Which part of serialize specimen metadata with json can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. Python `None`, `True`, and `False` become JSON `null`, `true`, and `false`, then return as their Python counterparts on decoding. A JSON string is text, not a live dictionary until parsed."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Separate the Python operation from any shell-only steps before building the output.",
+          "Preserve input records and explicit missingness; verify the exact requested output names."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check import and variable names.",
+        "TypeError": "Handle None explicitly before arithmetic.",
+        "ValueError": "Review file and calibration assumptions.",
+        "hardcoded": "Use the changing input rather than a pasted expected output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Browser exploration",
+        "apply": "Changed-input practice",
+        "prove": "Transfer; offline steps remain manual"
+      }
+    },
+    {
+      "id": "P06-G04",
+      "title": "Write assertions that expose broken code",
+      "competencies": [
+        "034"
+      ],
+      "why": "Learn write assertions that expose broken code through traceable biological programming exercises.",
+      "explain": [
+        "An `assert` states an expected property and raises `AssertionError` when the property fails. A meaningful test checks at least two different inputs, including a boundary or zero case.",
+        "A test that simply checks `print()` succeeded does not verify unit conversion. A deliberately broken multiplier must fail a width-conversion test that expects division.",
+        "Public browser exercises are not hidden secure assessment. The independent local task is to run the test against both correct and deliberately incorrect functions in a fresh Python process.",
+        "Assertions should distinguish a real conversion from an incorrect multiplication."
+      ],
+      "worked_example": {
+        "code": "def width(pixels,scale):\n    return pixels/scale\nassert width(20,4)==5\nassert width(0,4)==0\nprint('tests passed')",
+        "predict": "What happens if the conversion implementation multiplies pixels by scale?"
+      },
+      "prediction_answer": "The test that expects 20/4 to equal 5 fails with AssertionError; a broken method is detected.",
+      "walkthrough": [
+        "Read the stated input and output contract for write assertions that expose broken code.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
+      ],
+      "investigate": [
+        "Change one parameter in write assertions that expose broken code and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
+      ],
+      "debug_task": "Identify a real failure mode in write assertions that expose broken code: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "A browser result proves that local software and scientifically valid data were used.",
+      "scientific_boundary": "Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict the working example; run and change the input.",
+          "starter_code": "# P06-G04 | LEARN | Write assertions that expose broken code\n# TASK: Predict the working example; run and change the input.\n\ndef width(pixels,scale):\n    return pixels/scale\nassert width(20,4)==5\nassert width(0,4)==0\nprint('tests passed')\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing inputs",
+          "description": "Define width_um(pixels,scale); define test_width(fn) using assert fn(20,4)==5 and fn(0,4)==0. Catch AssertionError to return False, else True. Set passed=test_width(width_um).",
+          "starter_code": "# P06-G04 | APPLY | Write assertions that expose broken code\n# TASK: Define width_um(pixels,scale); define test_width(fn) using assert\n#   fn(20,4)==5 and fn(0,4)==0. Catch AssertionError to return False, else True.\n#   Set passed=test_width(width_um).\n# INPUTS: pixels, scale\n\n",
+          "preview_inputs": {
+            "pixels": 40,
+            "scale": 4
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "pixels": 40,
+                "scale": 4
+              },
+              "assertions": [
+                "passed is True",
+                "test_width(lambda p,s:p*s) is False",
+                "width_um(pixels,scale)==10"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": 0,
+                "scale": 2
+              },
+              "assertions": [
+                "passed is True",
+                "test_width(lambda p,s:p/s) is True"
+              ]
+            },
+            {
+              "inputs": {
+                "pixels": 9,
+                "scale": 3
+              },
+              "assertions": [
+                "passed is True",
+                "test_width(lambda p,s:5) is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Public browser exercises are not hidden secure assessment. The independent local task is to run the test against both correct and deliberately incorrect functions in a fresh Python process.",
+            "probe": "Which part of write assertions that expose broken code can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. A test that simply checks `print()` succeeded does not verify unit conversion. A deliberately broken multiplier must fail a width-conversion test that expects division."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Define mean_or_none(values). Define test_mean(fn) with assert fn([2,4])==3 and fn([]) is None, catching AssertionError to return False. Set good_test=test_mean(mean_or_none), broken_detected=(test_mean(lambda x:0) is False).",
+          "starter_code": "# P06-G04 | PROVE | Write assertions that expose broken code\n# TASK: Define mean_or_none(values). Define test_mean(fn) with assert fn([2,4])==3\n#   and fn([]) is None, catching AssertionError to return False. Set\n#   good_test=test_mean(mean_or_none), broken_detected=(test_mean(lambda x:0) is\n#   False).\n# INPUTS: values\n\n",
+          "preview_inputs": {
+            "values": [
+              2,
+              4
+            ]
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "values": [
+                  2,
+                  4
+                ]
+              },
+              "assertions": [
+                "good_test is True",
+                "broken_detected is True",
+                "mean_or_none(values)==3"
+              ]
+            },
+            {
+              "inputs": {
+                "values": []
+              },
+              "assertions": [
+                "good_test is True",
+                "mean_or_none(values) is None"
+              ]
+            },
+            {
+              "inputs": {
+                "values": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "assertions": [
+                "good_test is True",
+                "mean_or_none(values)==2"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Public browser exercises are not hidden secure assessment. The independent local task is to run the test against both correct and deliberately incorrect functions in a fresh Python process.",
+            "probe": "Which part of write assertions that expose broken code can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. A test that simply checks `print()` succeeded does not verify unit conversion. A deliberately broken multiplier must fail a width-conversion test that expects division."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Separate the Python operation from any shell-only steps before building the output.",
+          "Preserve input records and explicit missingness; verify the exact requested output names."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check import and variable names.",
+        "TypeError": "Handle None explicitly before arithmetic.",
+        "ValueError": "Review file and calibration assumptions.",
+        "hardcoded": "Use the changing input rather than a pasted expected output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Browser exploration",
+        "apply": "Changed-input practice",
+        "prove": "Transfer; offline steps remain manual"
+      }
+    },
+    {
+      "id": "P06-G05",
+      "title": "Compose a standalone analysis workflow",
+      "competencies": [
+        "035"
+      ],
+      "why": "Learn compose a standalone analysis workflow through traceable biological programming exercises.",
+      "explain": [
+        "A small pipeline combines independently testable pieces: a conversion function, a record-processing function, and a final report. Each piece should take arguments and return data, not depend on stale notebook globals.",
+        "Package inputs and assumptions explicitly. Preserve IDs next to measurements and keep missing observations visible. Invalid scale should not silently return a seemingly valid numeric measurement.",
+        "Export a standalone `.py` file and run it with local Python. Reproducing an output on a different computer requires documenting the environment, data source and dependency versions.",
+        "The conversion can be reused in a batch-processing function without duplicating its formula."
+      ],
+      "worked_example": {
+        "code": "def convert(pixels,scale):\n    return pixels/scale\ndef batch(values,scale):\n    return [convert(v,scale) for v in values]\nprint(batch([8,12],4))",
+        "predict": "Which code component knows the mathematical formula for each width?"
+      },
+      "prediction_answer": "The conversion function. The batch function calls it for each record rather than copying the calculation.",
+      "walkthrough": [
+        "Read the stated input and output contract for compose a standalone analysis workflow.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
+      ],
+      "investigate": [
+        "Change one parameter in compose a standalone analysis workflow and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
+      ],
+      "debug_task": "Identify a real failure mode in compose a standalone analysis workflow: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "A browser result proves that local software and scientifically valid data were used.",
+      "scientific_boundary": "Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict the working example; run and change the input.",
+          "starter_code": "# P06-G05 | LEARN | Compose a standalone analysis workflow\n# TASK: Predict the working example; run and change the input.\n\ndef convert(pixels,scale):\n    return pixels/scale\ndef batch(values,scale):\n    return [convert(v,scale) for v in values]\nprint(batch([8,12],4))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing inputs",
+          "description": "Define convert_field(pixels,scale) returning width or None for missing pixels or nonpositive scale; define process_fields(rows,scale) returning [ID,width] pairs; set processed.",
+          "starter_code": "# P06-G05 | APPLY | Compose a standalone analysis workflow\n# TASK: Define convert_field(pixels,scale) returning width or None for missing\n#   pixels or nonpositive scale; define process_fields(rows,scale) returning\n#   [ID,width] pairs; set processed.\n# INPUTS: rows, px_per_um\n\n",
+          "preview_inputs": {
+            "rows": [
+              [
+                "F1",
+                12
+              ],
+              [
+                "F2",
+                null
+              ],
+              [
+                "F3",
+                0
+              ]
+            ],
+            "px_per_um": 3
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    "F1",
+                    12
+                  ],
+                  [
+                    "F2",
+                    null
+                  ],
+                  [
+                    "F3",
+                    0
+                  ]
+                ],
+                "px_per_um": 3
+              },
+              "assertions": [
+                "processed == [['F1',4],['F2',None],['F3',0]]"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    "X",
+                    8
+                  ]
+                ],
+                "px_per_um": 0
+              },
+              "assertions": [
+                "processed == [['X',None]]"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [],
+                "px_per_um": 4
+              },
+              "assertions": [
+                "processed == []"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Export a standalone `.py` file and run it with local Python. Reproducing an output on a different computer requires documenting the environment, data source and dependency versions.",
+            "probe": "Which part of compose a standalone analysis workflow can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. Package inputs and assumptions explicitly. Preserve IDs next to measurements and keep missing observations visible. Invalid scale should not silently return a seemingly valid numeric measurement."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Define summarize_batch(rows,scale) for [pixels,tag], returning {'observed':N,'missing':M,'mean_um':mean or None}. If scale<=0, treat all as missing. Set summary.",
+          "starter_code": "# P06-G05 | PROVE | Compose a standalone analysis workflow\n# TASK: Define summarize_batch(rows,scale) for [pixels,tag], returning\n#   {'observed':N,'missing':M,'mean_um':mean or None}. If scale<=0, treat all as\n#   missing. Set summary.\n# INPUTS: rows, scale\n\n",
+          "preview_inputs": {
+            "rows": [
+              [
+                4,
+                "A"
+              ],
+              [
+                null,
+                "B"
+              ],
+              [
+                8,
+                "C"
+              ]
+            ],
+            "scale": 2
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    4,
+                    "A"
+                  ],
+                  [
+                    null,
+                    "B"
+                  ],
+                  [
+                    8,
+                    "C"
+                  ]
+                ],
+                "scale": 2
+              },
+              "assertions": [
+                "summary == {'observed':2,'missing':1,'mean_um':3}"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    0,
+                    "A"
+                  ]
+                ],
+                "scale": 2
+              },
+              "assertions": [
+                "summary == {'observed':1,'missing':0,'mean_um':0}"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [
+                  [
+                    4,
+                    "A"
+                  ],
+                  [
+                    8,
+                    "B"
+                  ]
+                ],
+                "scale": 0
+              },
+              "assertions": [
+                "summary == {'observed':0,'missing':2,'mean_um':None}"
+              ]
+            },
+            {
+              "inputs": {
+                "rows": [],
+                "scale": 4
+              },
+              "assertions": [
+                "summary == {'observed':0,'missing':0,'mean_um':None}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Export a standalone `.py` file and run it with local Python. Reproducing an output on a different computer requires documenting the environment, data source and dependency versions.",
+            "probe": "Which part of compose a standalone analysis workflow can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. Package inputs and assumptions explicitly. Preserve IDs next to measurements and keep missing observations visible. Invalid scale should not silently return a seemingly valid numeric measurement."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Separate the Python operation from any shell-only steps before building the output.",
+          "Preserve input records and explicit missingness; verify the exact requested output names."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check import and variable names.",
+        "TypeError": "Handle None explicitly before arithmetic.",
+        "ValueError": "Review file and calibration assumptions.",
+        "hardcoded": "Use the changing input rather than a pasted expected output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Browser exploration",
+        "apply": "Changed-input practice",
+        "prove": "Transfer; offline steps remain manual"
+      }
+    },
+    {
+      "id": "P06-G06",
+      "title": "Plan and verify a real Git change",
+      "competencies": [
+        "036"
+      ],
+      "why": "Learn plan and verify a real git change through traceable biological programming exercises.",
+      "explain": [
+        "Git records changes to source files. `git status` identifies the working state; `git add` stages selected files; `git commit` creates a recorded change only when actually executed in a repository.",
+        "New untracked files do not appear in a plain unstaged `git diff -- file` until tracked or staged. Inspect `git diff --cached` after staging and confirm the hash with `git log -1`.",
+        "The browser can generate a correct command sequence but cannot certify the commands ran locally. Keep real biological or personal data out of public Git repositories.",
+        "The generated command list is a plan, not proof of a new Git commit."
+      ],
+      "worked_example": {
+        "code": "script='field_report.py'\ncommands=['git status',f'git add {script}','git commit -m \"Add field report\"']\nprint('\\n'.join(commands))",
+        "predict": "Which evidence would show that a commit actually happened?"
+      },
+      "prediction_answer": "A new local commit hash in git log, the intended file in the commit, and the repository status.",
+      "walkthrough": [
+        "Read the stated input and output contract for plan and verify a real git change.",
+        "Predict the worked code's output before pressing Run.",
+        "Change the shown input and observe an actual changed Python result.",
+        "Explain a real failure case and distinguish software correctness from scientific validity."
+      ],
+      "investigate": [
+        "Change one parameter in plan and verify a real git change and predict the new result.",
+        "Try a missing, empty or boundary input when relevant.",
+        "Explain whether the operation runs inside Python or needs local-machine evidence."
+      ],
+      "debug_task": "Identify a real failure mode in plan and verify a real git change: which expression or assumption would be responsible, and how would you test it?",
+      "misconception": "A browser result proves that local software and scientifically valid data were used.",
+      "scientific_boundary": "Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run and investigate",
+          "description": "Predict the working example; run and change the input.",
+          "starter_code": "# P06-G06 | LEARN | Plan and verify a real Git change\n# TASK: Predict the working example; run and change the input.\n\nscript='field_report.py'\ncommands=['git status',f'git add {script}','git commit -m \"Add field report\"']\nprint('\\n'.join(commands))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Apply to changing inputs",
+          "description": "Build commands=['git status','git add <script_name>','git commit -m \"<message>\"'] from supplied inputs. Set git_executed=False; this is a plan only.",
+          "starter_code": "# P06-G06 | APPLY | Plan and verify a real Git change\n# TASK: Build commands=['git status','git add <script_name>','git commit -m\n#   \"<message>\"'] from supplied inputs. Set git_executed=False; this is a plan\n#   only.\n# INPUTS: script_name, message\n\n",
+          "preview_inputs": {
+            "script_name": "report.py",
+            "message": "Add report"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "script_name": "report.py",
+                "message": "Add report"
+              },
+              "assertions": [
+                "commands == ['git status','git add report.py','git commit -m \"Add report\"']",
+                "git_executed is False"
+              ]
+            },
+            {
+              "inputs": {
+                "script_name": "qc.py",
+                "message": "Fix QC"
+              },
+              "assertions": [
+                "commands[1]=='git add qc.py'",
+                "git_executed is False"
+              ]
+            },
+            {
+              "inputs": {
+                "script_name": "x.py",
+                "message": "Improve tests"
+              },
+              "assertions": [
+                "commands[2]=='git commit -m \"Improve tests\"'",
+                "git_executed is False"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The browser can generate a correct command sequence but cannot certify the commands ran locally. Keep real biological or personal data out of public Git repositories.",
+            "probe": "Which part of plan and verify a real git change can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. New untracked files do not appear in a plain unstaged `git diff -- file` until tracked or staged. Inspect `git diff --cached` after staging and confirm the hash with `git log -1`."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Set next_steps to git diff -- changed_file, git add changed_file, git commit -m commit_message and git status. Set evidence='NOT_VERIFIED_LOCALLY'.",
+          "starter_code": "# P06-G06 | PROVE | Plan and verify a real Git change\n# TASK: Set next_steps to git diff -- changed_file, git add changed_file, git\n#   commit -m commit_message and git status. Set evidence='NOT_VERIFIED_LOCALLY'.\n# INPUTS: changed_file, commit_message\n\n",
+          "preview_inputs": {
+            "changed_file": "report.py",
+            "commit_message": "Document QC"
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "changed_file": "report.py",
+                "commit_message": "Document QC"
+              },
+              "assertions": [
+                "next_steps[0]=='git diff -- report.py'",
+                "next_steps[-1]=='git status'",
+                "evidence=='NOT_VERIFIED_LOCALLY'"
+              ]
+            },
+            {
+              "inputs": {
+                "changed_file": "run.py",
+                "commit_message": "Fix width"
+              },
+              "assertions": [
+                "next_steps[2]=='git commit -m \"Fix width\"'"
+              ]
+            },
+            {
+              "inputs": {
+                "changed_file": "qc.py",
+                "commit_message": "Add tests"
+              },
+              "assertions": [
+                "'git add qc.py' in next_steps",
+                "len(next_steps)==4"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "The browser can generate a correct command sequence but cannot certify the commands ran locally. Keep real biological or personal data out of public Git repositories.",
+            "probe": "Which part of plan and verify a real git change can be executed in Pyodide, and what additional local evidence would you need?",
+            "check": "Check the exact task inputs, edge cases and output contract. New untracked files do not appear in a plain unstaged `git diff -- file` until tracked or staged. Inspect `git diff --cached` after staging and confirm the hash with `git log -1`."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Separate the Python operation from any shell-only steps before building the output.",
+          "Preserve input records and explicit missingness; verify the exact requested output names."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "NameError": "Check import and variable names.",
+        "TypeError": "Handle None explicitly before arithmetic.",
+        "ValueError": "Review file and calibration assumptions.",
+        "hardcoded": "Use the changing input rather than a pasted expected output."
+      },
+      "reflection_prompts": [],
+      "learning_evidence": {
+        "learn": "Browser exploration",
+        "apply": "Changed-input practice",
+        "prove": "Transfer; offline steps remain manual"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "P06-CAPSTONE",
+    "title": "Export a reproducible specimen audit",
+    "competencies": [],
+    "why": "Learn export a reproducible specimen audit through traceable biological programming exercises.",
+    "explain": [
+      "**Concept:** Export a reproducible specimen audit. Use Python's explicit input and output contracts instead of copying a first-example result.",
+      "**Data:** Distinguish None from recorded zero and preserve the original specimen ID, physical units and calibration provenance.",
+      "**Execution boundary:** Pyodide executes genuine Python and uses its own temporary file system. It cannot run local shell commands, create a local virtual environment or commit to the user's Git repository.",
+      "**Transfer:** Test changed inputs, export a working .py file, then verify local Python execution and Git evidence separately. Browser checks are not certification of scientific validity."
+    ],
+    "worked_example": {
+      "code": "import json\nrecord={'id':'F1','pixels':16,'scale':4}\nprint(json.dumps(record,sort_keys=True))\nprint(record['pixels']/record['scale'])",
+      "predict": "Predict the output and distinguish executed Python from printed local shell instructions."
+    },
+    "prediction_answer": "Python executes inside the browser; printing text does not run a local terminal.",
+    "walkthrough": [
+      "Identify inputs and the expected returned output before coding.",
+      "Predict and run the example; change a case and explain the difference.",
+      "Record which operations still require local-machine verification."
+    ],
+    "investigate": [
+      "Try a missing or empty observation.",
+      "Check one changed input instead of copying a fixed output.",
+      "Explain why local environment and biological calibration remain unverified."
+    ],
+    "debug_task": "A printed git command is presented as proof of a local commit. Explain what evidence is actually required.",
+    "misconception": "Printing shell instructions creates local Python environments or Git commits.",
+    "scientific_boundary": "Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and investigate",
+        "description": "Predict the working example; run and change the input.",
+        "starter_code": "# P06-CAPSTONE | LEARN | Export a reproducible specimen audit\n# TASK: Predict the working example; run and change the input.\n\nimport json\nrecord={'id':'F1','pixels':16,'scale':4}\nprint(json.dumps(record,sort_keys=True))\nprint(record['pixels']/record['scale'])\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changing inputs",
+        "description": "Import json. Define build_audit(records,scale) for [id,pixels] returning {'measurements':[[id,width]],'missing':[ids]}. Missing pixels or invalid scale are missing. Set audit and json_report=json.dumps(audit,sort_keys=True), print it.",
+        "starter_code": "# P06-CAPSTONE | APPLY | Export a reproducible specimen audit\n# TASK: Import json. Define build_audit(records,scale) for [id,pixels] returning\n#   {'measurements':[[id,width]],'missing':[ids]}. Missing pixels or invalid scale\n#   are missing. Set audit and json_report=json.dumps(audit,sort_keys=True), print\n#   it.\n# INPUTS: records, scale\n\n",
+        "preview_inputs": {
+          "records": [
+            [
+              "F1",
+              16
+            ],
+            [
+              "F2",
+              null
+            ],
+            [
+              "F3",
+              0
+            ]
+          ],
+          "scale": 4
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "records": [
+                [
+                  "F1",
+                  16
+                ],
+                [
+                  "F2",
+                  null
+                ],
+                [
+                  "F3",
+                  0
+                ]
+              ],
+              "scale": 4
+            },
+            "assertions": [
+              "audit == {'measurements':[['F1',4],['F3',0]],'missing':['F2']}",
+              "json.loads(json_report)==audit"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "A",
+                  4
+                ],
+                [
+                  "B",
+                  8
+                ]
+              ],
+              "scale": 0
+            },
+            "assertions": [
+              "audit == {'measurements':[],'missing':['A','B']}"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [],
+              "scale": 2
+            },
+            "assertions": [
+              "audit == {'measurements':[],'missing':[]}"
+            ]
+          },
+          {
+            "inputs": {
+              "records": [
+                [
+                  "μ",
+                  9
+                ]
+              ],
+              "scale": 3
+            },
+            "assertions": [
+              "audit == {'measurements':[['μ',3]],'missing':[]}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The exercise checks export a reproducible specimen audit with changed biological records rather than one fixed output.",
+          "probe": "What evidence would be needed to demonstrate export a reproducible specimen audit on a fresh real computer?",
+          "check": "Follow the exact data contract for export a reproducible specimen audit, preserving missing values and source records."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Import json. Define summarize_input(observations,calibration) for [pixels,id] returning {'n':N,'mean_um':mean or None,'excluded':[IDs]}. Invalid calibration excludes all. Set result and json_text=json.dumps(result,sort_keys=True), print it.",
+        "starter_code": "# P06-CAPSTONE | PROVE | Export a reproducible specimen audit\n# TASK: Import json. Define summarize_input(observations,calibration) for\n#   [pixels,id] returning {'n':N,'mean_um':mean or None,'excluded':[IDs]}. Invalid\n#   calibration excludes all. Set result and\n#   json_text=json.dumps(result,sort_keys=True), print it.\n# INPUTS: observations, calibration\n\n",
+        "preview_inputs": {
+          "observations": [
+            [
+              8,
+              "F1"
+            ],
+            [
+              null,
+              "F2"
+            ],
+            [
+              12,
+              "F3"
+            ]
+          ],
+          "calibration": 4
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "observations": [
+                [
+                  8,
+                  "F1"
+                ],
+                [
+                  null,
+                  "F2"
+                ],
+                [
+                  12,
+                  "F3"
+                ]
+              ],
+              "calibration": 4
+            },
+            "assertions": [
+              "result == {'n':2,'mean_um':2.5,'excluded':['F2']}",
+              "json.loads(json_text)==result"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  0,
+                  "A"
+                ]
+              ],
+              "calibration": 2
+            },
+            "assertions": [
+              "result == {'n':1,'mean_um':0,'excluded':[]}"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [
+                [
+                  9,
+                  "A"
+                ],
+                [
+                  3,
+                  "B"
+                ]
+              ],
+              "calibration": 0
+            },
+            "assertions": [
+              "result == {'n':0,'mean_um':None,'excluded':['A','B']}"
+            ]
+          },
+          {
+            "inputs": {
+              "observations": [],
+              "calibration": 1
+            },
+            "assertions": [
+              "result == {'n':0,'mean_um':None,'excluded':[]}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The exercise checks export a reproducible specimen audit with changed biological records rather than one fixed output.",
+          "probe": "What evidence would be needed to demonstrate export a reproducible specimen audit on a fresh real computer?",
+          "check": "Follow the exact data contract for export a reproducible specimen audit, preserving missing values and source records."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start from the supplied input contract, without overwriting source records.",
+        "Use actual Python when needed, but do not claim browser-printed commands executed locally."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "NameError": "Check import and variable names.",
+      "TypeError": "Handle None explicitly before arithmetic.",
+      "ValueError": "Review file and calibration assumptions.",
+      "hardcoded": "Use the changing input rather than a pasted expected output."
+    },
+    "reflection_prompts": [
+      "What executed in the browser, and what still needs local verification?",
+      "How would you verify Python version, tests and a real Git commit?",
+      "Which biological assumptions remain unvalidated?"
+    ],
+    "learning_evidence": {
+      "learn": "Browser exploration",
+      "apply": "Changed-input practice",
+      "prove": "Transfer; offline steps remain manual"
+    },
+    "build_steps": [
+      "Build a JSON-ready report function preserving None and zero.",
+      "Reject invalid calibration before converting numeric widths.",
+      "Export a standalone script and test it on a changed specimen.",
+      "Run the script and tests in a local virtual environment.",
+      "Inspect actual Git diff and commit evidence; browser commands cannot do this."
+    ],
+    "assessment": {
+      "code": "PUBLIC_CHANGED_INPUTS",
+      "export": "REPRODUCIBLE_REPORT_PY",
+      "local": "MANUAL_VERIFICATION_REQUIRED",
+      "independent": "NOT_AUTOMATICALLY_CERTIFIED"
+    }
+  },
+  "review": {
+    "id": "P06-REVIEW",
+    "title": "Reconstruct reproducible analysis after a delay",
+    "competencies": [],
+    "why": "Learn reconstruct reproducible analysis after a delay through traceable biological programming exercises.",
+    "explain": [
+      "**Concept:** Reconstruct reproducible analysis after a delay. Use Python's explicit input and output contracts instead of copying a first-example result.",
+      "**Data:** Distinguish None from recorded zero and preserve the original specimen ID, physical units and calibration provenance.",
+      "**Execution boundary:** Pyodide executes genuine Python and uses its own temporary file system. It cannot run local shell commands, create a local virtual environment or commit to the user's Git repository.",
+      "**Transfer:** Test changed inputs, export a working .py file, then verify local Python execution and Git evidence separately. Browser checks are not certification of scientific validity."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Predict the output and distinguish executed Python from printed local shell instructions."
+    },
+    "prediction_answer": "Independent reconstruction: no solved program is given.",
+    "walkthrough": [
+      "Identify inputs and the expected returned output before coding.",
+      "Predict and run the example; change a case and explain the difference.",
+      "Record which operations still require local-machine verification."
+    ],
+    "investigate": [
+      "Try a missing or empty observation.",
+      "Check one changed input instead of copying a fixed output.",
+      "Explain why local environment and biological calibration remain unverified."
+    ],
+    "debug_task": "A printed git command is presented as proof of a local commit. Explain what evidence is actually required.",
+    "misconception": "Printing shell instructions creates local Python environments or Git commits.",
+    "scientific_boundary": "Examples are synthetic. No local Git or virtual environment is executed, and raw-image calibration is not established.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run and investigate",
+        "description": "Recall the workflow without opening earlier code.",
+        "starter_code": "# P06-REVIEW | LEARN | Reconstruct reproducible analysis after a delay\n# TASK: Recall the workflow without opening earlier code.\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Apply to changing inputs",
+        "description": "Write pseudocode comments for local Python, tests, .venv setup and Git evidence requirements.",
+        "starter_code": "# P06-REVIEW | APPLY | Reconstruct reproducible analysis after a delay\n# TASK: Write pseudocode comments for local Python, tests, .venv setup and Git\n#   evidence requirements.\n\n",
+        "preview_inputs": {},
+        "practice_feedback": {
+          "why": "The exercise checks reconstruct reproducible analysis after a delay with changed biological records rather than one fixed output.",
+          "probe": "What evidence would be needed to demonstrate reconstruct reproducible analysis after a delay on a fresh real computer?",
+          "check": "Follow the exact data contract for reconstruct reproducible analysis after a delay, preserving missing values and source records."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "Define reproducible_summary(measures,scale) for [id,pixels] returning {'count':N,'total_um':T,'invalid':[IDs]}. Missing pixels or invalid scale are invalid. Set report and print a summary.",
+        "starter_code": "# P06-REVIEW | PROVE | Reconstruct reproducible analysis after a delay\n# TASK: Define reproducible_summary(measures,scale) for [id,pixels] returning\n#   {'count':N,'total_um':T,'invalid':[IDs]}. Missing pixels or invalid scale are\n#   invalid. Set report and print a summary.\n# INPUTS: measures, scale\n\n",
+        "preview_inputs": {
+          "measures": [
+            [
+              "A",
+              8
+            ],
+            [
+              "B",
+              null
+            ],
+            [
+              "C",
+              4
+            ]
+          ],
+          "scale": 4
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "measures": [
+                [
+                  "A",
+                  8
+                ],
+                [
+                  "B",
+                  null
+                ],
+                [
+                  "C",
+                  4
+                ]
+              ],
+              "scale": 4
+            },
+            "assertions": [
+              "report == {'count':2,'total_um':3,'invalid':['B']}"
+            ]
+          },
+          {
+            "inputs": {
+              "measures": [
+                [
+                  "X",
+                  0
+                ]
+              ],
+              "scale": 2
+            },
+            "assertions": [
+              "report == {'count':1,'total_um':0,'invalid':[]}"
+            ]
+          },
+          {
+            "inputs": {
+              "measures": [
+                [
+                  "F",
+                  10
+                ]
+              ],
+              "scale": 0
+            },
+            "assertions": [
+              "report == {'count':0,'total_um':0,'invalid':['F']}"
+            ]
+          },
+          {
+            "inputs": {
+              "measures": [],
+              "scale": 3
+            },
+            "assertions": [
+              "report == {'count':0,'total_um':0,'invalid':[]}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "The exercise checks reconstruct reproducible analysis after a delay with changed biological records rather than one fixed output.",
+          "probe": "What evidence would be needed to demonstrate reconstruct reproducible analysis after a delay on a fresh real computer?",
+          "check": "Follow the exact data contract for reconstruct reproducible analysis after a delay, preserving missing values and source records."
+        }
+      }
+    },
+    "hints": {
+      "apply": [],
+      "prove": []
+    },
+    "feedback": {
+      "NameError": "Check import and variable names.",
+      "TypeError": "Handle None explicitly before arithmetic.",
+      "ValueError": "Review file and calibration assumptions.",
+      "hardcoded": "Use the changing input rather than a pasted expected output."
+    },
+    "reflection_prompts": [
+      "What executed in the browser, and what still needs local verification?",
+      "How would you verify Python version, tests and a real Git commit?",
+      "Which biological assumptions remain unvalidated?"
+    ],
+    "learning_evidence": {
+      "learn": "Browser exploration",
+      "apply": "Changed-input practice",
+      "prove": "Transfer; offline steps remain manual"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "reproducible_specimen_audit.py",
+    "brief": "Export runnable JSON audit script and complete docs/P06_LOCAL_HANDOFF.md in a local Python environment.",
+    "status": "BROWSER_IMPLEMENTATION_LOCAL_PROOF_PENDING"
+  }
+}

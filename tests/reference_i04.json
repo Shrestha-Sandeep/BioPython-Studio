@@ -1,0 +1,34 @@
+{
+  "I04-G01": {
+    "apply": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot(times,signals)\nax.set(xlabel='Time (min)',ylabel='Signal (a.u.)',title=sample_name)\nplotted_points=len(times)\nprint(plotted_points)",
+    "prove": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot(positions,distance_um)\nplot_title=sample_id+' displacement'\nx_label='Frame';y_label='Distance (µm)'\nax.set(xlabel=x_label,ylabel=y_label,title=plot_title)\nline_count=len(ax.lines)\nprint(plot_title)"
+  },
+  "I04-G02": {
+    "apply": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.plot(times,signals)\nax.scatter(times,signals)\nax.set(xlabel='Time (min)',ylabel='Intensity (a.u.)')\nn_lines=len(ax.lines)\nn_scatter_groups=len(ax.collections)",
+    "prove": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nax.scatter(batch_index,observed)\nax.set(xlabel='Batch index',ylabel='Observed value')\nscatter_points=len(observed)\nconnected=False"
+  },
+  "I04-G03": {
+    "apply": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\ncounts,edges,patches=ax.hist(measurements,bins=n_bins)\nobservation_count=int(counts.sum())\nbar_count=len(patches)\nax.set(xlabel='Field score',ylabel='Fields (not replicates)')",
+    "prove": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nheights,edges,patches=ax.hist(sample_values,bins=bin_number)\ntotal=int(heights.sum())\nrightmost=float(edges[-1])\nax.set(ylabel='Measurement count')"
+  },
+  "I04-G04": {
+    "apply": "import matplotlib.pyplot as plt\nfig,axes=plt.subplots(1,2)\naxes[0].plot(x,y)\naxes[0].set_title('Trajectory')\naxes[1].hist(y,bins=bins)\naxes[1].set_title('Distribution')\npanel_count=len(fig.axes)\npanel_titles=[a.get_title() for a in axes]",
+    "prove": "import matplotlib.pyplot as plt\nfig,axes=plt.subplots(1,2)\naxes[0].scatter(coordinates,observations)\naxes[0].set(xlabel='Coordinate',ylabel='Observed value')\naxes[1].hist(observations,bins=bin_count)\npanel_count=len(fig.axes)"
+  },
+  "I04-G05": {
+    "apply": "import numpy as np\nimport matplotlib.pyplot as plt\noriginal=np.asarray(pixel_rows)\nbackup=original.copy()\nfig,ax=plt.subplots();im=ax.imshow(original,vmin=display_min,vmax=display_max)\ndisplay_limits=im.get_clim()\npixel_unchanged=bool(np.array_equal(original,backup))\nactual_max=int(original.max())",
+    "prove": "from PIL import Image\nimport numpy as np\nimport matplotlib.pyplot as plt\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nplane=rgb[:,:,component]\nbackup=plane.copy()\nfig,ax=plt.subplots();im=ax.imshow(plane,vmin=low,vmax=high)\nunchanged=bool(np.array_equal(plane,backup))\ndisplay_limits=im.get_clim()\ndata_range=(int(plane.min()),int(plane.max()))"
+  },
+  "I04-G06": {
+    "apply": "from PIL import Image\nimport numpy as np\nimport matplotlib.pyplot as plt\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nplane=rgb[:,:,color_index]\nhist,edges=np.histogram(plane,bins=n_bins,range=(0,256))\nhist_total=int(hist.sum())\ndisplay_only=True\nfig,ax=plt.subplots();ax.hist(plane.ravel(),bins=n_bins,range=(0,256))",
+    "prove": "from PIL import Image\nimport numpy as np\nimport matplotlib.pyplot as plt\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nplane=rgb[:,:,component]\ncounts,edges=np.histogram(plane,bins=bin_count,range=(0,256))\npixel_count=int(counts.sum())\nfirst_bin=int(counts[0])\nhas_raw_calibration=False\nfig,ax=plt.subplots();ax.bar(edges[:-1],counts,width=np.diff(edges),align='edge')"
+  },
+  "I04-CAPSTONE": {
+    "apply": "from PIL import Image\nimport numpy as np\nimport matplotlib.pyplot as plt\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nplane=rgb[:,:,color_index]\nfig,axes=plt.subplots(1,2)\naxes[0].imshow(plane,cmap='gray')\ncounts,edges,patches=axes[1].hist(plane.ravel(),bins=n_bins,range=(0,256))\naxes[1].set(xlabel='RGB display code',ylabel='Pixel count')\nreport={'pixels':int(plane.size),'hist_total':int(counts.sum()),'raw':False,'panels':len(axes)}\nprint(report)",
+    "prove": "from PIL import Image\nimport numpy as np\nimport matplotlib.pyplot as plt\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nplane=rgb[:,:,component]\nfig,axes=plt.subplots(1,2)\naxes[0].imshow(plane,cmap='gray');axes[0].set_title('Display component')\nhist,edges,patches=axes[1].hist(plane.ravel(),bins=bins,range=(0,256));axes[1].set_title('Display histogram')\nsummary={'n':int(hist.sum()),'n_pixels':int(plane.size),'calibrated':False}\nprint(summary)"
+  },
+  "I04-REVIEW": {
+    "apply": "",
+    "prove": "import matplotlib.pyplot as plt\nfig,ax=plt.subplots()\nheights,edges,patches=ax.hist(data,bins=n_bins)\ntotal=int(heights.sum())\nax.set(title=label,xlabel='Score (a.u.)',ylabel='Observations')\nprint(total)"
+  }
+}

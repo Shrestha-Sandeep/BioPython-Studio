@@ -1,0 +1,26 @@
+{
+  "N01-G01": {
+    "apply": "seq=data['seq'].upper();allowed=set('ACGTN' if data['allow_n'] else 'ACGT');bad=[i for i,b in enumerate(seq) if b not in allowed];result={'valid':not bad,'bad_indices':bad}\nprint(result)",
+    "prove": "s=sample['seq'].upper();result={'ambiguous':s.count('N'),'invalid':sum(x not in 'ACGTN' for x in s),'callable':sum(x in 'ACGT' for x in s)}\nprint(result)"
+  },
+  "N01-G02": {
+    "apply": "s=data['seq'].upper();called=[c for c in s if c in 'ACGT'];result=sum(c in 'GC' for c in called)/len(called) if called else None\nprint(result)",
+    "prove": "s=sample['seq'].upper();called=[c for c in s if c in 'ACGT'];result={'gc_called':sum(c in 'GC' for c in called)/len(called) if called else None,'n_fraction':s.count('N')/len(s) if s else None}\nprint(result)"
+  },
+  "N01-G03": {
+    "apply": "s=data['seq'].upper();result=s.translate(str.maketrans('ACGTN','TGCAN'))[::-1]\nprint(result)",
+    "prove": "s=sample['seq'].upper();rc=s.translate(str.maketrans('ACGTN','TGCAN'))[::-1];result=s if sample['strand']=='+' else rc\nprint(result)"
+  },
+  "N01-G04": {
+    "apply": "from Bio.Seq import Seq\ns=data['cds'].upper();frame=len(s)%3==0;result={'frame_ok':frame,'protein':str(Seq(s).translate()) if frame else None}\nprint(result)",
+    "prove": "from Bio.Seq import Seq\ns=sample['cds'].upper();protein=str(Seq(s).translate()) if len(s)%3==0 else '';result={'start':s.startswith('ATG'),'stop':protein.endswith('*'),'protein':protein}\nprint(result)"
+  },
+  "N01-CAPSTONE": {
+    "apply": "from Bio.Seq import Seq\ns=data['seq'].upper();called=[b for b in s if b in 'ACGT'];cds=data['cds'].upper();result={'id':data['sample_id'],'gc_called':sum(b in 'GC' for b in called)/len(called) if called else None,'reverse_complement':str(Seq(s).reverse_complement()),'protein':str(Seq(cds).translate()) if len(cds)%3==0 else None,'unknown':s.count('N')}\nprint(result)",
+    "prove": "from Bio.Seq import Seq\ns=sample['cds'].upper();ok=len(s)%3==0;prot=str(Seq(s).translate()) if ok else None;result={'frame_ok':ok,'protein':prot,'stop_count':prot.count('*') if prot is not None else None}\nprint(result)"
+  },
+  "N01-REVIEW": {
+    "apply": "",
+    "prove": "s=sample['seq'].upper();known=[b for b in s if b in 'ACGT'];result={'rc':s.translate(str.maketrans('ACGTN','TGCAN'))[::-1],'called_gc':sum(b in 'GC' for b in known)/len(known) if known else None,'n':s.count('N')}\nprint(result)"
+  }
+}

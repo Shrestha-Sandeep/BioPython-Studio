@@ -1,107 +1,155 @@
-# BioPython Studio — microscopy-first scientific Python trainer
+# BioPython Studio — scientific Python learning workspace
 
-**Status:** Standalone training app with **25 executable lessons** (11 original + 14 applied-science extensions). This is original software, not a reproduction of either reference course. The live AppDeploy ImageLab and ImageLab Arcade were **not modified**.
+> **2026-11-09 release candidate (draft):** [Consolidated PR #28](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/28) proposes the complete 26-chapter foundations/microscopy/sequence/ML course plus seven optional advanced research chapters against the older `main`. The existing interface and local learner progress remain in place. All 12 upstream CI workflows passed; the latest upstream Vercel preview reached READY, but hosted interactive verification, human learner trials and independent A07 research validation remain outstanding. **This PR is not merged or promoted to production.** See [Phase 1 release evidence](docs/PHASE1_RELEASE_CANDIDATE.md).
 
-## Purpose
+BioPython Studio is a personal, minimally cluttered browser IDE for learning transferable scientific Python through biological research problems. Its primary applied pathway is microscopy; sequencing/NGS and machine learning are optional later pathways.
 
-Target learner: a scientist experienced in molecular biology and fluorescence microscopy who is learning Python. Use an authentic scientific workflow, not programming trivia: begin with specimen metadata and small calculations, progress to real NumPy image arrays and masks, work with Pandas tables, and generate a real Matplotlib figure. The final task asks for a reusable Python function across new scientific input cases.
+## Complete frozen v3 course — development branch
 
-**Research objective:** develop the Python skills needed to turn microscopy measurements into reproducible scientific evidence. The image lessons use **real Human Protein Atlas fluorescence composites**, fetched from their published source with attribution. Other numerical cases remain illustrative. The threshold task counts **pixels**, not nuclei, cells, puncta, or exophers. Real segmentation, calibration, biological replicates, and model evaluation are out of scope for v0.1.
+The frozen v3 curriculum now has **26 implemented interactive chapters / 156 canonical competencies** (not 156 separate chapter titles): **P01–P06** (36 Python goals), **I01–I13** (91 microscopy/image-analysis goals), **N01–N04** (17 sequence/NGS goals), and **L01–L03** (12 baseline ML goals). Every chapter has Learn, Apply, independent Prove, a capstone and delayed review. There are **237 additional changed-input cases** for the seven optional sequence/ML chapters; author-side solutions stay in tests, never in Apply/Prove starter code.
 
-## Contents
+The existing 19-chapter progress and frozen editor/viewer shell are preserved. The **NGS** and **ML** navigation items now open genuine lessons and execute real Biopython and scikit-learn on version-pinned Pyodide. Sequence FASTA/FASTQ strings and model observations are clearly **synthetic training records**, not real reads or externally validated models. Experimental units, batch leakage, split groups and training-only fitting are explicit prerequisites.
 
-- `index.html` — main responsive training interface
-- `styles.css` — layout, contrast, keyboard and mobile styles
-- `app.js` — original curriculum, synthetic datasets, navigation, practice progression and results visualization
-- `worker.js` — Pyodide-based real Python interpreter and changed-input assessment harness
-- `CURRICULUM.md` — full source alignment and future phases
-- `TEST_REPORT.md` — verification and remaining production gates
-- `tests/test_harness.py` — 27 automated tests against local CPython
+**Development only:** [Draft PR #21](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/21) builds on [Draft PR #20](https://github.com/Shrestha-Sandeep/BioPython-Studio/pull/20). Tests and initial learner trial are required before treating this as validated teaching or merging it into production. Local project reproducibility and real biological generalization need separate evidence.
 
-## Run locally (Windows, macOS or Linux)
+## Repository and implementation status
 
-The app needs a normal local HTTP server because browsers usually restrict Web Workers on `file://` URLs.
+- **Curriculum authority:** the frozen v3 design in [docs/CURRICULUM_V3_FROZEN.md](https://github.com/Shrestha-Sandeep/BioPython-Studio/blob/docs/frozen-v3-curriculum/docs/CURRICULUM_V3_FROZEN.md) defines 156 distinct competencies and safe prerequisite ordering. The [Witz-first mission map](curriculum/witz_spine.json) defines 26 connected missions. These are **not 156 shipped interactive lessons**.
+- **Python Foundations pathway:** P01–P06 (36 canonical competencies) with Learn, Apply, Prove, a capstone and a delayed review. All 13 Microscopy, four NGS and three ML chapters are also present as documented in the complete-course status above.
+- **Production:** this is an isolated draft branch; `main` is unchanged. The frozen UI structure remains intact.
+- **Quality status:** automated browser and content tests do not establish retained learner skill, independent scientific truth, or an empirically measured 9.5+/10 learning score.
 
-1. Unzip the entire folder.
-2. In a terminal inside the folder, run:
+## Optional Advanced Research Lab — seven core chapters (draft)
 
-   ```bash
-   python -m http.server 8000
-   ```
+This development branch implements an opt-in project sequence **A00 → A01 → A02 → A03 → A05 → A06 → A07**. The conditional A04 3D/time-lapse and specialization electives X01–X05 are deliberately separate. The **original 26-chapter/156-competency route remains intact**.
 
-   On Windows, `py -m http.server 8000` is another option.
-3. Open `http://localhost:8000` in a browser.
-4. Select the first mission, edit the Python code, then click **Run Python & check**.
+From a checked-out branch, run:
 
-The first run downloads the Pyodide Python runtime from jsDelivr. Later stages download NumPy, Pandas and Matplotlib on demand. **An internet connection is necessary for the runtime and packages.** This prototype does not use a backend, account, or AppDeploy, and your scripts remain inside the local browser session. The browser does contact a package CDN to download the runtime; consult that service's privacy practices if relevant.
-
-For a public installation, upload the **whole folder** to a static host such as GitHub Pages or Vercel. Do not upload private microscopy images: this version does not support them.
-
-## How learning is assessed
-
-Each task evaluates user-written **real Python** against two or three different cases. The expected skill is more general than one matching printed number. For example, a hardcoded specimen ID fails the changed-input cases. Masks must be actual NumPy arrays equal to the image-to-threshold comparison; tables must be genuine Pandas DataFrames; and the plotted bar values must be derived from provided variables.
-
-The app differentiates **independent** completion from **guided** completion after a hint, without penalties, scores, or streaks. Results and code drafts are saved in the browser's localStorage. The data are not synchronized across browsers or devices.
-
-Keyboard shortcuts:
-
-| Action | Shortcut |
-|---|---|
-| Run Python | Ctrl+Enter (Cmd+Enter on macOS) |
-| Continue (when unlocked) | Shift+Enter |
-| Back | Ctrl+Shift+Enter (Cmd+Shift+Enter on macOS) |
-| Indent code | Tab |
-
-## References and content policy
-
-These are **curriculum references**, not copied lessons:
-
-1. Guillaume Witz, *Image Processing for Beginners*: https://github.com/guiwitz/PyImageCourse_beginner. Relevant chapters: Python essentials, images as arrays, thresholding, regions, pipelines and logic.
-2. Jake VanderPlas, *Python Data Science Handbook*: https://jakevdp.github.io/PythonDataScienceHandbook/ . Relevant parts: Jupyter/IPython, NumPy, Pandas, Matplotlib, and ML. See the repository for text and code licenses: https://github.com/jakevdp/PythonDataScienceHandbook . Handbook **text** is CC BY-NC-ND; code is MIT. This app does **not** republish the book text or figures.
-
-All exercise wording, synthetic data, interface elements and instructional checks were written specifically for this prototype. Links take users to original resources and do not imply affiliation or endorsement.
-
-## Limitations and follow-up priorities
-
-- **Browser Pyodide download not verified live in this environment.** The Python harness passed 27 local CPython tests; UI interactions were tested using a simulated Worker, not the CDN-backed browser runtime. A network-enabled end-to-end run is a release gate.
-- This is a tailored curriculum, not yet an AI tutor. There is no conversation model or spaced-repetition algorithm; guidance comes from authored hints and changed-input checks.
-- Python execution is isolated in a Web Worker and bounded by output, source-length and step limits, but it is **not a hardened sandbox** for untrusted third-party code. It is intended for the user's own practice scripts only.
-- The microscopy photos are real HPA RGB composites. Their decoded/resampled JPEG pixels are teaching arrays, not calibrated raw fluorescence intensities. For quantitative work, add raw data with axes, pixel units, and annotated reference labels.
-- A Jupyter notebook is a distinct environment from this embedded code editor. Genuine Jupyter/Colab transfer exercises are needed before claiming notebook fluency.
-- Long-term topics (scikit-image segmentation, measurement QA, time-lapse, real replicate statistics, scikit-learn and exopher/aggregate analysis) must be added after foundation mastery, not merely simulated as finished tasks.
-
-## Testing
-
-With `pytest`, NumPy, Pandas and Matplotlib installed locally:
-
-```bash
-python -m pytest -q tests/test_harness.py
+```sh
+python -m http.server 8000
 ```
 
-Local UI previews were generated with Playwright and Chromium using in-page JavaScript injection because this environment restricts network navigation, so full browser runtime delivery remains unverified.
+Open `http://localhost:8000/?lab=advanced` to start with A00 in the original compact CodeMirror/Pyodide workspace. The standard `http://localhost:8000/` remains unchanged. A small link from I13 offers the optional track. Advanced selected-chapter and code-draft keys are separate from the legacy progress records.
 
-## Real microscopy source data (v0.2)
+| Advanced chapter | Focus | Learning activities |
+|---|---|---:|
+| A00 | Local Python, venv/Git, safe files, tests and hashes | 7 |
+| A01 | Native images, metadata, calibration and provenance | 6 |
+| A02 | Candidate segmentation, polarity, morphology and sensitivity | 7 |
+| A03 | Annotation matching, object F1, leakage and uncertainty | 7 |
+| A05 | Correct biological units, paired studies and bootstrap statistics | 8 |
+| A06 | Batch TIFF analysis and complete reproducibility records | 8 |
+| A07 | Independent image-research evidence and decision capstone | 9 |
+| **Total** | | **52** |
 
-The original v0.1 synthetic image generator has been **replaced**. BioPython Studio uses **three real fluorescence RGB composite JPEGs hosted by the Human Protein Atlas (HPA)**, including two fields named in the [Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner) teaching materials:
+Every activity has real Python Learn/Apply/Prove, concise task comments, changed-input checks and progression; each chapter also has a capstone and a delayed-review activity. The expanded local [advanced research workflow](projects/advanced/README.md) provides source-safe TIFF audits, puncta measurements, agreement checks, animal-level statistics, reproducible batch analyses and a seven-checkpoint evidence auditor.
 
-| Source ID | Original HPA image | Educational role |
+**Scientific caveat:** browser checks use *synthetic learning examples*. Real BBBC038/039 source-image benchmarks are separately documented, and they do not establish exopher detection quality or independent human mastery. A07's evidence checker intentionally cannot certify biological validity. Use a real local environment for source data, Git, full TIFF processing and a reproducible capstone. See [release QA and outstanding evidence gates](docs/ADVANCEMENT_CORE_RELEASE_QA.md).
+
+**Release status:** new material is on a development branch and is not merged into `main`. Vercel previously returned a build-rate-limit failure, so a new stable hosted preview is not presumed.
+
+## Python Foundations chapter sequence
+
+| Chapter | Mission | Central deliverable |
 |---|---|---|
-| `HPA-8346-22-C1-1` | https://images.proteinatlas.org/8346/22_C1_1_blue_red_green.jpg | Visible field; first NumPy array |
-| `HPA-46658-784-B12-1` | https://images.proteinatlas.org/46658/784_B12_1_blue_red_green.jpg | Changed-size independent Python test |
-| `HPA-23394-182-H7-1` | https://images.proteinatlas.org/23394/182_H7_1_blue_red_green.jpg | Third unfamiliar microscopy field |
+| P01 | First scientific Python script | Specimen report and unit conversion |
+| P02 | Trustworthy sample labels | Strict identifier and QC validator |
+| P03 | Filter microscope fields | Source-preserving field-QC audit |
+| P04 | Organize experimental metadata | Deduplicated, traceable metadata registry |
+| P05 | Make a reusable analysis function | Documented, tested field-measurement functions |
+| P06 | Save and reproduce a real script | JSON audit export plus **manual** local Python/venv/Git verification |
 
-**Credit:** Human Protein Atlas, [proteinatlas.org](https://www.proteinatlas.org/); Thul PJ et al., *Science* (2017), DOI [10.1126/science.aal3321](https://doi.org/10.1126/science.aal3321). HPA's [current data license](https://www.proteinatlas.org/about/licence) is **CC BY 4.0**, subject to the image's provenance and any third-party conditions. The teaching repository notes an older CC BY-SA 3.0 designation; the JPEGs are fetched **directly from HPA by the browser**, with direct image links preserved here and next to the images in the app. The app does not copy the reference course's written lessons, nor the *Python Data Science Handbook* text. The source course's code uses a BSD 3-Clause license; the handbook's code is MIT, while its text is CC BY-NC-ND.
+Each exercise places its immediate task as concise `#` comments inside the editable Python editor. Detailed concepts, predictions, optional walkthroughs, staged hints, changed-input feedback and scientific limitations remain in the lesson panel.
 
-For the NumPy shape, pixel and threshold exercises, the app draws the real HPA composite and creates actual `uint8` NumPy input arrays by **resampling and taking the blue channel** of that same decoded JPEG in the learner's browser. Threshold overlays are calculated from those arrays. These are **not original raw microscopy files**, and decoded/resampled JPEG intensities are unsuitable for publication-quality quantitative fluorescence measurements. Counts in the other beginner activities, tables, and plots remain clearly labeled as illustrative teaching data, not measurements of these HPA images. The browser checks image response size, type, dimensions and blue-channel variation before accepting it. A missing or truncated image produces an explicit error and Retry action—never a false success label or invented substitute. The previously truncated local JPEG copies have been deleted from this repository.
+## Runtime and interface
 
-**Standing project direction:** Keep BioPython Studio a single, low-clutter Python-for-biology training app. Preserve the progression from *Image Processing for Beginners* plus *Python Data Science Handbook*. Prefer a tiny, traceable set of licensed real datasets over fictional microscopy or wholesale forks of upstream teaching repositories. Each data example must have provenance, license, scientific caveats and code that actually uses its data. Source of truth is this GitHub repository; Vercel is its deployment target. Don't change BioCompute or AppDeploy ImageLab.
+- **Actual Python:** version-pinned Pyodide in a Web Worker, loaded on the first Python Run. Normal Python stdout, traceback and changed-input checks are displayed. No simulated outputs or hidden secure grading.
+- **Editor:** locally vendored CodeMirror with editable code, Python highlighting, keyboard navigation and separate saved drafts for each chapter/goal/phase.
+- **Interface:** frozen clean IDE layout with compact lesson controls, a results console, optional image viewer, focus mode and responsive layouts.
+- **Persistence:** existing `biopython.p01.v1`, `biopython.p02.v1`, and `biopython.p03.v1` are retained. New `biopython.p04.v1`, `biopython.p05.v1`, and `biopython.p06.v1` store new drafts separately. Do not infer independent mastery from old completion data.
+- **Export:** completed capstone and review scripts can be downloaded as standalone `.py` files with one supplied example input.
+- **Source images:** attributed Witz/Human Protein Atlas teaching images are contextual. They are not calibrated TIFF stacks and do not authorize quantitative fluorescence claims.
 
-### Image-loading reliability (November 5, 2026)
+Run locally from the repository root:
 
-The original GitHub image upload inadvertently stored JPEGs truncated to approximately 1.5 KB. Some browsers read the JPEG dimensions but displayed a blank microscopy canvas. We removed these broken copies. The app now fetches full-resolution JPEGs from the HPA publisher over CORS (`Access-Control-Allow-Origin: *` confirmed for the source) and rejects short, invalid or visually empty images. Image failure is visible and retryable without resetting Python output or drafts. This adds a dependency on HPA image hosting and internet connectivity; if HPA is unreachable, the app explains the failure instead of simulating data.
+```sh
+python -m http.server 8000
+```
 
-Image browser test with deterministic local JPEG fixtures: `python tests/check_browser_images.py` (requires Playwright/Chromium and Pillow). Real HPA source bytes and headers were checked separately; deployed Pyodide execution still requires a live browser check after new deployments.
+Then open `http://localhost:8000` and select Python foundations. Internet access is required to download the Pyodide runtime on first Run.
 
-## Applied-science expansion (Chunk 1)
+## Scientific Python microscopy missions (draft PR #18)
 
-After the original 11 exercises, 14 additional lessons cover biological sequence/metadata handling, quality filters, real HPA image ROI, intensity, thresholds, background subtraction, histogram, SciPy candidate connected regions, Pandas missingness/joins/replicate-aware means, and a reusable field report. **25 total lessons; old progress remains intact.** See the single canonical `CURRICULUM.md` for source-by-source mapping and scientific caveats. A `scipy` wheel is loaded on demand only for connected-components and the final field report (Pyodide 0.28.3 supported package). These sources are instructional references, not republished books.
+The frozen 26-mission course places the scientific-computing foundation inside applied microscopy missions, rather than in an unrelated additional chapter series. The combined full microscopy integration branch adds **91 distinct competencies** and real Python execution to these missions:
+
+| Mission | Core techniques | Competencies |
+|---|---|---:|
+| I01 | NumPy arrays, real credited Witz/HPA PNG bytes, shape, dtype, provenance | 8 |
+| I02 | ROI cropping, views and copies, axis labels, synthetic TIFF I/O | 6 |
+| I03 | Vectorization, broadcasting, masks, missingness, statistics, dtype overflow, ROI | 10 |
+| I04 | Real Matplotlib line/scatter/histograms, contrast, figure panels | 6 |
+| I07 | Pandas tables, explicit-typed CSV, QC, duplicate and missing records | 7 |
+| I08 | Safe metadata joins, group summaries, reshaping, timestamps, plots and exports | 8 |
+
+The original six scientific-foundation missions account for 45 goals. This development integration adds seven further microscopy missions (46 goals), resulting in **13 missions and 91 distinct canonical competencies**. Competency 068 is now taught with biological replication in I12. Real learner mastery and biological validity remain unverified.
+
+Source hygiene: The bundled `assets/witz/fluorescence-single.png` is a **real attributed published notebook figure based on Human Protein Atlas**, decoded into actual pixels in Pyodide. It is not a calibrated raw HPA TIFF. Synthetic numerical examples and synthetic TIFF files remain explicitly labeled. An OME-looking TIFF Description tag is not validated OME metadata.
+
+The pinned scientific Python worker lazily imports NumPy, Pillow, Pandas, Matplotlib, SciPy and scikit-image. Actual Matplotlib figures render in the results console, not precomputed stock pictures. First import needs a network connection. I01 and other Python mission progress keys are kept separate; stage switching does not overwrite prior drafts. The image-analysis stage displays the existing frozen IDE and its image-preview panel.
+
+This is a **draft learner pilot**, not scientifically validated quantitative image analysis or demonstrated learner mastery.
+
+## Full microscopy course — I01–I13 (isolated draft)
+
+`integration/microscopy-i05-i13-complete` integrates the seven remaining missions into the original frozen IDE. All 91 microscopy skills now have a goal-specific Learn, Apply and independent Prove exercise, plus a mission capstone and delayed review.
+
+| Mission | Content | Goals |
+|---|---|---:|
+| I05 | Background, denoising, thresholds and sensitivity | 6 |
+| I06 | Morphology, watershed, connected objects and 3D limitations | 7 |
+| I09 | Candidate-region properties, intensity, colocalization and proximity | 6 |
+| I10 | Tracking and segmentation validation against synthetic annotations | 6 |
+| I11 | Biological units, QC, batch structure and normalization | 7 |
+| I12 | Replicate-aware uncertainty, testing and plots | 9 |
+| I13 | Source-aware integrated real-image pipeline and visualization | 5 |
+
+**Scientific boundary:** The bundled Witz/HPA PNG is a credited published *rendered RGB figure*, not a raw calibrated microscope image. Exercises run real scientific Python, including actual pixel decoding and candidate segmentation, but no validated nucleus/exopher detection, nuclear-edge localization, raw intensity or biological effect estimate is claimed. Those require real raw data, calibrated metadata, controls, manual annotations and biological replicates.
+
+The development release remains draft until complete CPython and Pyodide QA, desktop/mobile checks, standalone exported scripts and a real learner trial pass. The new QA scripts are `tests/test_microscopy_complete_import.py`, `tests/test_microscopy_complete_reference.py` and `tests/test_microscopy_complete_browser.py`.
+
+## P06 local-machine limit
+
+Browser Python can create genuine temporary files in its own virtual filesystem, encode JSON and execute assertions. **It cannot create your computer's .venv, run local Git, verify an on-disk repository, or certify a local notebook kernel.**
+
+Use [P06 local verification guide](docs/P06_LOCAL_HANDOFF.md) to export the script and run it in a real local environment, verify interpreter and tests, and record an actual commit hash. P06's browser checks record practice only; competencies 032 and 036 require local evidence.
+
+## QA commands
+
+```sh
+node --test tests/preview.test.mjs tests/witz_sources.test.mjs
+python tests/test_p01_import.py
+python tests/test_p02_import.py
+python tests/test_p03_import.py
+python tests/test_editor_briefs.py
+python tests/test_p04_p06_import.py
+python tests/test_p04_p06_reference.py
+```
+
+Browser tests additionally require Playwright and Chromium; see `.github/workflows/p04-p06-integration.yml` for Python foundations and `.github/workflows/scientific-python-integration.yml` for real NumPy/Pandas/Matplotlib microscopy missions. Scientific CPython QA runs `tests/test_scientific_foundation_import.py` and `tests/test_scientific_foundation_reference.py`; complete real Pyodide QA runs `tests/test_i01_browser.py` and `tests/test_scientific_foundation_browser.py`. They run the original frozen-shell regression and P01–P06 chapter flows, changed-input checks in genuine Pyodide, exported script execution in CPython, draft preservation and mobile/tablet/desktop layout tests.
+
+
+## Authentic microscopy file workflow — new draft feature
+
+For real image practice, use **Open images** in the microscopy viewer. Selected TIFF/OME-TIFF and RGB files (maximum eight, 32 MB each, 96 MB total) are copied into **local browser Pyodide memory** without scaling or conversion through the RGB viewer. The learner code receives them through the Python list `uploaded_image_paths`. Source bytes are never sent to the BioPython Studio server, and selecting **Clear files** then running again removes them from the worker filesystem. They are not saved across page reloads.
+
+Use the **Witz TIFF pair** button to fetch two original TIFF *files* on demand from the Witz course repository. These HPA-derived files were converted from JPEG, so they are **not original calibrated instrument data**. Their provenance and license are documented in [the real-data learning guide](projects/real-microscopy/START_HERE.md).
+
+The [I13 real-data project](projects/real-microscopy/START_HERE.md) adds a reproducible local TIFF batch-analysis script, documented QC outputs, source hashes and a [blind independent transfer challenge](projects/real-microscopy/INDEPENDENT_CHALLENGE.md) with a delayed learning rubric. Project tests exercise 16-bit OME-TIFF, preserved image pixel values, explicit channels/axes and live browser file transport. Desktop Bio-Formats and independently annotated raw experimental image datasets are still necessary for wider vendor formats and research-grade validation.
+
+## Learning sources and scientific safeguards
+
+Witz [Image Processing for Beginners](https://github.com/guiwitz/PyImageCourse_beginner) is the primary source spine. Supporting references include the [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/), [Python for Biologists](https://www.pythonforbiologists.org/), [Introduction to Bioimage Analysis](https://bioimagebook.github.io/) and [Bio-image Analysis Notebooks](https://haesleinhuepf.github.io/BioImageAnalysisNotebooks/).
+
+Synthetic specimen IDs, cutoffs, calibrations and field scores are for programming education only. Image fields are not independent biological replicates; connected regions are not validated cell/exopher detections. Calibrated quantitative microscopy requires original raw images and independent validation beyond the rendered figure.
+
+**Release policy:** Keep this branch in draft until the exact-commit QA suite, a real-device learner pilot and a deployment preview are confirmed. Do not merge or update production automatically.

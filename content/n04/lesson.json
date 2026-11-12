@@ -1,0 +1,3566 @@
+{
+  "schema_version": "bps.chapter.v1",
+  "chapter_id": "N04",
+  "version": "1.0.0",
+  "status": "INTEGRATED_LEARNER_PILOT",
+  "title": "Summarize coverage and count features",
+  "competencies": [
+    "135",
+    "136",
+    "137",
+    "138",
+    "155"
+  ],
+  "intro": "Connect mapping-category summaries, base coverage and feature-count tables while respecting zero library sizes and the limits of CPM.",
+  "scientific_context": {
+    "source": "https://biopython.org/docs/latest/Tutorial/",
+    "asset": null,
+    "credited_in": "docs/SOURCE_LEDGER.md",
+    "use": "ORIGINAL_SYNTHETIC_SEQUENCE_RECORDS",
+    "caution": "Mapping entries, read alignments, count tables and sample metadata are synthetic. Coverage and CPM do not establish differential expression or a verified mapped genome."
+  },
+  "chapter_method": "Predict → Run → Investigate → Apply → independent Prove → delayed review.",
+  "goals": [
+    {
+      "id": "N04-G01",
+      "title": "Interpret mapped, unmapped and multimapped reads",
+      "competencies": [
+        "135"
+      ],
+      "why": "A reported mapping rate depends on how multiply-mapping reads are classified.",
+      "explain": [
+        "Preserve mapped, multi and unmapped categories; calculate the proportion that is mapped at least once, keeping multi distinct.",
+        "Counting a multimapping read as two independent reads artificially inflates the numerator.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "status=['mapped','multi','unmapped','mapped'];print(sum(x!='unmapped' for x in status)/len(status))",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Preserve mapped, multi and unmapped categories; calculate the proportion that is mapped at least once, keeping multi distinct.",
+        "Use Counter on status; divide each sample-level category by number of read records.",
+        "Why is fraction mapped not the same as fraction uniquely mapped?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Counting a multimapping read as two independent reads artificially inflates the numerator.",
+      "scientific_boundary": "Mapping entries, read alignments, count tables and sample metadata are synthetic. Coverage and CPM do not establish differential expression or a verified mapped genome.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N04-G01 | LEARN | Interpret mapped, unmapped and multimapped reads\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nstatus=['mapped','multi','unmapped','mapped'];print(sum(x!='unmapped' for x in status)/len(status))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Return result={'mapped':int,'multi':int,'unmapped':int,'at_least_once_fraction':float} from data.mappings; count each read once.",
+          "starter_code": "# N04-G01 | APPLY | Interpret mapped, unmapped and multimapped reads\n# TASK: Return\n# result={'mapped':int,'multi':int,'unmapped':int,'at_least_once_fraction':float}\n# from data.mappings; count each read once.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "result['mapped']+result['multi']+result['unmapped']==len(data['mappings'])",
+                "result['at_least_once_fraction']==sum(r['status']!='unmapped' for r in data['mappings'])/len(data['mappings'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "result['mapped']+result['multi']+result['unmapped']==len(data['mappings'])",
+                "result['at_least_once_fraction']==sum(r['status']!='unmapped' for r in data['mappings'])/len(data['mappings'])"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "result['mapped']+result['multi']+result['unmapped']==len(data['mappings'])",
+                "result['at_least_once_fraction']==sum(r['status']!='unmapped' for r in data['mappings'])/len(data['mappings'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Preserve mapped, multi and unmapped categories; calculate the proportion that is mapped at least once, keeping multi distinct.",
+            "probe": "Why is fraction mapped not the same as fraction uniquely mapped?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Return result={'total':number,'unique_mapped_fraction':fraction with status exactly 'mapped','multi_fraction':fraction with status 'multi'} from sample.mappings.",
+          "starter_code": "# N04-G01 | PROVE | Interpret mapped, unmapped and multimapped reads\n# TASK: Return result={'total':number,'unique_mapped_fraction':fraction with status\n# exactly 'mapped','multi_fraction':fraction with status 'multi'} from\n# sample.mappings.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "result['total']==len(sample['mappings'])",
+                "result['multi_fraction']==sum(r['status']=='multi' for r in sample['mappings'])/len(sample['mappings'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "result['total']==len(sample['mappings'])",
+                "result['multi_fraction']==sum(r['status']=='multi' for r in sample['mappings'])/len(sample['mappings'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "result['total']==len(sample['mappings'])",
+                "result['multi_fraction']==sum(r['status']=='multi' for r in sample['mappings'])/len(sample['mappings'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Preserve mapped, multi and unmapped categories; calculate the proportion that is mapped at least once, keeping multi distinct.",
+            "probe": "Why is fraction mapped not the same as fraction uniquely mapped?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use Counter on status; divide each sample-level category by number of read records.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Why is fraction mapped not the same as fraction uniquely mapped?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N04-G02",
+      "title": "Compute zero-based half-open read coverage",
+      "competencies": [
+        "136"
+      ],
+      "why": "Coverage depth is positional and must not double-count base coordinates outside the reference.",
+      "explain": [
+        "For uniquely mapped read intervals [start:end), clip to [0,reference_length) and add one to each covered position.",
+        "Treating the end coordinate as inclusive adds a spurious final base and wrong totals.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "depth=[0]*6\nfor i in range(1,4):depth[i]+=1\nprint(depth)",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "For uniquely mapped read intervals [start:end), clip to [0,reference_length) and add one to each covered position.",
+        "Use Python range(max(0,start),min(end,length)) for each uniquely mapped interval.",
+        "What does average depth fail to reveal about local uncovered genomic regions?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Treating the end coordinate as inclusive adds a spurious final base and wrong totals.",
+      "scientific_boundary": "Mapping entries, read alignments, count tables and sample metadata are synthetic. Coverage and CPM do not establish differential expression or a verified mapped genome.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N04-G02 | LEARN | Compute zero-based half-open read coverage\n# TASK: Predict the demonstration output. Change a meaningful input.\n\ndepth=[0]*6\nfor i in range(1,4):depth[i]+=1\nprint(depth)\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Return result list of per-position depth for data.length using only status='mapped' mappings, clipping end to contig length and excluding multi/unmapped.",
+          "starter_code": "# N04-G02 | APPLY | Compute zero-based half-open read coverage\n# TASK: Return result list of per-position depth for data.length using only\n# status='mapped' mappings, clipping end to contig length and excluding\n# multi/unmapped.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "len(result)==data['length']",
+                "sum(result)==sum(max(0,min(data['length'],r['end'])-max(0,r['start'])) for r in data['mappings'] if r['status']=='mapped')"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "len(result)==data['length']",
+                "sum(result)==sum(max(0,min(data['length'],r['end'])-max(0,r['start'])) for r in data['mappings'] if r['status']=='mapped')"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "len(result)==data['length']",
+                "sum(result)==sum(max(0,min(data['length'],r['end'])-max(0,r['start'])) for r in data['mappings'] if r['status']=='mapped')"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For uniquely mapped read intervals [start:end), clip to [0,reference_length) and add one to each covered position.",
+            "probe": "What does average depth fail to reveal about local uncovered genomic regions?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Return result={'covered_positions':positive-depth positions,'mean_depth':total depth/sample.length} for uniquely mapped sample.mappings.",
+          "starter_code": "# N04-G02 | PROVE | Compute zero-based half-open read coverage\n# TASK: Return result={'covered_positions':positive-depth\n# positions,'mean_depth':total depth/sample.length} for uniquely mapped\n# sample.mappings.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "0<=result['covered_positions']<=sample['length']",
+                "result['mean_depth']>=0"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "0<=result['covered_positions']<=sample['length']",
+                "result['mean_depth']>=0"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "0<=result['covered_positions']<=sample['length']",
+                "result['mean_depth']>=0"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "For uniquely mapped read intervals [start:end), clip to [0,reference_length) and add one to each covered position.",
+            "probe": "What does average depth fail to reveal about local uncovered genomic regions?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use Python range(max(0,start),min(end,length)) for each uniquely mapped interval.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "What does average depth fail to reveal about local uncovered genomic regions?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N04-G03",
+      "title": "Build a feature count matrix with safe aggregation",
+      "competencies": [
+        "137"
+      ],
+      "why": "Duplicate sample/gene rows can hide or inflate transcript-level measurements.",
+      "explain": [
+        "Use pandas to sum explicitly repeated sample×gene records, then pivot to a complete zero-filled matrix.",
+        "Silently taking the first duplicate record loses counts; treating absent combinations as missing instead of zero requires a stated policy.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "import pandas as pd\nx=pd.DataFrame({'s':['A','A'],'g':['X','X'],'n':[2,3]});print(x.groupby(['s','g']).n.sum().iloc[0])",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Use pandas to sum explicitly repeated sample×gene records, then pivot to a complete zero-filled matrix.",
+        "Use pivot_table with aggfunc='sum' and fill_value=0, then convert numeric outputs to plain ints.",
+        "When might an absent gene count mean unobserved rather than true zero?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "Silently taking the first duplicate record loses counts; treating absent combinations as missing instead of zero requires a stated policy.",
+      "scientific_boundary": "Mapping entries, read alignments, count tables and sample metadata are synthetic. Coverage and CPM do not establish differential expression or a verified mapped genome.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N04-G03 | LEARN | Build a feature count matrix with safe aggregation\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nimport pandas as pd\nx=pd.DataFrame({'s':['A','A'],'g':['X','X'],'n':[2,3]});print(x.groupby(['s','g']).n.sum().iloc[0])\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Build a pandas pivot_table from data.counts with samples as row index, genes as columns and sum aggregation; return result as nested sample→gene→integer count, including zeros for missing combinations.",
+          "starter_code": "# N04-G03 | APPLY | Build a feature count matrix with safe aggregation\n# TASK: Build a pandas pivot_table from data.counts with samples as row index,\n# genes as columns and sum aggregation; return result as nested sample→gene→integer\n# count, including zeros for missing combinations.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "sum(sum(d.values()) for d in result.values())==sum(r['count'] for r in data['counts'])",
+                "len(result)==len(set(r['sample'] for r in data['counts']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "sum(sum(d.values()) for d in result.values())==sum(r['count'] for r in data['counts'])",
+                "len(result)==len(set(r['sample'] for r in data['counts']))"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "sum(sum(d.values()) for d in result.values())==sum(r['count'] for r in data['counts'])",
+                "len(result)==len(set(r['sample'] for r in data['counts']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use pandas to sum explicitly repeated sample×gene records, then pivot to a complete zero-filled matrix.",
+            "probe": "When might an absent gene count mean unobserved rather than true zero?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Sum repeated sample/gene counts from sample.counts; return result={'samples':sorted IDs,'genes':sorted IDs,'total':sum of all counts} without dropping duplicates.",
+          "starter_code": "# N04-G03 | PROVE | Build a feature count matrix with safe aggregation\n# TASK: Sum repeated sample/gene counts from sample.counts; return\n# result={'samples':sorted IDs,'genes':sorted IDs,'total':sum of all counts}\n# without dropping duplicates.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "result['total']==sum(r['count'] for r in sample['counts'])",
+                "result['genes']==sorted(set(r['gene'] for r in sample['counts']))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "result['total']==sum(r['count'] for r in sample['counts'])",
+                "result['genes']==sorted(set(r['gene'] for r in sample['counts']))"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "result['total']==sum(r['count'] for r in sample['counts'])",
+                "result['genes']==sorted(set(r['gene'] for r in sample['counts']))"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Use pandas to sum explicitly repeated sample×gene records, then pivot to a complete zero-filled matrix.",
+            "probe": "When might an absent gene count mean unobserved rather than true zero?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Use pivot_table with aggfunc='sum' and fill_value=0, then convert numeric outputs to plain ints.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "When might an absent gene count mean unobserved rather than true zero?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N04-G04",
+      "title": "Calculate counts per million with zero safeguards",
+      "competencies": [
+        "138"
+      ],
+      "why": "Library size normalization cannot rescue unmeasured biological effects or technical confounders.",
+      "explain": [
+        "CPM = 1,000,000 × feature_count / total counts for a sample, after aggregating duplicate features.",
+        "A zero total library size is undefined CPM, not 0 or infinity; CPM is not a differential-expression test.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "counts={'A':10,'B':30};print({k:1e6*v/sum(counts.values()) for k,v in counts.items()})",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "CPM = 1,000,000 × feature_count / total counts for a sample, after aggregating duplicate features.",
+        "Group by sample first, compute library size, then normalize each feature only if nonzero.",
+        "Why can a high CPM arise from compositional changes rather than a true increase in expression?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "A zero total library size is undefined CPM, not 0 or infinity; CPM is not a differential-expression test.",
+      "scientific_boundary": "Mapping entries, read alignments, count tables and sample metadata are synthetic. Coverage and CPM do not establish differential expression or a verified mapped genome.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N04-G04 | LEARN | Calculate counts per million with zero safeguards\n# TASK: Predict the demonstration output. Change a meaningful input.\n\ncounts={'A':10,'B':30};print({k:1e6*v/sum(counts.values()) for k,v in counts.items()})\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "From data.counts return result nested sample→gene→CPM, aggregating duplicates first and using None for all features in a zero-total sample.",
+          "starter_code": "# N04-G04 | APPLY | Calculate counts per million with zero safeguards\n# TASK: From data.counts return result nested sample→gene→CPM, aggregating\n# duplicates first and using None for all features in a zero-total sample.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "all(all(v is None for v in row.values()) if sum(r['count'] for r in data['counts'] if r['sample']==s)==0 else abs(sum(row.values())-1e6)<1e-6 for s,row in result.items())"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "all(all(v is None for v in row.values()) if sum(r['count'] for r in data['counts'] if r['sample']==s)==0 else abs(sum(row.values())-1e6)<1e-6 for s,row in result.items())"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "all(all(v is None for v in row.values()) if sum(r['count'] for r in data['counts'] if r['sample']==s)==0 else abs(sum(row.values())-1e6)<1e-6 for s,row in result.items())"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "CPM = 1,000,000 × feature_count / total counts for a sample, after aggregating duplicate features.",
+            "probe": "Why can a high CPM arise from compositional changes rather than a true increase in expression?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "For sample.counts return result sample→sum of CPM across genes (None if total count 0), with duplicate features aggregated.",
+          "starter_code": "# N04-G04 | PROVE | Calculate counts per million with zero safeguards\n# TASK: For sample.counts return result sample→sum of CPM across genes (None if\n# total count 0), with duplicate features aggregated.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "all((v is None if sum(r['count'] for r in sample['counts'] if r['sample']==s)==0 else abs(v-1e6)<1e-6) for s,v in result.items())"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "all((v is None if sum(r['count'] for r in sample['counts'] if r['sample']==s)==0 else abs(v-1e6)<1e-6) for s,v in result.items())"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "all((v is None if sum(r['count'] for r in sample['counts'] if r['sample']==s)==0 else abs(v-1e6)<1e-6) for s,v in result.items())"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "CPM = 1,000,000 × feature_count / total counts for a sample, after aggregating duplicate features.",
+            "probe": "Why can a high CPM arise from compositional changes rather than a true increase in expression?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Group by sample first, compute library size, then normalize each feature only if nonzero.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "Why can a high CPM arise from compositional changes rather than a true increase in expression?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    },
+    {
+      "id": "N04-G05",
+      "title": "Audit a miniature sequence-analysis project",
+      "competencies": [
+        "155"
+      ],
+      "why": "A real project needs traceable mapping/QC outputs and clear limits, not just a chart.",
+      "explain": [
+        "Combine explicit mapping rates and count-table totals into a source-aware report without pretending a tiny example is RNA-seq.",
+        "A count matrix and coverage depth alone cannot establish a biological expression difference.",
+        "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+      ],
+      "worked_example": {
+        "code": "records=[{'sample':'S1','count':2},{'sample':'S1','count':3}]\nprint(sum(r['count'] for r in records))",
+        "predict": "Predict the printed output before running."
+      },
+      "prediction_answer": "Explain the output using the source data and the declared denominator.",
+      "walkthrough": [
+        "Combine explicit mapping rates and count-table totals into a source-aware report without pretending a tiny example is RNA-seq.",
+        "Build separate summaries by read and by biological sample; never mix their denominators.",
+        "What metadata must accompany a real count table before interpreting treated-versus-control differences?"
+      ],
+      "investigate": [
+        "Change one input and compare the predicted and observed output.",
+        "Try an empty, ambiguous or boundary-valued input.",
+        "Explain why a correct Python result is not evidence of a biological effect."
+      ],
+      "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+      "misconception": "A count matrix and coverage depth alone cannot establish a biological expression difference.",
+      "scientific_boundary": "Mapping entries, read alignments, count tables and sample metadata are synthetic. Coverage and CPM do not establish differential expression or a verified mapped genome.",
+      "phases": {
+        "learn": {
+          "title": "Predict, run, investigate",
+          "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+          "starter_code": "# N04-G05 | LEARN | Audit a miniature sequence-analysis project\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nrecords=[{'sample':'S1','count':2},{'sample':'S1','count':3}]\nprint(sum(r['count'] for r in records))\n",
+          "preview_inputs": {}
+        },
+        "apply": {
+          "title": "Practice with changed data",
+          "description": "Return result={'mapped_fraction':read fraction mapped at least once,'sample_libraries':sample→total count,'feature':data.feature} using data.mappings and data.counts.",
+          "starter_code": "# N04-G05 | APPLY | Audit a miniature sequence-analysis project\n# TASK: Return result={'mapped_fraction':read fraction mapped at least\n# once,'sample_libraries':sample→total count,'feature':data.feature} using\n# data.mappings and data.counts.\n# INPUTS: data\n\n\n",
+          "preview_inputs": {
+            "data": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "data": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "result['feature']==data['feature']",
+                "result['sample_libraries']=={s:sum(r['count'] for r in data['counts'] if r['sample']==s) for s in set(r['sample'] for r in data['counts'])}"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "result['feature']==data['feature']",
+                "result['sample_libraries']=={s:sum(r['count'] for r in data['counts'] if r['sample']==s) for s in set(r['sample'] for r in data['counts'])}"
+              ]
+            },
+            {
+              "inputs": {
+                "data": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "result['feature']==data['feature']",
+                "result['sample_libraries']=={s:sum(r['count'] for r in data['counts'] if r['sample']==s) for s in set(r['sample'] for r in data['counts'])}"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Combine explicit mapping rates and count-table totals into a source-aware report without pretending a tiny example is RNA-seq.",
+            "probe": "What metadata must accompany a real count table before interpreting treated-versus-control differences?",
+            "check": "Check changed inputs, missing cases and source provenance."
+          }
+        },
+        "prove": {
+          "title": "Independent transfer",
+          "description": "Report result={'unique_mapped':integer,'covered_reference_bases':unique mapped positions covered on sample.length,'count_rows':input count-table rows}; no biological significance claim.",
+          "starter_code": "# N04-G05 | PROVE | Audit a miniature sequence-analysis project\n# TASK: Report result={'unique_mapped':integer,'covered_reference_bases':unique\n# mapped positions covered on sample.length,'count_rows':input count-table rows};\n# no biological significance claim.\n# INPUTS: sample\n\n\n",
+          "preview_inputs": {
+            "sample": {
+              "length": 12,
+              "mappings": [
+                {
+                  "id": "a",
+                  "status": "mapped",
+                  "start": 1,
+                  "end": 5
+                },
+                {
+                  "id": "b",
+                  "status": "unmapped",
+                  "start": 0,
+                  "end": 0
+                },
+                {
+                  "id": "c",
+                  "status": "multi",
+                  "start": 3,
+                  "end": 7
+                },
+                {
+                  "id": "d",
+                  "status": "mapped",
+                  "start": 8,
+                  "end": 12
+                }
+              ],
+              "counts": [
+                {
+                  "sample": "S1",
+                  "gene": "G1",
+                  "count": 10
+                },
+                {
+                  "sample": "S1",
+                  "gene": "G2",
+                  "count": 30
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G1",
+                  "count": 20
+                },
+                {
+                  "sample": "S2",
+                  "gene": "G2",
+                  "count": 0
+                }
+              ],
+              "feature": "G1"
+            }
+          },
+          "public_checks": [
+            {
+              "inputs": {
+                "sample": {
+                  "length": 12,
+                  "mappings": [
+                    {
+                      "id": "a",
+                      "status": "mapped",
+                      "start": 1,
+                      "end": 5
+                    },
+                    {
+                      "id": "b",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "c",
+                      "status": "multi",
+                      "start": 3,
+                      "end": 7
+                    },
+                    {
+                      "id": "d",
+                      "status": "mapped",
+                      "start": 8,
+                      "end": 12
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "S1",
+                      "gene": "G1",
+                      "count": 10
+                    },
+                    {
+                      "sample": "S1",
+                      "gene": "G2",
+                      "count": 30
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G1",
+                      "count": 20
+                    },
+                    {
+                      "sample": "S2",
+                      "gene": "G2",
+                      "count": 0
+                    }
+                  ],
+                  "feature": "G1"
+                }
+              },
+              "assertions": [
+                "result['unique_mapped']==sum(r['status']=='mapped' for r in sample['mappings'])",
+                "0<=result['covered_reference_bases']<=sample['length']",
+                "result['count_rows']==len(sample['counts'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 8,
+                  "mappings": [
+                    {
+                      "id": "x",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 3
+                    },
+                    {
+                      "id": "y",
+                      "status": "mapped",
+                      "start": 2,
+                      "end": 8
+                    },
+                    {
+                      "id": "z",
+                      "status": "multi",
+                      "start": 1,
+                      "end": 4
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "A",
+                      "gene": "X",
+                      "count": 0
+                    },
+                    {
+                      "sample": "A",
+                      "gene": "Y",
+                      "count": 0
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "X",
+                      "count": 6
+                    },
+                    {
+                      "sample": "B",
+                      "gene": "Y",
+                      "count": 14
+                    }
+                  ],
+                  "feature": "X"
+                }
+              },
+              "assertions": [
+                "result['unique_mapped']==sum(r['status']=='mapped' for r in sample['mappings'])",
+                "0<=result['covered_reference_bases']<=sample['length']",
+                "result['count_rows']==len(sample['counts'])"
+              ]
+            },
+            {
+              "inputs": {
+                "sample": {
+                  "length": 10,
+                  "mappings": [
+                    {
+                      "id": "i",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "j",
+                      "status": "mapped",
+                      "start": 9,
+                      "end": 12
+                    },
+                    {
+                      "id": "k",
+                      "status": "unmapped",
+                      "start": 0,
+                      "end": 0
+                    },
+                    {
+                      "id": "l",
+                      "status": "mapped",
+                      "start": 0,
+                      "end": 5
+                    }
+                  ],
+                  "counts": [
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 4
+                    },
+                    {
+                      "sample": "p1",
+                      "gene": "a",
+                      "count": 6
+                    },
+                    {
+                      "sample": "p2",
+                      "gene": "b",
+                      "count": 9
+                    }
+                  ],
+                  "feature": "a"
+                }
+              },
+              "assertions": [
+                "result['unique_mapped']==sum(r['status']=='mapped' for r in sample['mappings'])",
+                "0<=result['covered_reference_bases']<=sample['length']",
+                "result['count_rows']==len(sample['counts'])"
+              ]
+            }
+          ],
+          "practice_feedback": {
+            "why": "Combine explicit mapping rates and count-table totals into a source-aware report without pretending a tiny example is RNA-seq.",
+            "probe": "What metadata must accompany a real count table before interpreting treated-versus-control differences?",
+            "check": "Solve with a different operation or data representation than Apply."
+          }
+        }
+      },
+      "hints": {
+        "apply": [
+          "Build separate summaries by read and by biological sample; never mix their denominators.",
+          "Use explicit checks and preserve source identity."
+        ],
+        "prove": []
+      },
+      "feedback": {
+        "ValueError": "Inspect declared data format, dimensionality and missing values.",
+        "TypeError": "Check string versus numeric values; avoid silent coercion.",
+        "KeyError": "Read each input contract and preserve source identifiers.",
+        "hardcoded": "A solution must work on all three changed-input scenarios."
+      },
+      "reflection_prompts": [
+        "What metadata must accompany a real count table before interpreting treated-versus-control differences?"
+      ],
+      "learning_evidence": {
+        "learn": "Prediction and investigation only",
+        "apply": "Public changed-input practice checks",
+        "prove": "Independent transfer practice, not retained-mastery certification"
+      }
+    }
+  ],
+  "capstone": {
+    "id": "N04-CAPSTONE",
+    "title": "Export a source-aware miniature NGS QC report",
+    "competencies": [],
+    "why": "Package coverage, mapping summaries and library counts into one auditable result.",
+    "explain": [
+      "Technical QC and count-level summaries are appropriate outputs; unvalidated differential-expression significance is not.",
+      "Field and read counts are not independent biological replicates.",
+      "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+    ],
+    "worked_example": {
+      "code": "records=[4,6];print({'library_size':sum(records),'n_records':len(records)})",
+      "predict": "Predict the printed output before running."
+    },
+    "prediction_answer": "Explain the output using the source data and the declared denominator.",
+    "walkthrough": [
+      "Technical QC and count-level summaries are appropriate outputs; unvalidated differential-expression significance is not.",
+      "Keep a dictionary of sample library sizes and a set of covered base indices.",
+      "Which assumption could fail with unfamiliar samples?"
+    ],
+    "investigate": [
+      "Change one input and compare the predicted and observed output.",
+      "Try an empty, ambiguous or boundary-valued input.",
+      "Explain why a correct Python result is not evidence of a biological effect."
+    ],
+    "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+    "misconception": "Field and read counts are not independent biological replicates.",
+    "scientific_boundary": "Mapping entries, read alignments, count tables and sample metadata are synthetic. Coverage and CPM do not establish differential expression or a verified mapped genome.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Predict the concrete output, execute the genuine Python example, then change an input.",
+        "starter_code": "# N04-CAPSTONE | LEARN | Export a source-aware miniature NGS QC report\n# TASK: Predict the demonstration output. Change a meaningful input.\n\nrecords=[4,6];print({'library_size':sum(records),'n_records':len(records)})\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Integrated practice",
+        "description": "From data return result={'mapping_rate':mapped/multi fraction,'sample_totals':sample→sum count,'covered_bp':unique mapped coverage} with 0-based half-open coordinates.",
+        "starter_code": "# N04-CAPSTONE | APPLY | Export a source-aware miniature NGS QC report\n# TASK: From data return result={'mapping_rate':mapped/multi\n# fraction,'sample_totals':sample→sum count,'covered_bp':unique mapped coverage}\n# with 0-based half-open coordinates.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "length": 12,
+            "mappings": [
+              {
+                "id": "a",
+                "status": "mapped",
+                "start": 1,
+                "end": 5
+              },
+              {
+                "id": "b",
+                "status": "unmapped",
+                "start": 0,
+                "end": 0
+              },
+              {
+                "id": "c",
+                "status": "multi",
+                "start": 3,
+                "end": 7
+              },
+              {
+                "id": "d",
+                "status": "mapped",
+                "start": 8,
+                "end": 12
+              }
+            ],
+            "counts": [
+              {
+                "sample": "S1",
+                "gene": "G1",
+                "count": 10
+              },
+              {
+                "sample": "S1",
+                "gene": "G2",
+                "count": 30
+              },
+              {
+                "sample": "S2",
+                "gene": "G1",
+                "count": 20
+              },
+              {
+                "sample": "S2",
+                "gene": "G2",
+                "count": 0
+              }
+            ],
+            "feature": "G1"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "data": {
+                "length": 12,
+                "mappings": [
+                  {
+                    "id": "a",
+                    "status": "mapped",
+                    "start": 1,
+                    "end": 5
+                  },
+                  {
+                    "id": "b",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "c",
+                    "status": "multi",
+                    "start": 3,
+                    "end": 7
+                  },
+                  {
+                    "id": "d",
+                    "status": "mapped",
+                    "start": 8,
+                    "end": 12
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "S1",
+                    "gene": "G1",
+                    "count": 10
+                  },
+                  {
+                    "sample": "S1",
+                    "gene": "G2",
+                    "count": 30
+                  },
+                  {
+                    "sample": "S2",
+                    "gene": "G1",
+                    "count": 20
+                  },
+                  {
+                    "sample": "S2",
+                    "gene": "G2",
+                    "count": 0
+                  }
+                ],
+                "feature": "G1"
+              }
+            },
+            "assertions": [
+              "result['mapping_rate']==sum(r['status']!='unmapped' for r in data['mappings'])/len(data['mappings'])",
+              "result['covered_bp']<=data['length']"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "length": 8,
+                "mappings": [
+                  {
+                    "id": "x",
+                    "status": "mapped",
+                    "start": 0,
+                    "end": 3
+                  },
+                  {
+                    "id": "y",
+                    "status": "mapped",
+                    "start": 2,
+                    "end": 8
+                  },
+                  {
+                    "id": "z",
+                    "status": "multi",
+                    "start": 1,
+                    "end": 4
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "A",
+                    "gene": "X",
+                    "count": 0
+                  },
+                  {
+                    "sample": "A",
+                    "gene": "Y",
+                    "count": 0
+                  },
+                  {
+                    "sample": "B",
+                    "gene": "X",
+                    "count": 6
+                  },
+                  {
+                    "sample": "B",
+                    "gene": "Y",
+                    "count": 14
+                  }
+                ],
+                "feature": "X"
+              }
+            },
+            "assertions": [
+              "result['mapping_rate']==sum(r['status']!='unmapped' for r in data['mappings'])/len(data['mappings'])",
+              "result['covered_bp']<=data['length']"
+            ]
+          },
+          {
+            "inputs": {
+              "data": {
+                "length": 10,
+                "mappings": [
+                  {
+                    "id": "i",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "j",
+                    "status": "mapped",
+                    "start": 9,
+                    "end": 12
+                  },
+                  {
+                    "id": "k",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "l",
+                    "status": "mapped",
+                    "start": 0,
+                    "end": 5
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "p1",
+                    "gene": "a",
+                    "count": 4
+                  },
+                  {
+                    "sample": "p1",
+                    "gene": "a",
+                    "count": 6
+                  },
+                  {
+                    "sample": "p2",
+                    "gene": "b",
+                    "count": 9
+                  }
+                ],
+                "feature": "a"
+              }
+            },
+            "assertions": [
+              "result['mapping_rate']==sum(r['status']!='unmapped' for r in data['mappings'])/len(data['mappings'])",
+              "result['covered_bp']<=data['length']"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Technical QC and count-level summaries are appropriate outputs; unvalidated differential-expression significance is not.",
+          "probe": "What assumption would break this analysis on a real experiment?",
+          "check": "Check changed inputs, missing cases and source provenance."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "For sample return result={'unique_map_fraction':exact mapped fraction,'zero_lib_samples':[sorted sample IDs with zero library sum], 'total_assigned_counts':sum counts}; do not modify inputs.",
+        "starter_code": "# N04-CAPSTONE | PROVE | Export a source-aware miniature NGS QC report\n# TASK: For sample return result={'unique_map_fraction':exact mapped\n# fraction,'zero_lib_samples':[sorted sample IDs with zero library sum],\n# 'total_assigned_counts':sum counts}; do not modify inputs.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "length": 12,
+            "mappings": [
+              {
+                "id": "a",
+                "status": "mapped",
+                "start": 1,
+                "end": 5
+              },
+              {
+                "id": "b",
+                "status": "unmapped",
+                "start": 0,
+                "end": 0
+              },
+              {
+                "id": "c",
+                "status": "multi",
+                "start": 3,
+                "end": 7
+              },
+              {
+                "id": "d",
+                "status": "mapped",
+                "start": 8,
+                "end": 12
+              }
+            ],
+            "counts": [
+              {
+                "sample": "S1",
+                "gene": "G1",
+                "count": 10
+              },
+              {
+                "sample": "S1",
+                "gene": "G2",
+                "count": 30
+              },
+              {
+                "sample": "S2",
+                "gene": "G1",
+                "count": 20
+              },
+              {
+                "sample": "S2",
+                "gene": "G2",
+                "count": 0
+              }
+            ],
+            "feature": "G1"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "length": 12,
+                "mappings": [
+                  {
+                    "id": "a",
+                    "status": "mapped",
+                    "start": 1,
+                    "end": 5
+                  },
+                  {
+                    "id": "b",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "c",
+                    "status": "multi",
+                    "start": 3,
+                    "end": 7
+                  },
+                  {
+                    "id": "d",
+                    "status": "mapped",
+                    "start": 8,
+                    "end": 12
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "S1",
+                    "gene": "G1",
+                    "count": 10
+                  },
+                  {
+                    "sample": "S1",
+                    "gene": "G2",
+                    "count": 30
+                  },
+                  {
+                    "sample": "S2",
+                    "gene": "G1",
+                    "count": 20
+                  },
+                  {
+                    "sample": "S2",
+                    "gene": "G2",
+                    "count": 0
+                  }
+                ],
+                "feature": "G1"
+              }
+            },
+            "assertions": [
+              "result['total_assigned_counts']==sum(r['count'] for r in sample['counts'])",
+              "result['zero_lib_samples']==sorted(set(r['sample'] for r in sample['counts'] if sum(x['count'] for x in sample['counts'] if x['sample']==r['sample'])==0))"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "length": 8,
+                "mappings": [
+                  {
+                    "id": "x",
+                    "status": "mapped",
+                    "start": 0,
+                    "end": 3
+                  },
+                  {
+                    "id": "y",
+                    "status": "mapped",
+                    "start": 2,
+                    "end": 8
+                  },
+                  {
+                    "id": "z",
+                    "status": "multi",
+                    "start": 1,
+                    "end": 4
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "A",
+                    "gene": "X",
+                    "count": 0
+                  },
+                  {
+                    "sample": "A",
+                    "gene": "Y",
+                    "count": 0
+                  },
+                  {
+                    "sample": "B",
+                    "gene": "X",
+                    "count": 6
+                  },
+                  {
+                    "sample": "B",
+                    "gene": "Y",
+                    "count": 14
+                  }
+                ],
+                "feature": "X"
+              }
+            },
+            "assertions": [
+              "result['total_assigned_counts']==sum(r['count'] for r in sample['counts'])",
+              "result['zero_lib_samples']==sorted(set(r['sample'] for r in sample['counts'] if sum(x['count'] for x in sample['counts'] if x['sample']==r['sample'])==0))"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "length": 10,
+                "mappings": [
+                  {
+                    "id": "i",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "j",
+                    "status": "mapped",
+                    "start": 9,
+                    "end": 12
+                  },
+                  {
+                    "id": "k",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "l",
+                    "status": "mapped",
+                    "start": 0,
+                    "end": 5
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "p1",
+                    "gene": "a",
+                    "count": 4
+                  },
+                  {
+                    "sample": "p1",
+                    "gene": "a",
+                    "count": 6
+                  },
+                  {
+                    "sample": "p2",
+                    "gene": "b",
+                    "count": 9
+                  }
+                ],
+                "feature": "a"
+              }
+            },
+            "assertions": [
+              "result['total_assigned_counts']==sum(r['count'] for r in sample['counts'])",
+              "result['zero_lib_samples']==sorted(set(r['sample'] for r in sample['counts'] if sum(x['count'] for x in sample['counts'] if x['sample']==r['sample'])==0))"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Technical QC and count-level summaries are appropriate outputs; unvalidated differential-expression significance is not.",
+          "probe": "Which decision must be verified against actual biological sources?",
+          "check": "Solve with a different operation or data representation than Apply."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Keep a dictionary of sample library sizes and a set of covered base indices.",
+        "Use explicit checks and preserve source identity."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Inspect declared data format, dimensionality and missing values.",
+      "TypeError": "Check string versus numeric values; avoid silent coercion.",
+      "KeyError": "Read each input contract and preserve source identifiers.",
+      "hardcoded": "A solution must work on all three changed-input scenarios."
+    },
+    "reflection_prompts": [
+      "What would you check before using this method on a real dataset?"
+    ],
+    "learning_evidence": {
+      "learn": "Prediction and investigation only",
+      "apply": "Public changed-input practice checks",
+      "prove": "Independent transfer practice, not retained-mastery certification"
+    }
+  },
+  "review": {
+    "id": "N04-REVIEW",
+    "title": "Delayed coverage and CPM recall",
+    "competencies": [],
+    "why": "Transfer the correct unit and denominator choices without a worked key.",
+    "explain": [
+      "Coverage counts positional bases; library size counts assigned feature observations per sample.",
+      "Coverage and CPM are different quantities and must never be interchanged.",
+      "The inputs are deliberately synthetic for practice; matching an expected result does not validate a biological interpretation."
+    ],
+    "worked_example": {
+      "code": "",
+      "predict": "Recall the earlier scientific reasoning before opening the code."
+    },
+    "prediction_answer": "Explain the output using the source data and the declared denominator.",
+    "walkthrough": [
+      "Coverage counts positional bases; library size counts assigned feature observations per sample.",
+      "Check data types and source order explicitly.",
+      "Which assumption could fail with unfamiliar samples?"
+    ],
+    "investigate": [
+      "Change one input and compare the predicted and observed output.",
+      "Try an empty, ambiguous or boundary-valued input.",
+      "Explain why a correct Python result is not evidence of a biological effect."
+    ],
+    "debug_task": "Find a changed input that reveals the danger of a hardcoded answer or a wrong denominator.",
+    "misconception": "Coverage and CPM are different quantities and must never be interchanged.",
+    "scientific_boundary": "Mapping entries, read alignments, count tables and sample metadata are synthetic. Coverage and CPM do not establish differential expression or a verified mapped genome.",
+    "phases": {
+      "learn": {
+        "title": "Predict, run, investigate",
+        "description": "Recall an earlier technique from memory; no worked answer is supplied.",
+        "starter_code": "# N04-REVIEW | LEARN | Delayed coverage and CPM recall\n# TASK: Recall the method independently before trying Prove.\n\n\n",
+        "preview_inputs": {}
+      },
+      "apply": {
+        "title": "Review without a worked key",
+        "description": "Recall previous module operations; no worked example.",
+        "starter_code": "# N04-REVIEW | APPLY | Delayed coverage and CPM recall\n# TASK: Recall previous module operations; no worked example.\n# INPUTS: data\n\n\n",
+        "preview_inputs": {
+          "data": {
+            "length": 12,
+            "mappings": [
+              {
+                "id": "a",
+                "status": "mapped",
+                "start": 1,
+                "end": 5
+              },
+              {
+                "id": "b",
+                "status": "unmapped",
+                "start": 0,
+                "end": 0
+              },
+              {
+                "id": "c",
+                "status": "multi",
+                "start": 3,
+                "end": 7
+              },
+              {
+                "id": "d",
+                "status": "mapped",
+                "start": 8,
+                "end": 12
+              }
+            ],
+            "counts": [
+              {
+                "sample": "S1",
+                "gene": "G1",
+                "count": 10
+              },
+              {
+                "sample": "S1",
+                "gene": "G2",
+                "count": 30
+              },
+              {
+                "sample": "S2",
+                "gene": "G1",
+                "count": 20
+              },
+              {
+                "sample": "S2",
+                "gene": "G2",
+                "count": 0
+              }
+            ],
+            "feature": "G1"
+          }
+        },
+        "practice_feedback": {
+          "why": "Coverage counts positional bases; library size counts assigned feature observations per sample.",
+          "probe": "What assumption would break this analysis on a real experiment?",
+          "check": "Check changed inputs, missing cases and source provenance."
+        }
+      },
+      "prove": {
+        "title": "Independent transfer",
+        "description": "From sample return result={'mapped_bp':unique positions with status='mapped','libs':dict(sample→total assigned count)} preserving records.",
+        "starter_code": "# N04-REVIEW | PROVE | Delayed coverage and CPM recall\n# TASK: From sample return result={'mapped_bp':unique positions with\n# status='mapped','libs':dict(sample→total assigned count)} preserving records.\n# INPUTS: sample\n\n\n",
+        "preview_inputs": {
+          "sample": {
+            "length": 12,
+            "mappings": [
+              {
+                "id": "a",
+                "status": "mapped",
+                "start": 1,
+                "end": 5
+              },
+              {
+                "id": "b",
+                "status": "unmapped",
+                "start": 0,
+                "end": 0
+              },
+              {
+                "id": "c",
+                "status": "multi",
+                "start": 3,
+                "end": 7
+              },
+              {
+                "id": "d",
+                "status": "mapped",
+                "start": 8,
+                "end": 12
+              }
+            ],
+            "counts": [
+              {
+                "sample": "S1",
+                "gene": "G1",
+                "count": 10
+              },
+              {
+                "sample": "S1",
+                "gene": "G2",
+                "count": 30
+              },
+              {
+                "sample": "S2",
+                "gene": "G1",
+                "count": 20
+              },
+              {
+                "sample": "S2",
+                "gene": "G2",
+                "count": 0
+              }
+            ],
+            "feature": "G1"
+          }
+        },
+        "public_checks": [
+          {
+            "inputs": {
+              "sample": {
+                "length": 12,
+                "mappings": [
+                  {
+                    "id": "a",
+                    "status": "mapped",
+                    "start": 1,
+                    "end": 5
+                  },
+                  {
+                    "id": "b",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "c",
+                    "status": "multi",
+                    "start": 3,
+                    "end": 7
+                  },
+                  {
+                    "id": "d",
+                    "status": "mapped",
+                    "start": 8,
+                    "end": 12
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "S1",
+                    "gene": "G1",
+                    "count": 10
+                  },
+                  {
+                    "sample": "S1",
+                    "gene": "G2",
+                    "count": 30
+                  },
+                  {
+                    "sample": "S2",
+                    "gene": "G1",
+                    "count": 20
+                  },
+                  {
+                    "sample": "S2",
+                    "gene": "G2",
+                    "count": 0
+                  }
+                ],
+                "feature": "G1"
+              }
+            },
+            "assertions": [
+              "result['mapped_bp']<=sample['length']",
+              "result['libs']=={s:sum(r['count'] for r in sample['counts'] if r['sample']==s) for s in set(r['sample'] for r in sample['counts'])}"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "length": 8,
+                "mappings": [
+                  {
+                    "id": "x",
+                    "status": "mapped",
+                    "start": 0,
+                    "end": 3
+                  },
+                  {
+                    "id": "y",
+                    "status": "mapped",
+                    "start": 2,
+                    "end": 8
+                  },
+                  {
+                    "id": "z",
+                    "status": "multi",
+                    "start": 1,
+                    "end": 4
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "A",
+                    "gene": "X",
+                    "count": 0
+                  },
+                  {
+                    "sample": "A",
+                    "gene": "Y",
+                    "count": 0
+                  },
+                  {
+                    "sample": "B",
+                    "gene": "X",
+                    "count": 6
+                  },
+                  {
+                    "sample": "B",
+                    "gene": "Y",
+                    "count": 14
+                  }
+                ],
+                "feature": "X"
+              }
+            },
+            "assertions": [
+              "result['mapped_bp']<=sample['length']",
+              "result['libs']=={s:sum(r['count'] for r in sample['counts'] if r['sample']==s) for s in set(r['sample'] for r in sample['counts'])}"
+            ]
+          },
+          {
+            "inputs": {
+              "sample": {
+                "length": 10,
+                "mappings": [
+                  {
+                    "id": "i",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "j",
+                    "status": "mapped",
+                    "start": 9,
+                    "end": 12
+                  },
+                  {
+                    "id": "k",
+                    "status": "unmapped",
+                    "start": 0,
+                    "end": 0
+                  },
+                  {
+                    "id": "l",
+                    "status": "mapped",
+                    "start": 0,
+                    "end": 5
+                  }
+                ],
+                "counts": [
+                  {
+                    "sample": "p1",
+                    "gene": "a",
+                    "count": 4
+                  },
+                  {
+                    "sample": "p1",
+                    "gene": "a",
+                    "count": 6
+                  },
+                  {
+                    "sample": "p2",
+                    "gene": "b",
+                    "count": 9
+                  }
+                ],
+                "feature": "a"
+              }
+            },
+            "assertions": [
+              "result['mapped_bp']<=sample['length']",
+              "result['libs']=={s:sum(r['count'] for r in sample['counts'] if r['sample']==s) for s in set(r['sample'] for r in sample['counts'])}"
+            ]
+          }
+        ],
+        "practice_feedback": {
+          "why": "Coverage counts positional bases; library size counts assigned feature observations per sample.",
+          "probe": "Which decision must be verified against actual biological sources?",
+          "check": "Solve with a different operation or data representation than Apply."
+        }
+      }
+    },
+    "hints": {
+      "apply": [
+        "Start by checking the input keys and expected result type.",
+        "Use explicit checks and preserve source identity."
+      ],
+      "prove": []
+    },
+    "feedback": {
+      "ValueError": "Inspect declared data format, dimensionality and missing values.",
+      "TypeError": "Check string versus numeric values; avoid silent coercion.",
+      "KeyError": "Read each input contract and preserve source identifiers.",
+      "hardcoded": "A solution must work on all three changed-input scenarios."
+    },
+    "reflection_prompts": [
+      "What would you check before using this method on a real dataset?"
+    ],
+    "learning_evidence": {
+      "learn": "Prediction and investigation only",
+      "apply": "Public changed-input practice checks",
+      "prove": "Independent transfer practice, not retained-mastery certification"
+    }
+  },
+  "retention": {
+    "recommend_after_hours": 24,
+    "automatic_certification": false
+  },
+  "final_project": {
+    "name": "n04_sequence_project.py",
+    "brief": "Export a source-aware miniature NGS QC report",
+    "status": "INTEGRATED_LEARNER_PILOT"
+  }
+}

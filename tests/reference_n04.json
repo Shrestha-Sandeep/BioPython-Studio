@@ -1,0 +1,30 @@
+{
+  "N04-G01": {
+    "apply": "from collections import Counter\nc=Counter(r['status'] for r in data['mappings']);n=len(data['mappings']);result={'mapped':c['mapped'],'multi':c['multi'],'unmapped':c['unmapped'],'at_least_once_fraction':(c['mapped']+c['multi'])/n if n else None}\nprint(result)",
+    "prove": "from collections import Counter\nc=Counter(r['status'] for r in sample['mappings']);n=len(sample['mappings']);result={'total':n,'unique_mapped_fraction':c['mapped']/n if n else None,'multi_fraction':c['multi']/n if n else None}\nprint(result)"
+  },
+  "N04-G02": {
+    "apply": "result=[0]*data['length']\nfor r in data['mappings']:\n if r['status']=='mapped':\n  for i in range(max(0,r['start']),min(data['length'],r['end'])):result[i]+=1\nprint(result)",
+    "prove": "d=[0]*sample['length']\nfor r in sample['mappings']:\n if r['status']=='mapped':\n  for i in range(max(0,r['start']),min(sample['length'],r['end'])):d[i]+=1\nresult={'covered_positions':sum(x>0 for x in d),'mean_depth':sum(d)/sample['length'] if sample['length'] else None}\nprint(result)"
+  },
+  "N04-G03": {
+    "apply": "import pandas as pd\ndf=pd.DataFrame(data['counts']);m=df.pivot_table(index='sample',columns='gene',values='count',aggfunc='sum',fill_value=0);result={str(s):{str(g):int(m.loc[s,g]) for g in m.columns} for s in m.index}\nprint(result)",
+    "prove": "import pandas as pd\ndf=pd.DataFrame(sample['counts']);result={'samples':sorted(df['sample'].unique().tolist()),'genes':sorted(df['gene'].unique().tolist()),'total':int(df['count'].sum())}\nprint(result)"
+  },
+  "N04-G04": {
+    "apply": "from collections import defaultdict\nmat=defaultdict(lambda:defaultdict(int))\nfor r in data['counts']:mat[r['sample']][r['gene']]+=r['count']\nresult={s:{g:(1e6*v/sum(row.values()) if sum(row.values()) else None) for g,v in row.items()} for s,row in mat.items()}\nprint(result)",
+    "prove": "from collections import defaultdict\nsums=defaultdict(int)\nfor r in sample['counts']:sums[r['sample']]+=r['count']\nresult={s:(1e6 if n else None) for s,n in sums.items()}\nprint(result)"
+  },
+  "N04-G05": {
+    "apply": "from collections import defaultdict\nn=len(data['mappings']);library=defaultdict(int)\nfor r in data['counts']:library[r['sample']]+=r['count']\nresult={'mapped_fraction':sum(r['status']!='unmapped' for r in data['mappings'])/n if n else None,'sample_libraries':dict(library),'feature':data['feature']}\nprint(result)",
+    "prove": "covered=set()\nfor r in sample['mappings']:\n if r['status']=='mapped':covered.update(range(max(0,r['start']),min(sample['length'],r['end'])))\nresult={'unique_mapped':sum(r['status']=='mapped' for r in sample['mappings']),'covered_reference_bases':len(covered),'count_rows':len(sample['counts'])}\nprint(result)"
+  },
+  "N04-CAPSTONE": {
+    "apply": "from collections import defaultdict\nlib=defaultdict(int)\nfor r in data['counts']:lib[r['sample']]+=r['count']\ncovered=set()\nfor r in data['mappings']:\n if r['status']=='mapped':covered.update(range(max(0,r['start']),min(data['length'],r['end'])))\nresult={'mapping_rate':sum(r['status']!='unmapped' for r in data['mappings'])/len(data['mappings']),'sample_totals':dict(lib),'covered_bp':len(covered)}\nprint(result)",
+    "prove": "from collections import defaultdict\nlib=defaultdict(int)\nfor r in sample['counts']:lib[r['sample']]+=r['count']\nresult={'unique_map_fraction':sum(r['status']=='mapped' for r in sample['mappings'])/len(sample['mappings']),'zero_lib_samples':sorted(s for s,n in lib.items() if n==0),'total_assigned_counts':sum(lib.values())}\nprint(result)"
+  },
+  "N04-REVIEW": {
+    "apply": "",
+    "prove": "from collections import defaultdict\ncovered=set();lib=defaultdict(int)\nfor r in sample['mappings']:\n if r['status']=='mapped':covered.update(range(max(0,r['start']),min(sample['length'],r['end'])))\nfor r in sample['counts']:lib[r['sample']]+=r['count']\nresult={'mapped_bp':len(covered),'libs':dict(lib)}\nprint(result)"
+  }
+}

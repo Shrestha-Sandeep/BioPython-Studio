@@ -1,0 +1,30 @@
+{
+  "A02-G01": {
+    "apply": "import numpy as np\nraw=np.asarray(data[\"image\"],dtype=np.uint16)\ncorrected=np.maximum(raw.astype(float)-data[\"background\"],0)\nmask=corrected>data[\"threshold\"]\nresult={\"positive_pixels\":int(np.count_nonzero(mask)),\"corrected_max\":float(corrected.max())}\nprint(result)",
+    "prove": "import numpy as np\nraw=np.asarray(data[\"image\"],dtype=np.uint16)\ncorrected=np.maximum(raw.astype(float)-data[\"background\"],0)\nmask=corrected>data[\"threshold\"]\nresult={\"positive_pixels\":int(np.count_nonzero(mask)),\"corrected_max\":float(corrected.max())}\nprint(result)"
+  },
+  "A02-G02": {
+    "apply": "import numpy as np\nimg=np.asarray(data[\"image\"],dtype=float)\nborder=np.concatenate([img[0,:],img[-1,:],img[1:-1,0],img[1:-1,-1]])\npolarity=\"dark\" if float(np.median(border))>=0.55*data[\"max_possible\"] else \"bright\"\nresult={\"polarity\":polarity,\"pixels\":int(np.count_nonzero(img<data[\"threshold\"] if polarity==\"dark\" else img>data[\"threshold\"]))}\nprint(result)",
+    "prove": "import numpy as np\nimg=np.asarray(data[\"image\"],dtype=float)\nborder=np.concatenate([img[0,:],img[-1,:],img[1:-1,0],img[1:-1,-1]])\npolarity=\"dark\" if float(np.median(border))>=0.55*data[\"max_possible\"] else \"bright\"\nresult={\"polarity\":polarity,\"pixels\":int(np.count_nonzero(img<data[\"threshold\"] if polarity==\"dark\" else img>data[\"threshold\"]))}\nprint(result)"
+  },
+  "A02-G03": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nmask=np.asarray(data[\"mask\"],bool)\nlabels,n=ndi.label(mask)\ncounts=np.bincount(labels.ravel())\nvalid=np.flatnonzero(counts[1:]>=data[\"min_area\"])+1\nkept=np.isin(labels,valid)&mask\nresult={\"kept_objects\":int(len(valid)),\"kept_pixels\":int(kept.sum())}\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nmask=np.asarray(data[\"mask\"],bool)\nlabels,n=ndi.label(mask)\ncounts=np.bincount(labels.ravel())\nvalid=np.flatnonzero(counts[1:]>=data[\"min_area\"])+1\nkept=np.isin(labels,valid)&mask\nresult={\"kept_objects\":int(len(valid)),\"kept_pixels\":int(kept.sum())}\nprint(result)"
+  },
+  "A02-G04": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nfrom skimage.segmentation import watershed\nmask=np.asarray(data[\"mask\"],bool)\nmarkers=np.zeros(mask.shape,dtype=np.int32)\nfor idx,(y,x) in enumerate(data[\"seeds\"],1):\n    markers[y,x]=idx\nlabels=watershed(-ndi.distance_transform_edt(mask),markers,mask=mask)\nresult={\"objects\":int(len(np.unique(labels[labels>0]))),\"total_px\":int(np.count_nonzero(labels))}\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nfrom skimage.segmentation import watershed\nmask=np.asarray(data[\"mask\"],bool)\nmarkers=np.zeros(mask.shape,dtype=np.int32)\nfor idx,(y,x) in enumerate(data[\"seeds\"],1):\n    markers[y,x]=idx\nlabels=watershed(-ndi.distance_transform_edt(mask),markers,mask=mask)\nresult={\"objects\":int(len(np.unique(labels[labels>0]))),\"total_px\":int(np.count_nonzero(labels))}\nprint(result)"
+  },
+  "A02-G05": {
+    "apply": "import numpy as np\na=np.asarray(data[\"baseline\"],bool)\nb=np.asarray(data[\"variant\"],bool)\ninter=int(np.count_nonzero(a&b));union=int(np.count_nonzero(a|b))\nresult={\"foreground_iou\":float(inter/union if union else 1.0),\"changed_fraction\":float(np.mean(a!=b)),\"verified_accuracy\":False}\nprint(result)",
+    "prove": "import numpy as np\na=np.asarray(data[\"baseline\"],bool)\nb=np.asarray(data[\"variant\"],bool)\ninter=int(np.count_nonzero(a&b));union=int(np.count_nonzero(a|b))\nresult={\"foreground_iou\":float(inter/union if union else 1.0),\"changed_fraction\":float(np.mean(a!=b)),\"verified_accuracy\":False}\nprint(result)"
+  },
+  "A02-CAPSTONE": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nraw=np.asarray(data[\"image\"],dtype=float)\nmask=raw>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else raw<data[\"threshold\"]\nlabels,n=ndi.label(mask)\nareas=np.bincount(labels.ravel())[1:]\nresult={\"candidate_count\":int(np.count_nonzero(areas>=data[\"min_area\"])),\"areas_px\":sorted([int(v) for v in areas if v>=data[\"min_area\"]]),\"validated\":False}\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nraw=np.asarray(data[\"image\"],dtype=float)\nmask=raw>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else raw<data[\"threshold\"]\nlabels,n=ndi.label(mask)\nareas=np.bincount(labels.ravel())[1:]\nresult={\"candidate_count\":int(np.count_nonzero(areas>=data[\"min_area\"])),\"areas_px\":sorted([int(v) for v in areas if v>=data[\"min_area\"]]),\"validated\":False}\nprint(result)"
+  },
+  "A02-REVIEW": {
+    "apply": "import numpy as np\nfrom scipy import ndimage as ndi\nimage=np.asarray(data[\"image\"])\nforeground=image>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else image<data[\"threshold\"]\nlabels,n=ndi.label(foreground)\nresult={\"candidate_count\":int(n),\"foreground_pixels\":int(np.count_nonzero(foreground)),\"validated\":False}\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy import ndimage as ndi\nimage=np.asarray(data[\"image\"])\nforeground=image>data[\"threshold\"] if data[\"foreground\"]==\"bright\" else image<data[\"threshold\"]\nlabels,n=ndi.label(foreground)\nresult={\"candidate_count\":int(n),\"foreground_pixels\":int(np.count_nonzero(foreground)),\"validated\":False}\nprint(result)"
+  }
+}

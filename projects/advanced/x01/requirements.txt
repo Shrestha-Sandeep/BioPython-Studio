@@ -1,0 +1,5 @@
+# CPython 3.12; pinned local ImageJ/napari interoperability QA (not browser Pyodide)
+numpy==2.2.6
+tifffile==2026.9.20
+roifile==2026.9.22
+pytest==8.4.2

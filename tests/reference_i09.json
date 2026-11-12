@@ -1,0 +1,34 @@
+{
+  "I09-G01": {
+    "apply": "import numpy as np\nfrom skimage.measure import regionprops\nlab=np.asarray(data['labels'],int)\nresult=[{'label':int(r.label),'area':int(r.area),'centroid_yx':tuple(map(float,r.centroid))} for r in regionprops(lab)]\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nfrom skimage.measure import regionprops\nlab=np.asarray(sample['labels'],int)\nresult=[float(r.area)*sample['pixel_um']**2 for r in regionprops(lab)]\nprint(str(result)[:450])"
+  },
+  "I09-G02": {
+    "apply": "import numpy as np\nfrom skimage.measure import regionprops\nresult=[float(r.mean_intensity) for r in regionprops(np.asarray(data['labels'],int),intensity_image=np.asarray(data['signal'],float))]\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nfrom skimage.measure import regionprops\nlab=np.asarray(sample['labels'],int);a=np.asarray(sample['signal'],float)\nbg=float(np.median(a[lab==0]))\nresult=[float(r.mean_intensity) for r in regionprops(lab,intensity_image=np.maximum(a-bg,0))]\nprint(str(result)[:450])"
+  },
+  "I09-G03": {
+    "apply": "import numpy as np\na=np.asarray(data['signal'],float);n=np.asarray(data['labels'])>0\nnm=float(a[n].mean()) if n.any() else None\nout=float(a[~n].mean()) if (~n).any() else None\nresult={'nuclear_mean':nm,'outside_mean':out,'ratio':nm/out if nm is not None and out not in (None,0) else None}\nprint(str(result)[:450])",
+    "prove": "import numpy as np\na=np.asarray(sample['second'],float);m=np.asarray(sample['labels'])>0\nresult=float(a[m].mean()-a[~m].mean()) if m.any() and (~m).any() else None\nprint(str(result)[:450])"
+  },
+  "I09-G04": {
+    "apply": "import numpy as np\nm=np.asarray(data['labels'])>0;a=np.asarray(data['signal'],float)[m];b=np.asarray(data['second'],float)[m]\nresult=float(np.corrcoef(a,b)[0,1]) if len(a)>1 and a.std()>0 and b.std()>0 else None\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nm=np.asarray(sample['labels'])>0;a=(np.asarray(sample['signal'])>sample['threshold'])&m;b=(np.asarray(sample['second'])>sample['threshold'])&m\nresult=float((a&b).sum()/a.sum()) if a.any() else None\nprint(str(result)[:450])"
+  },
+  "I09-G05": {
+    "apply": "import numpy as np\nfrom skimage.feature import peak_local_max\na=np.asarray(data['signal'],float)\nresult=peak_local_max(a,min_distance=data['min_distance'],threshold_abs=data['threshold'],exclude_border=False)\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nfrom skimage.feature import peak_local_max\na=np.asarray(sample['second'],float)\nresult=int(len(peak_local_max(a,min_distance=1,threshold_abs=sample['threshold'],exclude_border=False)))\nprint(str(result)[:450])"
+  },
+  "I09-G06": {
+    "apply": "import numpy as np\nfrom scipy.spatial.distance import cdist\nresult=cdist(np.asarray(data['points'],float),np.asarray(data['centers'],float)).min(axis=1).tolist()\nprint(str(result)[:450])",
+    "prove": "import numpy as np\nfrom scipy.spatial.distance import cdist\nresult=(cdist(np.asarray(sample['points'],float),np.asarray(sample['centers'],float)).min(axis=1)*sample['pixel_um']).tolist()\nprint(str(result)[:450])"
+  },
+  "I09-CAPSTONE": {
+    "apply": "import numpy as np\nfrom skimage.measure import regionprops\nlab=np.asarray(data['labels'],int);sig=np.asarray(data['signal'],float)\nrows=[{'label':int(r.label),'area_px':int(r.area),'mean_display':float(r.mean_intensity)} for r in regionprops(lab,intensity_image=sig)]\nresult={'rows':rows,'validated':False}\nprint(result)",
+    "prove": "import numpy as np\nfrom skimage.morphology import binary_erosion,disk\nlab=np.asarray(sample['labels'],int);sig=np.asarray(sample['signal'],float)\nrows=[]\nfor k in sorted(set(lab.ravel())-{0}):\n    mask=lab==k;inner=binary_erosion(mask,footprint=disk(1))&mask;edge=mask&~inner\n    rows.append({'label':int(k),'edge_mean':float(sig[edge].mean()) if edge.any() else None,'core_mean':float(sig[inner].mean()) if inner.any() else None})\nresult={'rows':rows,'raw':False}\nprint(result)"
+  },
+  "I09-REVIEW": {
+    "apply": "",
+    "prove": "import numpy as np\na=np.asarray(sample['second'],float);m=np.asarray(sample['labels'])>0\nresult=float(a[m].mean()) if m.any() else None\nprint(result)"
+  }
+}

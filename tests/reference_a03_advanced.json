@@ -1,0 +1,30 @@
+{
+  "A03-G01": {
+    "apply": "import numpy as np\nt=np.asarray(data[\"truth\"],int);p=np.asarray(data[\"pred\"],int)\ninter=int(np.count_nonzero((t>0)&(p>0)));union=int(np.count_nonzero((t>0)|(p>0)))\nresult={\"pixel_iou\":float(inter/union if union else 1.0),\"truth_objects\":int(len(np.unique(t[t>0]))),\"pred_objects\":int(len(np.unique(p[p>0])))}\nprint(result)",
+    "prove": "import numpy as np\nt=np.asarray(data[\"truth\"],int);p=np.asarray(data[\"pred\"],int)\ninter=int(np.count_nonzero((t>0)&(p>0)));union=int(np.count_nonzero((t>0)|(p>0)))\nresult={\"pixel_iou\":float(inter/union if union else 1.0),\"truth_objects\":int(len(np.unique(t[t>0]))),\"pred_objects\":int(len(np.unique(p[p>0])))}\nprint(result)"
+  },
+  "A03-G02": {
+    "apply": "import numpy as np\nfrom scipy.optimize import linear_sum_assignment\nm=np.asarray(data[\"iou\"],float)\nvalid=m>=data[\"cutoff\"]\nreward=valid*(min(m.shape)+1)+valid*m\nr,c=linear_sum_assignment(-reward)\ntp=int(sum(bool(valid[i,j]) for i,j in zip(r,c)))\nresult={\"tp\":tp,\"fp\":int(m.shape[1]-tp),\"fn\":int(m.shape[0]-tp)}\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy.optimize import linear_sum_assignment\nm=np.asarray(data[\"iou\"],float)\nvalid=m>=data[\"cutoff\"]\nreward=valid*(min(m.shape)+1)+valid*m\nr,c=linear_sum_assignment(-reward)\ntp=int(sum(bool(valid[i,j]) for i,j in zip(r,c)))\nresult={\"tp\":tp,\"fp\":int(m.shape[1]-tp),\"fn\":int(m.shape[0]-tp)}\nprint(result)"
+  },
+  "A03-G03": {
+    "apply": "cal={r[\"group_id\"] for r in data[\"records\"] if r[\"split\"]==\"calibration\"}\nhold={r[\"group_id\"] for r in data[\"records\"] if r[\"split\"]==\"holdout\"}\noverlap=sorted(cal&hold)\nresult={\"safe\":not bool(overlap),\"overlap\":overlap}\nprint(result)",
+    "prove": "cal={r[\"group_id\"] for r in data[\"records\"] if r[\"split\"]==\"calibration\"}\nhold={r[\"group_id\"] for r in data[\"records\"] if r[\"split\"]==\"holdout\"}\noverlap=sorted(cal&hold)\nresult={\"safe\":not bool(overlap),\"overlap\":overlap}\nprint(result)"
+  },
+  "A03-G04": {
+    "apply": "tp=data[\"tp\"];fp=data[\"fp\"];fn=data[\"fn\"]\nprecision=tp/(tp+fp) if tp+fp else (1.0 if fn==0 else 0.0)\nrecall=tp/(tp+fn) if tp+fn else 1.0\nf1=2*precision*recall/(precision+recall) if precision+recall else 0.0\nresult={\"precision\":float(precision),\"recall\":float(recall),\"f1\":float(f1),\"biological_n\":len(set(data[\"animal_ids\"]))}\nprint(result)",
+    "prove": "tp=data[\"tp\"];fp=data[\"fp\"];fn=data[\"fn\"]\nprecision=tp/(tp+fp) if tp+fp else (1.0 if fn==0 else 0.0)\nrecall=tp/(tp+fn) if tp+fn else 1.0\nf1=2*precision*recall/(precision+recall) if precision+recall else 0.0\nresult={\"precision\":float(precision),\"recall\":float(recall),\"f1\":float(f1),\"biological_n\":len(set(data[\"animal_ids\"]))}\nprint(result)"
+  },
+  "A03-G05": {
+    "apply": "pixel=data[\"annotation_type\"]==\"pixel_masks\"\nresult={\"pixel_iou_allowed\":bool(pixel),\"count_abs_error\":abs(data[\"pred_count\"]-data[\"truth_count\"]),\"claim\":\"pixel_reference_available\" if pixel else \"counts_only\"}\nprint(result)",
+    "prove": "pixel=data[\"annotation_type\"]==\"pixel_masks\"\nresult={\"pixel_iou_allowed\":bool(pixel),\"count_abs_error\":abs(data[\"pred_count\"]-data[\"truth_count\"]),\"claim\":\"pixel_reference_available\" if pixel else \"counts_only\"}\nprint(result)"
+  },
+  "A03-CAPSTONE": {
+    "apply": "import numpy as np\nfrom scipy.optimize import linear_sum_assignment\nt=np.asarray(data[\"truth\"],int);p=np.asarray(data[\"pred\"],int)\ntids=[x for x in np.unique(t) if x>0];pids=[x for x in np.unique(p) if x>0]\nm=np.zeros((len(tids),len(pids)),float)\nfor i,a in enumerate(tids):\n    for j,b in enumerate(pids):\n        inter=np.count_nonzero((t==a)&(p==b));union=np.count_nonzero((t==a)|(p==b))\n        m[i,j]=inter/union if union else 0.0\nvalid=m>=data[\"cutoff\"]\nif m.size:\n    rr,cc=linear_sum_assignment(-(valid*(min(m.shape)+1)+m*valid))\n    tp=sum(bool(valid[i,j]) for i,j in zip(rr,cc))\nelse:tp=0\nfp=len(pids)-tp;fn=len(tids)-tp\nf1=2*tp/(2*tp+fp+fn) if 2*tp+fp+fn else 1.0\ninter=np.count_nonzero((t>0)&(p>0));union=np.count_nonzero((t>0)|(p>0))\nresult={\"tp\":int(tp),\"fp\":int(fp),\"fn\":int(fn),\"f1\":float(f1),\"foreground_pixel_iou\":float(inter/union if union else 1.0),\"biological_validated\":False}\nprint(result)",
+    "prove": "import numpy as np\nfrom scipy.optimize import linear_sum_assignment\nt=np.asarray(data[\"truth\"],int);p=np.asarray(data[\"pred\"],int)\ntids=[x for x in np.unique(t) if x>0];pids=[x for x in np.unique(p) if x>0]\nm=np.zeros((len(tids),len(pids)),float)\nfor i,a in enumerate(tids):\n    for j,b in enumerate(pids):\n        inter=np.count_nonzero((t==a)&(p==b));union=np.count_nonzero((t==a)|(p==b))\n        m[i,j]=inter/union if union else 0.0\nvalid=m>=data[\"cutoff\"]\nif m.size:\n    rr,cc=linear_sum_assignment(-(valid*(min(m.shape)+1)+m*valid))\n    tp=sum(bool(valid[i,j]) for i,j in zip(rr,cc))\nelse:tp=0\nfp=len(pids)-tp;fn=len(tids)-tp\nf1=2*tp/(2*tp+fp+fn) if 2*tp+fp+fn else 1.0\ninter=np.count_nonzero((t>0)&(p>0));union=np.count_nonzero((t>0)|(p>0))\nresult={\"tp\":int(tp),\"fp\":int(fp),\"fn\":int(fn),\"f1\":float(f1),\"foreground_pixel_iou\":float(inter/union if union else 1.0),\"biological_validated\":False}\nprint(result)"
+  },
+  "A03-REVIEW": {
+    "apply": "tp=data[\"tp\"];fp=data[\"fp\"];fn=data[\"fn\"]\nf1=2*tp/(2*tp+fp+fn) if 2*tp+fp+fn else 1.0\ntrain={r[\"group_id\"] for r in data[\"records\"] if r[\"split\"]==\"calibration\"}\nhold={r[\"group_id\"] for r in data[\"records\"] if r[\"split\"]==\"holdout\"}\nresult={\"object_f1\":float(f1),\"biological_n\":len(set(data[\"animals\"])),\"valid_holdout\":not bool(train&hold)}\nprint(result)",
+    "prove": "tp=data[\"tp\"];fp=data[\"fp\"];fn=data[\"fn\"]\nf1=2*tp/(2*tp+fp+fn) if 2*tp+fp+fn else 1.0\ntrain={r[\"group_id\"] for r in data[\"records\"] if r[\"split\"]==\"calibration\"}\nhold={r[\"group_id\"] for r in data[\"records\"] if r[\"split\"]==\"holdout\"}\nresult={\"object_f1\":float(f1),\"biological_n\":len(set(data[\"animals\"])),\"valid_holdout\":not bool(train&hold)}\nprint(result)"
+  }
+}

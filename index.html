@@ -3,64 +3,200 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Learn practical scientific Python one clear exercise at a time.">
-  <title>BioPython Studio — Learn Python with Biology</title>
-  <link rel="stylesheet" href="./styles.css?v=chunk1-20261105">
+  <meta name="theme-color" content="#0b1118">
+  <meta name="description" content="Learn Python with guided exercises and an optional analysis workspace.">
+  <title>Learn Python</title>
+  <link rel="stylesheet" href="./vendor/codemirror5/codemirror.css">
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./vendor/codemirror5/codemirror.js"></script>
+  <script defer src="./vendor/codemirror5/python.js"></script>
+  <script defer src="./vendor/codemirror5/closebrackets.js"></script>
+  <script defer src="./vendor/codemirror5/matchbrackets.js"></script>
+  <script defer src="./src/ui-first.js"></script>
+  <script defer src="./src/course-teaching.js"></script>
+  <script defer src="./src/course-adapter.js"></script>
+  <script defer src="./src/ui-first-2.js"></script>
+  <link rel="stylesheet" href="./src/p01-pilot.css">
+  <link rel="stylesheet" href="./src/ui-first-2.css">
 </head>
-<body>
-<header class="sitebar">
-  <a class="brand" href="./index.html" aria-label="BioPython Studio home"><span class="brand-mark" aria-hidden="true">B</span><span>BioPython <strong>Studio</strong></span></a>
-  <span class="site-progress"><span id="done-count">0</span> of 25 complete</span>
+<body data-theme="dark" data-ui-view="learn" data-mobile-pane="code">
+<header class="topbar">
+  <button id="nav-toggle" class="icon-button nav-button" type="button" aria-label="Open lessons" aria-expanded="false" aria-controls="sidebar">☰ <span>Lessons</span></button>
+  <span class="top-current" id="top-section">Python</span>
+  <div class="header-right">
+    <div class="view-switch" role="group" aria-label="Workspace mode">
+      <button id="view-learn" type="button" aria-pressed="true">Learn</button>
+      <button id="view-explore" type="button" aria-pressed="false">Explore</button>
+    </div>
+    <button class="icon-button" id="reference-toggle" aria-controls="reference" aria-expanded="false" aria-label="Help" title="Help" type="button">?</button>
+    <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch to light theme" title="Theme">☼</button>
+  </div>
 </header>
-<main class="app">
-  <div class="progress-track" aria-label="Course completion"><div id="progress-fill"></div></div>
-  <div class="work-layout">
-    <aside class="sidebar" aria-label="Course navigation">
-      <details id="curriculum-toggle"><summary><span>All lessons</span><span id="curriculum-now">1 / 11</span><span aria-hidden="true" class="chevron">⌄</span></summary><nav id="curriculum" aria-label="Learning path"></nav></details>
-    </aside>
-    <section class="lesson-area" aria-label="Current lesson">
-      <div class="lesson-topline"><span class="course-breadcrumb" id="chapter"></span><span class="pill" id="proof-label">Ready</span></div>
-      <h1 id="mission-title">Sample identity</h1>
-      <p id="mission-goal" class="sr-only"></p>
-      <section class="mission-brief" aria-label="Coding task">
-        <span class="brief-kicker">YOUR TASK <span id="brief-number" class="sr-only">01</span></span>
-        <p id="instruction-text"></p>
-        <details class="task-details" id="task-details">
-          <summary>Need more detail? <span class="open-hint">Examples &amp; steps</span></summary>
-          <div class="task-guide-grid">
-            <div class="task-guide-cell task-given"><h2>Provided data</h2><p id="task-given"></p></div>
-            <div class="task-guide-cell task-actions"><h2>Steps</h2><ol id="task-steps"></ol></div>
-            <div class="task-guide-cell task-expected"><h2>Expected result</h2><p id="task-expected"></p></div>
-            <div class="task-check-strip"><b>How it's checked</b><p id="task-check"></p></div>
+
+<div class="app-layout" id="app-layout">
+  <aside class="sidebar" id="sidebar" aria-label="Learning navigation">
+    <div class="sidebar-top">
+      <p class="eyebrow">Topics</p>
+      <nav id="course-nav" aria-label="Course stages">
+        <button class="course-link selected" data-stage="Python" aria-current="page" type="button"><span class="course-num" aria-hidden="true">01</span><span>Python foundations</span></button>
+        <button class="course-link" data-stage="Microscopy" type="button"><span class="course-num" aria-hidden="true">02</span><span>Microscopy</span></button>
+        <button class="course-link" data-stage="NGS" type="button"><span class="course-num" aria-hidden="true">03</span><span>Sequence analysis</span></button>
+        <button class="course-link" data-stage="ML" type="button"><span class="course-num" aria-hidden="true">04</span><span>Machine learning</span></button>
+      </nav>
+      <div class="sidebar-section"><p class="eyebrow">Choose a lesson</p><p class="quiet-text">Loading…</p></div>
+    </div>
+
+  </aside>
+  <main class="main" id="main">
+    <div class="page-top">
+      <div class="page-copy">
+        <p class="breadcrumbs"><span id="crumb">Python foundations</span><span class="slash">/</span> Workspace</p>
+        <h1 id="page-title">Python</h1>
+        <p class="subtitle" id="page-subtitle"></p>
+      </div>
+      <div class="page-actions">
+        <button id="focus-toggle" type="button" class="subtle-button focus-button" aria-pressed="false" title="Hide navigation and lesson to maximize workspace">Focus</button>
+      </div>
+    </div>
+
+    <section class="lesson" id="lesson" aria-label="Learning activity">
+      <div class="lesson-strip">
+        <div class="lesson-caption"><span class="phase-caption" id="phase-caption">LEARN</span><span class="lesson-divider" aria-hidden="true">·</span><span id="lesson-summary">No lesson content yet</span></div>
+        <div class="lesson-controls">
+          <div class="phase-tabs" role="tablist" aria-label="Learning phase">
+            <button role="tab" id="tab-learn" data-phase="learn" aria-controls="phase-panel" aria-selected="true" tabindex="0" type="button">Learn</button>
+            <button role="tab" id="tab-apply" data-phase="apply" aria-controls="phase-panel" aria-selected="false" tabindex="-1" type="button">Apply</button>
+            <button role="tab" id="tab-prove" data-phase="prove" aria-controls="phase-panel" aria-selected="false" tabindex="-1" type="button">Prove</button>
           </div>
-        </details>
-      </section>
-      <div class="content-grid" id="workspace-layout">
-        <section class="image-panel" id="image-panel" hidden aria-label="Microscopy image used in this exercise">
-          <div class="panel-top"><strong id="data-title">Microscopy image</strong><span id="image-role" class="panel-sub">USED IN THIS TASK</span></div>
-          <div class="image-display" id="image-box"><canvas id="microscope" width="512" height="512" aria-label="Human Protein Atlas fluorescence microscopy composite" role="img"></canvas><span class="image-id" id="sample-label">Image loading…</span><div class="pixel-cursor" id="pixel-cursor" hidden>Pixel [20, 25]</div></div>
-          <div class="image-footer"><div class="image-source"><span id="image-caption">Loading real microscopy data…</span><a id="image-credit" href="https://www.proteinatlas.org/" target="_blank" rel="noopener noreferrer" hidden>HPA image · Attribution ↗</a><button class="link-button" id="retry-images" hidden>Retry images</button></div><label class="toggle-row"><input type="checkbox" id="show-mask" disabled><span>Show mask</span></label></div>
-          <p class="image-science-note" id="science-caution"></p>
+          <button class="icon-button lesson-expand" id="lesson-toggle" aria-expanded="false" aria-controls="phase-panel" type="button" aria-label="Expand lesson">⌄</button>
+        </div>
+      </div>
+      <div class="lesson-panel" id="phase-panel" role="tabpanel" aria-labelledby="tab-learn" tabindex="0" hidden>
+        <h2 id="phase-title">Your lesson will appear here</h2>
+        <p id="phase-description">A concise explanation and a single task will appear when lessons are added.</p>
+      </div>
+      <div class="guided-nav" id="guided-nav" aria-label="Lesson navigation">
+        <button id="guided-back" type="button" class="subtle-button">Back</button>
+        <span id="guided-position" aria-live="polite"></span>
+        <button id="guided-next" type="button" class="subtle-button">Next <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Programming workspace">
+      <div class="mobile-workspace-tabs" id="mobile-workspace-tabs" role="tablist" aria-label="Workspace views">
+        <button id="mobile-pane-code" data-mobile-target="code" role="tab" type="button" aria-controls="code-wrapper" aria-selected="true">Code</button>
+        <button id="mobile-pane-image" data-mobile-target="image" role="tab" type="button" aria-controls="image-panel" aria-selected="false" hidden>Image</button>
+        <button id="mobile-pane-result" data-mobile-target="result" role="tab" type="button" aria-controls="output-panel" aria-selected="false">Result</button>
+      </div>
+      <div class="section-header workspace-header">
+        <h2>Workspace</h2>
+        <span class="mode-label" id="mode-label">Python editor</span>
+      </div>
+      <div class="workspace-grid" id="workspace-grid">
+        <section class="editor card" aria-label="Python editor">
+          <div class="panel-toolbar">
+            <span class="file-label">Code <span class="editor-type">main.py</span></span>
+            <div class="panel-actions">
+              <span id="save-status" class="save-status" role="status">Saved locally</span>
+              <button id="clear-code" class="subtle-button" type="button" title="Clear current draft">Clear</button>
+              <button class="run-button" id="run-button" type="button" disabled title="Python engine is not connected">▶ Run</button>
+            </div>
+          </div>
+          <div class="code-wrapper" id="code-wrapper">
+            <div class="gutter" id="line-numbers" aria-hidden="true">1</div>
+            <textarea id="code-editor" aria-label="Python code editor" placeholder="# Write Python here" rows="18" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off"></textarea>
+          </div>
+          <div class="panel-footer"><span id="editor-engine">Python · Editor initializing</span><span id="cursor">Ln 1, Col 1</span></div>
         </section>
-        <section class="code-panel" aria-label="Python code editor and feedback">
-          <div class="data-view" id="data-view"><div class="data-label">Provided to your code</div><div id="input-metadata"></div></div>
-          <div class="code-heading"><label for="editor">Python</label><button id="reset-code" class="link-button" title="Restore starter code">Reset</button></div>
-          <textarea id="editor" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" aria-label="Python code editor"></textarea>
-          <div class="editor-actions"><button id="run" class="main-button">Run code <span aria-hidden="true">▶</span></button><button id="hint-button" class="small-button">Hint</button><span class="shortcut">Ctrl+Enter</span></div>
-          <div id="hint" class="hint" hidden></div>
-          <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
-          <div class="output-area" id="output-area" hidden><div class="output-head">Python output <span id="runtime-state">Runs in your browser</span></div><pre id="python-output"></pre></div>
-          <div id="generated-result" hidden></div>
-          <div class="navigation" id="navigation" hidden><button id="back" class="nav-button">← Previous</button><button id="next" class="main-button" hidden>Continue →</button></div>
+
+        <div id="horizontal-resizer" class="split-resizer" role="separator" aria-label="Resize editor and image viewer" aria-orientation="vertical" aria-valuemin="30" aria-valuemax="75" aria-valuenow="54" tabindex="0" hidden><span aria-hidden="true"></span></div>
+
+        <section class="image card" id="image-panel" aria-label="Scientific image viewer" hidden>
+          <div class="panel-toolbar image-toolbar">
+            <span class="file-label">Image</span>
+            <div class="panel-actions viewer-controls">
+              <button id="zoom-out" class="icon-button compact" type="button" aria-label="Zoom out" disabled>−</button>
+              <button id="zoom-reset" class="subtle-button" type="button" disabled>Fit</button>
+              <button id="zoom-in" class="icon-button compact" type="button" aria-label="Zoom in" disabled>+</button>
+              <label class="load-button" for="image-upload" tabindex="0">Open</label>
+              <input id="image-upload" type="file" accept=".tif,.tiff,.ome.tif,.ome.tiff,image/png,image/jpeg,image/webp,image/gif" multiple hidden>
+              <button type="button" id="witz-dataset-button" class="subtle-button" title="Stage two credited Witz/HPA microscopy-derived TIFF files in Python">Example</button>
+            </div>
+          </div>
+          <div class="viewer-options">
+            <label class="control-label" for="preview-channel">Preview</label>
+            <select id="preview-channel" aria-label="Displayed RGB channel" disabled>
+              <option value="rgb">RGB</option><option value="red">Red</option><option value="green">Green</option><option value="blue">Blue</option><option value="gray">Grayscale</option>
+            </select>
+            <div id="volume-controls" class="volume-controls" hidden>
+              <label class="control-label" for="z-plane">Z</label><input id="z-plane" type="range" min="0" max="0" value="0" disabled aria-label="Z plane" title="Z-stack viewer will be enabled for supported microscopy files">
+              <span class="viewer-value">0 / 0</span>
+              <label class="control-label" for="time-point">T</label><input id="time-point" type="range" min="0" max="0" value="0" disabled aria-label="Time point" title="Time-series viewer will be enabled for supported microscopy files">
+              <span class="viewer-value">0 / 0</span>
+            </div>
+            <button type="button" id="compare-toggle" class="subtle-button compare-toggle" aria-expanded="false" aria-controls="comparison-tools">Compare</button>
+          </div>
+          <div class="comparison-tools" id="comparison-tools" hidden>
+            <label class="load-button" for="comparison-upload" tabindex="0">Open result image</label>
+            <input id="comparison-upload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+            <span id="comparison-filename" class="comparison-filename">No comparison image</span>
+            <label class="control-label" for="comparison-mode">View</label>
+            <select id="comparison-mode" aria-label="Comparison view" disabled>
+              <option value="side">Side by side</option>
+              <option value="overlay">Overlay</option>
+              <option value="wipe">Wipe</option>
+            </select>
+            <div id="opacity-tools" class="opacity-tools" hidden>
+              <label class="control-label" for="comparison-opacity">Mix</label>
+              <input id="comparison-opacity" type="range" min="0" max="100" value="50" aria-label="Overlay opacity or wipe position" disabled>
+              <output id="comparison-opacity-value" for="comparison-opacity">50%</output>
+            </div>
+          </div>
+          <div class="comparison-notice" id="comparison-notice" role="status" hidden></div>
+          <div class="image-canvas" id="image-canvas" aria-label="Image preview area">
+            <div id="image-empty" class="image-empty">
+              <svg width="48" height="48" viewBox="0 0 52 52" fill="none" aria-hidden="true"><rect x="6" y="7" width="40" height="38" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="18" cy="19" r="4" stroke="currentColor" stroke-width="1.5"/><path d="m9 39 10-11 8 7 9-12 7 11" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              <strong>Open an image</strong>
+              <p>TIFF files can be processed in Python.</p>
+            </div>
+            <div id="source-image-frame" class="image-frame source-frame" hidden>
+              <span class="frame-tag">Original</span>
+              <img id="image-preview" alt="Opened microscopy image" draggable="false" hidden>
+            </div>
+            <div id="comparison-image-frame" class="image-frame comparison-frame" hidden>
+              <span class="frame-tag">Comparison</span>
+              <img id="comparison-preview" alt="Manually opened comparison image" draggable="false" hidden>
+            </div>
+            <div class="image-loading" id="image-loading" hidden>Loading image…</div>
+          </div>
+          <div class="panel-footer viewer-footer">
+            <span id="image-meta">No image loaded</span>
+            <span id="analysis-dataset-status" class="comparison-filename" role="status" hidden></span>
+            <button type="button" id="clear-analysis-files" class="subtle-button" hidden>Clear files</button>
+            <span id="pixel-readout" class="pixel-readout">x — y —</span>
+            <span id="image-zoom">—</span>
+          </div>
         </section>
       </div>
-      <details class="lesson-bottom" id="learn-more"><summary>Why this matters &amp; sources</summary>
-        <div class="teaching"><h2>Why this matters</h2><p id="why"></p></div>
-        <div class="sources"><h2>Original learning resources</h2><div id="source-links"></div></div>
-      </details>
+      <div id="vertical-resizer" class="console-resizer" role="separator" aria-label="Resize output console" aria-orientation="horizontal" aria-valuemin="100" aria-valuemax="380" aria-valuenow="160" tabindex="0"><span aria-hidden="true"></span></div>
+      <section class="output card" id="output-panel" aria-label="Results">
+        <div class="output-header">
+          <div class="result-tabs" role="tablist" aria-label="Result view">
+            <button type="button" role="tab" data-result="output" id="result-output" aria-controls="output-body" aria-selected="true" tabindex="0">Result</button>
+            <button type="button" role="tab" data-result="measurements" id="result-measurements" aria-controls="output-body" aria-selected="false" tabindex="-1">Measurements</button>
+            <button type="button" role="tab" data-result="histogram" id="result-histogram" aria-controls="output-body" aria-selected="false" tabindex="-1">Histogram</button>
+          </div>
+          <span class="runtime-state" role="status"><span aria-hidden="true" class="status-dot"></span> Loading</span>
+        </div>
+        <div id="output-body" role="tabpanel" aria-labelledby="result-output" tabindex="0"><p id="output-placeholder">Run code to see the result.</p></div>
+      </section>
     </section>
-  </div>
-</main>
-<script src="./app.js?v=chunk1-20261105"></script>
+  </main>
+  <aside id="reference" class="reference" aria-label="Contextual reference" hidden>
+    <div class="reference-head"><h2>Reference</h2><button id="reference-close" class="icon-button" type="button" aria-label="Close reference">×</button></div>
+    <div class="reference-empty"><h3>Help</h3><p>Hints and explanations are available in each lesson.</p></div>
+  </aside>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
 </body>
 </html>

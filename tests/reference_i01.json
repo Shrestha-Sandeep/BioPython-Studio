@@ -1,0 +1,42 @@
+{
+  "I01-G01": {
+    "apply": "import numpy as np\npixels=np.asarray(values,dtype=np.uint16)\npixel_count=pixels.size\ndoubled=pixels*2",
+    "prove": "import numpy as np\nintensities=np.asarray(raw_counts,dtype=np.float32)\nshifted=intensities+offset\ntotal=float(intensities.sum())"
+  },
+  "I01-G02": {
+    "apply": "import numpy as np\narr=np.asarray(rows)\nshape=arr.shape\ndimensions=arr.ndim\nelement_count=arr.size",
+    "prove": "import numpy as np\nstack=np.asarray(stack_data)\nplane_count=stack.shape[0]\npixel_count=stack.size\ndimensionality=stack.ndim"
+  },
+  "I01-G03": {
+    "apply": "import numpy as np\nstack=np.asarray(planes)\nselected_plane=stack[plane_index]\nselected_value=int(stack[plane_index,row,col])\nplane_shape=selected_plane.shape",
+    "prove": "import numpy as np\narr=np.asarray(volume)\nvoxel_value=int(arr[z,y,x])\nxy_coordinate=(x,y)\nslice_shape=arr[z].shape"
+  },
+  "I01-G04": {
+    "apply": "provenance={'filename':filename,'source_url':source_url,'license':license_name,'raw_calibrated':False}\ncan_measure_absolute=False",
+    "prove": "image_record={'id':image_id,'origin':origin,'display_only':True,'pixel_size_um':None}\nprovenance_ok=bool(origin.strip())"
+  },
+  "I01-G05": {
+    "apply": "from PIL import Image\nimport numpy as np\nimage=np.asarray(Image.open(image_path).convert('RGB'))\nheight,width,channels=image.shape\ndtype_name=str(image.dtype)\npixel_value=image[sample_row,sample_col].tolist()",
+    "prove": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nchannel_plane=rgb[:,:,color_index]\nplane_shape=channel_plane.shape\npixel_at=int(channel_plane[row,col])\ndistinct_levels=int(np.unique(channel_plane).size)"
+  },
+  "I01-G06": {
+    "apply": "from PIL import Image\nimport numpy as np\narr=np.asarray(Image.open(image_path).convert('RGB'))\ncomponent=arr[:,:,color_index]\ncomponent_mean=float(component.mean())\ncomponent_min=int(component.min())\ncomponent_shape=component.shape",
+    "prove": "from PIL import Image\nimport numpy as np\narr=np.asarray(Image.open(image_path).convert('RGB'))\nred,green,blue=(arr[:,:,i] for i in range(3))\nmeans=[float(v.mean()) for v in (red,green,blue)]\nbrightest_component=int(np.argmax(means))"
+  },
+  "I01-G07": {
+    "apply": "import numpy as np\nimage=np.asarray(rows)\nheight,width=image.shape\nintensity=int(image[row,col])\ndisplay_xy=(col,row)\ndimensions=(height,width)",
+    "prove": "from PIL import Image\nimport numpy as np\narr=np.asarray(Image.open(image_path).convert('RGB'))\ncoordinate_report={'x':col,'y':row,'component':component_index,'value':int(arr[row,col,component_index])}"
+  },
+  "I01-G08": {
+    "apply": "import numpy as np\narr=np.asarray(pixels,dtype=np.uint8)\ndtype_name=str(arr.dtype)\nobserved_min=int(arr.min())\nobserved_max=int(arr.max())\nstorage_max=int(np.iinfo(arr.dtype).max)",
+    "prove": "from PIL import Image\nimport numpy as np\narr=np.asarray(Image.open(image_path).convert('RGB'))\ndtype_name=str(arr.dtype)\nobserved_range=(int(arr.min()),int(arr.max()))\ndisplay_ceiling=int(np.iinfo(arr.dtype).max)\ncalibrated=False"
+  },
+  "I01-CAPSTONE": {
+    "apply": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nh,w,_=rgb.shape\nimage_report={'height':h,'width':w,'components':3,'dtype':str(rgb.dtype),'source':'Witz/HPA rendered figure','calibrated':False,'component_mean':float(rgb[:,:,component_index].mean())}\nprint(image_report['source'],rgb.shape)",
+    "prove": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\naudit={'shape':tuple(rgb.shape),'component':component_index,'pixel':int(rgb[row,col,component_index]),'raw_calibrated':False}\nprint(audit)"
+  },
+  "I01-REVIEW": {
+    "apply": "",
+    "prove": "from PIL import Image\nimport numpy as np\nrgb=np.asarray(Image.open(image_path).convert('RGB'))\nheight,width=rgb.shape[:2]\nresult={'xy':(col,row),'value':int(rgb[row,col,color_index]),'dimensions':(height,width),'calibrated':False}\nprint(result)"
+  }
+}
