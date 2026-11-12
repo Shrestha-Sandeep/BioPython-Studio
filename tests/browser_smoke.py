@@ -1,1 +1,9 @@
-"""Legacy CI entry point; assert the current ui-first-2 shell instead of frozen v2 labels.\nThe actual frozen v2 shell and its original test remain preserved on the frozen branch.\n"""\nfrom ui_first_2_browser import check_browser\n\nif __name__ == "__main__":\n    check_browser()\n
+"""Compatibility entrypoint for legacy CI: test the current UI-first-2 shell.
+
+The frozen v2 shell and its original test remain on the frozen branch.
+"""
+from ui_first_2_browser import check_browser
+
+
+if __name__ == "__main__":
+    check_browser()
