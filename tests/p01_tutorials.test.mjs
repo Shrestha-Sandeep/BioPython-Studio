@@ -17,15 +17,20 @@ const substitute=(value,parameter=25)=>String(value||"")
   .replace(/\{PIXEL_SIZE\}/g,"0.2")
   .replace(/\{LENGTH\}/g,"8.0");
 
-test("four examples cover P01 goals and capstone exactly once",()=>{
-  assert.equal(tutorials.length,4);
-  const goals=tutorials.flatMap(t=>t.goals);
-  assert.equal(new Set(goals).size,goals.length);
-  assert.deepEqual(goals.slice().sort(),[
+test("one chapter-level tutorial covers seven P01 goals and capstone",()=>{
+  assert.equal(tutorials.length,1);
+  const t=tutorials[0];
+  assert.equal(t.chapter,"P01");
+  assert.equal(t.steps.length,19);
+  assert.deepEqual(t.goals.slice().sort(),[
     "P01-G01","P01-G02","P01-G03","P01-G04","P01-G05",
     "P01-G06","P01-G07","P01-CAPSTONE"
   ].sort());
-  assert.ok(tutorials.reduce((n,t)=>n+t.steps.length,0)>=24);
+  assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),t.goals.slice().sort(),
+    "each existing competency needs a meaningful scene, not merely a goal label");
+  assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+  assert.ok(t.steps.filter(s=>s.interactive).length>=1);
+  assert.ok(!t.goals.includes("P01-REVIEW"),"Delayed review stays independent");
 });
 
 test("each narration step has aligned highlights, captions and valid visual data",()=>{
@@ -64,37 +69,41 @@ test("science-first lessons show the destination without attributing it to intro
       assert.ok(step.preview.label,t.id+":"+i);
     }
   }
-  assert.ok(previewCount>=7,"The core scientific outcome must be shown, not merely asserted");
+  assert.ok(previewCount>=3,"Show scientific outcomes at the beginning and at the end");
   assert.match(viewerSource,/P01Tutorials|BioPythonP01Tutorials/);
   assert.match(viewerSource,/CREDITS.md/);
   assert.doesNotMatch(viewerSource,/bps-example-record|MediaRecorder|Save MP4/);
 });
 
-test("changing scientific inputs changes expected outputs, not code structure",()=>{
-  const cases=[
-    {id:"p01-values",changes:[{cells:25},{cells:31}]},
-    {id:"p01-calculations",changes:[{pixelSize:0.2},{pixelSize:0.3},{pixelSize:0.6}]},
-    {id:"p01-report",changes:[{cells:25},{cells:31}]}
-  ];
-  for(const {id,changes} of cases){
-    const tutorial=tutorials.find(t=>t.id===id);
-    const last=tutorial.steps.findLast(s=>s.output&&s.code);
-    for(const values of changes){
-      const cells=values.cells??25,pixelSize=values.pixelSize??0.2;
-      const replace=(v)=>String(v).replaceAll("{CELLS}",String(cells))
-        .replaceAll("{PIXEL_SIZE}",pixelSize.toFixed(1))
-        .replaceAll("{LENGTH}",(40*pixelSize).toFixed(1));
-      const result=spawnSync("python3",["-c",replace(last.code)],{encoding:"utf8",timeout:3000});
-      assert.equal(result.status,0,id+":"+JSON.stringify(values)+":"+result.stderr);
-      assert.equal(result.stdout.trimEnd(),replace(last.output),id+":"+JSON.stringify(values));
+test("changed microscopy input produces real Python output, while length is invariant",()=>{
+  const t=tutorials[0];
+  const answer=t.steps.find(s=>s.title.startsWith("Reveal:"));
+  const final=t.steps.find(s=>s.title==="Put it all together");
+  const unexpected=new Set();
+  for(const cells of [5,25,31,50]){
+    const replace=v=>String(v).replaceAll("{CELLS}",String(cells))
+      .replaceAll("{PIXEL_SIZE}","0.2").replaceAll("{LENGTH}","8.0");
+    for(const step of [answer,final]){
+      const result=spawnSync("python3",["-c",replace(step.code)],{encoding:"utf8",timeout:3000});
+      assert.equal(result.status,0,result.stderr);
+      assert.equal(result.stdout.trimEnd(),replace(step.output));
+      unexpected.add(result.stdout);
     }
+    assert.match(replace(final.output),/Length: 8.0 µm/);
   }
+  assert.equal(unexpected.size,8,"The reports and printed counts must vary across inputs");
+  const wrong=t.steps.find(s=>s.title==="Not all mistakes cause errors");
+  const res=spawnSync("python3",["-c",wrong.code],{encoding:"utf8",timeout:3000});
+  assert.equal(res.status,0,"A silent calibration error still executes successfully");
+  assert.equal(res.stdout.trimEnd(),"16.0");
 });
 
 test("viewer syntax and optional integration do not change core course state",()=>{
   assert.doesNotThrow(()=>new Function(viewerSource));
   assert.match(viewerSource,/bps:lesson-change/);
   assert.match(viewerSource,/speechSynthesis/);
+  assert.match(viewerSource,/awaitingPrediction/);
+  assert.match(viewerSource,/▶ Chapter example/);
   assert.match(viewerSource,/state\.tutorial\.steps/);
   assert.doesNotMatch(viewerSource,/biopython\.p01\.v1/);
   for(const path of ["src/tutorials/p01-data.js","src/tutorials/p01-viewer.js","src/tutorials/p01-viewer.css"])assert.ok(indexSource.includes(path),path);
