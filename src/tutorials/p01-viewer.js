@@ -23,14 +23,14 @@
   // The markup is static. All user-facing instructional data is assigned using textContent.
   dialog.innerHTML=`
     <div class="bps-example-shell">
-      <header class="bps-example-header">
+      <div class="bps-example-header">
         <div class="bps-example-heading">
           <span class="bps-example-kicker">PYTHON · VISUAL EXAMPLE</span>
           <h2 id="bps-example-title"></h2>
           <p id="bps-example-subtitle"></p>
         </div>
         <button type="button" id="bps-example-close" class="bps-example-close" aria-label="Close tutorial">×</button>
-      </header>
+      </div>
       <div class="bps-example-controls">
         <button type="button" id="bps-example-play" class="bps-example-play">▶ Play</button>
         <button type="button" id="bps-example-prev" aria-label="Previous explanation step">← Back</button>
