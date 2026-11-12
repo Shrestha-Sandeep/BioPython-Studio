@@ -54,7 +54,7 @@ def check_browser():
                 errors = []
                 page.on("pageerror", lambda exc: errors.append(str(exc)))
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
-                page.locator("#p01-goal-select").wait_for(timeout=30000)
+                page.locator("#p01-goal-select").wait_for(state="attached", timeout=30000)
                 page.wait_for_function("document.getElementById('run-button').disabled === false")
                 assert page.locator("body").get_attribute("data-ui-view") == "learn"
                 assert page.locator("#phase-panel").is_visible(), f"Guided task not visible at {width}px"
@@ -148,7 +148,7 @@ def check_browser():
 
                 # Mode selection persists; no changes to legacy course-progress keys.
                 page.reload(wait_until="domcontentloaded", timeout=60000)
-                page.locator("#p01-goal-select").wait_for(timeout=30000)
+                page.locator("#p01-goal-select").wait_for(state="attached", timeout=30000)
                 assert page.locator("body").get_attribute("data-ui-view") == "explore"
                 assert page.locator("#view-explore").get_attribute("aria-pressed") == "true"
                 page.locator("#view-learn").click()
