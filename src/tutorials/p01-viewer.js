@@ -2,11 +2,12 @@
    learner progress stay untouched. Narration uses the browser's installed voices. */
 "use strict";
 (() => {
-  const tutorials=window.BioPythonP01Tutorials;
+  const tutorials=window.BioPythonFoundationTutorials||window.BioPythonP01Tutorials;
   if(!Array.isArray(tutorials)||!tutorials.length)return;
   const $=id=>document.getElementById(id);
   const library=new Map(tutorials.map(t=>[t.id,t]));
   const goalToTutorial=new Map(tutorials.flatMap(t=>t.goals.map(id=>[id,t.id])));
+  const chapterTutorials=new Map(tutorials.map(t=>[t.chapter,t]));
   const state={tutorial:null,step:0,playing:false,paused:false,awaitingPrediction:false,token:0,voices:[],preferredVoice:"",param:null};
   const hasSpeech=typeof window.speechSynthesis!=="undefined"&&typeof window.SpeechSynthesisUtterance!=="undefined";
   const entry=document.createElement("button");
@@ -228,9 +229,9 @@
   }
   function sync(event){
     const d=event?.detail||{};
-    const id=d.chapterId==="P01"&&d.phase==="learn"
-      ?goalToTutorial.get(d.goalIndex===7?"P01-CAPSTONE":d.goalIndex===8?"P01-REVIEW":("P01-G"+String(d.goalIndex+1).padStart(2,"0")))
-      :null;
+    const chapter=chapterTutorials.get(d.chapterId);
+    const goalId=chapter&&Number.isInteger(d.goalIndex)?chapter.goals[d.goalIndex]:null;
+    const id=d.phase==="learn"&&goalId?goalToTutorial.get(goalId):null;
     entry.hidden=!id;
     entry.dataset.tutorial=id||"";
     if(id)entry.textContent="▶ Chapter example";
