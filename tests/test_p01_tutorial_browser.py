@@ -54,9 +54,9 @@ def check():
                 trigger.click()
                 dialog = page.locator("#bps-example-dialog")
                 assert dialog.is_visible()
-                assert page.locator("#bps-example-title").inner_text() == "Variables and output"
-                assert page.locator("#bps-example-progress").get_attribute("max") == "8"
-                assert "counting cells" in page.locator("#bps-example-step-title").inner_text().lower()
+                assert page.locator("#bps-example-title").inner_text() == "From a microscope field to a trustworthy report"
+                assert page.locator("#bps-example-progress").get_attribute("max") == "19"
+                assert "destination" in page.locator("#bps-example-step-title").inner_text().lower()
                 preview = page.locator("#bps-example-image-preview")
                 assert preview.is_visible(), "The future-capability image must be visible in scene one"
                 page.wait_for_function(
@@ -67,8 +67,10 @@ def check():
                 assert page.locator("#bps-example-caption").inner_text()
                 assert page.locator("#bps-example-voice").count() == 1
                 assert page.locator("#bps-example-rate").count() == 1
-                for _ in range(4):
+                for _ in range(6):
                     page.locator("#bps-example-next").click()
+                assert "Reveal:" in page.locator("#bps-example-step-title").inner_text()
+                assert page.locator("#bps-example-parameter-box").is_visible()
                 page.locator("#bps-example-parameter").evaluate(
                     "(element) => { element.value='31'; element.dispatchEvent(new Event('input',{bubbles:true})); }"
                 )
@@ -86,12 +88,12 @@ def check():
                 change_selection(page,"p01-goal-select","4")
                 assert trigger.is_visible()
                 trigger.click()
-                assert page.locator("#bps-example-title").inner_text() == "Errors, help, and clean runs"
+                assert page.locator("#bps-example-title").inner_text() == "From a microscope field to a trustworthy report"
                 page.locator("#bps-example-close").click()
                 change_selection(page,"p01-goal-select","7")
-                assert "Complete example" in trigger.inner_text()
+                assert "Chapter example" in trigger.inner_text()
                 trigger.click()
-                assert page.locator("#bps-example-title").inner_text() == "Complete example: specimen report"
+                assert page.locator("#bps-example-title").inner_text() == "From a microscope field to a trustworthy report"
                 page.locator("#bps-example-close").click()
                 change_selection(page,"p01-goal-select","8")
                 assert trigger.is_hidden(), "Delayed review must not reveal a worked example"
@@ -104,6 +106,56 @@ def check():
                 assert trigger.is_hidden(), "The pilot must remain scoped to P01"
                 assert not errors, f"Browser errors at {width}px: {errors}"
                 page.close()
+            # Mock only the browser's speech API to verify that a prediction
+            # interrupts autoplay until the learner explicitly presses Reveal.
+            checkpoint_page = browser.new_page(viewport={"width": 1280, "height": 850})
+            checkpoint_page.add_init_script("""
+              (() => {
+                let active = null;
+                class Narration {
+                  constructor(text) { this.text=text; this.rate=1; this.voice=null; }
+                }
+                const synth = {
+                  getVoices(){ return [{name:"David Test",voiceURI:"david-test",lang:"en-US"}]; },
+                  addEventListener(){},
+                  cancel(){ active=null; },
+                  pause(){},
+                  resume(){},
+                  speak(utterance){
+                    active=utterance;
+                    setTimeout(()=>{
+                      if(active!==utterance)return;
+                      utterance.onstart?.();
+                      setTimeout(()=>{
+                        if(active!==utterance)return;
+                        active=null;utterance.onend?.();
+                      },12);
+                    },12);
+                  }
+                };
+                Object.defineProperty(window,"SpeechSynthesisUtterance",
+                  {value:Narration,configurable:true});
+                Object.defineProperty(window,"speechSynthesis",
+                  {value:synth,configurable:true});
+              })();
+            """)
+            checkpoint_page.goto(url, wait_until="domcontentloaded")
+            checkpoint_page.locator("#bps-example-trigger").click()
+            checkpoint_page.locator("#bps-example-play").click()
+            checkpoint_page.wait_for_function(
+                "() => document.getElementById('bps-example-play').textContent.includes('Reveal')",
+                timeout=20000
+            )
+            assert checkpoint_page.locator("#bps-example-position").inner_text() == "6 / 19"
+            checkpoint_page.wait_for_timeout(600)
+            assert checkpoint_page.locator("#bps-example-position").inner_text() == "6 / 19", \
+                "A prediction break must not autoplay to reveal the answer"
+            checkpoint_page.locator("#bps-example-play").click()
+            checkpoint_page.wait_for_function(
+                "() => Number(document.getElementById('bps-example-progress').value) >= 7",
+                timeout=5000
+            )
+            checkpoint_page.close()
             browser.close()
     finally:
         process.terminate()
