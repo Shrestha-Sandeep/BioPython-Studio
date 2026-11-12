@@ -116,7 +116,7 @@ def check_browser():
                 # Real microscopy chapter must retain image preview and comparison tools.
                 change_stage(page, "Microscopy", mobile)
                 page.wait_for_function("document.querySelector('#bps-chapter-select')?.value.startsWith('I')")
-                assert not page.locator("#image-panel").get_attribute("hidden") is None is False  # actual stage exposes viewer
+                assert page.locator("#image-panel").get_attribute("hidden") is None  # stage enables real viewer
                 if mobile:
                     assert page.locator("#mobile-pane-image").is_visible()
                     assert page.locator("#image-panel").is_hidden()
