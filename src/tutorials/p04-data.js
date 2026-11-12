@@ -4,8 +4,8 @@
  const scene=(title,say,code,focus,visual,output,note,goal,extra={})=>({title,say,code,focus,visual,output,note,goal,...extra});
  const registry="metadata = {'S01': {'channel': 'GFP', 'focus': 0.92},\n            'S02': {'channel': 'DAPI', 'focus': None}}";
  const records="acquisitions = [('S01', 'GFP', 0.92), ('S02', 'DAPI', None),\n                ('S01', 'GFP', 0.88), ('S03', 'GFP', 0.76)]";
- const capstone=records+"\nminimum_focus = 0.80\nmetadata = {}\nseen = set()\nduplicates, missing, accepted = [], [], []\nfor specimen, channel, focus in acquisitions:\n    if specimen in seen:\n        duplicates.append(specimen)\n        continue\n    seen.add(specimen)\n    metadata[specimen] = {'channel': channel, 'focus': focus}\n    if focus is None:\n        missing.append(specimen)\n    elif 0 <= focus <= 1 and focus >= minimum_focus:\n        accepted.append(specimen)\nprint('Registered:', list(metadata))\nprint('Accepted:', accepted)\nprint('Missing:', missing)\nprint('Duplicate IDs:', duplicates)";
- const result="Registered: ['S01', 'S02', 'S03']\nAccepted: ['S01']\nMissing: ['S02']\nDuplicate IDs: ['S01']";
+ const capstone=records+"\nminimum_focus = 0.80\nmetadata = {}\nseen = set()\nduplicates, missing, accepted, low, invalid = [], [], [], [], []\nfor specimen, channel, focus in acquisitions:\n    if specimen in seen:\n        duplicates.append(specimen)\n        continue\n    seen.add(specimen)\n    metadata[specimen] = {'channel': channel, 'focus': focus}\n    if focus is None:\n        missing.append(specimen)\n    elif not isinstance(focus, (int, float)) or not 0 <= focus <= 1:\n        invalid.append(specimen)\n    elif focus >= minimum_focus:\n        accepted.append(specimen)\n    else:\n        low.append(specimen)\nprint('Registered:', list(metadata))\nprint('Accepted:', accepted)\nprint('Missing:', missing)\nprint('Duplicate IDs:', duplicates)\nprint('Low:', low)\nprint('Invalid:', invalid)";
+ const result="Registered: ['S01', 'S02', 'S03']\nAccepted: ['S01']\nMissing: ['S02']\nDuplicate IDs: ['S01']\nLow: ['S03']\nInvalid: []";
  window.BioPythonFoundationTutorials=Object.freeze([...(window.BioPythonFoundationTutorials||window.BioPythonP01Tutorials||[]),{
   id:"p04-chapter",chapter:"P04",title:"Build a microscopy metadata registry you can trust",
   short:"One chapter example",minutes:"6–9 min",
@@ -74,7 +74,7 @@
     scene("Build a first-seen metadata registry",
       "This integrated script keeps the first recorded metadata for each specimen, records repeated identifiers, and separates missing focus from accepted records. We deliberately do not overwrite S zero one when it appears a second time.",
       capstone,[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],
-      [["Unique registered","3"],["Accepted","S01"],["Missing","S02"],["Duplicate","S01"]],result,
+      [["Accepted","S01"],["Missing","S02"],["Low","S03"],["Duplicate","S01"]],result,
       "This teaching audit does not assert that score 0.80 is a scientifically valid focus threshold.","P04-CAPSTONE"),
     scene("Where the registry leads",
       "Later, this registry can connect each image to its sample, treatment, channel, calibration and other acquisition metadata before computing quantitative results. The key principle is simple: never let array order or repeated identifiers silently rewrite the meaning of the experiment.",
