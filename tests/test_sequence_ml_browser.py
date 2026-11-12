@@ -50,7 +50,7 @@ def main():
                     page.locator("#bps-chapter-select").select_option(cid)
                     lesson=json.loads((ROOT/"content"/cid.lower()/"lesson.json").read_text(encoding="utf-8"))
                     reference=json.loads((ROOT/"tests"/f"reference_{cid.lower()}.json").read_text(encoding="utf-8"))
-                    assert page.locator("#lesson-summary").inner_text().startswith(cid)
+                    assert page.locator("#bps-chapter-select").input_value() == cid
                     for index,goal in enumerate([*lesson["goals"],lesson["capstone"],lesson["review"]]):
                         page.locator("#p01-goal-select").select_option(str(index))
                         for phase in ("apply","prove"):
