@@ -323,6 +323,9 @@
     const session=recordSession;
     if(!session||session.closing)return;
     session.closing=true;session.wantSave=save;session.message=message;
+    // Manual Finish & save must also stop the narration; otherwise it
+    // continues speaking after the recorded MP4 has already ended.
+    stopSpeech();
     if(session.recorder?.state!=="inactive")session.recorder.stop();
     else handleRecordingStop(session);
   }
