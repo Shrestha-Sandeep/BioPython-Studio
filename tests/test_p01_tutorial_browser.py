@@ -103,7 +103,11 @@ def check():
                 page.locator("#tab-prove").click()
                 assert trigger.is_hidden(), "Prove must remain independent"
                 change_selection(page,"bps-chapter-select","P02")
-                assert trigger.is_hidden(), "The pilot must remain scoped to P01"
+                page.wait_for_function(
+                    "() => document.getElementById('bps-example-trigger').hidden === false",
+                    timeout=20000
+                )
+                assert trigger.is_visible(), "The foundation viewer must now support P02"
                 assert not errors, f"Browser errors at {width}px: {errors}"
                 page.close()
             # Mock only the browser's speech API to verify that a prediction
