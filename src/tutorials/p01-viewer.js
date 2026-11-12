@@ -45,7 +45,7 @@
           <h3 id="bps-example-step-title"></h3>
           <p id="bps-example-caption" aria-live="polite"></p>
         </div>
-        <div class="bps-example-grid">
+        <div id="bps-example-grid" class="bps-example-grid">
           <section class="bps-example-card bps-example-code" aria-label="Highlighted example code">
             <div class="bps-example-card-heading">PYTHON CODE <span>Illustrative trace</span></div>
             <pre id="bps-example-code" aria-label="Code highlighted at this step"></pre>
@@ -141,6 +141,7 @@
     $("bps-example-caption").textContent=interpolate(step.say);
     $("bps-example-output").textContent=interpolate(step.output)||"—";
     $("bps-example-tip").textContent=step.note;
+    $("bps-example-grid").classList.toggle("is-preview-first",Boolean(step.preview&&!step.code));
     previous.disabled=state.step===0;next.disabled=state.step===tutorial.steps.length-1;
     const param=tutorial.parameter;
     $("bps-example-parameter-box").hidden=!param;
