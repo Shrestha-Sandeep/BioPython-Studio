@@ -7,12 +7,12 @@
   const $=id=>document.getElementById(id);
   const library=new Map(tutorials.map(t=>[t.id,t]));
   const goalToTutorial=new Map(tutorials.flatMap(t=>t.goals.map(id=>[id,t.id])));
-  const state={tutorial:null,step:0,playing:false,paused:false,token:0,voices:[],preferredVoice:"",param:null};
+  const state={tutorial:null,step:0,playing:false,paused:false,awaitingPrediction:false,token:0,voices:[],preferredVoice:"",param:null};
   const hasSpeech=typeof window.speechSynthesis!=="undefined"&&typeof window.SpeechSynthesisUtterance!=="undefined";
   const entry=document.createElement("button");
   entry.type="button";entry.id="bps-example-trigger";entry.className="subtle-button bps-example-trigger";entry.hidden=true;
   entry.setAttribute("aria-haspopup","dialog");
-  entry.textContent="▶ Example";
+  entry.textContent="▶ Chapter example";
   const anchor=$("phase-description");
   if(!anchor)return;
   anchor.insertAdjacentElement("afterend",entry);
@@ -133,7 +133,7 @@
   function render(){
     const tutorial=state.tutorial,step=currentStep();if(!tutorial||!step)return;
     $("bps-example-title").textContent=tutorial.title;
-    $("bps-example-subtitle").textContent="Step-by-step narration · "+tutorial.minutes+" · "+tutorial.goals.join(", ");
+    $("bps-example-subtitle").textContent="Guided chapter example · "+tutorial.minutes+" · "+(tutorial.chapter||"Python");
     $("bps-example-position").textContent=(state.step+1)+" / "+tutorial.steps.length;
     $("bps-example-progress").max=tutorial.steps.length;
     $("bps-example-progress").value=state.step+1;
@@ -144,7 +144,7 @@
     $("bps-example-grid").classList.toggle("is-preview-first",Boolean(step.preview&&!step.code));
     previous.disabled=state.step===0;next.disabled=state.step===tutorial.steps.length-1;
     const param=tutorial.parameter;
-    $("bps-example-parameter-box").hidden=!param;
+    $("bps-example-parameter-box").hidden=!param||!step.interactive;
     if(param){
       paramInput.min=String(param.min);paramInput.max=String(param.max);paramInput.step=String(param.step);
       paramInput.value=String(state.param);
@@ -152,11 +152,11 @@
       $("bps-example-parameter-value").textContent=paramInput.value;
     }
     renderCode(step);renderVisual(step);
-    play.textContent=state.paused?"▶ Resume":state.playing?"Ⅱ Pause":state.step===tutorial.steps.length-1?"↻ Replay":"▶ Play";
+    play.textContent=state.awaitingPrediction?"▶ Reveal":state.paused?"▶ Resume":state.playing?"Ⅱ Pause":state.step===tutorial.steps.length-1?"↻ Replay":"▶ Play";
   }
   function stopSpeech(){
     state.token++;
-    state.playing=false;state.paused=false;
+    state.playing=false;state.paused=false;state.awaitingPrediction=false;
     if(hasSpeech)window.speechSynthesis.cancel();
   }
   function findVoice(){
@@ -175,6 +175,11 @@
     utterance.onerror=event=>{if(token!==state.token)return;state.playing=false;state.paused=false;render();setStatus("Voice playback could not start ("+(event.error||"device voice") + "). You can use Next.");};
     utterance.onend=()=>{
       if(token!==state.token||!state.playing)return;
+      if(step.checkpoint){
+        state.playing=false;state.paused=false;state.awaitingPrediction=true;render();
+        setStatus("Prediction break: think about the answer, then press Reveal.");
+        return;
+      }
       if(state.step<state.tutorial.steps.length-1){
         state.step++;render();setTimeout(()=>{
           if(token!==state.token||!state.playing)return;
@@ -196,7 +201,7 @@
   }
   function openTutorial(id){
     const tutorial=library.get(id);if(!tutorial)return;
-    stopSpeech();state.tutorial=tutorial;state.step=0;
+    stopSpeech();state.tutorial=tutorial;state.step=0;state.awaitingPrediction=false;
     state.param=tutorial.parameter?.value??null;
     render();setStatus("Press Play to hear the explanation, or use Next.");
     if(typeof dialog.showModal==="function")dialog.showModal();
@@ -228,7 +233,7 @@
       :null;
     entry.hidden=!id;
     entry.dataset.tutorial=id||"";
-    if(id)entry.textContent=id==="p01-report"?"▶ Complete example":"▶ Example";
+    if(id)entry.textContent="▶ Chapter example";
     if(dialog.open&&(!id||id!==state.tutorial?.id))closeTutorial();
   }
   entry.addEventListener("click",()=>openTutorial(entry.dataset.tutorial));
@@ -237,6 +242,11 @@
   dialog.addEventListener("click",event=>{if(event.target===dialog)closeTutorial();});
   play.addEventListener("click",()=>{
     if(!state.tutorial)return;
+    if(state.awaitingPrediction){
+      state.awaitingPrediction=false;
+      state.step=Math.min(state.step+1,state.tutorial.steps.length-1);
+      state.playing=true;state.paused=false;render();speak();return;
+    }
     if(state.paused){state.paused=false;window.speechSynthesis.resume();render();setStatus("Narration resumed.");return;}
     if(state.playing){state.paused=true;window.speechSynthesis.pause();render();setStatus("Narration paused.");return;}
     if(state.step===state.tutorial.steps.length-1)state.step=0;
