@@ -6,7 +6,9 @@ const read = path => fs.readFileSync(new URL("../" + path, import.meta.url), "ut
 test("IDE-first shell has compact learning controls, real editor integration and viewer regions", () => {
  const html = read("index.html");
  for (const id of [
-   "sidebar", "course-nav", "phase-panel", "lesson-toggle",
+   "sidebar", "course-nav", "phase-panel", "lesson-toggle", "view-learn", "view-explore",
+   "guided-nav", "guided-back", "guided-next", "guided-position", "mobile-workspace-tabs",
+   "mobile-pane-code", "mobile-pane-image", "mobile-pane-result",
    "code-editor", "line-numbers", "run-button", "image-panel", "image-upload", "image-preview",
    "image-zoom", "pixel-readout", "preview-channel", "z-plane", "time-point",
    "horizontal-resizer", "vertical-resizer", "focus-toggle", "output-body", "reference", "theme-toggle",
@@ -43,7 +45,7 @@ test("editor is genuine CodeMirror, with accessible offline fallback and saved d
 test("viewer retains an RGB-only preview while TIFF analysis uses the separate Python engine", () => {
  const html = read("index.html");
  const js = read("src/ui-first.js");
- for (const term of ["Original", "Image viewer"]) assert.ok(html.includes(term) || term === "Original");
+ for (const term of ["Original", "Image preview area"]) assert.ok(html.includes(term));
  assert.match(js, /URL\.createObjectURL/);
  assert.match(js, /URL\.revokeObjectURL/);
  assert.match(js, /getImageData/);
@@ -55,8 +57,8 @@ test("viewer retains an RGB-only preview while TIFF analysis uses the separate P
  assert.match(html, /Comparison/);
  assert.match(js, /imageX/);
  assert.match(js, /pointermove/);
- assert.match(html, /TIFF\/OME-TIFF files can be analyzed in real Python/);
- assert.match(html, /Python engine not connected/);
+ assert.match(html, /TIFF files can be processed in Python/);
+ assert.match(read("src/course-adapter.js"), /async function run\(\)/);
 });
 test("responsive and keyboard-resizable panels preserve old course data", () => {
  const css = read("styles.css");
@@ -70,4 +72,27 @@ test("responsive and keyboard-resizable panels preserve old course data", () => 
  assert.match(js, /configureResizableHandle/);
  assert.ok(fs.statSync(new URL("../src/course.js", import.meta.url)).size > 1000);
  assert.ok(fs.statSync(new URL("../curriculum/witz_exercise_inventory.json", import.meta.url)).size > 1000);
+});
+test("new UI defaults to Learn without branding, while Explore preserves the scientific engine", () => {
+ const html = read("index.html");
+ const css = read("src/ui-first-2.css");
+ const js = read("src/ui-first-2.js");
+ const adapter = read("src/course-adapter.js");
+ assert.match(html, /<title>Learn Python<\/title>/);
+ assert.match(html, /data-ui-view="learn"/);
+ assert.match(html, /id="view-learn"[^>]*aria-pressed="true"/);
+ assert.match(html, /id="view-explore"[^>]*aria-pressed="false"/);
+ assert.doesNotMatch(html.slice(html.indexOf('<header'),html.indexOf('</header>')), /BioPython|Studio|Scientific Python|IDE/);
+ assert.match(css, /data-ui-view=learn/);
+ assert.match(css, /data-ui-view=explore/);
+ assert.match(css, /data-mobile-pane=result/);
+ assert.match(js, /bps:lesson-change/);
+ assert.match(js, /localStorage\.setItem/);
+ assert.match(js, /setMobilePane/);
+ assert.match(js, /guided-next/);
+ assert.match(adapter, /new CustomEvent\("bps:lesson-change"/);
+ assert.match(adapter, /const GOAL_COUNTS=/);
+ assert.match(adapter, /async function run\(\)/);
+ assert.match(adapter, /async function check\(\)/);
+ assert.ok(fs.statSync(new URL("../src/p01-worker.mjs", import.meta.url)).size > 1000);
 });
