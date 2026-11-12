@@ -79,6 +79,7 @@
   const voiceSelect=$("bps-example-voice"),rateSelect=$("bps-example-rate"),paramInput=$("bps-example-parameter");
   const recordButton=$("bps-example-record");
   let recordSession=null;
+  let recordPending=false;
   function mp4Mime(){
     if(!hasSpeech||!navigator.mediaDevices?.getDisplayMedia||!window.MediaRecorder?.isTypeSupported)return null;
     return ["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4"].find(type=>MediaRecorder.isTypeSupported(type))||null;
@@ -221,12 +222,14 @@
   /* User-consented screen or tab recording. speechSynthesis itself does not
      expose an audio stream, so successful exports depend on captured tab/system audio. */
   async function startRecording(){
-    if(recordSession||!state.tutorial)return;
+    if(recordSession||recordPending||!state.tutorial)return;
+    const initialTutorial=state.tutorial;
     if(!supportedMp4){
       setStatus("Direct MP4 recording is unavailable in this browser. Try desktop Edge or Chrome.");return;
     }
     setStatus("When asked, select this tab and enable Share tab audio. On Windows, screen + system audio may work if tab audio does not.");
     let stream;
+    recordPending=true;recordButton.disabled=true;
     try{
       // getDisplayMedia must be invoked synchronously from the click gesture.
       stream=await navigator.mediaDevices.getDisplayMedia({
@@ -234,7 +237,13 @@
         systemAudio:"include"
       });
     }catch(error){
+      recordPending=false;recordButton.disabled=false;
       setStatus(error?.name==="NotAllowedError"?"Capture permission was cancelled.":"Could not start screen capture: "+String(error?.message||error));
+      return;
+    }
+    recordPending=false;recordButton.disabled=false;
+    if(state.tutorial!==initialTutorial||!dialog.open){
+      stream.getTracks().forEach(track=>track.stop());
       return;
     }
     if(!stream.getAudioTracks().length||!stream.getVideoTracks().length){
