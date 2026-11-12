@@ -35,6 +35,7 @@
         <button type="button" id="bps-example-play" class="bps-example-play">▶ Play</button>
         <button type="button" id="bps-example-prev" aria-label="Previous explanation step">← Back</button>
         <button type="button" id="bps-example-next">Next →</button>
+        <button type="button" id="bps-example-record" title="Record selected narrator and speed to MP4, with screen/tab audio permission">↓ MP4</button>
         <span id="bps-example-position" aria-live="polite"></span>
         <label class="bps-example-voice-label">Voice <select id="bps-example-voice" aria-label="Narrator voice"></select></label>
         <label class="bps-example-speed-label">Speed <select id="bps-example-rate" aria-label="Narration speed"><option value="0.85">0.85×</option><option value="0.95" selected>0.95×</option><option value="1">1×</option><option value="1.1">1.1×</option></select></label>
@@ -76,6 +77,15 @@
   document.body.append(dialog);
   const play=$("bps-example-play"),previous=$("bps-example-prev"),next=$("bps-example-next");
   const voiceSelect=$("bps-example-voice"),rateSelect=$("bps-example-rate"),paramInput=$("bps-example-parameter");
+  const recordButton=$("bps-example-record");
+  let recordSession=null;
+  function mp4Mime(){
+    if(!hasSpeech||!navigator.mediaDevices?.getDisplayMedia||!window.MediaRecorder?.isTypeSupported)return null;
+    return ["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4"].find(type=>MediaRecorder.isTypeSupported(type))||null;
+  }
+  const supportedMp4=mp4Mime();
+  recordButton.disabled=!supportedMp4;
+  if(!supportedMp4)recordButton.title="MP4 capture with audio is not supported in this browser. Try current Edge or Chrome on desktop.";
   function currentStep(){return state.tutorial?.steps[state.step]||null;}
   function values(){
     const param=state.tutorial?.parameter;
@@ -123,7 +133,11 @@
     $("bps-example-caption").textContent=interpolate(step.say);
     $("bps-example-output").textContent=interpolate(step.output)||"—";
     $("bps-example-tip").textContent=step.note;
-    previous.disabled=state.step===0;next.disabled=state.step===tutorial.steps.length-1;
+    previous.disabled=state.step===0||!!recordSession;next.disabled=state.step===tutorial.steps.length-1||!!recordSession;
+    play.disabled=!!recordSession;
+    voiceSelect.disabled=!!recordSession||!hasSpeech;
+    rateSelect.disabled=!!recordSession;
+    paramInput.disabled=!!recordSession;
     const param=tutorial.parameter;
     $("bps-example-parameter-box").hidden=!param;
     if(param){
@@ -153,7 +167,7 @@
     utterance.pitch=1.0;
     const chosen=findVoice();if(chosen)utterance.voice=chosen;
     utterance.onstart=()=>{if(token===state.token)setStatus("Narrating step "+(state.step+1)+"…");};
-    utterance.onerror=event=>{if(token!==state.token)return;state.playing=false;state.paused=false;render();setStatus("Voice playback could not start ("+(event.error||"device voice") + "). You can use Next.");};
+    utterance.onerror=event=>{if(token!==state.token)return;state.playing=false;state.paused=false;render();if(recordSession)finishRecording(false,"The narrator stopped unexpectedly. No video was saved.");else setStatus("Voice playback could not start ("+(event.error||"device voice") + "). You can use Next.");};
     utterance.onend=()=>{
       if(token!==state.token||!state.playing)return;
       if(state.step<state.tutorial.steps.length-1){
@@ -161,7 +175,7 @@
           if(token!==state.token||!state.playing)return;
           speak();
         },320);
-      }else{state.playing=false;state.paused=false;render();setStatus("Tutorial complete. Practice the concept in the Python editor.");}
+      }else{state.playing=false;state.paused=false;render();setStatus("Tutorial complete. Practice the concept in the Python editor.");if(recordSession)setTimeout(()=>{if(recordSession)finishRecording(true);},500);}
     };
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
@@ -185,6 +199,7 @@
     $("bps-example-close").focus();
   }
   function closeTutorial(){
+    if(recordSession)finishRecording(false,"Recording cancelled.");
     stopSpeech();state.tutorial=null;
     if(dialog.open)dialog.close();
     else dialog.removeAttribute("open");
@@ -202,6 +217,109 @@
     voiceSelect.value=preferred?.voiceURI||"";
     state.preferredVoice=voiceSelect.value;
   }
+
+  /* User-consented screen or tab recording. speechSynthesis itself does not
+     expose an audio stream, so successful exports depend on captured tab/system audio. */
+  async function startRecording(){
+    if(recordSession||!state.tutorial)return;
+    if(!supportedMp4){
+      setStatus("Direct MP4 recording is unavailable in this browser. Try desktop Edge or Chrome.");return;
+    }
+    setStatus("When asked, select this tab and enable Share tab audio. On Windows, screen + system audio may work if tab audio does not.");
+    let stream;
+    try{
+      // getDisplayMedia must be invoked synchronously from the click gesture.
+      stream=await navigator.mediaDevices.getDisplayMedia({
+        video:{frameRate:24},audio:true,preferCurrentTab:true,selfBrowserSurface:"include",
+        systemAudio:"include"
+      });
+    }catch(error){
+      setStatus(error?.name==="NotAllowedError"?"Capture permission was cancelled.":"Could not start screen capture: "+String(error?.message||error));
+      return;
+    }
+    if(!stream.getAudioTracks().length||!stream.getVideoTracks().length){
+      stream.getTracks().forEach(track=>track.stop());
+      setStatus("No audio was shared. Try again and enable Share tab audio (or Share system audio for screen capture). Nothing was saved.");
+      return;
+    }
+    const session={stream,recorder:null,chunks:[],wantSave:false,closing:false,detected:false,
+      detector:null,audioContext:null,start:Date.now(),tutorialId:state.tutorial.id,
+      speed:rateSelect.value,voice:(findVoice()?.name||"system").slice(0,28)};
+    try{
+      const context=new (window.AudioContext||window.webkitAudioContext)();
+      const source=context.createMediaStreamSource(stream);
+      const analyser=context.createAnalyser();analyser.fftSize=1024;
+      source.connect(analyser);
+      session.audioContext=context;
+      const samples=new Uint8Array(analyser.fftSize);
+      session.detector=setInterval(()=>{
+        if(session.closing)return;
+        analyser.getByteTimeDomainData(samples);
+        let sum=0;
+        for(const sample of samples){const x=(sample-128)/128;sum+=x*x;}
+        if(Math.sqrt(sum/samples.length)>0.004)session.detected=true;
+      },130);
+      context.resume().catch(()=>{});
+      const recorder=new MediaRecorder(stream,{
+        mimeType:supportedMp4,videoBitsPerSecond:2800000,audioBitsPerSecond:128000
+      });
+      session.recorder=recorder;
+      recorder.ondataavailable=e=>{if(e.data?.size)session.chunks.push(e.data);};
+      recorder.onerror=()=>{if(recordSession===session)finishRecording(false,"Recording failed; no file was saved.");};
+      recorder.onstop=()=>handleRecordingStop(session);
+      stream.getVideoTracks()[0].addEventListener("ended",()=>{
+        if(recordSession===session&&!session.closing)finishRecording(false,"Screen sharing ended before the tutorial finished.");
+      });
+      recordSession=session;
+      dialog.classList.add("bps-exporting");
+      stopSpeech();state.step=0;state.playing=true;state.paused=false;
+      render();
+      recorder.start(250);
+      setStatus("Recording with your selected narrator at "+session.speed+"×. Keep the tab visible.");
+      // Start only after the browser's share dialog disappears.
+      setTimeout(()=>{
+        if(recordSession===session&&!session.closing)speak();
+      },650);
+    }catch(error){
+      if(session.detector)clearInterval(session.detector);
+      session.audioContext?.close().catch(()=>{});
+      stream.getTracks().forEach(track=>track.stop());
+      if(recordSession===session)recordSession=null;
+      dialog.classList.remove("bps-exporting");
+      render();
+      setStatus("MP4 recording could not start: "+String(error?.message||error));
+    }
+  }
+  function finishRecording(save,message=""){
+    const session=recordSession;
+    if(!session||session.closing)return;
+    session.closing=true;session.wantSave=save;session.message=message;
+    if(session.recorder?.state!=="inactive")session.recorder.stop();
+    else handleRecordingStop(session);
+  }
+  function handleRecordingStop(session){
+    if(session.detector)clearInterval(session.detector);
+    session.audioContext?.close().catch(()=>{});
+    session.stream.getTracks().forEach(track=>track.stop());
+    if(recordSession===session)recordSession=null;
+    dialog.classList.remove("bps-exporting");
+    render();
+    if(!session.wantSave){setStatus(session.message||"Recording cancelled.");return;}
+    if(!session.detected){
+      setStatus("The captured audio was silent. No file saved. Your selected device voice may be playing outside tab audio: try screen capture with Share system audio if your browser offers it.");
+      return;
+    }
+    const blob=new Blob(session.chunks,{type:"video/mp4"});
+    if(blob.size<12000){setStatus("The recorder returned an empty or incomplete MP4. Nothing was saved.");return;}
+    const url=URL.createObjectURL(blob);
+    const safe=String(session.tutorialId).replace(/[^a-zA-Z0-9_-]/g,"-");
+    const voice=String(session.voice).replace(/[^a-zA-Z0-9_-]/g,"-");
+    const a=document.createElement("a");
+    a.href=url;a.download="BioPython_"+safe+"_"+voice+"_"+session.speed+"x.mp4";
+    document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    setStatus("MP4 download created using the selected voice and "+session.speed+"× speed. Play it back to confirm audio and synchronization.");
+  }
   function sync(event){
     const d=event?.detail||{};
     const id=d.chapterId==="P01"&&d.phase==="learn"
@@ -214,7 +332,7 @@
   }
   entry.addEventListener("click",()=>openTutorial(entry.dataset.tutorial));
   $("bps-example-close").addEventListener("click",closeTutorial);
-  dialog.addEventListener("close",()=>{stopSpeech();state.tutorial=null;});
+  dialog.addEventListener("close",()=>{if(recordSession)finishRecording(false,"Recording cancelled.");stopSpeech();state.tutorial=null;});
   dialog.addEventListener("click",event=>{if(event.target===dialog)closeTutorial();});
   play.addEventListener("click",()=>{
     if(!state.tutorial)return;
@@ -225,7 +343,8 @@
   });
   previous.addEventListener("click",()=>jump(-1,state.playing&&!state.paused));
   next.addEventListener("click",()=>jump(1,state.playing&&!state.paused));
-  paramInput.addEventListener("input",()=>{state.param=Number(paramInput.value);render();});
+  paramInput.addEventListener("input",()=>{if(recordSession)return;state.param=Number(paramInput.value);render();});
+  recordButton.addEventListener("click",startRecording);
   voiceSelect.addEventListener("change",()=>{
     state.preferredVoice=voiceSelect.value;
     if(state.playing){stopSpeech();state.playing=true;render();speak();}
