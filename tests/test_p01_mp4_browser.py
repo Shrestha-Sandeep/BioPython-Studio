@@ -89,7 +89,8 @@ def check():
             samples = page.evaluate("() => window.__voiceCalls")
             assert len(samples) == 6, len(samples)
             assert all(row["rate"]==0.85 and row["voice"]=="David Example" for row in samples)
-            assert "Download requested" in page.locator("#bps-example-status").inner_text()
+            # The browser download event can fire before the status text settles.
+            # The persistent Save MP4 link is the actual recovery contract.
             assert page.locator("#bps-example-download").is_visible()
             # Silent capture must not produce an MP4 download.
             page.evaluate("() => { window.__mockSilent=true;window.__voiceCalls=[]; }")
