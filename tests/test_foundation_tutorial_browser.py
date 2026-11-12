@@ -26,8 +26,9 @@ def check():
                     page.wait_for_function(
                         """(chapter) => document.getElementById('bps-chapter-select').value === chapter
                         && document.getElementById('bps-example-trigger').hidden === false
-                        && document.getElementById('p01-goal-select').options.length >= 6""",
-                        chapter,timeout=25000)
+                        && document.getElementById('p01-goal-select').options.length >= 6
+                        && document.getElementById('crumb').textContent.includes(chapter)""",
+                        arg=chapter,timeout=25000)
                     trigger=page.locator("#bps-example-trigger")
                     assert trigger.is_visible(),chapter
                     assert "Chapter example" in trigger.inner_text(),chapter
