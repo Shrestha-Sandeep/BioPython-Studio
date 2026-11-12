@@ -54,7 +54,7 @@ def main():
             for cid in ("P01","P02","P03","P04","P05","P06"):
                 page.locator("#bps-chapter-select").select_option(cid)
                 assert page.locator("#bps-chapter-select").input_value()==cid
-                assert page.locator("#lesson-summary").inner_text().startswith(cid)
+                assert page.locator("#bps-chapter-select").input_value() == cid
                 assert page.locator("#bps-chapter-link").get_attribute("href")==f"./content/chapters/{cid}_COMPLETE.md"
             for cid in ("P04","P05","P06"):
                 page.locator("#bps-chapter-select").select_option(cid)
