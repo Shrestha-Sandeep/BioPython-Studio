@@ -69,6 +69,8 @@ def check_browser():
                 assert page.locator("#p01-check").is_hidden()
                 assert not page.locator("#image-panel").is_visible()
                 assert page.locator("#mobile-pane-image").is_hidden()
+                if width in (390, 1440):
+                    page.screenshot(path=str(SHOTS / f"learn-start-{width}.png"), full_page=True)
 
                 # Back/Next move through existing Learn, Apply and Prove phases without granting mastery.
                 page.locator("#guided-next").click()
@@ -107,6 +109,9 @@ def check_browser():
                     assert page.locator(".workspace-grid .editor").is_hidden()
                     page.locator("#mobile-pane-code").click()
                     assert page.locator(".workspace-grid .editor").is_visible()
+                    page.locator("#mobile-pane-result").click()
+                    page.locator("#tab-learn").click()
+                    assert page.locator("body").get_attribute("data-mobile-pane") == "code"
                 else:
                     assert page.locator("#mobile-workspace-tabs").is_hidden()
 
@@ -138,6 +143,7 @@ def check_browser():
                 assert page.locator("#compare-toggle").is_visible()
                 if mobile:
                     assert page.locator("#mobile-pane-image").is_visible()
+                    assert page.locator(".page-top").is_hidden(), "Explore should not repeat Images on mobile"
                 else:
                     assert page.locator("#focus-toggle").is_visible()
                     page.locator("#focus-toggle").click()
