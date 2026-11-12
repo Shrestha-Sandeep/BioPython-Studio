@@ -78,7 +78,6 @@
 body[data-ui-view=learn] #reference-toggle, 
 body[data-ui-view=learn] #focus-toggle,
 body[data-ui-view=learn] #clear-code,
-body[data-ui-view=learn] #p01-export,
 body[data-ui-view=learn] .output .result-tabs [data-result=measurements],
 body[data-ui-view=learn] .output .result-tabs [data-result=histogram],
 body[data-ui-view=learn] .panel-footer #cursor,
