@@ -54,9 +54,9 @@ def check():
                 trigger.click()
                 dialog = page.locator("#bps-example-dialog")
                 assert dialog.is_visible()
-                assert page.locator("#bps-example-title").inner_text() == "Variables and output"
-                assert page.locator("#bps-example-progress").get_attribute("max") == "8"
-                assert "counting cells" in page.locator("#bps-example-step-title").inner_text().lower()
+                assert page.locator("#bps-example-title").inner_text() == "From a microscope field to a trustworthy report"
+                assert page.locator("#bps-example-progress").get_attribute("max") == "19"
+                assert "destination" in page.locator("#bps-example-step-title").inner_text().lower()
                 preview = page.locator("#bps-example-image-preview")
                 assert preview.is_visible(), "The future-capability image must be visible in scene one"
                 page.wait_for_function(
@@ -67,8 +67,10 @@ def check():
                 assert page.locator("#bps-example-caption").inner_text()
                 assert page.locator("#bps-example-voice").count() == 1
                 assert page.locator("#bps-example-rate").count() == 1
-                for _ in range(4):
+                for _ in range(6):
                     page.locator("#bps-example-next").click()
+                assert "Reveal:" in page.locator("#bps-example-step-title").inner_text()
+                assert page.locator("#bps-example-parameter-box").is_visible()
                 page.locator("#bps-example-parameter").evaluate(
                     "(element) => { element.value='31'; element.dispatchEvent(new Event('input',{bubbles:true})); }"
                 )
@@ -86,12 +88,12 @@ def check():
                 change_selection(page,"p01-goal-select","4")
                 assert trigger.is_visible()
                 trigger.click()
-                assert page.locator("#bps-example-title").inner_text() == "Errors, help, and clean runs"
+                assert page.locator("#bps-example-title").inner_text() == "From a microscope field to a trustworthy report"
                 page.locator("#bps-example-close").click()
                 change_selection(page,"p01-goal-select","7")
-                assert "Complete example" in trigger.inner_text()
+                assert "Chapter example" in trigger.inner_text()
                 trigger.click()
-                assert page.locator("#bps-example-title").inner_text() == "Complete example: specimen report"
+                assert page.locator("#bps-example-title").inner_text() == "From a microscope field to a trustworthy report"
                 page.locator("#bps-example-close").click()
                 change_selection(page,"p01-goal-select","8")
                 assert trigger.is_hidden(), "Delayed review must not reveal a worked example"
