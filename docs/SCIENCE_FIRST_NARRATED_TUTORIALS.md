@@ -23,22 +23,29 @@ This is not a generic motivational speech. Give the learner a plausible reason t
 9. **User experience:** keep the minimal existing example dialog and installed browser voice selection/speed. Do not add download, screen recording, streaks, or another permanent panel.
 10. **Accessibility:** captions independent of speech; manual Previous/Next; reduced-motion support; readable microscopy alt text; citations.
 
-## Implemented P01 examples
+## Updated P01 implementation — one coherent example
 
-| Narrated example | P01 goals | Opening real-world capability | Concept and small transferable deliverable | Scenes |
-|---|---|---|---|---:|
-| Variables and output | G01, G02 | Segmented nuclei → a field-level count report | Assign specimen identifier and manual count; print and vary them | 8 |
-| Measurements and Python types | G03, G04 | Calibrated length/size measurement | Integers, floats, comparison/Boolean; pixel-to-µm arithmetic with explicitly hypothetical calibration | 7 |
-| Errors, help, clean runs | G05, G06, G07 | Avoid visible and silent failures in batch analysis | Debug NameError, use help, re-run from a clean session, challenge wrong calibration | 8 |
-| Complete specimen report | CAPSTONE | Traceable records across many fields | One small reproducible script: specimen ID, manual count, calculated length, formatted text output | 8 |
+Instead of four separate narrated clips with 31 scenes, P01 now has **one narrated 19-scene chapter tutorial**, approximately 5–8 minutes including a deliberate prediction pause. It remains available in Learn across all seven P01 goals and the capstone. It is deliberately absent from the delayed review, Apply and Prove.
 
-**Total: 31 narration scenes**, four tutorials. P01-REVIEW stays independent and has no walkthrough.
+**Recurring project:** a specimen-level microscopy measurement report.
 
-Figures: labeled nuclei, fluorescence images, and Otsu mask reproduced in Witz notebooks and credited to Witz/HPA. These previews are not paired before/after claims or direct computations from the beginner snippets.
+| Sequence | What the learner sees or understands | Learning goals |
+|---|---|---|
+| 1. Destination | Genuine published labeled nuclei; future field-level analysis and reports (not produced by current code) | G01 |
+| 2. Gather data | Specimen label and manually collected measurements, explicitly hypothetical calibration | G01, G02 |
+| 3. Execute | Variables, strings, integers, printing and a prediction about changing inputs | G01, G02 |
+| 4. Calculate | Pixels × micrometres per pixel; float/int/Boolean and scientific units | G03, G04 |
+| 5. Validate | Silent calibration error, visible NameError, documentation and clean-state reproducibility | G05, G06, G07 |
+| 6. Report | One complete, runnable Python report and connection to future quantitative image analysis | CAPSTONE |
+| 7. Transfer | Independent field variable, new pixel length, re-run and explain dependencies | CAPSTONE |
+
+**Learning mechanics:** the single existing Play button becomes Reveal at the prediction break. A user-selected browser TTS voice and narration rate remain supported. The count slider appears only where changes have a useful visible effect. Witz/HPA figures are credited and remain explicitly separate from actual numeric input data.
+
+**Decision gate:** Do not automatically scale this to five more chapters until the learner confirms the consolidated format is better than the earlier four-tutorial pilot. More content does not by itself improve mastery.
 
 ## Extension roadmap (not implemented)
 
-Follow the existing actual chapter goals, not a new syllabus:
+Create **one coherent evolving scientific example per chapter**, following the actual existing goals, not a new syllabus:
 
 | Chapter | Existing goals | Scientific destination to preview | How the new concepts contribute |
 |---|---|---|---|
@@ -48,7 +55,7 @@ Follow the existing actual chapter goals, not a new syllabus:
 | **P05: reusable analysis** | Functions, parameters, scope, typing/docstrings, errors, imports | Reuse identical calibrated measurements across specimens; reject invalid calibration | Composable, testable functions |
 | **P06: reproducibility** | Files, environments, JSON, assertions, standalone script, Git | Produce a documented and repeatable field-analysis artifact | Read, validate, save, test, and track analysis |
 
-For each chapter: start with one high-quality mini-workflow that appears across its tutorials, then make the chapter capstone the integrated version. Avoid six separate, unrelated examples. Introduce richer previews only where grounded in the core concept and the relevant licensing.
+For each chapter: create one carefully structured narrated tutorial showing one evolving workflow. Retain short written help and independent exercises for each individual learning goal. Do not turn every minor concept into a separate video. Introduce richer previews only where grounded in the core concept and the relevant licensing.
 
 ## QA gates
 
