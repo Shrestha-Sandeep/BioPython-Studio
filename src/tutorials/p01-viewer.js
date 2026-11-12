@@ -36,6 +36,7 @@
         <button type="button" id="bps-example-prev" aria-label="Previous explanation step">← Back</button>
         <button type="button" id="bps-example-next">Next →</button>
         <button type="button" id="bps-example-record" title="Record selected narrator and speed to MP4, with screen/tab audio permission">↓ MP4</button>
+        <a id="bps-example-download" class="bps-example-download" href="#" download hidden>Save MP4</a>
         <span id="bps-example-position" aria-live="polite"></span>
         <label class="bps-example-voice-label">Voice <select id="bps-example-voice" aria-label="Narrator voice"></select></label>
         <label class="bps-example-speed-label">Speed <select id="bps-example-rate" aria-label="Narration speed"><option value="0.85">0.85×</option><option value="0.95" selected>0.95×</option><option value="1">1×</option><option value="1.1">1.1×</option></select></label>
@@ -70,6 +71,10 @@
         <p class="bps-example-tip" id="bps-example-tip"></p>
       </div>
       <footer class="bps-example-footer">
+        <div id="bps-example-record-actions" hidden>
+          <button type="button" id="bps-example-finish">Finish &amp; save</button>
+          <button type="button" id="bps-example-cancel">Cancel recording</button>
+        </div>
         <span id="bps-example-status" role="status">Press Play to hear the explanation, or use Next.</span>
         <span>Use the lesson's Run button for real Python execution.</span>
       </footer>
@@ -77,9 +82,17 @@
   document.body.append(dialog);
   const play=$("bps-example-play"),previous=$("bps-example-prev"),next=$("bps-example-next");
   const voiceSelect=$("bps-example-voice"),rateSelect=$("bps-example-rate"),paramInput=$("bps-example-parameter");
-  const recordButton=$("bps-example-record");
+  const recordButton=$("bps-example-record"),downloadLink=$("bps-example-download");
+  const finishButton=$("bps-example-finish"),cancelButton=$("bps-example-cancel");
+  const recordingActions=$("bps-example-record-actions");
   let recordSession=null;
   let recordPending=false;
+  let latestDownloadURL=null;
+  function clearSavedRecording(){
+    downloadLink.hidden=true;downloadLink.removeAttribute("href");
+    downloadLink.textContent="Save MP4";
+    if(latestDownloadURL){URL.revokeObjectURL(latestDownloadURL);latestDownloadURL=null;}
+  }
   function mp4Mime(){
     if(!hasSpeech||!navigator.mediaDevices?.getDisplayMedia||!window.MediaRecorder?.isTypeSupported)return null;
     return ["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4"].find(type=>MediaRecorder.isTypeSupported(type))||null;
@@ -136,6 +149,8 @@
     $("bps-example-tip").textContent=step.note;
     previous.disabled=state.step===0||!!recordSession;next.disabled=state.step===tutorial.steps.length-1||!!recordSession;
     play.disabled=!!recordSession;
+    recordingActions.hidden=!recordSession;
+    recordButton.disabled=!supportedMp4||!!recordSession||recordPending;
     voiceSelect.disabled=!!recordSession||!hasSpeech;
     rateSelect.disabled=!!recordSession;
     paramInput.disabled=!!recordSession;
@@ -193,6 +208,7 @@
   function openTutorial(id){
     const tutorial=library.get(id);if(!tutorial)return;
     stopSpeech();state.tutorial=tutorial;state.step=0;
+    clearSavedRecording();
     state.param=tutorial.parameter?.value??null;
     render();setStatus("Press Play to hear the explanation, or use Next.");
     if(typeof dialog.showModal==="function")dialog.showModal();
@@ -259,6 +275,10 @@
       const source=context.createMediaStreamSource(stream);
       const analyser=context.createAnalyser();analyser.fftSize=1024;
       source.connect(analyser);
+      // Without a downstream sink some browsers suspend processing and falsely
+      // report a silent captured audio stream. Route to a muted destination.
+      const muted=context.createGain();muted.gain.value=0;
+      analyser.connect(muted);muted.connect(context.destination);
       session.audioContext=context;
       const samples=new Uint8Array(analyser.fftSize);
       session.detector=setInterval(()=>{
@@ -284,7 +304,7 @@
       stopSpeech();state.step=0;state.playing=true;state.paused=false;
       render();
       recorder.start(250);
-      setStatus("Recording with your selected narrator at "+session.speed+"×. Keep the tab visible.");
+      setStatus("Recording with your selected narrator at "+session.speed+"×. Keep the tab visible. Use Finish & save if the recording does not end automatically.");
       // Start only after the browser's share dialog disappears.
       setTimeout(()=>{
         if(recordSession===session&&!session.closing)speak();
@@ -314,20 +334,24 @@
     dialog.classList.remove("bps-exporting");
     render();
     if(!session.wantSave){setStatus(session.message||"Recording cancelled.");return;}
-    if(!session.detected){
-      setStatus("The captured audio was silent. No file saved. Your selected device voice may be playing outside tab audio: try screen capture with Share system audio if your browser offers it.");
-      return;
-    }
     const blob=new Blob(session.chunks,{type:"video/mp4"});
     if(blob.size<12000){setStatus("The recorder returned an empty or incomplete MP4. Nothing was saved.");return;}
-    const url=URL.createObjectURL(blob);
+    // Keep an explicit, clickable download link. A click triggered from the asynchronous
+    // MediaRecorder 'stop' callback can be blocked by the browser, even after a good recording.
+    clearSavedRecording();
+    latestDownloadURL=URL.createObjectURL(blob);
     const safe=String(session.tutorialId).replace(/[^a-zA-Z0-9_-]/g,"-");
     const voice=String(session.voice).replace(/[^a-zA-Z0-9_-]/g,"-");
-    const a=document.createElement("a");
-    a.href=url;a.download="BioPython_"+safe+"_"+voice+"_"+session.speed+"x.mp4";
-    document.body.append(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),30000);
-    setStatus("MP4 download created using the selected voice and "+session.speed+"× speed. Play it back to confirm audio and synchronization.");
+    downloadLink.href=latestDownloadURL;
+    downloadLink.download="BioPython_"+safe+"_"+voice+"_"+session.speed+"x.mp4";
+    downloadLink.textContent="Save MP4 · "+(blob.size/1048576).toFixed(1)+" MB";
+    downloadLink.hidden=false;
+    if(session.detected){
+      setStatus("MP4 recorded. Click Save MP4 if the download did not start automatically. Play it back to verify the selected voice.");
+      downloadLink.click();
+    }else{
+      setStatus("MP4 recorded, but NO AUDIO was detected. It may be silent. You can still save and inspect it, or retry with Share system audio. The selected device voice may not be captured.");
+    }
   }
   function sync(event){
     const d=event?.detail||{};
@@ -354,6 +378,12 @@
   next.addEventListener("click",()=>jump(1,state.playing&&!state.paused));
   paramInput.addEventListener("input",()=>{if(recordSession)return;state.param=Number(paramInput.value);render();});
   recordButton.addEventListener("click",startRecording);
+  finishButton.addEventListener("click",()=>finishRecording(true));
+  cancelButton.addEventListener("click",()=>finishRecording(false,"Recording cancelled."));
+  downloadLink.addEventListener("click",()=>{
+    if(!latestDownloadURL){setStatus("No MP4 has been recorded yet.");return;}
+    setStatus("MP4 download requested. Check your browser's downloads; verify narration by playing the saved file.");
+  });
   voiceSelect.addEventListener("change",()=>{
     state.preferredVoice=voiceSelect.value;
     if(state.playing){stopSpeech();state.playing=true;render();speak();}
