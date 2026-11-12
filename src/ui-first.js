@@ -70,8 +70,8 @@
   async function loadWitzPair() {
     const button = $("witz-dataset-button");
     if (button.disabled) return;
-    button.disabled = true; button.textContent = "Loading TIFFs…";
-    datasetStatus("Fetching two credited Witz/HPA JPEG-derived TIFF files…", analysisFiles.length>0);
+    button.disabled = true; button.textContent = "Loading…";
+    datasetStatus("Loading example TIFF images…", analysisFiles.length>0);
     const names = ["46658_784_B12_1.tif", "24138_196_F7_2.tif"];
     try {
       const files = [];
@@ -85,11 +85,11 @@
         files.push(new File([bytes], name, {type:"image/tiff"}));
       }
       if (!stageAnalysisFiles(files)) throw new Error("Sample TIFFs exceed file limits");
-      $("image-meta").title = "Microscopy-derived Witz/HPA RGB; JPEG-to-TIFF conversion, not calibrated raw acquisition";
+      $("image-meta").title = "Published RGB microscopy source converted to TIFF; not calibrated raw acquisition. See data provenance in documentation.";
     } catch(e) {
-      datasetStatus("Witz pair unavailable: " + String(e.message||e) + ". Download manually and use Open images.", analysisFiles.length>0);
+      datasetStatus("Example unavailable: " + String(e.message||e) + ". Open local images instead.", analysisFiles.length>0);
     } finally {
-      button.disabled = false; button.textContent = "Witz TIFF pair";
+      button.disabled = false; button.textContent = "Example";
     }
   }
 
@@ -230,6 +230,8 @@
     $("output-placeholder").textContent = RESULTS[next];
   }
   function openLesson(show, remember = true) {
+    // Guided learning keeps its task visible; Explore hides the lesson surface via CSS.
+    if (document.body.dataset.uiView === "learn") show = true;
     $("phase-panel").hidden = !show;
     $("lesson-toggle").setAttribute("aria-expanded", String(show));
     $("lesson-toggle").setAttribute("aria-label", show ? "Collapse lesson" : "Expand lesson");
