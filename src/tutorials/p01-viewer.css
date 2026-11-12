@@ -69,3 +69,15 @@ body[data-ui-view="explore"] #bps-example-trigger{display:none!important}
  .bps-example-parameter label{grid-column:1 / -1}
 }
 @media(prefers-reduced-motion:reduce){.bps-example-dialog::backdrop{backdrop-filter:none}}
+
+/* Genuine Witz/HPA teaching illustrations appear only in selected scenes.
+ * This is part of the existing variable-trace panel, not another UI panel. */
+.bps-example-image-preview[hidden]{display:none!important}
+.bps-example-image-preview{margin:0 0 12px;padding:0;min-width:0}
+.bps-example-image-preview figcaption{font-size:12px;font-weight:650;margin:0 0 7px;line-height:1.35}
+.bps-example-image-preview img{display:block;max-width:100%;width:100%;max-height:164px;object-fit:contain;object-position:center;background:#101820;border-radius:6px}
+.bps-example-image-preview small{display:block;margin:6px 0 0;font-size:10px;line-height:1.35;color:var(--muted,#a1a9b3)}
+.bps-example-image-preview a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+@keyframes bps-explain-enter{from{opacity:.55;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.bps-example-code-line.is-active,.bps-example-value{animation:bps-explain-enter .24s ease-out both}
+@media(prefers-reduced-motion:reduce){.bps-example-code-line.is-active,.bps-example-value{animation:none}}
