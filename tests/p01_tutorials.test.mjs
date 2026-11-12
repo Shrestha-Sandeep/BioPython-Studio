@@ -83,7 +83,10 @@ test("MP4 experiment keeps selected voice and speed and refuses silent capture",
   assert.match(viewerSource,/video\/mp4/);
   assert.match(viewerSource,/const chosen=findVoice\(\)/);
   assert.match(viewerSource,/session\.speed=rateSelect\.value|speed:rateSelect\.value/);
-  assert.match(viewerSource,/if\(!session\.detected\)/);
+  assert.match(viewerSource,/if\(session\.detected\)/);
+  assert.match(viewerSource,/downloadLink\.hidden=false/);
+  assert.match(viewerSource,/bps-example-finish/);
+  assert.match(viewerSource,/NO AUDIO was detected/);
   assert.match(viewerSource,/Voice playback could not start|The narrator stopped unexpectedly/);
   assert.match(viewerSource,/bps-example-record/);
   assert.doesNotMatch(viewerSource,/https:\/\/.*tts/);
