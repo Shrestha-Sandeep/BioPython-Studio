@@ -6,8 +6,8 @@
  const records="records = [('F01', 0.92), ('F02', None), ('F03', 0.65), ('F04', 0.84)]";
  const inspect=records+"\nfor field_id, focus in records:\n    print(field_id, focus)";
  const numbered=source+"\nfor number, field_id in enumerate(fields, start=1):\n    print(number, field_id)";
- const capstone="records = [('F01', 0.92), ('F02', None), ('F03', 0.65), ('F01', 0.88), ('STOP', None), ('F05', 0.99)]\nminimum = 0.80\nseen = []\naccepted, low, missing, duplicates, invalid = [], [], [], [], []\nfor position, (field, score) in enumerate(records, start=1):\n    if position > 5 or field == 'STOP':\n        break\n    if field in seen:\n        duplicates.append(field)\n        continue\n    seen.append(field)\n    if score is None:\n        missing.append(field)\n        continue\n    if not isinstance(score, (int, float)) or not 0 <= score <= 1:\n        invalid.append(field)\n        continue\n    if score < minimum:\n        low.append(field)\n        continue\n    accepted.append(field)\nprint('accepted:', accepted)\nprint('low:', low)\nprint('missing:', missing)\nprint('duplicates:', duplicates)\nprint('invalid:', invalid)";
- const result="accepted: ['F01']\nlow: ['F03']\nmissing: ['F02']\nduplicates: ['F01']\ninvalid: []";
+ const capstone="records = [('F01', 0.92), ('F02', None), ('F03', 0.65), ('F01', 0.88), ('STOP', None), ('F05', 0.99)]\nminimum = 0.80\nseen = []\naccepted, low, missing, duplicates, invalid = [], [], [], [], []\nstop_after = len(records)\nfor position, (field, score) in enumerate(records, start=1):\n    if position > 5 or field == 'STOP':\n        stop_after = position if field == 'STOP' else position - 1\n        break\n    if not isinstance(field, str) or len(field) != 3 or not field.startswith('F') or not field[1:].isascii() or not field[1:].isdigit():\n        invalid.append(str(field))\n        continue\n    if field in seen:\n        duplicates.append(field)\n        continue\n    seen.append(field)\n    if score is None:\n        missing.append(field)\n        continue\n    if not isinstance(score, (int, float)) or not 0 <= score <= 1:\n        invalid.append(field)\n        continue\n    if score < minimum:\n        low.append(field)\n        continue\n    accepted.append(field)\nprint('accepted:', accepted)\nprint('low:', low)\nprint('missing:', missing)\nprint('duplicates:', duplicates)\nprint('invalid:', invalid)\nprint('unvisited:', [fid for fid, _ in records[stop_after:]]";
+ const result="accepted: ['F01']\nlow: ['F03']\nmissing: ['F02']\nduplicates: ['F01']\ninvalid: []\nunvisited: ['F05']";
  window.BioPythonFoundationTutorials=Object.freeze([...(window.BioPythonFoundationTutorials||window.BioPythonP01Tutorials||[]),{
    id:"p03-chapter",chapter:"P03",title:"Audit a whole microscopy acquisition, field by field",
    short:"One chapter example",minutes:"6–9 min",
@@ -76,7 +76,7 @@
      scene("Put the field audit together",
        "Here is a full example using only lists, tuples, conditions and loops. The script records accepted, low, missing, and duplicate fields, checks invalid numeric scores, and stops on the acquisition marker. It does not inspect data after STOP.",
        capstone,[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26],
-       [["Accepted","F01"],["Low","F03"],["Missing","F02"],["Duplicate","F01"]],result,
+       [["Accepted","F01"],["Missing","F02"],["Duplicate","F01"],["Not visited","F05"]],result,
        "A duplicate ID does not mean a biological duplicate. Preserve original acquisition records and use an explicit policy.", "P03-CAPSTONE"),
      scene("How this grows into real image analysis",
        "Later, instead of supplying focus scores manually, a pipeline could extract quality metrics from image arrays, then use the same loop and audit structure. For now the important skill is correctly accounting for every supplied field without hiding exclusions.",
