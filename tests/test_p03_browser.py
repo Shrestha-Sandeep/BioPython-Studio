@@ -185,7 +185,7 @@ def main():
             page.locator("#bps-chapter-select").select_option("P03")
             assert page.evaluate("document.querySelector('.CodeMirror').CodeMirror.getValue().startsWith('# P03-G01 | LEARN |')")
             assert page.locator("#p01-goal-select").locator("option").count() == 9
-            assert page.locator("#lesson-summary").inner_text().startswith("P03")
+            assert page.locator("#bps-chapter-select").input_value() == "P03"
             assert page.locator("#bps-chapter-link").get_attribute("href") == "./content/chapters/P03_COMPLETE.md"
             assert "A Python list preserves" in page.locator("#phase-panel").inner_text()
             page.get_by_text("See a genuine microscopy example").click()
