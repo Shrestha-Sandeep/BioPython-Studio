@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16],['I09',16],['I10',16],['I11',16],['I12',18]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16],['I09',16],['I10',16],['I11',16],['I12',18],['I13',16]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,172);
+ assert.equal(count,188);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -227,4 +227,19 @@ test('I12 uncertainty displays explicit interval definitions and does not reveal
  assert.match(labels(box),/Independent n=3/);
  diagrams.render(box,'I12',20);
  assert.match(labels(box),/95% t CI/);
+});
+
+test('I13 visual explanation separates published RGB PNG from synthetic threshold counts',()=>{
+ const box=element('div');
+ diagrams.render(box,'I13',9);
+ assert.match(labels(box),/Not source 16-bit TIFF/);
+ diagrams.render(box,'I13',12);
+ assert.match(labels(box),/Count computed, not validated/);
+ diagrams.render(box,'I13',13);
+ assert.match(labels(box),/How many components/);
+ assert.doesNotMatch(labels(box),/3 labels, 4 pixels/);
+ diagrams.render(box,'I13',14);
+ assert.match(labels(box),/3 labels, 4 pixels/);
+ diagrams.render(box,'I13',15);
+ assert.match(labels(box),/No raw nuclei/);
 });
