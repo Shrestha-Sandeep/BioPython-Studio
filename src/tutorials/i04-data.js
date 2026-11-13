@@ -5,7 +5,7 @@
 const scene=(title,say,code,focus,visual,output,note,goal,extra={})=>({title,say,code,focus,visual,output,note,goal,...extra});
 const L="import matplotlib.pyplot as plt\nfig, ax = plt.subplots()\nax.plot([1, 2, 3], [2, 5, 4])\nax.set(xlabel='Field number', ylabel='Example signal (a.u.)', title='Synthetic observations')\nprint(len(fig.axes), ax.get_xlabel(), ax.get_ylabel())";
 const H="import matplotlib.pyplot as plt\nfig, ax = plt.subplots()\ncounts, edges, patches = ax.hist([1, 1, 2, 3], bins=[0, 1, 2, 3, 4])\nprint(counts.astype(int).tolist())\nprint(int(counts.sum()))";
-const I="import numpy as np\nimport matplotlib.pyplot as plt\npixels = np.array([[0, 100], [150, 255]], dtype=np.uint8)\noriginal = pixels.copy()\nfig, ax = plt.subplots()\nimage = ax.imshow(pixels, vmin=50, vmax=200, cmap='gray', interpolation='nearest')\nprint(np.array_equal(pixels, original))\nprint(tuple(image.get_clim()))";
+const I="import numpy as np\nimport matplotlib.pyplot as plt\npixels = np.array([[0, 100], [150, 255]], dtype=np.uint8)\noriginal = pixels.copy()\nfig, ax = plt.subplots()\nimage = ax.imshow(pixels, vmin=50, vmax=200, cmap='gray', interpolation='nearest')\nprint(tuple(image.get_clim()))";
 const C="import numpy as np\nimport matplotlib.pyplot as plt\nrgb = np.array([[[10, 30, 50], [20, 50, 80]],\n                [[30, 70, 120], [40, 90, 200]]], dtype=np.uint8)\noriginal = rgb.copy()\ngreen = rgb[:, :, 1]\nfig, axes = plt.subplots(1, 2)\naxes[0].imshow(green, cmap='gray', vmin=20, vmax=100, interpolation='nearest')\naxes[0].set(title='Synthetic green display component', xlabel='Column', ylabel='Row')\ncounts, edges, patches = axes[1].hist(green.ravel(), bins=[0, 50, 100, 150, 200, 256])\naxes[1].set(title='Display-value histogram', xlabel='8-bit display value', ylabel='Pixels')\nprint('Panels:', len(fig.axes))\nprint('Display pixels:', int(counts.sum()))\nprint('Raw array preserved:', bool(np.array_equal(rgb, original)))";
 const CO="Panels: 2\nDisplay pixels: 4\nRaw array preserved: True";
 window.BioPythonImagingTutorials=Object.freeze([...(window.BioPythonImagingTutorials||[]),{
@@ -58,9 +58,9 @@ scene("Arrange panels for honest comparison",
 "2",
 "Two panels do not automatically represent biological replicates or two different independent experiments.","I04-G04"),
 scene("Changing display contrast is not changing pixels",
-"Matplotlib can map stored values onto a different black-to-white range with vmin and vmax. This changes how the image looks, but does not rewrite the input NumPy array. We make a copy and compare it with the source after drawing.",
-I,[3,4,5,6,7,8,9],[["Source pixel values","0, 100, 150, 255"],["Display limits","50, 200"],["Raw array","Unmodified"]],
-"True\n(50.0, 200.0)",
+"Matplotlib maps stored values onto a visible gray range using vmin and vmax. Changing those settings can make the image look different. We can check the chosen color limits now, and then test separately whether the source numerical values have changed.",
+I,[3,4,5,6,7,8],[["Source pixel values","0, 100, 150, 255"],["Display limits","50, 200"],["Question","Are pixels changed?"]],
+"(50.0, 200.0)",
 "The display map is not background subtraction, acquisition recalibration, or a manipulation of original microscopy detector data.","I04-G05"),
 scene("Predict whether a contrast change edits data",
 "Consider a two-by-two array with stored values zero, one hundred, one hundred fifty and two hundred fifty five. We show it with a narrowed display range. Predict whether a later equality check against a saved source copy should be true or false, then reveal.",
