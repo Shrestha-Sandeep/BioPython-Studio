@@ -43,7 +43,7 @@ def check():
                     assert page.locator("#bps-example-position").inner_text().startswith(str(checkpoint) + " /")
                     assert page.locator("#bps-example-output").inner_text().strip() in ("", "—")
                     page.locator("#bps-example-next").click()
-                    assert page.locator("#bps-example-output").inner_text().strip() == "9"
+                    assert page.locator("#bps-example-output").inner_text().strip() == ("9" if chapter == "I01" else "99")
                     page.keyboard.press("Escape")
                     assert not page.locator("#bps-example-dialog").is_visible()
                     assert page.evaluate("() => document.querySelector('.CodeMirror').CodeMirror.getValue()") == code_before
