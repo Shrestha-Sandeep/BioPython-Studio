@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04','I05']){
+for(const chapter of ['I01','I02','I03','I04','I05','I06']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -265,5 +265,59 @@ test('I05 unseen thresholds and empty-union IoU have deterministic behavior',{
   const run=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:12000});
   assert.equal(run.status,0,run.stderr);
   assert.equal(run.stdout.trimEnd(),expected);
+ }
+});
+
+const morphologyPython=spawnSync('python3',['-c','import numpy; import skimage; from scipy import ndimage'],{encoding:'utf8'});
+test('I06 goal mapping and source-safe chapter narrative',()=>{
+ const t=tutorials.find(x=>x.chapter==='I06');
+ assert.ok(t,'I06 not registered');
+ const expected=Array.from({length:7},(_,i)=>'I06-G'+String(i+1).padStart(2,'0')).concat('I06-CAPSTONE');
+ assert.deepEqual(t.goals,expected);
+ assert.equal(t.steps.length,18);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),expected.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/);
+ assert.equal(t.steps[0].preview.image,'otsu-nuclei-mask');
+ assert.ok(html.indexOf('src/tutorials/i05-data.js')<html.indexOf('src/tutorials/i06-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i06-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const s of t.steps){
+  assert.ok(s.say.trim().split(/\\s+/).length>=18,s.title);
+  assert.ok(s.note.length>=30,s.title);
+  const lines=s.code?s.code.split('\\n'):[];
+  for(const n of s.focus)assert.ok(n>=1&&n<=lines.length,s.title+':'+n);
+  if(s.output)assert.ok(s.code,s.title);
+ }
+ assert.match(t.steps[0].note,/rendered teaching context/);
+ assert.ok(t.steps.some(s=>s.say.includes('three-dimensional')));
+ assert.ok(t.steps.some(s=>s.code.includes('watershed')));
+});
+test('I06 exact executed numerical output parity under pinned scientific Python',{
+ skip:morphologyPython.status!==0?'scikit-image or scipy missing':false
+},()=>{
+ const t=tutorials.find(x=>x.chapter==='I06');
+ let count=0;
+ for(const [i,s] of t.steps.entries()){
+  if(!s.code||!s.output)continue;
+  const run=spawnSync('python3',['-c',s.code],{encoding:'utf8',timeout:16000});
+  assert.equal(run.status,0,'I06 '+i+' '+s.title+': '+run.stderr);
+  assert.equal(run.stdout.trimEnd(),s.output,'I06 '+i+' '+s.title);
+  count++;
+ }
+ assert.ok(count>=14,'Only '+count+' executable examples');
+});
+test('I06 changed-input morphology, connectivity, projection and empty-mask cases',{
+ skip:morphologyPython.status!==0?'scikit-image or scipy missing':false
+},()=>{
+ const cases=[
+  ["import numpy as np\\nfrom skimage.measure import label\\nx=np.eye(5,dtype=bool)\\nprint(label(x,connectivity=1).max(),label(x,connectivity=2).max())","5 1"],
+  ["import numpy as np\\nfrom skimage.segmentation import clear_border\\nx=np.ones((2,2),bool)\\nprint(int(clear_border(x).sum()))","0"],
+  ["import numpy as np\\nfrom skimage.measure import label,regionprops\\nx=np.zeros((3,3),bool)\\nprint(len(regionprops(label(x,connectivity=1))))","0"],
+  ["import numpy as np\\nfrom skimage.measure import label\\nx=np.zeros((3,4,4),bool);x[0,1,1]=1;x[2,1,1]=1\\nprint(label(x,connectivity=1).max(),label(x.max(axis=0),connectivity=1).max())","2 1"]
+ ];
+ for(const [code,expected] of cases){
+  const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
+  assert.equal(r.status,0,r.stderr);assert.equal(r.stdout.trimEnd(),expected);
  }
 });
