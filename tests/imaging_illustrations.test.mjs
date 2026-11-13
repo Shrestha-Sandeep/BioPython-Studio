@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',14]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,61);
+ assert.equal(count,75);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -117,4 +117,21 @@ test('I05 candidate threshold prediction has no numerical answer before reveal',
  assert.doesNotMatch(labels(box),/Candidate pixels: 1/);
  diagrams.render(box,'I05',9);
  assert.match(labels(box),/only the pixel 12/);
+});
+
+test('I06 paired masks show actual region structure and hide the prediction',()=>{
+ const box=element('div');
+ diagrams.render(box,'I06',3);
+ let txt=labels(box);
+ assert.match(txt,/Three diagonal pixels/);
+ const groups=flatten(box).filter(n=>n.attributes['data-bps-part']!==undefined);
+ assert.equal(groups.length,2);
+ assert.match(txt,/1/);assert.match(txt,/2/);assert.match(txt,/3/);
+ diagrams.render(box,'I06',5);
+ txt=labels(box);assert.match(txt,/Count = \\?/);
+ assert.doesNotMatch(txt,/4-neighbor: 4/);
+ diagrams.render(box,'I06',6);
+ assert.match(labels(box),/4-neighbor: 4 labels/);
+ diagrams.render(box,'I06',9);
+ assert.match(labels(box),/Top-edge component excluded/);
 });
