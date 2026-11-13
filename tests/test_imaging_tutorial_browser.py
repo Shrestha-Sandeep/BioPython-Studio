@@ -47,7 +47,7 @@ def check():
                     assert page.locator("#bps-example-position").inner_text().startswith(str(checkpoint) + " /")
                     assert page.locator("#bps-example-output").inner_text().strip() in ("", "—")
                     page.locator("#bps-example-next").click()
-                    expected = {"I01": "9", "I02": "99", "I03": "nan\n3.0", "I04": "True", "I05": "1", "I06": "4\\n1"}[chapter]
+                    expected = {"I01": "9", "I02": "99", "I03": "nan\n3.0", "I04": "True", "I05": "1", "I06": "4\n1"}[chapter]
                     assert page.locator("#bps-example-output").inner_text().strip() == expected
                     page.keyboard.press("Escape")
                     assert not page.locator("#bps-example-dialog").is_visible()
