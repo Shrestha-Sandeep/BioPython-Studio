@@ -18,7 +18,21 @@ I01:{
 12:{type:"comparison",headline:"8-bit colour value",parts:["Allowed: 0 ... 255","Observed: 255","Raw saturation: unknown"]},
 13:{type:"comparison",headline:"Honest report",parts:["Source: synthetic RGB","Shape: (1,2,3)","Calibrated raw: False"]}
 },
-I02:{}
+I02:{
+1:{type:"grid",rows:4,cols:5,selected:[7,8,9,12,13,14],caption:"The crop uses rows [1:3) and columns [2:5)"},
+2:{type:"grid",rows:4,cols:5,selected:[7],caption:"Source [1,2] becomes crop [0,0]"},
+3:{type:"comparison",headline:"Slicing shares storage",parts:["Source: 1, 2, 3, 4","View changes first to 99","Saved copy stays at 1"]},
+4:{type:"comparison",headline:"Copy protects the source",parts:["Original first: 1","Copied ROI first: 99","No change to source"]},
+6:{type:"comparison",headline:"Validate bounds first",parts:["Image rows: 0 ... 3","Requested end: 99","ROI rejected"]},
+7:{type:"grid",rows:3,cols:3,selected:[4],hide:true,caption:"Predict: will source [1,1] change?"},
+8:{type:"grid",rows:3,cols:3,selected:[4],overrides:{4:"99"},caption:"After view mutation, source [1,1] is 99"},
+9:{type:"comparison",headline:"Example scale only",parts:["50 px","0.2 µm / pixel","10.0 µm"]},
+10:{type:"comparison",headline:"Area requires squared scale",parts:["50 selected pixels","(0.2 µm/px)²","2.0 µm²"]},
+11:{type:"comparison",headline:"Declared axis order",parts:["T=2, C=3, Z=1","Y=4, X=5","Shape alone is not metadata"]},
+12:{type:"comparison",headline:"TCZYX plane selection",parts:["Select T1, C2, Z0","Remaining Y and X","Plane shape (4,5)"]},
+13:{type:"comparison",headline:"Synthetic TIFF container",parts:["2 × 2 uint16","Tag: synthetic TIFF","OME not validated"]},
+14:{type:"comparison",headline:"Traceable ROI report",parts:["Source (5,7)","Crop (3,4), origin (1,2)","Independent memory"]}
+}
 };
 function add(parent,tag,attrs={}){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));parent.append(el);return el;}
 function rect(parent,x,y,w,h,fill=C.surface,stroke=C.line){return add(parent,"rect",{x,y,width:w,height:h,rx:8,fill,stroke,"stroke-width":1.5});}
@@ -35,13 +49,14 @@ function comparison(svg,d){
  });
 }
 function grid(svg,d){
- const rows=d.rows,cols=d.cols,cw=cols===4?83:103,ch=30,gap=6;
- const totalw=cw*cols+gap*(cols-1),left=(520-totalw)/2,top=28;
+ const rows=d.rows,cols=d.cols,gap=6,cw=Math.min(103,(466-gap*(cols-1))/cols);
+ const ch=Math.min(30,(100-gap*(rows-1))/rows);
+ const totalw=cw*cols+gap*(cols-1),left=(520-totalw)/2,top=26;
  for(let r=0;r<rows;r++){
   for(let c=0;c<cols;c++){
    const i=r*cols+c,g=group(svg,i),chosen=d.selected.includes(i),x=left+c*(cw+gap),y=top+r*(ch+gap);
    rect(g,x,y,cw,ch,chosen?"#1a4b40":C.surface,chosen?C.green:C.line);
-   label(g,x+cw/2,y+20,chosen&&d.hide?"?":String(i+(d.base||0)),14,chosen?C.green:C.text,720);
+   label(g,x+cw/2,y+ch/2+5,chosen&&d.hide?"?":String(d.overrides?.[i]??(i+(d.base||0))),14,chosen?C.green:C.text,720);
   }
  }
  label(svg,260,145,d.caption,13,C.muted,480);
