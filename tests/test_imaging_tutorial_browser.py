@@ -5,6 +5,7 @@ from test_p01_tutorial_browser import serve, change_selection
 CHAPTERS = {
     "I01": ("What a microscopy image actually contains", 16, 6),
     "I02": ("Crop a microscopy image without losing its meaning", 17, 8),
+    "I03": ("Summarize image pixels without inventing evidence", 17, 9),
 }
 
 def check():
@@ -43,7 +44,8 @@ def check():
                     assert page.locator("#bps-example-position").inner_text().startswith(str(checkpoint) + " /")
                     assert page.locator("#bps-example-output").inner_text().strip() in ("", "—")
                     page.locator("#bps-example-next").click()
-                    assert page.locator("#bps-example-output").inner_text().strip() == ("9" if chapter == "I01" else "99")
+                    expected = {"I01": "9", "I02": "99", "I03": "nan\n3.0"}[chapter]
+                    assert page.locator("#bps-example-output").inner_text().strip() == expected
                     page.keyboard.press("Escape")
                     assert not page.locator("#bps-example-dialog").is_visible()
                     assert page.evaluate("() => document.querySelector('.CodeMirror').CodeMirror.getValue()") == code_before
