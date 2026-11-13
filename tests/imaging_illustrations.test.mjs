@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',14]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,75);
+ assert.equal(count,77);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
