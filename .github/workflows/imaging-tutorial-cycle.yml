@@ -6,6 +6,7 @@ on:
       - feature/imaging-tutorial-cycle-i03
       - feature/imaging-tutorial-cycle-i04
       - feature/imaging-tutorial-cycle-i05
+      - feature/imaging-tutorial-cycle-i06
   pull_request:
     paths:
       - 'src/tutorials/i0*-data.js'
@@ -37,6 +38,7 @@ jobs:
           node --check src/tutorials/i03-data.js
           node --check src/tutorials/i04-data.js
           node --check src/tutorials/i05-data.js
+          node --check src/tutorials/i06-data.js
           node --check src/tutorials/imaging-illustrations.js
           node --check src/tutorials/p01-viewer.js
           node --test tests/imaging_tutorials.test.mjs tests/foundation_visuals.test.mjs tests/microscopy_storyboard.test.mjs tests/imaging_illustrations.test.mjs
