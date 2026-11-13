@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08']){
+for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -426,5 +426,60 @@ test('I08 rejects nonunique metadata, records unmatched keys and retains pairing
  for(const [code,expected] of cases){
   const run=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:20000,env:{...process.env,MPLBACKEND:'Agg'}});
   assert.equal(run.status,0,run.stderr);assert.equal(run.stdout.trimEnd(),expected);
+ }
+});
+
+const signalPython=spawnSync('python3',['-c','import numpy, scipy, skimage; from skimage.measure import regionprops; from skimage.feature import peak_local_max'],{encoding:'utf8'});
+test('I09 region, intensity, overlap, peaks and distance goals map canonically',()=>{
+ const t=tutorials.find(x=>x.chapter==='I09');
+ assert.ok(t,'I09 not loaded');
+ const ids=Array.from({length:6},(_,i)=>'I09-G'+String(i+1).padStart(2,'0')).concat('I09-CAPSTONE');
+ assert.deepEqual(t.goals,ids);
+ assert.equal(t.steps.length,18);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),ids.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/);
+ assert.equal(t.steps[0].preview.image,'fluorescence-single');
+ assert.ok(html.indexOf('src/tutorials/i08-data.js')<html.indexOf('src/tutorials/i09-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i09-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const s of t.steps){
+  assert.ok(s.say.trim().split(/\s+/).length>=18,s.title);
+  assert.ok(s.note.length>=30,s.title);
+  const n=s.code?s.code.split('\n').length:0;
+  for(const line of s.focus)assert.ok(line>=1&&line<=n,s.title+':'+line);
+  if(s.output)assert.ok(s.code,s.title);
+ }
+ assert.ok(t.steps.some(s=>s.code.includes('regionprops')));
+ assert.ok(t.steps.some(s=>s.code.includes('peak_local_max')));
+ assert.ok(t.steps.some(s=>s.code.includes('cdist')));
+ assert.ok(t.steps.some(s=>s.say.includes('molecular interaction')));
+});
+test('I09 fresh real scikit-image and SciPy outputs equal displayed examples',{
+ skip:signalPython.status!==0?'NumPy, scikit-image or SciPy unavailable':false
+},()=>{
+ let n=0;
+ for(const [i,s] of tutorials.find(x=>x.chapter==='I09').steps.entries()){
+  if(!s.code||!s.output)continue;
+  const run=spawnSync('python3',['-c',s.code],{encoding:'utf8',timeout:16000});
+  assert.equal(run.status,0,'I09 '+i+' '+s.title+': '+run.stderr);
+  assert.equal(run.stdout.trimEnd(),s.output,'I09 '+i+' '+s.title);
+  n++;
+ }
+ assert.ok(n>=14,'Only '+n+' runnable I09 scenes');
+});
+test('I09 changed-input empty masks, peaks and colocalization guards',{
+ skip:signalPython.status!==0?'NumPy, scikit-image or SciPy unavailable':false
+},()=>{
+ const cases=[
+  ["import numpy as np\nfrom skimage.measure import regionprops\nx=np.zeros((3,3),int)\nprint(len(regionprops(x)))","0"],
+  ["import numpy as np\nx=np.array([1.,2.,3.]);y=np.array([4.,4.,4.]);r=None if np.std(y)==0 else float(np.corrcoef(x,y)[0,1]);print(r)","None"],
+  ["import numpy as np\nfrom skimage.feature import peak_local_max\nx=np.zeros((4,4));x[0,2]=10;x[2,2]=8\nprint(len(peak_local_max(x,min_distance=1,threshold_abs=5,exclude_border=True)),len(peak_local_max(x,min_distance=1,threshold_abs=5,exclude_border=False)))","1 2"],
+  ["import numpy as np\nfrom scipy.spatial.distance import cdist\nprint(cdist([[0,0]],[[6,8]]).min())","10.0"],
+  ["import numpy as np\nroi=np.array([True,True,False]);a=np.array([0,0,9]);d=int((roi&(a>4)).sum());print(None if not d else 5/d)","None"]
+ ];
+ for(const [code,output] of cases){
+  const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
+  assert.equal(r.status,0,r.stderr);assert.equal(r.stdout.trimEnd(),output);
  }
 });
