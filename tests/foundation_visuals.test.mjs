@@ -26,7 +26,8 @@ test('six foundation chapters offer accessible original explanations',()=>{
       assert.equal(svg.attributes.role,'img');
       assert.ok(svg.attributes['aria-label']?.length>15);
       assert.equal(svg.attributes.viewBox,'0 0 520 165');
-      assert.ok(svg.children.length>5);
+      const descendants=(node)=>1+(node.children||[]).reduce((sum,child)=>sum+descendants(child),0);
+      assert.ok(descendants(svg)>5);
       count++;
     }
     assert.ok(count>=6,`${chapter} has only ${count} diagrams`);
