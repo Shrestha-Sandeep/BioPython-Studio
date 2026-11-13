@@ -47,6 +47,20 @@ I03:{
 12:{type:"comparison",headline:"Avoid uint8 overflow",parts:["uint8 250 + 10","Wraps to 4","Wide integer: 260"]},
 13:{type:"grid",rows:2,cols:2,base:1,selected:[2,3],caption:"Mask selects values 3 and 4 — not two specimens"},
 14:{type:"comparison",headline:"Synthetic ROI report",parts:["Shape: 2×3","Valid: 5, missing: 1","Mean: 6.0 a.u."]}
+},
+I04:{
+1:{type:"comparison",headline:"Figure → axes → labelled data",parts:["Figure contains axes","X: Field number","Y: synthetic a.u."]},
+2:{type:"comparison",headline:"Use truthful axis titles",parts:["X: Field","Y: illustrative a.u.","No raw fluorescence claim"]},
+3:{type:"plot",caption:"Connected lines imply ordered change; scatter keeps points separate"},
+4:{type:"comparison",headline:"Independent categories",parts:["Control","Treated","Recovery — no line"]},
+5:{type:"hist",counts:[0,2,1,1],edges:["0–1","1–2","2–3","3–4"],caption:"4 values distributed across 4 specified bins"},
+6:{type:"comparison",headline:"Last bin includes rightmost edge",parts:["[0,2): 2 values","[2,4]: 3 values","Count total: 5"]},
+7:{type:"comparison",headline:"A figure can have two panels",parts:["Left: ordered values","Right: distribution","Total axes: 2"]},
+8:{type:"contrast",caption:"One numeric array; two display mappings, no inferred detector values"},
+9:{type:"comparison",headline:"Predict: did the source change?",parts:["Stored array","Display vmin / vmax","Equal afterward: ?"]},
+10:{type:"contrast",caption:"Reveal: source array equality is True after changing display limits"},
+12:{type:"hist",counts:[1,3,0],edges:["0–50","50–100","100–150"],caption:"Histogram of four synthetic green RGB display components"},
+13:{type:"comparison",headline:"Auditable two-panel example",parts:["Source: synthetic RGB","2 axes, 4 pixels","Array unchanged: True"]}
 }
 };
 function add(parent,tag,attrs={}){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));parent.append(el);return el;}
@@ -86,7 +100,54 @@ function rgb(svg,d){
  }
  label(svg,260,145,d.caption,13,C.muted,480);
 }
-const painters={comparison,grid,rgb};
+function plot(svg,d){
+  const xsets=[[60,107,154],[304,351,398]];
+  const ys=[96,49,72];
+  for(let k=0;k<2;k++){
+    const g=group(svg,k),x=k===0?42:286;
+    rect(g,x,31,191,101,"#142530",C.line);
+    label(g,x+96,46,k===0?"LINE — ORDERED":"SCATTER — INDIVIDUAL",10,C.blue,740);
+    add(g,"line",{x1:x+22,y1:109,x2:x+169,y2:109,stroke:C.muted,"stroke-width":1});
+    add(g,"line",{x1:x+22,y1:59,x2:x+22,y2:109,stroke:C.muted,"stroke-width":1});
+    const pts=xsets[k].map((px,i)=>[px,ys[i]]);
+    if(k===0)add(g,"polyline",{points:pts.map(p=>p.join(",")).join(" "),fill:"none",stroke:C.green,"stroke-width":2.5});
+    for(const [px,py] of pts)add(g,"circle",{cx:px,cy:py,r:4.6,fill:k===0?C.green:C.blue});
+  }
+  label(svg,260,151,d.caption,12,C.muted,500);
+}
+function hist(svg,d){
+  const n=d.counts.length,width=380/n,left=72,top=42,height=83,maximum=Math.max(1,...d.counts);
+  label(svg,260,26,"COUNT EACH INPUT ONCE",13,C.blue,700);
+  const baseline=top+height;
+  add(svg,"line",{x1:61,y1:baseline,x2:464,y2:baseline,stroke:C.muted,"stroke-width":1.2});
+  d.counts.forEach((count,i)=>{
+    const g=group(svg,i),x=left+i*width+8,h=count/maximum*57;
+    rect(g,x,baseline-h,width-16,Math.max(1,h),count?C.green:"#203740",C.line);
+    label(g,x+(width-16)/2,baseline-h-7,String(count),14,C.text,740);
+    label(g,x+(width-16)/2,baseline+15,d.edges[i],11,C.muted,520);
+  });
+  label(svg,260,158,d.caption,12,C.muted,450);
+}
+function contrast(svg,d){
+ const values=[0,100,150,255];
+ const grids=[
+   {x:42,min:0,max:255,title:"DISPLAY 0–255"},
+   {x:288,min:50,max:200,title:"DISPLAY 50–200"}
+ ];
+ grids.forEach((cfg,k)=>{
+   const g=group(svg,k);
+   label(g,cfg.x+85,29,cfg.title,12,C.blue,720);
+   values.forEach((v,i)=>{
+     const intensity=Math.max(0,Math.min(255,Math.round((v-cfg.min)/(cfg.max-cfg.min)*255)));
+     const gray="#"+intensity.toString(16).padStart(2,"0").repeat(3);
+     const x=cfg.x+(i%2)*88,y=37+Math.floor(i/2)*47;
+     rect(g,x,y,78,41,gray,"#627686");
+     label(g,x+39,y+25,String(v),13,intensity>135?"#101c28":"#ffffff",750);
+   });
+ });
+ label(svg,260,151,d.caption,12,C.muted,450);
+}
+const painters={comparison,grid,rgb,plot,hist,contrast};
 function render(container,chapter,index){
  container.replaceChildren();
  const d=descriptors[chapter]?.[index];if(!d)return false;
