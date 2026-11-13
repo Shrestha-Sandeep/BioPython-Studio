@@ -30,6 +30,7 @@ jobs:
       - name: Validate modules and real Python numerical outputs
         run: |
           node --check src/tutorials/i01-data.js
+          node --check src/tutorials/i02-data.js
           node --check src/tutorials/imaging-illustrations.js
           node --check src/tutorials/p01-viewer.js
           node --test tests/imaging_tutorials.test.mjs tests/foundation_visuals.test.mjs tests/microscopy_storyboard.test.mjs
