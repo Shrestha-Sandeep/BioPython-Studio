@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03']){
+for(const chapter of ['I01','I02','I03','I04']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -153,5 +153,64 @@ test('I03 changed-input masks and uint8 widened arithmetic',{skip:py.status!==0?
   const run=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:7000});
   assert.equal(run.status,0,run.stderr);
   assert.equal(run.stdout.trimEnd(),expected);
+ }
+});
+
+const plottingPython=spawnSync('python3',['-c','import numpy, matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt'],{encoding:'utf8'});
+test('I04 maps its six actual plotting and display goals',()=>{
+ const t=tutorials.find(x=>x.chapter==='I04');
+ assert.ok(t,'I04 not loaded');
+ const expected=Array.from({length:6},(_,i)=>'I04-G'+String(i+1).padStart(2,'0')).concat('I04-CAPSTONE');
+ assert.deepEqual(t.goals,expected);
+ assert.equal(t.steps.length,16);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),expected.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/i);
+ assert.ok(t.steps[0].preview?.image);
+ assert.ok(html.indexOf('src/tutorials/i03-data.js')<html.indexOf('src/tutorials/i04-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i04-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const step of t.steps){
+  assert.ok(step.say.split(/\s+/).length>=18,step.title);
+  assert.ok(step.note.length>=30,step.title);
+  const lines=step.code?step.code.split('\n'):[];
+  for(const line of step.focus)assert.ok(line>0&&line<=lines.length,step.title+':'+line);
+  if(step.output)assert.ok(step.code,step.title);
+  if(step.preview)assert.equal(step.preview.image,'fluorescence-single');
+ }
+ assert.ok(t.steps.some(s=>s.code.includes('image_path')&&!s.output));
+ assert.ok(t.steps.some(s=>s.say.includes('PNG')));
+ assert.ok(t.steps.some(s=>s.note.includes('synthetic')));
+});
+test('I04 full example stdout matches real Matplotlib+NumPy in new interpreter',{
+ skip:plottingPython.status!==0?'Matplotlib not installed':false
+},()=>{
+ const t=tutorials.find(x=>x.chapter==='I04');
+ let count=0;
+ for(const [i,scene] of t.steps.entries()){
+  if(!scene.code||!scene.output)continue;
+  const cp=spawnSync('python3',['-c',scene.code],{
+    encoding:'utf8',timeout:20000,env:{...process.env,MPLBACKEND:'Agg'}
+  });
+  assert.equal(cp.status,0,'I04 step '+i+' '+scene.title+': '+cp.stderr);
+  assert.equal(cp.stdout.trimEnd(),scene.output,'I04 '+i+' '+scene.title);
+  count++;
+ }
+ assert.ok(count>=11,'I04 only '+count+' executable examples');
+});
+test('I04 changed-input visualization preserves numbers and explicit count',{
+ skip:plottingPython.status!==0?'Matplotlib not installed':false
+},()=>{
+ const checks=[
+  ["import numpy as np\nimport matplotlib.pyplot as plt\nx=np.array([[50,100],[200,255]])\ny=x.copy();fig,ax=plt.subplots();ax.imshow(x,cmap='gray',vmin=60,vmax=150)\nprint(np.array_equal(x,y),ax.images[0].get_clim())","True (60.0, 150.0)"],
+  ["import numpy as np\nvalues=np.array([0,1,2,3,4,5]);counts,edges=np.histogram(values,bins=[0,3,6]);print(counts.tolist(),int(counts.sum()))","[3, 3] 6"],
+  ["import matplotlib.pyplot as plt\nfig,axes=plt.subplots(1,2);print(len(fig.axes),axes[0].get_xlabel())","2 "]
+ ];
+ for(const [code,expected] of checks){
+  const run=spawnSync('python3',['-c',code],{
+    encoding:'utf8',timeout:20000,env:{...process.env,MPLBACKEND:'Agg'}
+  });
+  assert.equal(run.status,0,run.stderr);
+  assert.equal(run.stdout.trimEnd(),expected.trimEnd());
  }
 });
