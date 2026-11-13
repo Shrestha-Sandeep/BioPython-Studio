@@ -117,11 +117,11 @@
     });footer(svg,d.caption);
   }
   function tokens(svg,d){
-    const gap=18,w=141; d.parts.forEach((part,i)=>{
+    const gap=18,w=141; d.parts.forEach((item,i)=>{
       const x=31+i*(w+gap);const bad=i===d.bad,stage=part(svg,i);
       rect(stage,x,49,w,64,bad?"#503038":C.panel,bad?C.red:C.line);
       txt(stage,x+w/2,75,`PART ${i+1}`,11,C.muted,650);
-      txt(stage,x+w/2,99,part,20,bad?C.red:C.green,700);
+      txt(stage,x+w/2,99,item,20,bad?C.red:C.green,700);
     });footer(svg,d.caption);
   }
   function threshold(svg,d){
