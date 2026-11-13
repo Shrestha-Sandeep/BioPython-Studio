@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01']){
+for(const chapter of ['I01','I02']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -29,6 +29,45 @@ test('I01 maps canonical goals',()=>{
  assert.ok(html.indexOf('src/tutorials/i01-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
  assert.match(viewer,/BioPythonImagingTutorials/);
 });
+test('I02 matches its six ROI goals and independent capstone',()=>{
+ const t=tutorials.find(t=>t.chapter==='I02');
+ assert.ok(t,'I02 not registered');
+ const expected=Array.from({length:6},(_,i)=>'I02-G'+String(i+1).padStart(2,'0')).concat('I02-CAPSTONE');
+ assert.deepEqual(t.goals,expected);
+ assert.equal(t.steps.length,17);
+ assert.equal(t.steps.filter(x=>x.checkpoint).length,1);
+ assert.equal(t.steps.find(x=>x.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(x=>x.goal))].sort(),expected.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/i);
+ assert.ok(html.indexOf('src/tutorials/i01-data.js')<html.indexOf('src/tutorials/i02-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i02-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const scene of t.steps){
+   assert.ok(scene.say.split(/\s+/).length>=18,scene.title);
+   assert.ok(scene.note.length>=30,scene.title);
+   const len=scene.code?scene.code.split('\n').length:0;
+   for(const line of scene.focus)assert.ok(line>0&&line<=len,scene.title+':'+line);
+ }
+ assert.ok(t.steps.some(x=>x.code.includes("tiffinfo")&&x.note.includes("OME")));
+});
+test('I02 fresh Python outputs are exact',{skip:py.status!==0?'Install NumPy/Pillow':false},()=>{
+ const t=tutorials.find(x=>x.chapter==='I02');
+ let executed=0;
+ for(const [i,step] of t.steps.entries()){
+  if(!step.code||!step.output)continue;
+  const run=spawnSync('python3',['-c',step.code],{encoding:'utf8',timeout:7000});
+  assert.equal(run.status,0,'I02 '+i+' '+step.title+': '+run.stderr);
+  assert.equal(run.stdout.trimEnd(),step.output,'I02 '+i+': '+step.title);
+  executed++;
+ }
+ assert.ok(executed>=12,'I02 executable examples '+executed);
+});
+test('I02 crops use changed bounds without mutating original source',{skip:py.status!==0?'Install NumPy':false},()=>{
+ const source="import numpy as np\nsrc=np.arange(30).reshape(5,6)\nroi=src[2:5,1:4].copy()\nroi[0,0]=99\nprint(src[2,1],roi.shape,np.shares_memory(src,roi))";
+ const r=spawnSync('python3',['-c',source],{encoding:'utf8',timeout:7000});
+ assert.equal(r.status,0,r.stderr);
+ assert.equal(r.stdout.trim(),'13 (3, 3) False');
+});
+
 test('I01 keeps the published-figure and synthetic-array boundary',()=>{
  const t=tutorials.find(t=>t.chapter==='I01');
  for(const step of t.steps){
