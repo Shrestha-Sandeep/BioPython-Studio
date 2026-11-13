@@ -283,9 +283,9 @@ test('I06 goal mapping and source-safe chapter narrative',()=>{
  assert.ok(html.indexOf('src/tutorials/i05-data.js')<html.indexOf('src/tutorials/i06-data.js'));
  assert.ok(html.indexOf('src/tutorials/i06-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
  for(const s of t.steps){
-  assert.ok(s.say.trim().split(/\\s+/).length>=18,s.title);
+  assert.ok(s.say.trim().split(/\s+/).length>=18,s.title);
   assert.ok(s.note.length>=30,s.title);
-  const lines=s.code?s.code.split('\\n'):[];
+  const lines=s.code?s.code.split('\n'):[];
   for(const n of s.focus)assert.ok(n>=1&&n<=lines.length,s.title+':'+n);
   if(s.output)assert.ok(s.code,s.title);
  }
@@ -311,10 +311,10 @@ test('I06 changed-input morphology, connectivity, projection and empty-mask case
  skip:morphologyPython.status!==0?'scikit-image or scipy missing':false
 },()=>{
  const cases=[
-  ["import numpy as np\\nfrom skimage.measure import label\\nx=np.eye(5,dtype=bool)\\nprint(label(x,connectivity=1).max(),label(x,connectivity=2).max())","5 1"],
-  ["import numpy as np\\nfrom skimage.segmentation import clear_border\\nx=np.ones((2,2),bool)\\nprint(int(clear_border(x).sum()))","0"],
-  ["import numpy as np\\nfrom skimage.measure import label,regionprops\\nx=np.zeros((3,3),bool)\\nprint(len(regionprops(label(x,connectivity=1))))","0"],
-  ["import numpy as np\\nfrom skimage.measure import label\\nx=np.zeros((3,4,4),bool);x[0,1,1]=1;x[2,1,1]=1\\nprint(label(x,connectivity=1).max(),label(x.max(axis=0),connectivity=1).max())","2 1"]
+  ["import numpy as np\nfrom skimage.measure import label\nx=np.eye(5,dtype=bool)\nprint(label(x,connectivity=1).max(),label(x,connectivity=2).max())","5 1"],
+  ["import numpy as np\nfrom skimage.segmentation import clear_border\nx=np.ones((2,2),bool)\nprint(int(clear_border(x).sum()))","0"],
+  ["import numpy as np\nfrom skimage.measure import label,regionprops\nx=np.zeros((3,3),bool)\nprint(len(regionprops(label(x,connectivity=1))))","0"],
+  ["import numpy as np\nfrom skimage.measure import label\nx=np.zeros((3,4,4),bool);x[0,1,1]=1;x[2,1,1]=1\nprint(label(x,connectivity=1).max(),label(x.max(axis=0),connectivity=1).max())","2 1"]
  ];
  for(const [code,expected] of cases){
   const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
