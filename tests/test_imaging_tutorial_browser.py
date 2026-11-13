@@ -17,6 +17,7 @@ def check():
                 page.on("pageerror", lambda e: errors.append(str(e)))
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
                 page.locator("#p01-goal-select").wait_for(state="attached", timeout=30000)
+                page.evaluate("""() => document.querySelector('[data-stage="Microscopy"]').click()""")
                 for chapter, (title, n, checkpoint) in CHAPTERS.items():
                     change_selection(page, "bps-chapter-select", chapter)
                     page.wait_for_function(
