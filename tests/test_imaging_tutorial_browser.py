@@ -1,4 +1,4 @@
-"""Guided microscopy I01-I08 examples: browser state isolation and visual integrity."""
+"""Guided microscopy I01-I09 examples: browser state isolation and visual integrity."""
 from playwright.sync_api import sync_playwright
 from test_p01_tutorial_browser import serve, change_selection
 
@@ -11,6 +11,7 @@ CHAPTERS = {
     "I06": ("Clean a mask and label candidate nuclei", 18, 6),
     "I07": ("Clean a scientific measurements table", 18, 7),
     "I08": ("Merge measurements and make a report", 19, 8),
+    "I09": ("Measure nuclear features and protein signal", 18, 8),
 }
 
 def check():
@@ -49,7 +50,7 @@ def check():
                     assert page.locator("#bps-example-position").inner_text().startswith(str(checkpoint) + " /")
                     assert page.locator("#bps-example-output").inner_text().strip() in ("", "—")
                     page.locator("#bps-example-next").click()
-                    expected = {"I01": "9", "I02": "99", "I03": "nan\n3.0", "I04": "True", "I05": "1", "I06": "4\n1", "I07": "['F02', 'F03']", "I08": "6\n3"}[chapter]
+                    expected = {"I01": "9", "I02": "99", "I03": "nan\n3.0", "I04": "True", "I05": "1", "I06": "4\n1", "I07": "['F02', 'F03']", "I08": "6\n3", "I09": "6.0 2.0\n3.0"}[chapter]
                     assert page.locator("#bps-example-output").inner_text().strip() == expected
                     page.keyboard.press("Escape")
                     assert not page.locator("#bps-example-dialog").is_visible()
@@ -70,4 +71,4 @@ def check():
 
 if __name__ == "__main__":
     check()
-    print("I01-I08 tutorial browser checks passed on mobile and desktop.")
+    print("I01-I09 tutorial browser checks passed on mobile and desktop.")
