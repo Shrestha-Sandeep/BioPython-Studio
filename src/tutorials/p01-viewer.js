@@ -2,7 +2,7 @@
    learner progress stay untouched. Narration uses the browser's installed voices. */
 "use strict";
 (() => {
-  const tutorials=window.BioPythonFoundationTutorials||window.BioPythonP01Tutorials;
+  const tutorials=[...(window.BioPythonFoundationTutorials||window.BioPythonP01Tutorials||[]),...(window.BioPythonImagingTutorials||[])];
   if(!Array.isArray(tutorials)||!tutorials.length)return;
   const $=id=>document.getElementById(id);
   const library=new Map(tutorials.map(t=>[t.id,t]));
@@ -98,7 +98,12 @@
   }
   function setStatus(message){$("bps-example-status").textContent=message;}
   function visualProgress(value){
-    window.BioPythonTutorialIllustrations?.progress?.($("bps-example-illustration-box"),value);
+    const box=$("bps-example-illustration-box");
+    if(window.BioPythonImagingIllustrations?.has?.(state.tutorial?.chapter,state.step)){
+      window.BioPythonImagingIllustrations.progress(box,value);
+    }else{
+      window.BioPythonTutorialIllustrations?.progress?.(box,value);
+    }
   }
   function renderCode(step){
     const code=$("bps-example-code");
@@ -136,9 +141,13 @@
     // Show a single original diagram when no credited microscopy preview is present.
     // The illustration is tied to this exact chapter step and updates with inputs.
     const illustrationBox=$("bps-example-illustration-box");
-    const hasTeachingImage=!image&&Boolean(window.BioPythonTutorialIllustrations?.render(
-      illustrationBox,state.tutorial?.chapter,state.step,{cells:values().CELLS}
-    ));
+    const drawImaging=window.BioPythonImagingIllustrations?.has?.(state.tutorial?.chapter,state.step);
+    const hasTeachingImage=!image&&Boolean(drawImaging
+      ? window.BioPythonImagingIllustrations.render(illustrationBox,state.tutorial?.chapter,state.step)
+      : window.BioPythonTutorialIllustrations?.render(
+          illustrationBox,state.tutorial?.chapter,state.step,{cells:values().CELLS}
+        )
+    );
     if(!hasTeachingImage)illustrationBox.replaceChildren();
     illustrationBox.hidden=!hasTeachingImage;
     const target=$("bps-example-visual");
