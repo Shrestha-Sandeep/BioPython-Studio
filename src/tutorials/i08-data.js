@@ -428,7 +428,7 @@ window.BioPythonImagingTutorials=Object.freeze([...(window.BioPythonImagingTutor
     {
       "title": "Label what the values actually measure",
       "say": "Honest figure axes should state the synthetic observation unit and avoid implying micrometers when only pixel counts were supplied. Explicit limits help a reader see the baseline, but the chosen display range should not hide relevant points.",
-      "code": "import matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\nfig,ax = plt.subplots()\nax.scatter([0,1],[2,6])\nax.set(xlabel='Condition (coded)',ylabel='Candidate area (pixels squared)')\nax.set_ylim(0,8)\nprint(ax.get_ylabel())\nprint(ax.get_ylim())\nplt.close(fig)",
+      "code": "import matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\nfig,ax = plt.subplots()\nax.scatter([0,1],[2,6])\nax.set(xlabel='Condition (coded)',ylabel='Candidate area (pixels squared)')\nax.set_ylim(0,8)\nprint(ax.get_ylabel())\nprint(tuple(float(v) for v in ax.get_ylim()))\nplt.close(fig)",
       "focus": [
         8,
         9,
