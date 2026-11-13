@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09','I10','I11']){
+for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09','I10','I11','I12']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -584,5 +584,60 @@ test('I11 changed-input unequal field count, incomplete pair and batch confoundi
  for(const [code,expected] of cases){
   const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
   assert.equal(r.status,0,r.stderr);assert.equal(r.stdout.trimEnd(),expected);
+ }
+});
+
+const statsPython=spawnSync('python3',['-c','import numpy,pandas,scipy,matplotlib;matplotlib.use("Agg")'],{encoding:'utf8'});
+test('I12 canonical nine-goal statistical interpretation and capstone',()=>{
+ const t=tutorials.find(x=>x.chapter==='I12');
+ assert.ok(t,'I12 missing');
+ const ids=Array.from({length:9},(_,i)=>'I12-G'+String(i+1).padStart(2,'0')).concat('I12-CAPSTONE');
+ assert.deepEqual(t.goals,ids);
+ assert.equal(t.steps.length,22);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),ids.slice().sort());
+ assert.match(t.steps.at(-1).note,/independent/i);
+ assert.equal(t.steps[0].preview.image,'fluorescence-single');
+ assert.ok(html.indexOf('src/tutorials/i11-data.js')<html.indexOf('src/tutorials/i12-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i12-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const s of t.steps){
+  assert.ok(s.say.trim().split(/\s+/).length>=18,s.title);
+  assert.ok(s.note.length>=30,s.title);
+  const n=s.code?s.code.split('\n').length:0;
+  for(const line of s.focus)assert.ok(line>=1&&line<=n,s.title+':'+line);
+  if(s.output)assert.ok(s.code,s.title);
+ }
+ assert.ok(t.steps.some(s=>s.code.includes('t.ppf')));
+ assert.ok(t.steps.some(s=>s.code.includes('np.random.default_rng')));
+ assert.ok(t.steps.some(s=>s.code.includes('maximum.accumulate')));
+ assert.ok(t.steps.some(s=>s.code.includes('errorbar')));
+});
+test('I12 numeric effect, bootstrap, t-CI and graph outputs match fresh Python',{
+ skip:statsPython.status!==0?'stats stack unavailable':false
+},()=>{
+ let count=0;
+ for(const [i,s] of tutorials.find(x=>x.chapter==='I12').steps.entries()){
+  if(!s.code||!s.output)continue;
+  const cp=spawnSync('python3',['-c',s.code],{encoding:'utf8',timeout:22000,env:{...process.env,MPLBACKEND:'Agg'}});
+  assert.equal(cp.status,0,'I12 '+i+' '+s.title+': '+cp.stderr);
+  assert.equal(cp.stdout.trimEnd(),s.output,'I12 '+i+' '+s.title);
+  count++;
+ }
+ assert.ok(count>=18,'Only '+count+' executable I12 examples');
+});
+test('I12 changed-input small n, zero SEM, Holm original ordering and reproducible bootstrap',{
+ skip:statsPython.status!==0?'stats stack unavailable':false
+},()=>{
+ const cases=[
+  ["import numpy as np\nx=np.array([4.]);print(None if len(x)<2 else x.std(ddof=1))","None"],
+  ["import numpy as np\nx=np.array([2.,2.,2.]);print(float(x.std(ddof=1)))","0.0"],
+  ["import numpy as np\np=np.array([.04,.001,.02]);i=np.argsort(p);v=np.maximum.accumulate((len(p)-np.arange(len(p)))*p[i]);a=np.empty_like(p);a[i]=np.minimum(v,1);print([round(float(x),3) for x in a])","[0.04, 0.003, 0.04]"],
+  ["import numpy as np\nx=np.array([2.,4.,6.]);a=np.random.default_rng(7).choice(x,size=(5,3),replace=True);b=np.random.default_rng(7).choice(x,size=(5,3),replace=True);print(bool(np.array_equal(a,b)))","True"],
+  ["import numpy as np\nfrom scipy.stats import t\nx=np.array([1.,2.,3.]);mean=float(x.mean());h=float(t.ppf(.975,2)*x.std(ddof=1)/np.sqrt(3));print(round(mean-h,2),round(mean+h,2))","-0.48 4.48"]
+ ];
+ for(const [code,expected] of cases){
+  const cp=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
+  assert.equal(cp.status,0,cp.stderr);assert.equal(cp.stdout.trimEnd(),expected);
  }
 });
