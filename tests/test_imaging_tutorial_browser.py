@@ -1,4 +1,4 @@
-"""Guided microscopy I01/I02 examples: browser state isolation and preview provenance."""
+"""Guided microscopy I01-I04 examples: browser state isolation and visual integrity."""
 from playwright.sync_api import sync_playwright
 from test_p01_tutorial_browser import serve, change_selection
 
@@ -6,6 +6,7 @@ CHAPTERS = {
     "I01": ("What a microscopy image actually contains", 16, 6),
     "I02": ("Crop a microscopy image without losing its meaning", 17, 8),
     "I03": ("Summarize image pixels without inventing evidence", 17, 9),
+    "I04": ("Make scientific figures without misleading yourself", 16, 10),
 }
 
 def check():
@@ -44,7 +45,7 @@ def check():
                     assert page.locator("#bps-example-position").inner_text().startswith(str(checkpoint) + " /")
                     assert page.locator("#bps-example-output").inner_text().strip() in ("", "—")
                     page.locator("#bps-example-next").click()
-                    expected = {"I01": "9", "I02": "99", "I03": "nan\n3.0"}[chapter]
+                    expected = {"I01": "9", "I02": "99", "I03": "nan\n3.0", "I04": "True"}[chapter]
                     assert page.locator("#bps-example-output").inner_text().strip() == expected
                     page.keyboard.press("Escape")
                     assert not page.locator("#bps-example-dialog").is_visible()
@@ -65,4 +66,4 @@ def check():
 
 if __name__ == "__main__":
     check()
-    print("I01/I02 tutorial browser checks passed on mobile and desktop.")
+    print("I01-I04 tutorial browser checks passed on mobile and desktop.")

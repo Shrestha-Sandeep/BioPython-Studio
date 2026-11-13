@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,38);
+ assert.equal(count,50);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -70,4 +70,31 @@ test('I03 prediction hides the missing-value outcome before revealing it',()=>{
  diagrams.render(box,'I03',9);
  assert.match(labels(box),/nanmean/);
  assert.match(labels(box),/3\.0/);
+});
+
+test('I04 histogram explains the exact half-open bin counts',()=>{
+ const box=element('div');
+ diagrams.render(box,'I04',5);
+ const t=labels(box);
+ assert.match(t,/COUNT EACH INPUT ONCE/);
+ for(const v of ['0–1','1–2','2–3','3–4'])assert.ok(t.includes(v));
+ const groups=flatten(box).filter(n=>n.attributes['data-bps-part']!==undefined);
+ assert.equal(groups.length,4);
+ for(const n of ['0','2','1'])assert.match(t,new RegExp('\\b'+n+'\\b'));
+});
+test('I04 contrast comparison uses exactly the numerical source values',()=>{
+ const box=element('div');
+ diagrams.render(box,'I04',8);
+ const groups=flatten(box).filter(n=>n.attributes['data-bps-part']!==undefined);
+ assert.equal(groups.length,2);
+ for(const v of ['0','100','150','255'])assert.match(labels(box),new RegExp('\\b'+v+'\\b'));
+ assert.match(labels(box),/DISPLAY 50–200/);
+});
+test('I04 checkpoint does not expose the source-array equality answer',()=>{
+ const box=element('div');
+ diagrams.render(box,'I04',9);
+ assert.match(labels(box),/Equal afterward: \?/);
+ assert.doesNotMatch(labels(box),/True/);
+ diagrams.render(box,'I04',10);
+ assert.match(labels(box),/True/);
 });
