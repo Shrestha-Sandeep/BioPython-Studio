@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16],['I09',16]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,106);
+ assert.equal(count,122);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -166,4 +166,20 @@ test('I08 join visuals disclose unmatched rows, retain specimen hierarchy and hi
  assert.match(labels(box),/Six long rows/);
  diagrams.render(box,'I08',17);
  assert.match(labels(box),/S3 unmatched/);
+});
+
+test('I09 array diagrams show label footprint, hide ROI-ratio checkpoint and disclose limits',()=>{
+ const box=element('div');
+ diagrams.render(box,'I09',3);
+ assert.match(labels(box),/Exact label footprint intensity/);
+ assert.match(labels(box),/Means: label 1 = 5/);
+ diagrams.render(box,'I09',7);
+ assert.match(labels(box),/Mean ratio: \?/);
+ assert.doesNotMatch(labels(box),/Ratio: 3/);
+ diagrams.render(box,'I09',8);
+ assert.match(labels(box),/Ratio: 3/);
+ diagrams.render(box,'I09',12);
+ assert.match(labels(box),/two local maxima/);
+ diagrams.render(box,'I09',16);
+ assert.match(labels(box),/Verified=False/);
 });
