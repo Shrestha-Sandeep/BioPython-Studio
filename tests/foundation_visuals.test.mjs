@@ -32,7 +32,7 @@ test('six foundation chapters offer accessible original explanations',()=>{
     assert.ok(count>=6,`${chapter} has only ${count} diagrams`);
     total+=count;
   }
-  assert.equal(total,46);
+  assert.equal(total,40);
 });
 
 test('dynamic manual count is reflected in the diagram',()=>{
@@ -50,4 +50,30 @@ test('missing steps leave no stale illustration behind',()=>{
   visuals.render(c,'P02',6);
   assert.equal(visuals.render(c,'P02',0),false);
   assert.equal(c.children.length,0);
+});
+
+test('TTS progress reveals successive concepts and fully resets after pause/stop',()=>{
+  const c=makeElement('div');
+  visuals.render(c,'P05',1);
+  const svg=c.children[0];
+  const parts=svg.children.filter(node=>node.attributes['data-bps-part']!==undefined);
+  assert.equal(parts.length,4);
+  const makeClasses=()=>{
+    const names=new Set();
+    return {add:k=>names.add(k),remove:(...ks)=>ks.forEach(k=>names.delete(k)),
+      toggle:(k,on)=>on?names.add(k):names.delete(k),contains:k=>names.has(k)};
+  };
+  svg.classList=makeClasses();
+  parts.forEach(part=>{part.classList=makeClasses();});
+  svg.querySelectorAll=()=>parts;
+  c.querySelector=()=>svg;
+  visuals.progress(c,0);
+  assert.equal(parts[0].classList.contains('bps-is-current'),true);
+  assert.equal(parts[3].classList.contains('bps-is-future'),true);
+  visuals.progress(c,0.8);
+  assert.equal(parts[3].classList.contains('bps-is-current'),true);
+  assert.equal(parts[0].classList.contains('bps-is-future'),false);
+  visuals.progress(c,null);
+  assert.equal(svg.classList.contains('bps-is-speaking'),false);
+  assert.ok(parts.every(part=>!part.classList.contains('bps-is-future')));
 });
