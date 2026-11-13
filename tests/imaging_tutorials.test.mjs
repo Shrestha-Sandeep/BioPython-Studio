@@ -14,6 +14,7 @@ for(const chapter of ['I01','I02']){
 const tutorials=JSON.parse(JSON.stringify(ctx.window.BioPythonImagingTutorials));
 const html=readFileSync(new URL('index.html',root),'utf8');
 const viewer=readFileSync(new URL('src/tutorials/p01-viewer.js',root),'utf8');
+const py=spawnSync('python3',['-c','import numpy; from PIL import Image'],{encoding:'utf8'});
 test('I01 maps canonical goals',()=>{
  const t=tutorials.find(t=>t.chapter==='I01');
  assert.ok(t);
@@ -83,7 +84,7 @@ test('I01 keeps the published-figure and synthetic-array boundary',()=>{
  assert.ok(t.steps.some(step=>step.say.includes('RGB')));
  assert.ok(t.steps.some(step=>step.say.includes('calibrat')));
 });
-const py=spawnSync('python3',['-c','import numpy; from PIL import Image'],{encoding:'utf8'});
+
 test('I01 runnable outputs equal fresh real Python',{skip:py.status!==0?'Install NumPy and Pillow':false},()=>{
  const t=tutorials.find(t=>t.chapter==='I01');
  let tested=0;
