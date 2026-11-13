@@ -61,6 +61,19 @@ I04:{
 10:{type:"contrast",caption:"Reveal: source array equality is True after changing display limits"},
 12:{type:"hist",counts:[1,3,0],edges:["0–50","50–100","100–150"],caption:"Histogram of four synthetic green RGB display components"},
 13:{type:"comparison",headline:"Auditable two-panel example",parts:["Source: synthetic RGB","2 axes, 4 pixels","Array unchanged: True"]}
+},
+I05:{
+1:{type:"comparison",headline:"Declare the background estimator",parts:["Values: 2,3,8,15","25th percentile","Background: 2.75"]},
+3:{type:"comparison",headline:"Gaussian smooths a bright impulse",parts:["Center: 9.0","Sigma: 0.5 px","Center after: 5.57"]},
+4:{type:"comparison",headline:"Median can remove an isolated spot",parts:["Center before: 9","Median neighborhood","Center after: 0"]},
+6:{type:"mask",threshold:4,caption:"Threshold >4 selects four candidate pixels, not four cells"},
+7:{type:"mask",threshold:8,caption:"Strict >8 excludes the pixel equal to 8"},
+8:{type:"comparison",headline:"Predict a stricter threshold",parts:["Source: 0,2,6,8,10,12","Apply strict >10","How many survive?"]},
+9:{type:"mask",threshold:10,caption:"Reveal: strict >10 retains only the pixel 12"},
+10:{type:"comparison",headline:"Otsu gives a candidate threshold",parts:["Source: 0,0,2,2,10,10","Otsu cutoff: 2","Candidate pixels: 2"]},
+12:{type:"comparison",headline:"Check sensitivity, not one mask",parts:[">4 selects 4",">8 selects 2",">10 selects 1"]},
+13:{type:"comparison",headline:"Compare two candidate masks",parts:["Intersection: 2 px","Union: 4 px","IoU: 0.5"]},
+14:{type:"comparison",headline:"Document a candidate pixel report",parts:["Background: 3.0","Low/high: 3 / 1","Source preserved"]}
 }
 };
 function add(parent,tag,attrs={}){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));parent.append(el);return el;}
@@ -147,7 +160,22 @@ function contrast(svg,d){
  });
  label(svg,260,151,d.caption,12,C.muted,450);
 }
-const painters={comparison,grid,rgb,plot,hist,contrast};
+function mask(svg,d){
+  const values=[0,2,6,8,10,12];
+  const labels=["SOURCE PIXELS","CANDIDATE MASK"];
+  [0,1].forEach(k=>{
+    const g=group(svg,k),left=k===0?23:280;
+    label(g,left+105,27,labels[k],12,C.blue,730);
+    values.forEach((v,i)=>{
+      const chosen=v>d.threshold;
+      const x=left+(i%3)*70,y=38+Math.floor(i/3)*48;
+      rect(g,x,y,64,40,k===0?C.surface:chosen?"#1c5146":"#263743",k===1&&chosen?C.green:C.line);
+      label(g,x+32,y+25,k===0?String(v):chosen?"1":"0",17,k===1&&chosen?C.green:C.text,740);
+    });
+  });
+  label(svg,260,153,d.caption,12,C.muted,470);
+}
+const painters={comparison,grid,rgb,plot,hist,contrast,mask};
 function render(container,chapter,index){
  container.replaceChildren();
  const d=descriptors[chapter]?.[index];if(!d)return false;
