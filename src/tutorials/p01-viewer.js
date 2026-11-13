@@ -54,6 +54,8 @@
           <div class="bps-example-right">
             <section class="bps-example-card" aria-label="Values in the example">
               <div class="bps-example-card-heading">WHAT CHANGES</div>
+              <div id="bps-example-workflow-box" class="bps-example-workflow-box" hidden></div>
+              <div id="bps-example-illustration-box" class="bps-example-illustration-box" hidden></div>
               <figure id="bps-example-image-preview" class="bps-example-image-preview" hidden>
               <figcaption id="bps-example-image-label"></figcaption>
               <img id="bps-example-image" alt="" loading="lazy" />
@@ -95,6 +97,9 @@
     return String(source).replace(/\{(CELLS|PIXEL_SIZE|LENGTH)\}/g,(_,name)=>m[name]);
   }
   function setStatus(message){$("bps-example-status").textContent=message;}
+  function visualProgress(value){
+    window.BioPythonTutorialIllustrations?.progress?.($("bps-example-illustration-box"),value);
+  }
   function renderCode(step){
     const code=$("bps-example-code");
     code.replaceChildren();
@@ -116,12 +121,26 @@
   });
   function renderVisual(step){
     const figure=$("bps-example-image-preview"),img=$("bps-example-image"),image=previewImages[step.preview?.image];
-    figure.hidden=!image;
-    if(image){
+    const workflowBox=$("bps-example-workflow-box");
+    const workflow=Boolean(step.preview&&!step.code&&window.BioPythonMicroscopyWorkflow?.render(
+      workflowBox,state.tutorial?.chapter,values().CELLS
+    ));
+    if(!workflow)workflowBox.replaceChildren();
+    workflowBox.hidden=!workflow;
+    figure.hidden=!image||workflow;
+    if(image&&!workflow){
       if(img.getAttribute("src")!==image.src)img.src=image.src;
       img.alt=image.alt;
       $("bps-example-image-label").textContent=step.preview.label;
     }else{img.removeAttribute("src");img.alt="";}
+    // Show a single original diagram when no credited microscopy preview is present.
+    // The illustration is tied to this exact chapter step and updates with inputs.
+    const illustrationBox=$("bps-example-illustration-box");
+    const hasTeachingImage=!image&&Boolean(window.BioPythonTutorialIllustrations?.render(
+      illustrationBox,state.tutorial?.chapter,state.step,{cells:values().CELLS}
+    ));
+    if(!hasTeachingImage)illustrationBox.replaceChildren();
+    illustrationBox.hidden=!hasTeachingImage;
     const target=$("bps-example-visual");
     target.replaceChildren();
     for(const [label,value] of step.visual){
@@ -159,6 +178,7 @@
     state.token++;
     state.playing=false;state.paused=false;state.awaitingPrediction=false;
     if(hasSpeech)window.speechSynthesis.cancel();
+    visualProgress(null);
   }
   function findVoice(){
     const id=voiceSelect.value;
@@ -173,9 +193,18 @@
     utterance.pitch=1.0;
     const chosen=findVoice();if(chosen)utterance.voice=chosen;
     utterance.onstart=()=>{if(token===state.token)setStatus("Narrating step "+(state.step+1)+"…");};
+    // Reveal diagrams against reported TTS word positions. Some voices do not
+    // provide boundaries; those retain the full diagram instead of fake timing.
+    utterance.onboundary=(event)=>{
+      if(token!==state.token||!state.playing||state.paused)return;
+      if(Number.isFinite(event.charIndex)&&event.charIndex>=0){
+        visualProgress(event.charIndex/Math.max(1,utterance.text.length));
+      }
+    };
     utterance.onerror=event=>{if(token!==state.token)return;state.playing=false;state.paused=false;render();setStatus("Voice playback could not start ("+(event.error||"device voice") + "). You can use Next.");};
     utterance.onend=()=>{
       if(token!==state.token||!state.playing)return;
+      visualProgress(null);
       if(step.checkpoint){
         state.playing=false;state.paused=false;state.awaitingPrediction=true;render();
         setStatus("Prediction break: think about the answer, then press Reveal.");

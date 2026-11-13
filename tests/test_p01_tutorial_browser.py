@@ -57,13 +57,15 @@ def check():
                 assert page.locator("#bps-example-title").inner_text() == "From a microscope field to a trustworthy report"
                 assert page.locator("#bps-example-progress").get_attribute("max") == "19"
                 assert "destination" in page.locator("#bps-example-step-title").inner_text().lower()
-                preview = page.locator("#bps-example-image-preview")
-                assert preview.is_visible(), "The future-capability image must be visible in scene one"
+                workflow = page.locator("#bps-example-workflow-box")
+                assert workflow.is_visible(), "A source-image-to-report storyboard must open the chapter"
+                assert workflow.locator(".bps-example-workflow-tile").count() == 4
                 page.wait_for_function(
-                    "() => document.getElementById('bps-example-image').naturalWidth > 0",
+                    "() => [...document.querySelectorAll('#bps-example-workflow-box img')].length === 2 && [...document.querySelectorAll('#bps-example-workflow-box img')].every(img=>img.naturalWidth>0)",
                     timeout=10000
                 )
-                assert "Human Protein Atlas" in preview.inner_text()
+                assert "not extracted from these images" in workflow.inner_text()
+                assert page.locator("#bps-example-image-preview").is_hidden()
                 assert page.locator("#bps-example-caption").inner_text()
                 assert page.locator("#bps-example-voice").count() == 1
                 assert page.locator("#bps-example-rate").count() == 1
@@ -132,6 +134,9 @@ def check():
                       utterance.onstart?.();
                       setTimeout(()=>{
                         if(active!==utterance)return;
+                        utterance.onboundary?.({charIndex: Math.floor(utterance.text.length * 0.2)});
+                        window.__sawIllustrationProgress = window.__sawIllustrationProgress ||
+                          Boolean(document.querySelector('#bps-example-illustration-box svg.bps-is-speaking .bps-is-future'));
                         active=null;utterance.onend?.();
                       },12);
                     },12);
@@ -151,6 +156,7 @@ def check():
                 timeout=20000
             )
             assert checkpoint_page.locator("#bps-example-position").inner_text() == "6 / 19"
+            assert checkpoint_page.evaluate("() => window.__sawIllustrationProgress === true"), "Word-boundary events should reveal successive diagram components"
             checkpoint_page.wait_for_timeout(600)
             assert checkpoint_page.locator("#bps-example-position").inner_text() == "6 / 19", \
                 "A prediction break must not autoplay to reveal the answer"

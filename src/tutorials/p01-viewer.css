@@ -88,3 +88,10 @@ body[data-ui-view="explore"] #bps-example-trigger{display:none!important}
 .bps-example-grid.is-preview-first .bps-example-code,.bps-example-grid.is-preview-first .bps-example-right>section:last-child{display:none}
 .bps-example-grid.is-preview-first .bps-example-right{grid-template-rows:auto}
 .bps-example-grid.is-preview-first .bps-example-image-preview img{max-height:250px}
+
+/* Original step-synchronized explanations live in the existing WHAT CHANGES panel.
+ * One diagram at a time; no extra card or autoplaying animation. */
+.bps-example-illustration-box[hidden]{display:none!important}
+.bps-example-illustration-box{margin:0 0 12px;min-width:0}
+.bps-example-illustration{display:block;width:100%;height:auto;max-height:200px;border:1px solid var(--line,#374151);border-radius:8px}
+@media(max-width:720px){.bps-example-illustration{max-height:none}}
