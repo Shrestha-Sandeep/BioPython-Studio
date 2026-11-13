@@ -40,11 +40,14 @@ def check():
                     assert dialog.is_visible(),chapter
                     assert page.locator("#bps-example-title").inner_text()==title,chapter
                     assert page.locator("#bps-example-progress").get_attribute("max") in ("14","15"),chapter
-                    assert page.locator("#bps-example-image-preview").is_visible(),chapter
+                    workflow = page.locator("#bps-example-workflow-box")
+                    assert workflow.is_visible(),chapter
+                    assert workflow.locator(".bps-example-workflow-tile").count() == 4,chapter
                     page.wait_for_function(
-                        "() => document.getElementById('bps-example-image').naturalWidth > 0",
+                        "() => [...document.querySelectorAll('#bps-example-workflow-box img')].length === 2 && [...document.querySelectorAll('#bps-example-workflow-box img')].every(img=>img.naturalWidth>0)",
                         timeout=10000)
-                    assert "Human Protein Atlas" in page.locator("#bps-example-image-preview").inner_text(),chapter
+                    assert "not extracted from these images" in workflow.inner_text(),chapter
+                    assert page.locator("#bps-example-image-preview").is_hidden(),chapter
                     assert page.locator("#bps-example-voice").count()==1
                     assert page.locator("#bps-example-rate").count()==1
                     assert not page.locator("#bps-example-parameter-box").is_visible(),chapter
