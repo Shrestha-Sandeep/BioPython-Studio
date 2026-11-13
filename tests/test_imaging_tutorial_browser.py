@@ -4,6 +4,7 @@ from test_p01_tutorial_browser import serve, change_selection
 
 CHAPTERS = {
     "I01": ("What a microscopy image actually contains", 16, 6),
+    "I02": ("Crop a microscopy image without losing its meaning", 17, 8),
 }
 
 def check():
