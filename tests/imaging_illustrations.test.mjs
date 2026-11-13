@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16],['I09',16],['I10',16],['I11',16]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16],['I09',16],['I10',16],['I11',16],['I12',18]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,154);
+ assert.equal(count,172);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -212,4 +212,19 @@ test('I11 diagrams do not present fields as independent and withhold paired mean
  assert.match(labels(box),/inseparable/);
  diagrams.render(box,'I11',16);
  assert.match(labels(box),/Validated=False/);
+});
+
+test('I12 uncertainty displays explicit interval definitions and does not reveal predicted n',()=>{
+ const box=element('div');
+ diagrams.render(box,'I12',1);
+ assert.match(labels(box),/SEM = 0.577/);
+ diagrams.render(box,'I12',5);
+ assert.match(labels(box),/95% t confidence interval/);
+ diagrams.render(box,'I12',14);
+ assert.match(labels(box),/Line artists = \?/);
+ assert.doesNotMatch(labels(box),/Independent n=3/);
+ diagrams.render(box,'I12',15);
+ assert.match(labels(box),/Independent n=3/);
+ diagrams.render(box,'I12',20);
+ assert.match(labels(box),/95% t CI/);
 });
