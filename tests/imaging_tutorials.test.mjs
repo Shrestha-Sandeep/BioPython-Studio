@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04']){
+for(const chapter of ['I01','I02','I03','I04','I05']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -212,5 +212,58 @@ test('I04 changed-input visualization preserves numbers and explicit count',{
   });
   assert.equal(run.status,0,run.stderr);
   assert.equal(run.stdout.trimEnd(),expected.trimEnd());
+ }
+});
+
+const segmentationPython=spawnSync('python3',['-c','import numpy; from skimage.filters import gaussian, median, threshold_otsu'],{encoding:'utf8'});
+test('I05 maps all shipped thresholding goals and preserves prediction privacy',()=>{
+ const t=tutorials.find(x=>x.chapter==='I05');
+ assert.ok(t);
+ const ids=Array.from({length:6},(_,i)=>'I05-G'+String(i+1).padStart(2,'0')).concat('I05-CAPSTONE');
+ assert.deepEqual(t.goals,ids);
+ assert.equal(t.steps.length,16);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),ids.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/i);
+ assert.ok(html.indexOf('src/tutorials/i04-data.js')<html.indexOf('src/tutorials/i05-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i05-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ assert.equal(t.steps[0].preview.image,'otsu-nuclei-mask');
+ for(const step of t.steps){
+  assert.ok(step.say.trim().split(/\s+/).length>=18,step.title);
+  assert.ok(step.note.length>=30,step.title);
+  const n=step.code?step.code.split('\n').length:0;
+  for(const line of step.focus)assert.ok(line>=1&&line<=n,step.title+':'+line);
+  if(step.output)assert.ok(step.code,step.title);
+ }
+ assert.ok(t.steps.some(s=>s.say.includes('Otsu')));
+ assert.ok(t.steps.some(s=>s.say.includes('candidate')));
+});
+test('I05 all displayed numerical masks and filtering outputs equal fresh Python',{
+ skip:segmentationPython.status!==0?'scikit-image not installed':false
+},()=>{
+ const t=tutorials.find(x=>x.chapter==='I05');
+ let count=0;
+ for(const [index,s] of t.steps.entries()){
+  if(!s.code||!s.output)continue;
+  const cp=spawnSync('python3',['-c',s.code],{encoding:'utf8',timeout:16000});
+  assert.equal(cp.status,0,'I05 step '+index+' '+s.title+': '+cp.stderr);
+  assert.equal(cp.stdout.trimEnd(),s.output,'I05 step '+index+': '+s.title);
+  count++;
+ }
+ assert.ok(count>=12,'only '+count+' executable scenes');
+});
+test('I05 unseen thresholds and empty-union IoU have deterministic behavior',{
+ skip:segmentationPython.status!==0?'scikit-image not installed':false
+},()=>{
+ const cases=[
+  ["import numpy as np\nx=np.array([[0,5,10],[15,20,25]])\nprint([int((x>t).sum()) for t in (5,10,20)])","[4, 3, 1]"],
+  ["import numpy as np\nx=np.array([0,0,0]);a=x>10;b=x>20;u=np.logical_or(a,b).sum();print(float(np.logical_and(a,b).sum()/u) if u else 1.0)","1.0"],
+  ["from skimage.filters import threshold_otsu\nimport numpy as np\nx=np.array([0,0,2,2,10,10]);print(int(threshold_otsu(x)),int((x>2).sum()))","2 2"]
+ ];
+ for(const [code,expected] of cases){
+  const run=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:12000});
+  assert.equal(run.status,0,run.stderr);
+  assert.equal(run.stdout.trimEnd(),expected);
  }
 });
