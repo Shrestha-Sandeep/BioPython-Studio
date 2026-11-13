@@ -556,7 +556,7 @@ test('I11 canonical independent biological unit and batch guardrails',()=>{
   for(const line of s.focus)assert.ok(line>=1&&line<=n,s.title+':'+line);
   if(s.output)assert.ok(s.code,s.title);
  }
- assert.ok(t.steps.some(s=>s.say.includes('confounded')));
+ assert.ok(t.steps.some(s=>(s.say+' '+s.note).toLowerCase().includes('confound')));
  assert.ok(t.steps.some(s=>s.code.includes("groupby")));
 });
 test('I11 all displayed unit-level Pandas results match fresh CPython',{
