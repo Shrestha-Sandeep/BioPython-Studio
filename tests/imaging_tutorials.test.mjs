@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04','I05','I06']){
+for(const chapter of ['I01','I02','I03','I04','I05','I06','I07']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -315,6 +315,57 @@ test('I06 changed-input morphology, connectivity, projection and empty-mask case
   ["import numpy as np\nfrom skimage.segmentation import clear_border\nx=np.ones((2,2),bool)\nprint(int(clear_border(x).sum()))","0"],
   ["import numpy as np\nfrom skimage.measure import label,regionprops\nx=np.zeros((3,3),bool)\nprint(len(regionprops(label(x,connectivity=1))))","0"],
   ["import numpy as np\nfrom skimage.measure import label\nx=np.zeros((3,4,4),bool);x[0,1,1]=1;x[2,1,1]=1\nprint(label(x,connectivity=1).max(),label(x.max(axis=0),connectivity=1).max())","2 1"]
+ ];
+ for(const [code,expected] of cases){
+  const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
+  assert.equal(r.status,0,r.stderr);assert.equal(r.stdout.trimEnd(),expected);
+ }
+});
+
+const pandasPython=spawnSync('python3',['-c','import pandas'],{encoding:'utf8'});
+test('I07 canonical identity, schema and missingness curriculum',()=>{
+ const t=tutorials.find(x=>x.chapter==='I07');
+ assert.ok(t,'I07 not loaded');
+ const goals=Array.from({length:7},(_,i)=>'I07-G'+String(i+1).padStart(2,'0')).concat('I07-CAPSTONE');
+ assert.deepEqual(t.goals,goals);
+ assert.equal(t.steps.length,18);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),goals.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/);
+ assert.equal(t.steps[0].preview.image,'fluorescence-single');
+ assert.ok(html.indexOf('src/tutorials/i06-data.js')<html.indexOf('src/tutorials/i07-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i07-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const s of t.steps){
+  assert.ok(s.say.trim().split(/\s+/).length>=18,s.title);
+  assert.ok(s.note.length>=30,s.title);
+  const n=s.code?s.code.split('\n').length:0;
+  for(const i of s.focus)assert.ok(i>=1&&i<=n,s.title+':'+i);
+ }
+ assert.ok(t.steps.some(s=>s.say.includes('biological replicates')));
+ assert.ok(t.steps.some(s=>s.say.includes('missing')));
+});
+test('I07 runnable DataFrame outputs match fresh pinned Python pandas',{
+ skip:pandasPython.status!==0?'pandas not installed':false
+},()=>{
+ let count=0;
+ for(const [i,s] of tutorials.find(x=>x.chapter==='I07').steps.entries()){
+  if(!s.code||!s.output)continue;
+  const cp=spawnSync('python3',['-c',s.code],{encoding:'utf8',timeout:15000});
+  assert.equal(cp.status,0,'I07 '+i+' '+s.title+': '+cp.stderr);
+  assert.equal(cp.stdout.trimEnd(),s.output,'I07 '+i+' '+s.title);
+  count++;
+ }
+ assert.ok(count>=14,'only '+count+' executable I07 examples');
+});
+test('I07 unseen leading-zero, missing, duplicate and composite-key cases',{
+ skip:pandasPython.status!==0?'pandas not installed':false
+},()=>{
+ const cases=[
+  ["import pandas as pd\nfrom io import StringIO\ndf=pd.read_csv(StringIO('id,value\\n0007,2\\n0008,3\\n'),dtype={'id':'string'});print(df.id.tolist())","['0007', '0008']"],
+  ["import pandas as pd\ndf=pd.DataFrame({'id':['A','a'],'score':[0,None]});print(df.id.nunique(),df.score.isna().sum(),int((df.score==0).sum()))","2 1 1"],
+  ["import pandas as pd\ndf=pd.DataFrame({'sample':['S1','S2'],'field':['F1','F1']});print(df.duplicated(['sample','field']).any())","False"],
+  ["import pandas as pd\ndf=pd.DataFrame({'score':['bad',None,'0']});z=pd.to_numeric(df.score,errors='coerce');print(z.isna().tolist(),int((z==0).sum()))","[True, True, False] 1"]
  ];
  for(const [code,expected] of cases){
   const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
