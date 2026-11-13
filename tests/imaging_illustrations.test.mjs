@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,90);
+ assert.equal(count,106);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -150,4 +150,20 @@ test('I07 diagrams retain source ID and do not leak checkpoint answers',()=>{
  diagrams.render(box,'I07',14);
  assert.match(labels(box),/MISSING/);
  assert.match(labels(box),/ZERO/);
+});
+
+test('I08 join visuals disclose unmatched rows, retain specimen hierarchy and hide prediction answer',()=>{
+ const box=element('div');
+ diagrams.render(box,'I08',1);
+ assert.match(labels(box),/3 source fields stay 3/);
+ assert.match(labels(box),/S1/);
+ diagrams.render(box,'I08',3);
+ assert.match(labels(box),/left_only/);
+ diagrams.render(box,'I08',7);
+ assert.match(labels(box),/New row count = \?/);
+ assert.doesNotMatch(labels(box),/Six long rows/);
+ diagrams.render(box,'I08',8);
+ assert.match(labels(box),/Six long rows/);
+ diagrams.render(box,'I08',17);
+ assert.match(labels(box),/S3 unmatched/);
 });

@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04','I05','I06','I07']){
+for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -370,5 +370,61 @@ test('I07 unseen leading-zero, missing, duplicate and composite-key cases',{
  for(const [code,expected] of cases){
   const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
   assert.equal(r.status,0,r.stderr);assert.equal(r.stdout.trimEnd(),expected);
+ }
+});
+
+const joinFigurePython=spawnSync('python3',['-c','import pandas, matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt'],{encoding:'utf8'});
+test('I08 canonical table joining and figure reporting goals',()=>{
+ const t=tutorials.find(x=>x.chapter==='I08');
+ assert.ok(t,'I08 not registered');
+ const ids=Array.from({length:8},(_,i)=>'I08-G'+String(i+1).padStart(2,'0')).concat('I08-CAPSTONE');
+ assert.deepEqual(t.goals,ids);
+ assert.equal(t.steps.length,19);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),ids.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/);
+ assert.equal(t.steps[0].preview.image,'fluorescence-single');
+ assert.ok(html.indexOf('src/tutorials/i07-data.js')<html.indexOf('src/tutorials/i08-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i08-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const s of t.steps){
+  assert.ok(s.say.trim().split(/\s+/).length>=18,s.title);
+  assert.ok(s.note.length>=30,s.title);
+  const n=s.code?s.code.split('\n').length:0;
+  for(const line of s.focus)assert.ok(line>=1&&line<=n,s.title+':'+line);
+  if(s.output)assert.ok(s.code,s.title);
+ }
+ assert.ok(t.steps.some(s=>s.code.includes('validate=')));
+ assert.ok(t.steps.some(s=>s.code.includes('savefig')));
+ assert.ok(t.steps.some(s=>s.say.includes('pseudoreplication')));
+});
+test('I08 all displayed Pandas and Matplotlib outputs match fresh CPython',{
+ skip:joinFigurePython.status!==0?'Pandas or Matplotlib missing':false
+},()=>{
+ let count=0;
+ for(const [i,s] of tutorials.find(x=>x.chapter==='I08').steps.entries()){
+  if(!s.code||!s.output)continue;
+  const run=spawnSync('python3',['-c',s.code],{
+   encoding:'utf8',timeout:24000,env:{...process.env,MPLBACKEND:'Agg'}
+  });
+  assert.equal(run.status,0,'I08 '+i+' '+s.title+': '+run.stderr);
+  assert.equal(run.stdout.trimEnd(),s.output,'I08 '+i+' '+s.title);
+  count++;
+ }
+ assert.ok(count>=15,'Only '+count+' executable I08 scenes');
+});
+test('I08 rejects nonunique metadata, records unmatched keys and retains pairing',{
+ skip:joinFigurePython.status!==0?'Pandas or Matplotlib missing':false
+},()=>{
+ const cases=[
+  ["import pandas as pd\nfrom pandas.errors import MergeError\nf=pd.DataFrame({'id':['A','A']});m=pd.DataFrame({'id':['A','A']});\ntry:f.merge(m,on='id',validate='many_to_one')\nexcept MergeError:print('BLOCKED')","BLOCKED"],
+  ["import pandas as pd\nf=pd.DataFrame({'id':['0003','0004']});m=pd.DataFrame({'id':['0003'],'condition':['ctrl']});z=f.merge(m,on='id',how='left',validate='many_to_one',indicator=True);print(z['_merge'].astype(str).tolist())","['both', 'left_only']"],
+  ["import pandas as pd\nw=pd.DataFrame({'id':['A','B','C'],'ch1':[1,2,3],'ch2':[4,5,6]});l=w.melt(id_vars='id');print(len(l),l.id.nunique())","6 3"],
+  ["import pandas as pd\nf=pd.DataFrame({'id':[None]});m=pd.DataFrame({'id':[None]});print(len(f.merge(m,on='id')))","1"],
+  ["import io\nimport matplotlib;matplotlib.use('Agg')\nimport matplotlib.pyplot as plt\nfig,ax=plt.subplots();ax.scatter([0,1],[2,3]);b=io.BytesIO();fig.savefig(b,format='svg');print(b.getvalue().startswith(b'<?xml'));plt.close(fig)","True"]
+ ];
+ for(const [code,expected] of cases){
+  const run=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:20000,env:{...process.env,MPLBACKEND:'Agg'}});
+  assert.equal(run.status,0,run.stderr);assert.equal(run.stdout.trimEnd(),expected);
  }
 });
