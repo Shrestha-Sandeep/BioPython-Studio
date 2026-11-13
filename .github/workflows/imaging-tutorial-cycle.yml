@@ -33,7 +33,7 @@ jobs:
           node --check src/tutorials/i02-data.js
           node --check src/tutorials/imaging-illustrations.js
           node --check src/tutorials/p01-viewer.js
-          node --test tests/imaging_tutorials.test.mjs tests/foundation_visuals.test.mjs tests/microscopy_storyboard.test.mjs
+          node --test tests/imaging_tutorials.test.mjs tests/foundation_visuals.test.mjs tests/microscopy_storyboard.test.mjs tests/imaging_illustrations.test.mjs
       - name: Install browser engine
         run: python -m playwright install --with-deps chromium
       - name: Check staged lesson UI on desktop and mobile
