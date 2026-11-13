@@ -182,10 +182,10 @@
     });footer(svg,d.caption);
   }
   function test(svg,d){
-    const color=d.pass?C.green:C.red;
-    rect(svg,21,39,218,78);rect(svg,280,39,218,78,d.pass?"#1a423b":"#4e3435",color);
-    txt(svg,130,61,"EXPECTED",12,C.muted,650);txt(svg,130,92,d.expected,22,C.text,750);
-    txt(svg,390,61,"ACTUAL",12,C.muted,650);txt(svg,390,92,d.actual,22,color,750);
+    const color=d.pass?C.green:C.red,expected=part(svg,0),actual=part(svg,1);
+    rect(expected,21,39,218,78);rect(actual,280,39,218,78,d.pass?"#1a423b":"#4e3435",color);
+    txt(expected,130,61,"EXPECTED",12,C.muted,650);txt(expected,130,92,d.expected,22,C.text,750);
+    txt(actual,390,61,"ACTUAL",12,C.muted,650);txt(actual,390,92,d.actual,22,color,750);
     txt(svg,260,30,d.pass?"✓ TEST PASSES":"× ASSERTION ERROR",13,color,800);footer(svg,d.caption);
   }
   const painters={flow,store,ruler,bars,tokens,threshold,sequence,metadata,audit,error,report,test};
