@@ -57,13 +57,15 @@ def check():
                 assert page.locator("#bps-example-title").inner_text() == "From a microscope field to a trustworthy report"
                 assert page.locator("#bps-example-progress").get_attribute("max") == "19"
                 assert "destination" in page.locator("#bps-example-step-title").inner_text().lower()
-                preview = page.locator("#bps-example-image-preview")
-                assert preview.is_visible(), "The future-capability image must be visible in scene one"
+                workflow = page.locator("#bps-example-workflow-box")
+                assert workflow.is_visible(), "A source-image-to-report storyboard must open the chapter"
+                assert workflow.locator(".bps-example-workflow-tile").count() == 4
                 page.wait_for_function(
-                    "() => document.getElementById('bps-example-image').naturalWidth > 0",
+                    "() => [...document.querySelectorAll('#bps-example-workflow-box img')].length === 2 && [...document.querySelectorAll('#bps-example-workflow-box img')].every(img=>img.naturalWidth>0)",
                     timeout=10000
                 )
-                assert "Human Protein Atlas" in preview.inner_text()
+                assert "not extracted from these images" in workflow.inner_text()
+                assert page.locator("#bps-example-image-preview").is_hidden()
                 assert page.locator("#bps-example-caption").inner_text()
                 assert page.locator("#bps-example-voice").count() == 1
                 assert page.locator("#bps-example-rate").count() == 1
