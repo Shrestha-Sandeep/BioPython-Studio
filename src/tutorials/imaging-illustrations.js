@@ -7,8 +7,8 @@ const descriptors={
 I01:{
 1:{type:"comparison",headline:"Python list × 2",parts:["Repeated elements","NumPy array × 2","Each value doubles"]},
 2:{type:"comparison",headline:"dtype = uint16",parts:["10, 20, 30","Shape: (3,)","12, 22, 32"]},
-3:{type:"grid",rows:2,cols:3,selected:[],caption:"Image: 2 rows × 3 columns (Y, X)"},
-4:{type:"grid",rows:2,cols:3,selected:[3],caption:"[row 1, col 0] selects the fourth value"},
+3:{type:"grid",rows:2,cols:3,base:1,selected:[],caption:"Image: 2 rows × 3 columns (Y, X)"},
+4:{type:"grid",rows:2,cols:3,base:1,selected:[3],caption:"[row 1, col 0] selects the fourth value"},
 5:{type:"grid",rows:3,cols:4,selected:[9],hide:true,caption:"Predict [2,1] — the selected value is hidden"},
 6:{type:"grid",rows:3,cols:4,selected:[9],caption:"Reveal: the value at [2,1] is 9"},
 7:{type:"comparison",headline:"Published Witz/HPA PNG",parts:["Source: credited","Format: rendered figure","Raw calibration: absent"]},
@@ -41,7 +41,7 @@ function grid(svg,d){
   for(let c=0;c<cols;c++){
    const i=r*cols+c,g=group(svg,i),chosen=d.selected.includes(i),x=left+c*(cw+gap),y=top+r*(ch+gap);
    rect(g,x,y,cw,ch,chosen?"#1a4b40":C.surface,chosen?C.green:C.line);
-   label(g,x+cw/2,y+20,chosen&&d.hide?"?":String(i),14,chosen?C.green:C.text,720);
+   label(g,x+cw/2,y+20,chosen&&d.hide?"?":String(i+(d.base||0)),14,chosen?C.green:C.text,720);
   }
  }
  label(svg,260,145,d.caption,13,C.muted,480);
