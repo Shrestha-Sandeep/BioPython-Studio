@@ -75,7 +75,7 @@ const painters={comparison,grid,rgb};
 function render(container,chapter,index){
  container.replaceChildren();
  const d=descriptors[chapter]?.[index];if(!d)return false;
- const svg=add(container,"svg",{viewBox:"0 0 520 165",role:"img",class:"bps-example-illustration","aria-label":d.caption||d.headline,focusable:"false"});
+ const svg=add(container,"svg",{viewBox:"0 0 520 165",role:"img",class:"bps-example-illustration","aria-label":"Scientific teaching diagram: "+(d.caption||d.headline)+". Values are illustrative.",focusable:"false"});
  rect(svg,0,0,520,165,C.bg,C.bg);painters[d.type](svg,d);return true;
 }
 function progress(container,value){
