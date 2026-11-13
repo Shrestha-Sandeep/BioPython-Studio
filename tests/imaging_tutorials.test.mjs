@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09','I10']){
+for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09','I10','I11']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -533,5 +533,56 @@ test('I10 changed-input IoU, both-empty, assignment and unmatched edge behavior'
  for(const [code,expected] of cases){
   const run=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
   assert.equal(run.status,0,run.stderr);assert.equal(run.stdout.trimEnd(),expected);
+ }
+});
+
+test('I11 canonical independent biological unit and batch guardrails',()=>{
+ const t=tutorials.find(x=>x.chapter==='I11');
+ assert.ok(t,'I11 not present');
+ const ids=Array.from({length:7},(_,i)=>'I11-G'+String(i+1).padStart(2,'0')).concat('I11-CAPSTONE');
+ assert.deepEqual(t.goals,ids);
+ assert.equal(t.steps.length,18);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),ids.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/);
+ assert.equal(t.steps[0].preview.image,'fluorescence-single');
+ assert.ok(html.indexOf('src/tutorials/i10-data.js')<html.indexOf('src/tutorials/i11-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i11-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const s of t.steps){
+  assert.ok(s.say.trim().split(/\s+/).length>=18,s.title);
+  assert.ok(s.note.length>=30,s.title);
+  const n=s.code?s.code.split('\n').length:0;
+  for(const line of s.focus)assert.ok(line>=1&&line<=n,s.title+':'+line);
+  if(s.output)assert.ok(s.code,s.title);
+ }
+ assert.ok(t.steps.some(s=>(s.say+' '+s.note).toLowerCase().includes('confound')));
+ assert.ok(t.steps.some(s=>s.code.includes("groupby")));
+});
+test('I11 all displayed unit-level Pandas results match fresh CPython',{
+ skip:pandasPython.status!==0?'pandas missing':false
+},()=>{
+ let n=0;
+ for(const [i,s] of tutorials.find(x=>x.chapter==='I11').steps.entries()){
+  if(!s.code||!s.output)continue;
+  const r=spawnSync('python3',['-c',s.code],{encoding:'utf8',timeout:16000});
+  assert.equal(r.status,0,'I11 '+i+' '+s.title+': '+r.stderr);
+  assert.equal(r.stdout.trimEnd(),s.output,'I11 '+i+' '+s.title);
+  n++;
+ }
+ assert.ok(n>=14,'I11 runnable scenes '+n);
+});
+test('I11 changed-input unequal field count, incomplete pair and batch confounding',{
+ skip:pandasPython.status!==0?'pandas missing':false
+},()=>{
+ const cases=[
+  ["import pandas as pd\ndf=pd.DataFrame({'unit':['A','A','B'],'x':[10.,10.,0.]});print(round(df.x.mean(),2),round(df.groupby('unit').x.mean().mean(),2))","6.67 5.0"],
+  ["import pandas as pd\ndf=pd.DataFrame({'unit':['A','B'],'cond':['ctrl','treated'],'x':[1.,5.]});w=df.pivot(index='unit',columns='cond',values='x');print(len(w.dropna(subset=['ctrl','treated'])))","0"],
+  ["import pandas as pd\ndf=pd.DataFrame({'batch':['A','B'],'cond':['ctrl','treated']});print(pd.crosstab(df.batch,df.cond).to_numpy().tolist())","[[1, 0], [0, 1]]"],
+  ["import pandas as pd\ndf=pd.DataFrame({'id':['F1','F2'],'score':[0,None]});print(df.score.isna().sum(),int((df.score==0).sum()))","1 1"]
+ ];
+ for(const [code,expected] of cases){
+  const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
+  assert.equal(r.status,0,r.stderr);assert.equal(r.stdout.trimEnd(),expected);
  }
 });
