@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16],['I09',16],['I10',16]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11],['I06',16],['I07',13],['I08',16],['I09',16],['I10',16],['I11',16]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,138);
+ assert.equal(count,154);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -196,5 +196,20 @@ test('I10 validation diagrams hide IoU checkpoint answer and distinguish foregro
  diagrams.render(box,'I10',14);
  assert.match(labels(box),/corner false positive/);
  diagrams.render(box,'I10',15);
+ assert.match(labels(box),/Validated=False/);
+});
+
+test('I11 diagrams do not present fields as independent and withhold paired mean',()=>{
+ const box=element('div');
+ diagrams.render(box,'I11',1);
+ assert.match(labels(box),/n depends on design/);
+ diagrams.render(box,'I11',8);
+ assert.match(labels(box),/Matched mean = \?/);
+ assert.doesNotMatch(labels(box),/Mean: \+2.5/);
+ diagrams.render(box,'I11',9);
+ assert.match(labels(box),/Mean: \+2.5/);
+ diagrams.render(box,'I11',12);
+ assert.match(labels(box),/inseparable/);
+ diagrams.render(box,'I11',16);
  assert.match(labels(box),/Validated=False/);
 });
