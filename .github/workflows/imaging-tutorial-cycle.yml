@@ -12,6 +12,7 @@ on:
       - feature/imaging-tutorial-cycle-i09
       - feature/imaging-tutorial-cycle-i10
       - feature/imaging-tutorial-cycle-i11
+      - feature/imaging-tutorial-cycle-i12
   pull_request:
     paths:
       - 'src/tutorials/i0*-data.js'
@@ -49,6 +50,7 @@ jobs:
           node --check src/tutorials/i09-data.js
           node --check src/tutorials/i10-data.js
           node --check src/tutorials/i11-data.js
+          node --check src/tutorials/i12-data.js
           node --check src/tutorials/imaging-illustrations.js
           node --check src/tutorials/p01-viewer.js
           node --test tests/imaging_tutorials.test.mjs tests/foundation_visuals.test.mjs tests/microscopy_storyboard.test.mjs tests/imaging_illustrations.test.mjs
