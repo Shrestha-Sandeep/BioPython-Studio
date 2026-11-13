@@ -134,6 +134,9 @@ def check():
                       utterance.onstart?.();
                       setTimeout(()=>{
                         if(active!==utterance)return;
+                        utterance.onboundary?.({charIndex: Math.floor(utterance.text.length * 0.2)});
+                        window.__sawIllustrationProgress = window.__sawIllustrationProgress ||
+                          Boolean(document.querySelector('#bps-example-illustration-box svg.bps-is-speaking .bps-is-future'));
                         active=null;utterance.onend?.();
                       },12);
                     },12);
@@ -153,6 +156,7 @@ def check():
                 timeout=20000
             )
             assert checkpoint_page.locator("#bps-example-position").inner_text() == "6 / 19"
+            assert checkpoint_page.evaluate("() => window.__sawIllustrationProgress === true"), "Word-boundary events should reveal successive diagram components"
             checkpoint_page.wait_for_timeout(600)
             assert checkpoint_page.locator("#bps-example-position").inner_text() == "6 / 19", \
                 "A prediction break must not autoplay to reveal the answer"
