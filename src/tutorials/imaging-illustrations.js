@@ -75,6 +75,7 @@ I05:{
 13:{type:"comparison",headline:"Compare two candidate masks",parts:["Intersection: 2 px","Union: 4 px","IoU: 0.5"]},
 14:{type:"comparison",headline:"Document a candidate pixel report",parts:["Background: 3.0","Low/high: 3 / 1","Source preserved"]}
 }
+,I06:{"1":{"type":"comparison","headline":"One mask, opposing operations","parts":["8 source pixels","Closing: 9 pixels","Opening: 0 pixels"]},"2":{"type":"comparison","headline":"Small features can be eliminated","parts":["10 initial pixels","5 after opening","Isolated pixel lost"]},"3":{"type":"pair","headline":"Four-neighbor labels","left":[[1,0,0],[0,1,0],[0,0,1]],"right":[[1,0,0],[0,2,0],[0,0,3]],"caption":"Three diagonal pixels → three labels"},"4":{"type":"pair","headline":"Eight-neighbor labels","left":[[1,0,0],[0,1,0],[0,0,1]],"right":[[1,0,0],[0,1,0],[0,0,1]],"caption":"Three diagonal pixels → one label"},"5":{"type":"comparison","headline":"Prediction: diagonal connectivity","parts":["Four pixels, diagonal","connectivity = 1","Count = ?"]},"6":{"type":"comparison","headline":"Reveal: same pixels, two rules","parts":["4-neighbor: 4 labels","8-neighbor: 1 label","Input never changed"]},"7":{"type":"comparison","headline":"Area screening","parts":["Candidates: [1,4] px","Keep area ≥ 2 px","Retained: [4] px"]},"8":{"type":"comparison","headline":"Explicit inclusive area range","parts":["Min: 2 pixels","Max: 4 pixels","Exclude one singleton"]},"9":{"type":"pair","headline":"Clear border","left":[[0,1,1,0,0],[0,0,0,0,0],[0,0,1,1,0],[0,0,1,1,0],[0,0,0,0,0]],"right":[[0,0,0,0,0],[0,0,0,0,0],[0,0,1,1,0],[0,0,1,1,0],[0,0,0,0,0]],"caption":"Top-edge component excluded; central square retained"},"10":{"type":"comparison","headline":"One square, two borders","parts":["Full image: 4 px","Cropped image: 0 px","Crop makes a new edge"]},"11":{"type":"pair","headline":"Watershed candidates","left":[[0,1,1,1,0],[0,1,1,1,0],[0,1,1,1,0]],"right":[[0,1,1,2,0],[0,1,1,2,0],[0,1,1,2,0]],"caption":"Illustrative split: two explicit markers, not annotated nuclei"},"12":{"type":"comparison","headline":"Seed sensitivity","parts":["Same 9-pixel mask","One marker supplied","One output label"]},"13":{"type":"comparison","headline":"Projection loses z separation","parts":["Z0: one voxel","Z1: empty, Z2: one","XY maximum: one pixel"]},"14":{"type":"comparison","headline":"Adjacent z voxels connect","parts":["Z0: same XY","Z1: same XY","3D 6-neighbor: one"]},"15":{"type":"comparison","headline":"One function, changed image","parts":["Threshold: >4","Area cutoff: ≥2 px","Source unchanged"]},"16":{"type":"comparison","headline":"Complete rejection audit","parts":["3 initial components","1 small + 1 border","1 kept; verified=False"]}},
 };
 function add(parent,tag,attrs={}){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));parent.append(el);return el;}
 function rect(parent,x,y,w,h,fill=C.surface,stroke=C.line){return add(parent,"rect",{x,y,width:w,height:h,rx:8,fill,stroke,"stroke-width":1.5});}
@@ -175,7 +176,22 @@ function mask(svg,d){
   });
   label(svg,260,153,d.caption,12,C.muted,470);
 }
-const painters={comparison,grid,rgb,plot,hist,contrast,mask};
+function pair(svg,d){
+ label(svg,260,23,d.headline,15,C.blue,740);
+ const boards=[{x:48,data:d.left,caption:"SOURCE MASK"},{x:305,data:d.right,caption:"LABELS / RESULT"}];
+ boards.forEach((board,j)=>{
+  const g=group(svg,j),rows=board.data.length,cols=board.data[0].length,side=Math.min(27,110/Math.max(rows,cols));
+  label(g,board.x+cols*side/2,37,board.caption,10,C.muted,680);
+  board.data.forEach((row,r)=>row.forEach((value,c)=>{
+   const x=board.x+c*side,y=44+r*side;
+   const palette=["#213240","#276a61","#426da6","#a77639","#7d578d"];
+   add(g,"rect",{x,y,width:side-2,height:side-2,rx:3,fill:palette[Math.min(4,value)],stroke:C.line,"stroke-width":0.8});
+   label(g,x+(side-2)/2,y+side/2+3,String(value),11,C.text,720);
+  }));
+ });
+ label(svg,260,157,d.caption,11,C.muted,470);
+}
+const painters={comparison,grid,rgb,plot,hist,contrast,mask,pair};
 function render(container,chapter,index){
  container.replaceChildren();
  const d=descriptors[chapter]?.[index];if(!d)return false;
