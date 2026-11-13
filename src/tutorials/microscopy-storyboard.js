@@ -56,7 +56,7 @@
     focus.append(make("span","",chapter+" · "+context[0]),make("strong","",context[1]));
     figure.append(focus);
     const disclaimer=make("p","bps-example-workflow-caveat");
-    disclaimer.append(document.createTextNode("Published teaching figures are illustrative; numerical values are invented and not extracted from these images. "));
+    disclaimer.append(document.createTextNode("Published figures are separate teaching examples, not a verified before/after pair; numerical values are invented and not extracted from these images. "));
     const link=make("a","","Image credits");
     link.href="./assets/witz/CREDITS.md";link.target="_blank";link.rel="noopener noreferrer";
     disclaimer.append(link);
