@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,25);
+ assert.equal(count,38);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -60,4 +60,14 @@ test('nonexistent scene clears stale diagram',()=>{
  diagrams.render(box,'I02',1);
  assert.equal(diagrams.render(box,'I02',99),false);
  assert.equal(box.children.length,0);
+});
+
+test('I03 prediction hides the missing-value outcome before revealing it',()=>{
+ const box=element('div');
+ diagrams.render(box,'I03',8);
+ assert.match(labels(box),/Result: \?/);
+ assert.doesNotMatch(labels(box),/np\.nanmean/);
+ diagrams.render(box,'I03',9);
+ assert.match(labels(box),/nanmean/);
+ assert.match(labels(box),/3\.0/);
 });

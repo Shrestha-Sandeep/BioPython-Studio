@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02']){
+for(const chapter of ['I01','I02','I03']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -107,5 +107,51 @@ test('indexing and dtype changed-input cases are verified',{skip:py.status!==0?'
   const res=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:7000});
   assert.equal(res.status,0,res.stderr);
   assert.equal(res.stdout.trim(),output);
+ }
+});
+
+test('I03 maps 10 canonical numerical microscopy goals',()=>{
+ const t=tutorials.find(x=>x.chapter==='I03');
+ assert.ok(t);
+ const expected=Array.from({length:10},(_,i)=>'I03-G'+String(i+1).padStart(2,'0')).concat('I03-CAPSTONE');
+ assert.deepEqual(t.goals,expected);
+ assert.equal(t.steps.length,17);
+ assert.equal(t.steps.filter(x=>x.checkpoint).length,1);
+ assert.equal(t.steps.find(x=>x.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(x=>x.goal))].sort(),expected.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/i);
+ assert.ok(html.indexOf('src/tutorials/i02-data.js')<html.indexOf('src/tutorials/i03-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i03-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const scene of t.steps){
+  assert.ok(scene.say?.split(/\s+/).length>=18,scene.title);
+  assert.ok(scene.note?.length>=30,scene.title);
+  const n=scene.code?scene.code.split('\n').length:0;
+  for(const line of scene.focus)assert.ok(line>0&&line<=n,scene.title+':'+line);
+ }
+ assert.match(t.steps[0].note,/synthetic/i);
+ assert.match(t.steps.find(x=>x.checkpoint).say,/predict/i);
+});
+test('I03 outputs are identical to fresh NumPy',{skip:py.status!==0?'NumPy not installed':false},()=>{
+ const t=tutorials.find(x=>x.chapter==='I03');
+ let tested=0;
+ for(const [i,step] of t.steps.entries()){
+  if(!step.code||!step.output)continue;
+  const r=spawnSync('python3',['-c',step.code],{encoding:'utf8',timeout:8000});
+  assert.equal(r.status,0,'I03 '+i+': '+r.stderr);
+  assert.equal(r.stdout.trimEnd(),step.output,'I03 '+i+' '+step.title);
+  tested++;
+ }
+ assert.ok(tested>=13,tested+' runnable I03 examples');
+});
+test('I03 changed-input masks and uint8 widened arithmetic',{skip:py.status!==0?'NumPy not installed':false},()=>{
+ const samples=[
+  ["import numpy as np\nx=np.array([np.nan,.2,.9]);print((np.isfinite(x)&(x>=.8)).tolist())","[False, False, True]"],
+  ["import numpy as np\nx=np.array([251],dtype=np.uint8);print((x+np.uint8(10)).tolist());print((x.astype(np.int64)+10).tolist())","[5]\n[261]"],
+  ["import numpy as np\nx=np.array([[2,np.nan,8],[4,6,10]]);v=x[np.isfinite(x)];print(len(v),float(v.mean()))","5 6.0"]
+ ];
+ for(const [code,expected] of samples){
+  const run=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:7000});
+  assert.equal(run.status,0,run.stderr);
+  assert.equal(run.stdout.trimEnd(),expected);
  }
 });

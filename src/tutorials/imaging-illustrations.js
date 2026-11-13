@@ -32,6 +32,21 @@ I02:{
 12:{type:"comparison",headline:"TCZYX plane selection",parts:["Select T1, C2, Z0","Remaining Y and X","Plane shape (4,5)"]},
 13:{type:"comparison",headline:"Synthetic TIFF container",parts:["2 × 2 uint16","Tag: synthetic TIFF","OME not validated"]},
 14:{type:"comparison",headline:"Traceable ROI report",parts:["Source (5,7)","Crop (3,4), origin (1,2)","Independent memory"]}
+},
+I03:{
+1:{type:"comparison",headline:"Elementwise NumPy transform",parts:["Input: 1,4,9","Apply square root","Result: 1,2,3"]},
+2:{type:"comparison",headline:"Broadcast along declared final axis",parts:["Rows × 2 columns","Background (1,2)","Corrected each column"]},
+3:{type:"comparison",headline:"Broadcast requires compatible shapes",parts:["Data: 2×3","Background: 2","ValueError"]},
+4:{type:"comparison",headline:"Boolean mask and NaN",parts:["0.9 → True","NaN → False","0.5 → False"]},
+5:{type:"comparison",headline:"Preserve original data",parts:["Source: 1,9,3","Copy, threshold","Result: 0,9,0"]},
+6:{type:"comparison",headline:"Which axis is averaged?",parts:["axis=0 → 5,7,9","axis=1 → 4,10","Pixels ≠ replicates"]},
+7:{type:"comparison",headline:"Document the denominator",parts:["Supplied: 3","Finite: 2","Mean: 3.0"]},
+8:{type:"comparison",headline:"Predict NaN propagation",parts:["2.0, NaN, 4.0","np.mean(values)","Result: ?"]},
+9:{type:"comparison",headline:"Reveal missing-value treatment",parts:["np.mean → nan","np.nanmean → 3.0","Missing policy is explicit"]},
+11:{type:"comparison",headline:"Reproducible simulation",parts:["Generator seed: 17","Five simulated values","3,4,0,0,2"]},
+12:{type:"comparison",headline:"Avoid uint8 overflow",parts:["uint8 250 + 10","Wraps to 4","Wide integer: 260"]},
+13:{type:"grid",rows:2,cols:2,base:1,selected:[2,3],caption:"Mask selects values 3 and 4 — not two specimens"},
+14:{type:"comparison",headline:"Synthetic ROI report",parts:["Shape: 2×3","Valid: 5, missing: 1","Mean: 6.0 a.u."]}
 }
 };
 function add(parent,tag,attrs={}){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));parent.append(el);return el;}
