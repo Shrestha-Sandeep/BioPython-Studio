@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09']){
+for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09','I10']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -481,5 +481,57 @@ test('I09 changed-input empty masks, peaks and colocalization guards',{
  for(const [code,output] of cases){
   const r=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
   assert.equal(r.status,0,r.stderr);assert.equal(r.stdout.trimEnd(),output);
+ }
+});
+
+const trackingPython=spawnSync('python3',['-c','import numpy, scipy; from scipy.optimize import linear_sum_assignment'],{encoding:'utf8'});
+test('I10 canonical tracking, annotation and validation goals',()=>{
+ const t=tutorials.find(x=>x.chapter==='I10');
+ assert.ok(t,'I10 not loaded');
+ const ids=Array.from({length:6},(_,i)=>'I10-G'+String(i+1).padStart(2,'0')).concat('I10-CAPSTONE');
+ assert.deepEqual(t.goals,ids);
+ assert.equal(t.steps.length,18);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),ids.slice().sort());
+ assert.match(t.steps.at(-1).note,/Independent/);
+ assert.equal(t.steps[0].preview.image,'otsu-nuclei-mask');
+ assert.ok(html.indexOf('src/tutorials/i09-data.js')<html.indexOf('src/tutorials/i10-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i10-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ for(const s of t.steps){
+  assert.ok(s.say.trim().split(/\s+/).length>=18,s.title);
+  assert.ok(s.note.length>=30,s.title);
+  const n=s.code?s.code.split('\n').length:0;
+  for(const line of s.focus)assert.ok(line>=1&&line<=n,s.title+':'+line);
+  if(s.output)assert.ok(s.code,s.title);
+ }
+ assert.ok(t.steps.some(s=>s.code.includes('linear_sum_assignment')));
+ assert.ok(t.steps.some(s=>s.code.includes('IoU')||s.code.includes('iou')));
+});
+test('I10 exact reproducible tracking and IoU results from fresh Python',{
+ skip:trackingPython.status!==0?'NumPy or SciPy unavailable':false
+},()=>{
+ let count=0;
+ for(const [i,s] of tutorials.find(x=>x.chapter==='I10').steps.entries()){
+  if(!s.code||!s.output)continue;
+  const cp=spawnSync('python3',['-c',s.code],{encoding:'utf8',timeout:16000});
+  assert.equal(cp.status,0,'I10 '+i+' '+s.title+': '+cp.stderr);
+  assert.equal(cp.stdout.trimEnd(),s.output,'I10 '+i+' '+s.title);
+  count++;
+ }
+ assert.ok(count>=13,'Only '+count+' executable I10 scenes');
+});
+test('I10 changed-input IoU, both-empty, assignment and unmatched edge behavior',{
+ skip:trackingPython.status!==0?'NumPy or SciPy unavailable':false
+},()=>{
+ const cases=[
+  ["import numpy as np\nx=np.zeros(3,bool);y=x.copy();u=np.logical_or(x,y).sum();print(1.0 if u==0 else float(np.logical_and(x,y).sum()/u))","1.0"],
+  ["import numpy as np\nx=np.array([1,0],bool);y=np.array([0,1],bool);print(float(np.logical_and(x,y).sum()/np.logical_or(x,y).sum()))","0.0"],
+  ["import numpy as np\nfrom scipy.spatial.distance import cdist\nfrom scipy.optimize import linear_sum_assignment\nb=np.array([[0.,0.],[0.,5.]]);a=np.array([[0.,0.2],[0.,5.2]]);d=cdist(b,a);r,c=linear_sum_assignment(d);print(r.tolist(),c.tolist(),[round(float(d[i,j]),1) for i,j in zip(r,c)])","[0, 1] [0, 1] [0.2, 0.2]"],
+  ["import numpy as np\nfrom scipy.optimize import linear_sum_assignment\nprint(len(linear_sum_assignment(np.empty((0,2)))[0]))","0"]
+ ];
+ for(const [code,expected] of cases){
+  const run=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
+  assert.equal(run.status,0,run.stderr);assert.equal(run.stdout.trimEnd(),expected);
  }
 });
