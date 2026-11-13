@@ -18,7 +18,7 @@ const labels=n=>flatten(n).map(node=>node.textContent).join(' ');
 
 test('I01/I02 diagrams are original and accessible',()=>{
  let count=0;
- for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12]]){
+ for(const [chapter,expected] of [['I01',12],['I02',13],['I03',13],['I04',12],['I05',11]]){
   let found=0;
   for(let step=0;step<20;step++){
    if(!diagrams.has(chapter,step))continue;
@@ -34,7 +34,7 @@ test('I01/I02 diagrams are original and accessible',()=>{
   assert.equal(found,expected,chapter);
   count+=found;
  }
- assert.equal(count,50);
+ assert.equal(count,61);
 });
 test('prediction diagram does not reveal hidden cell answer',()=>{
  const box=element('div');
@@ -97,4 +97,24 @@ test('I04 checkpoint does not expose the source-array equality answer',()=>{
  assert.doesNotMatch(labels(box),/True/);
  diagrams.render(box,'I04',10);
  assert.match(labels(box),/True/);
+});
+
+test('I05 mask diagrams show only source pixels above the strict cutoff',()=>{
+ const box=element('div');
+ for(const [index,expected] of [[6,4],[7,2],[9,1]]){
+  diagrams.render(box,'I05',index);
+  const groups=flatten(box).filter(n=>n.attributes['data-bps-part']!==undefined);
+  assert.equal(groups.length,2);
+  const mask=groups[1];
+  const ones=flatten(mask).filter(n=>n.tag==='text'&&n.textContent==='1');
+  assert.equal(ones.length,expected,'I05 diagram '+index);
+ }
+});
+test('I05 candidate threshold prediction has no numerical answer before reveal',()=>{
+ const box=element('div');
+ diagrams.render(box,'I05',8);
+ assert.match(labels(box),/How many survive\?/);
+ assert.doesNotMatch(labels(box),/Candidate pixels: 1/);
+ diagrams.render(box,'I05',9);
+ assert.match(labels(box),/only the pixel 12/);
 });
