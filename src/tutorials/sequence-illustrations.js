@@ -21,6 +21,27 @@ const D={
 14:{kind:"route",nodes:["Raw DNA","ACGTN QC","GC called","Bio.Seq RC","CDS → protein"]},
 15:{kind:"decision",items:[["Validate","X and N policy"],["Compute","GC and strand"],["Translate","Complete frame?"]],caption:"Independent transfer: new inputs, no shown solution"}
 };
+
+const D02={
+0:{kind:"route",nodes:["FASTA text","Record ID","Sequence","FASTQ Q","Audit"]},
+1:{kind:"record",items:[["ID","read01"],["Seq","ATGN"],["Description","synthetic"]],caption:"A SeqRecord keeps identity and sequence together"},
+2:{kind:"record",items:[["Source ID","r01"],["Original","ATGN"],["Derived RC","NCAT"]],caption:"Transformation is not a second independently observed read"},
+3:{kind:"record",items:[["ID","sampleA"],["Description","synthetic only"],["Validation","not established"]],caption:"Header words are annotations, not scientific proof"},
+4:{kind:"fasta",lines:[">a","ACG",">b","TT"],ids:[["a","ACG"],["b","TT"]],caption:"Two headers → two separate SeqRecords"},
+5:{kind:"fasta",lines:[">sample7 note","AC","GT",">sample8","NN"],ids:[["sample7","ACGT"],["sample8","NN"]],caption:"Wrapped lines join until the next > header"},
+6:{kind:"fasta",lines:[">r1","AC",">r1","GT"],ids:[["r1","AC"],["r1","GT"]],caption:"Repeated record ID makes an ambiguous join"},
+7:{kind:"fasta",lines:[">a","AC","GT",">b","TT"],ids:[["a","ACGT"],["b","TT"]],caption:"Record content survives even if line wrapping changes"},
+8:{kind:"interval",seq:"AACCGG",start:1,end:4,out:"ACC",caption:"Zero-based [1:4) selects indices 1,2,3"},
+9:{kind:"strand",rows:[["FASTA chr1","AACCGG"],["slice [1:4)","ACC"],["minus strand","GGT"]],caption:"Choose reference coordinates before reverse complement"},
+10:{kind:"decision",items:[["Reference","6 bases"],["Request","[3:8)"],["Bounds","Reject"]],caption:"Do not silently clip coordinates beyond the source"},
+11:{kind:"interval",seq:"AACCGG",start:2,end:5,out:"?",caption:"Predict the minus strand of slice [2:5)"},
+12:{kind:"interval",seq:"AACCGG",start:2,end:5,out:"CGG",caption:"Reference CCG → minus complement CGG"},
+13:{kind:"quality",bases:["A","C"],ascii:["I","I"],scores:["40","40"],caption:"Four FASTQ lines → qualities aligned with each base"},
+14:{kind:"quality",bases:["A","C","G"],ascii:["I","!","5"],scores:["40","0","20"],caption:"One Q score per base; strictly below Q20: one"},
+15:{kind:"quality",bases:["A","C"],ascii:["I","!"],scores:["40","0"],caption:"Keep r1 ID attached to its Q0 minimum"},
+16:{kind:"record",items:[["FASTA IDs","r1, r2"],["FASTQ IDs","r1, r2"],["Low Q read","r1"]],caption:"The report preserves sequence identity and QC origin"},
+17:{kind:"decision",items:[["Identity","Duplicate IDs?"],["Format","Valid FASTQ?"],["Interval","Bounds valid?"]],caption:"Independent audit: no worked answer"}
+};
 function add(p,tag,attr={}){let n=document.createElementNS(NS,tag);Object.entries(attr).forEach(([k,v])=>n.setAttribute(k,String(v)));p.append(n);return n;}
 function t(p,x,y,s,fill=C.ink,size=15,weight=620){let q=add(p,"text",{x,y,fill,"font-size":size,"font-weight":weight,"text-anchor":"middle","font-family":"system-ui, sans-serif"});q.textContent=s;return q;}
 function rect(p,x,y,w,h,fill=C.panel,stroke=C.line){return add(p,"rect",{x,y,width:w,height:h,rx:8,fill,stroke,"stroke-width":1.5});}
@@ -31,8 +52,13 @@ function fraction(svg,d){const chars=[...d.seq],cw=48,gap=8,w=chars.length*cw+(c
 function strand(svg,d){d.rows.forEach(([lab,seq],i)=>{const g=group(svg,i),y=24+i*47;rect(g,22,y,476,40,i===2?"#1c5145":C.panel,i===2?C.ok:C.line);t(g,111,y+25,lab,C.muted,14);t(g,330,y+26,seq,i===2?C.ok:C.ink,23);});t(svg,260,178,d.caption,C.muted,13);}
 function codons(svg,d){t(svg,260,26,"CODONS → PROTEIN SYMBOLS",C.muted,14);d.bases.forEach((base,i)=>{const g=group(svg,i),x=40+i*157;rect(g,x,41,125,47);t(g,x+62,71,base,base==="NNN"?C.warn:C.blue,24);t(g,x+62,109,"↓",C.muted,17);rect(g,x+26,117,74,40,i===2?"#60452a":C.panel);t(g,x+62,144,d.aas[i],d.aas[i]==="X"?C.warn:d.aas[i]==="*"?C.error:C.ok,23);});t(svg,260,180,d.caption,C.muted,12);}
 function decision(svg,d){d.items.forEach(([left,right],i)=>{const g=group(svg,i),y=20+i*48;rect(g,25,y,470,42,i===2?"#244b42":C.panel,i===2?C.ok:C.line);t(g,135,y+27,left,C.muted,15);t(g,355,y+27,right,i===2?C.ok:C.ink,17);});t(svg,260,180,d.caption,C.muted,12);}
-const painters={route,bases,fraction,strand,codons,decision};
-function render(container,ch,index){container.replaceChildren();if(ch!=="N01"||!D[index])return false;const d=D[index];const svg=add(container,"svg",{viewBox:"0 0 520 190",role:"img","aria-label":"Illustrative synthetic DNA teaching diagram: "+(d.caption||d.nodes?.join(" to ")||d.kind),class:"bps-example-illustration",focusable:"false"});rect(svg,0,0,520,190,C.bg,C.bg);painters[d.kind](svg,d);return true;}
+
+function record(svg,d){d.items.forEach(([a,b],i)=>{const g=group(svg,i),y=20+i*48;rect(g,22,y,476,42,i===2?"#224b42":C.panel,i===2?C.ok:C.line);t(g,126,y+27,a,C.muted,15);t(g,360,y+27,b,i===2?C.ok:C.ink,b.length>14?14:19);});t(svg,260,180,d.caption,C.muted,12);}
+function fasta(svg,d){t(svg,122,20,"RAW FASTA",C.blue,13);t(svg,382,20,"PARSED RECORDS",C.blue,13);const g0=group(svg,0);rect(g0,18,30,212,130);d.lines.forEach((line,i)=>t(g0,120,47+i*21,line,line.startsWith(">")?C.warn:C.ink,line.length>14?12:16));d.ids.forEach(([id,seq],i)=>{const g=group(svg,i+1),y=43+i*65;rect(g,281,y,224,50,id==="r1"&&i===1?"#5a3733":C.panel,id==="r1"&&i===1?C.error:C.line);t(g,347,y+20,"ID "+id,C.blue,15);t(g,394,y+41,seq,C.ok,19);});t(svg,260,180,d.caption,C.muted,12);}
+function interval(svg,d){const seq=[...d.seq],x0=45,cw=66,gap=7;t(svg,260,20,"REFERENCE INDEX: 0  1  2  3  4  5",C.muted,13);seq.forEach((b,i)=>{let g=group(svg,i),x=x0+i*(cw+gap),selected=i>=d.start&&i<d.end;rect(g,x,44,cw,63,selected?"#245747":C.panel,selected?C.ok:C.line);t(g,x+cw/2,83,b,selected?C.ok:C.ink,26);});t(svg,260,135,"SELECTED ["+d.start+":"+d.end+")   →   "+d.out,d.out==="?"?C.warn:C.blue,17);t(svg,260,178,d.caption,C.muted,12);}
+function quality(svg,d){t(svg,100,24,"BASE",C.blue,13);t(svg,100,78,"FASTQ ASCII",C.muted,12);t(svg,100,131,"PHRED Q",C.ok,12);d.bases.forEach((base,i)=>{const x=172+i*107;const arr=[base,d.ascii[i],d.scores[i]];arr.forEach((value,row)=>{const g=group(svg,i*3+row),y=32+row*53;rect(g,x,y,92,44,row===2&&Number(value)<20?"#60402d":row===2?"#205245":C.panel,row===2&&Number(value)<20?C.error:row===2?C.ok:C.line);t(g,x+46,y+29,value,row===2&&Number(value)<20?C.error:row===2?C.ok:C.ink,23);});});t(svg,260,186,d.caption,C.muted,12);}
+const painters={route,bases,fraction,strand,codons,decision,record,fasta,interval,quality};
+function render(container,ch,index){container.replaceChildren();const d=ch==="N01"?D[index]:ch==="N02"?D02[index]:null;if(!d)return false;const svg=add(container,"svg",{viewBox:"0 0 520 190",role:"img","aria-label":"Illustrative synthetic DNA teaching diagram: "+(d.caption||d.nodes?.join(" to ")||d.kind),class:"bps-example-illustration",focusable:"false"});rect(svg,0,0,520,190,C.bg,C.bg);painters[d.kind](svg,d);return true;}
 function progress(container,value){const svg=container.querySelector("svg");if(!svg)return;const nodes=[...svg.querySelectorAll("[data-bps-part]")];if(!nodes.length)return;for(const [i,n] of nodes.entries()){n.classList.toggle("bps-is-future",value!=null&&i>Math.min(nodes.length-1,Math.floor(Math.max(0,Math.min(1,Number(value)||0))*nodes.length)));n.classList.toggle("bps-is-current",value!=null&&i===Math.min(nodes.length-1,Math.floor(Math.max(0,Math.min(1,Number(value)||0))*nodes.length)));}svg.classList.toggle("bps-is-speaking",value!=null);}
-window.BioPythonSequenceIllustrations=Object.freeze({render,progress,has:(ch,i)=>ch==="N01"&&Boolean(D[i])});
+window.BioPythonSequenceIllustrations=Object.freeze({render,progress,has:(ch,i)=>Boolean(ch==="N01"?D[i]:ch==="N02"?D02[i]:false)});
 })();
