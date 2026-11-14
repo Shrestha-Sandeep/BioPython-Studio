@@ -1,0 +1,45 @@
+name: Advanced A05 biological-statistics narrated tutorial QA
+on:
+  push:
+    branches:
+      - feature/advanced-tutorial-cycle-a05
+  pull_request:
+    paths:
+      - 'src/tutorials/a05-data.js'
+      - 'src/tutorials/advanced-illustrations.js'
+      - 'index.html'
+      - 'tests/a05_tutorials.test.mjs'
+      - 'tests/test_a05_tutorial_browser.py'
+      - '.github/workflows/advanced-a05-tutorial-cycle.yml'
+permissions:
+  contents: read
+jobs:
+  a05-biological-units:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.13'
+      - name: Install numerical, image and browser dependencies
+        run: python -m pip install numpy==2.3.5 scipy==1.17.0 scikit-image==0.26.0 tifffile==2026.11.12 playwright==1.56.0
+      - name: A00–A05 real CPython examples and adversarial tests
+        run: |
+          node --check src/tutorials/advanced-illustrations.js
+          node --check src/tutorials/a05-data.js
+          node --check src/tutorials/p01-viewer.js
+          node --test tests/a00_tutorials.test.mjs tests/a01_tutorials.test.mjs tests/a02_tutorials.test.mjs tests/a03_tutorials.test.mjs tests/a05_tutorials.test.mjs
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Real mobile/desktop viewer and independent practice QA
+        run: |
+          python tests/test_a00_tutorial_browser.py
+          python tests/test_a01_tutorial_browser.py
+          python tests/test_a02_tutorial_browser.py
+          python tests/test_a03_tutorial_browser.py
+          python tests/test_a05_tutorial_browser.py
+          python tests/test_p01_tutorial_browser.py
