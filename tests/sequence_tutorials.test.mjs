@@ -52,7 +52,8 @@ test('N01 source-safe SVG and existing Learn-only reader',()=>{
  assert.match(viewer,/BioPythonSequenceTutorials/);
  assert.match(viewer,/BioPythonSequenceIllustrations/);
  assert.match(viewer,/d.phase==="learn"/);
- assert.ok(!html.includes('n02-data.js'));
+ assert.ok(html.indexOf('src/tutorials/n01-data.js')<html.indexOf('src/tutorials/n02-data.js'));
+ assert.ok(html.indexOf('src/tutorials/n02-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
 });
 test('N01 exact real Python and Biopython output parity',{skip:!haveBio?'Install Biopython to run':false},()=>{
  let n=0;
