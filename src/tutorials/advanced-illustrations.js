@@ -84,6 +84,28 @@
     {kind:"route",headline:"INDEPENDENT ANNOTATION TRANSFER",nodes:["New masks","Max TP pairs","Group holdout","Failure gallery"],caption:"Scientific validity needs verified references and biological groups"}
   ];
 
+
+  const DATA05=[
+    {kind:"route",headline:"FROM FIELDS TO BIOLOGICAL INFERENCE",nodes:["Image fields","Animal means","Effect / design","Reproducibility"],caption:"The scientific unit determines valid uncertainty"},
+    {kind:"cards",headline:"FIELD METADATA JOIN AUDIT",cards:[["F1","Worm A","good"],["F2","Worm B","good"],["F3","Missing ID","bad"]],caption:"Two matched fields; one requires metadata review"},
+    {kind:"cards",headline:"CONFLICTING PRIMARY KEY",cards:[["FIELD F1","Animal A","good"],["FIELD F2","Animal B","good"],["FIELD F1","Animal C","bad"]],caption:"Detect a repeated field key before building a dictionary"},
+    {kind:"hierarchy",headline:"UNEQUAL FIELDS ALTER THE POOLED MEAN",groups:[["A","0,0,0","0.0"],["B","10","10.0"]],caption:"Field pooled: 2.5; equal-animal mean: 5.0"},
+    {kind:"hierarchy",headline:"COUNT WORMS, NOT IMAGE FIELDS",groups:[["A","3 fields","1 animal"],["B","1 field","1 animal"]],caption:"Four field records are only two biological units"},
+    {kind:"cards",headline:"KEEP THE EXCLUSION REASONS",cards:[["A / F1","Value 4","good"],["A / F2","Out of focus","bad"],["B / F3","Value 8","good"]],caption:"Retained data and discarded source record are both auditable"},
+    {kind:"hierarchy",headline:"AFTER EXCLUSION, TWO ANIMAL MEANS",groups:[["A","4 retained","mean 4"],["B","8 retained","mean 8"]],caption:"The excluded value 99 must not distort animal A"},
+    {kind:"pair",headline:"COMPARE WITHIN-ANIMAL DIFFERENCES",items:[["A",4,6],["B",5,9],["C",7,8]],caption:"Independent paired changes: +2, +4, +1"},
+    {kind:"split",headline:"NO CONTROL FOR ANIMAL C",left:["COMPLETE","A, B","2 pairs"],right:["INCOMPLETE","C treatment only","Flag before analysis"],caption:"Do not turn missing pair data into a new independent sample"},
+    {kind:"pair",headline:"PREDICT THREE NEW PAIRED DIFFERENCES",items:[["A",3,4],["B",5,9],["C",6,8]],hide:true,caption:"Calculate treatment − control; mean withheld"},
+    {kind:"pair",headline:"REVEAL THE PER-PAIR CHANGES",items:[["A",3,4],["B",5,9],["C",6,8]],caption:"Differences 1,4,2 → mean 2.33; n=3 pairs"},
+    {kind:"hierarchy",headline:"BOOTSTRAP THE ANIMALS, NOT FIELDS",groups:[["CONTROL","2, 3, 4","3 animals"],["TREATED","5, 7, 9","3 animals"]],caption:"Sample whole independent units with replacement per group"},
+    {kind:"interval",headline:"SEE WHAT THE SEEDED BOOTSTRAP DOES",center:4,low:2,high:6,left:0,right:8,caption:"Toy effect=4; percentile range 2 to 6, not validated uncertainty"},
+    {kind:"hierarchy",headline:"20 IMAGES ≠ 20 INDEPENDENT WORMS",groups:[["WORM A","10 fields","1 biological unit"],["WORM B","10 fields","1 biological unit"]],caption:"A narrow interval with only two animals cannot establish certainty"},
+    {kind:"hierarchy",headline:"PLOT ONE LARGE POINT PER ANIMAL",groups:[["CONTROL","A 3.0 · B 4.0","n=2"],["TREATED","C 7.0","n=1"]],caption:"Y axis: invented signal in arbitrary units (a.u.)"},
+    {kind:"hierarchy",headline:"FIELDS NEST INSIDE ANIMAL DOTS",groups:[["A","1,3,5","mean 3"],["B","7","mean 7"]],caption:"Four field-level points but only two biological replicates"},
+    {kind:"route",headline:"A SOURCE-AWARE BIOLOGICAL REPORT",nodes:["Retain source","Exclude 1 field","2+2 animals","Effect 4.5"],caption:"Too few for inference; no invented p-value or causal claim"},
+    {kind:"route",headline:"INDEPENDENT STATISTICS TRANSFER",nodes:["New table","Declare unit","Choose design","Replay locally"],caption:"A05-REVIEW and Prove stay unsolved"}
+  ];
+
   const make=(parent,name,attrs={})=>{const e=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));parent.appendChild(e);return e;};
   const txt=(p,x,y,v,size=13,color=C.ink,weight=550)=>{const t=make(p,"text",{x,y,"text-anchor":"middle","font-family":"system-ui, sans-serif","font-size":size,"font-weight":weight,fill:color});t.textContent=String(v);return t;};
   const rect=(p,x,y,w,h,fill=C.panel,stroke=C.stroke)=>make(p,"rect",{x,y,width:w,height:h,rx:10,fill,stroke,"stroke-width":1.4});
@@ -132,9 +154,36 @@
     }));
     txt(svg,260,y0+n*h+15,"rows = reference · columns = predictions",10,C.muted,450);
   }
-  const painters={route,cards,split,animals,axis,pixels,mask,instances,matrix};
+
+  function hierarchy(svg,d){
+    const a=d.groups,columns=a.length,w=(490-12*(columns-1))/columns;
+    a.forEach(([group,fields,unit],i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=15+i*(w+12);rect(g,x,42,w,110,i%2?"#263e58":"#214839",i%2?C.blue:C.green);
+      txt(g,x+w/2,64,group,14,i%2?C.blue:C.green,750);
+      txt(g,x+w/2,96,fields,fields.length>22?11:16,C.ink);
+      txt(g,x+w/2,131,unit,12,C.amber);
+    });
+  }
+  function pair(svg,d){
+    const items=d.items,w=147;
+    items.forEach(([id,control,treated],i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=29+i*163;
+      rect(g,x,43,w,107,i%2?"#243c54":"#214639",i%2?C.blue:C.green);
+      txt(g,x+w/2,64,"ANIMAL "+id,13,C.muted);
+      txt(g,x+w/2,96,control+" → "+treated,18,C.ink);
+      txt(g,x+w/2,130,d.hide?"Δ = ?":"Δ = +"+(treated-control),16,d.hide?C.amber:C.green);
+    });
+  }
+  function interval(svg,d){
+    rect(svg,16,52,488,87,C.panel);
+    const px=v=>27+(v-d.left)/(d.right-d.left)*465;
+    make(svg,"line",{x1:px(d.left),y1:109,x2:px(d.right),y2:109,stroke:C.stroke,"stroke-width":3});
+    make(svg,"line",{x1:px(d.low),y1:100,x2:px(d.high),y2:100,stroke:C.green,"stroke-width":7,"stroke-linecap":"round"});
+    const c=make(svg,"g",{"data-bps-part":1});
+    make(c,"circle",{cx:px(d.center),cy:100,r:8,fill:C.amber,stroke:C.bg,"stroke-width":2});
+    txt(svg,px(d.low),82,String(d.low),16,C.green);txt(svg,px(d.center),76,String(d.center),16,C.amber);txt(svg,px(d.high),82,String(d.high),16,C.green);
+  }
+  const painters={route,cards,split,animals,axis,pixels,mask,instances,matrix,hierarchy,pair,interval};
   function render(container,ch,index){
-    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:ch==="A03"?DATA03:null;if(!catalogue||!catalogue[index])return false;
+    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:ch==="A03"?DATA03:ch==="A05"?DATA05:null;if(!catalogue||!catalogue[index])return false;
     const d=catalogue[index],svg=make(container,"svg",{viewBox:"0 0 520 190",class:"bps-example-illustration",role:"img",focusable:"false","aria-label":"Original "+ch+" scientific microscopy source audit diagram: "+d.headline+". "+d.caption});
     rect(svg,0,0,520,190,C.bg,C.bg);txt(svg,260,23,d.headline,13,C.blue,700);painters[d.kind](svg,d);
     txt(svg,260,177,d.caption,11,C.muted,450);return true;
@@ -145,5 +194,5 @@
     nodes.forEach((e,i)=>{e.classList.toggle("bps-is-future",value!==null&&i>current);e.classList.toggle("bps-is-current",value!==null&&i===current);});
     svg.classList.toggle("bps-is-speaking",value!==null);
   }
-  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:ch==="A03"?DATA03[i]:false),render,progress});
+  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:ch==="A03"?DATA03[i]:ch==="A05"?DATA05[i]:false),render,progress});
 })();
