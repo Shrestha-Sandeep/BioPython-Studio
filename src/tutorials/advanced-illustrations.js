@@ -106,6 +106,28 @@
     {kind:"route",headline:"INDEPENDENT STATISTICS TRANSFER",nodes:["New table","Declare unit","Choose design","Replay locally"],caption:"A05-REVIEW and Prove stay unsolved"}
   ];
 
+
+  const DATA06=[
+    {kind:"route",headline:"MANY TIFFS → ONE SOURCE-AWARE REPORT",nodes:["Native TIFFs","Manifest audit","Candidate masks","Animal CSV"],caption:"Every result must trace to original image bytes and parameters"},
+    {kind:"mask",headline:"SOURCE PRESERVED, FLOAT-CORRECTED",grid:[[1,5,10]],marks:[[0,2]],caption:"Corrected [0,1,6]; just one pixel passes >2"},
+    {kind:"split",headline:"ONE PURE FUNCTION, TWO INPUTS",left:["IMAGE A","1 candidate","[1,5,10]"],right:["IMAGE B","2 candidates","[1,2,3]"],caption:"Changed inputs run without stale notebook state"},
+    {kind:"axis",headline:"DECLARE TCZYX BEFORE SELECTING",axes:[["T",2],["C",3],["Z",2],["Y",4],["X",5]],caption:"Y and X remain 4×5 after explicit T/C/Z selection"},
+    {kind:"cards",headline:"REFUSE AMBIGUOUS MULTI-AXIS TIFF",cards:[["TIME","No selection","bad"],["CHANNEL","No selection","bad"],["Z PLANE","No selection","bad"]],caption:"All non-singleton axes need a justified selector"},
+    {kind:"split",headline:"SELECT THE EXACT SOURCE PLANE",left:["SELECTORS","T1 C2 Z0",""],right:["YX","4 × 5","first 200"],caption:"A wrong source channel changes the entire analysis"},
+    {kind:"cards",headline:"DUPLICATE MANIFEST IMAGE IDS",cards:[["IMAGE","F1","good"],["IMAGE","F2","good"],["IMAGE","F2 AGAIN","bad"]],caption:"Never overwrite one source record with another"},
+    {kind:"cards",headline:"DECLARED BUT MISSING TIFF FILE",cards:[["F1","Source found","good"],["F2","Source found","good"],["F3","Not found","bad"]],caption:"Do not export a partial-looking complete report"},
+    {kind:"cards",headline:"PREDICT WHETHER PREFLIGHT MAY PASS",cards:[["ROWS","4 entries","warn"],["REPEATED ID","Present","warn"],["CAN START?","Withheld","warn"]],caption:"Predict the fail-closed decision before reveal"},
+    {kind:"cards",headline:"PREFLIGHT REFUSAL IS A SUCCESS",cards:[["DUPLICATE","F2","bad"],["MISSING","F3","bad"],["CAN START?","False","bad"]],caption:"Identified blockers before writing outputs"},
+    {kind:"split",headline:"ORIGINAL BYTE FINGERPRINT",left:["SOURCE IMAGE","64-char SHA",""],right:["CHANGED BYTE","Different hash","reported"],caption:"A hash proves byte identity, not source biological validity"},
+    {kind:"split",headline:"PARAMETERS AND SOFTWARE HAVE IDENTITY",left:["CONFIG","Canonical JSON","hash separately"],right:["ENVIRONMENT","Package versions","record versions"],caption:"Exact reproduction needs source, config, code and runtime"},
+    {kind:"mask",headline:"REGRESSION: > VERSUS ≥",grid:[[4,5,6]],marks:[[0,2]],caption:"Strict >5 counts 1; incorrect ≥5 counts 2"},
+    {kind:"cards",headline:"TEST INVALID CONFIGURATIONS",cards:[["MIN AREA","0","bad"],["VALID RULE","At least 1","good"],["EXPECTED","ValueError","warn"]],caption:"A failed invalid-input case is good test coverage"},
+    {kind:"split",headline:"TWO RUN MANIFESTS ARE DIFFERENT",left:["SOURCE HASH","Same",""],right:["CONFIG HASH","Changed","Mismatch"],caption:"Output hashes alone cannot prove exact procedure equality"},
+    {kind:"split",headline:"OUTPUT SAME, RUNTIME DIFFERENT",left:["FIRST RUN","Python 3.12","result 3"],right:["SECOND RUN","Python 3.13","result 3"],caption:"Matching numbers do not hide an environment change"},
+    {kind:"hierarchy",headline:"THREE FIELDS, TWO ANIMALS",groups:[["ANIMAL A","F1: 1 · F2: 2","mean 1.5"],["ANIMAL B","F3: 0","mean 0"]],caption:"Candidate only; field_n=3, biological_n=2"},
+    {kind:"route",headline:"INDEPENDENT SOURCE-SAFE REPLAY",nodes:["New TIFFs","Fresh manifest","Unchanged SHA","Local QA"],caption:"Review real source and candidate error cases"}
+  ];
+
   const make=(parent,name,attrs={})=>{const e=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));parent.appendChild(e);return e;};
   const txt=(p,x,y,v,size=13,color=C.ink,weight=550)=>{const t=make(p,"text",{x,y,"text-anchor":"middle","font-family":"system-ui, sans-serif","font-size":size,"font-weight":weight,fill:color});t.textContent=String(v);return t;};
   const rect=(p,x,y,w,h,fill=C.panel,stroke=C.stroke)=>make(p,"rect",{x,y,width:w,height:h,rx:10,fill,stroke,"stroke-width":1.4});
@@ -183,7 +205,7 @@
   }
   const painters={route,cards,split,animals,axis,pixels,mask,instances,matrix,hierarchy,pair,interval};
   function render(container,ch,index){
-    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:ch==="A03"?DATA03:ch==="A05"?DATA05:null;if(!catalogue||!catalogue[index])return false;
+    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:ch==="A03"?DATA03:ch==="A05"?DATA05:ch==="A06"?DATA06:null;if(!catalogue||!catalogue[index])return false;
     const d=catalogue[index],svg=make(container,"svg",{viewBox:"0 0 520 190",class:"bps-example-illustration",role:"img",focusable:"false","aria-label":"Original "+ch+" scientific microscopy source audit diagram: "+d.headline+". "+d.caption});
     rect(svg,0,0,520,190,C.bg,C.bg);txt(svg,260,23,d.headline,13,C.blue,700);painters[d.kind](svg,d);
     txt(svg,260,177,d.caption,11,C.muted,450);return true;
@@ -194,5 +216,5 @@
     nodes.forEach((e,i)=>{e.classList.toggle("bps-is-future",value!==null&&i>current);e.classList.toggle("bps-is-current",value!==null&&i===current);});
     svg.classList.toggle("bps-is-speaking",value!==null);
   }
-  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:ch==="A03"?DATA03[i]:ch==="A05"?DATA05[i]:false),render,progress});
+  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:ch==="A03"?DATA03[i]:ch==="A05"?DATA05[i]:ch==="A06"?DATA06[i]:false),render,progress});
 })();

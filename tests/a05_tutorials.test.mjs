@@ -35,7 +35,7 @@ test('A05 source-mapped goals, 18 stages, hidden prediction and unsolved transfe
 test('A05 original subject/pair/interval diagrams and script ordering',()=>{
  assert.ok(html.indexOf('src/tutorials/a03-data.js')<html.indexOf('src/tutorials/a05-data.js'));
  assert.ok(html.indexOf('src/tutorials/a05-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
- const section=svg.slice(svg.indexOf('const DATA05='),svg.indexOf('const make='));
+ const section=svg.slice(svg.indexOf('const DATA05='),svg.indexOf('const DATA06='));
  assert.equal((section.match(/kind:"(?:route|cards|hierarchy|pair|interval|split)"/g)||[]).length,18);
  for(const painter of ['hierarchy','pair','interval'])assert.match(svg,new RegExp('function '+painter+'\\('));
  assert.match(svg,/ch==="A05"/);
