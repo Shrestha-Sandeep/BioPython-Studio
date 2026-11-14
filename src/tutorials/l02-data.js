@@ -177,7 +177,7 @@
     {
       "title": "Linear regression fits an association, not a mechanism",
       "say": "Fit a straight line to three synthetic numeric pairs. The slope is two and the intercept one, so the fitted prediction at a new input of three is seven; this is mathematics on synthetic numbers, not a causal effect of fluorescence.",
-      "code": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit([[0],[1],[2]],[1,3,5])\nprint(round(float(m.coef_[0]),2),round(float(m.intercept_),2),m.predict([[3]]).tolist())",
+      "code": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit([[0],[1],[2]],[1,3,5])\nprint(round(float(m.coef_[0]),2),round(float(m.intercept_),2),[round(float(v),2) for v in m.predict([[3]])])",
       "focus": [
         1,
         2,
@@ -204,7 +204,7 @@
     {
       "title": "Extrapolating far beyond training values is risky",
       "say": "The same model can calculate a value at feature ten, far outside its training range zero to two. The numerical result twenty-one follows the line equation, but there is no experimental evidence that the relation remains linear so far away.",
-      "code": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit([[0],[1],[2]],[1,3,5])\nprint(m.predict([[10]]).tolist())",
+      "code": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit([[0],[1],[2]],[1,3,5])\nprint([round(float(v),2) for v in m.predict([[10]])])",
       "focus": [
         1,
         2,
@@ -231,7 +231,7 @@
     {
       "title": "A residual compares observed and predicted response",
       "say": "In a new invented test case, the model predicts four for input one point five, but the supplied observed response is four point two. Their difference is a residual of zero point two and does not imply a systematic causal effect.",
-      "code": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit([[0],[1],[2]],[1,3,5])\npred=float(m.predict([[1.5]])[0])\nprint(pred,round(4.2-pred,2))",
+      "code": "from sklearn.linear_model import LinearRegression\nm=LinearRegression().fit([[0],[1],[2]],[1,3,5])\npred=round(float(m.predict([[1.5]])[0]),2)\nprint(pred,round(4.2-pred,2))",
       "focus": [
         2,
         3,
