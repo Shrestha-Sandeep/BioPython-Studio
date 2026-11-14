@@ -63,6 +63,29 @@ const D03={
 16:{kind:"record",items:[["r1 retained","ACG"],["r2 retained","ACGN"],["Motifs","AC ×2; CG ×2"]],caption:"Keep each source ID and output policy"},
 17:{kind:"decision",items:[["Quality","Missing ≠ zero"],["Trimming","Declared tail policy"],["Motifs / align","New inputs"]],caption:"Independent transfer without shown solution"}
 };
+
+const D04={
+0:{kind:"route",nodes:["Source reads","Coverage","Count ledger","CPM","Report"]},
+1:{kind:"mapping",labels:["mapped","mapped","multi","unmapped"],caption:"Mutually exclusive source-read labels, not SAM alignment flags"},
+2:{kind:"mapping",labels:["mapped","mapped","multi","unmapped"],caption:"Mapped at least once = 3/4, never 4/4 or 5/4"},
+3:{kind:"cpm",items:[["Uniquely mapped","2 / 4","0.50"],["Mapped at least once","3 / 4","0.75"]],caption:"Different numerator, same four source reads"},
+4:{kind:"depth",depth:[0,1,1,1,0,0],intervals:"[1:4) only",caption:"End coordinate 4 is excluded"},
+5:{kind:"depth",depth:[0,1,1,2,1,1],intervals:"[1:4) and [3:6)",caption:"Index 3 has two overlapping mapped intervals"},
+6:{kind:"depth",depth:[1,1,0,0,0,1],intervals:"clip [-2:2), [5:9) to [0:6)",caption:"Exclude multi/unmapped and record clipping"},
+7:{kind:"depth",depth:[0,1,1,2,1,0],intervals:"4 positions covered; total depth 5",caption:"Covered bases = 4, mean depth = 5/6"},
+8:{kind:"matrix",cols:["Source rows","After sum"],rows:[["A-X 2, A-X 3","A-X 5"],["A-Y 1","A-Y 1"]],caption:"Repeated rows are summed, never overwritten"},
+9:{kind:"matrix",cols:["Sample","X","Y"],rows:[["A","5","4"],["B","0","2"]],caption:"aggfunc=sum and fill_value=0 are explicit"},
+10:{kind:"matrix",cols:["Source","Pivot","Observed?"],rows:[["A-Y missing","0","No"],["B-Y 2","2","Yes"]],caption:"Zero-filled missing is not proof of measured biological zero"},
+11:{kind:"cpm",items:[["G1","10 / 40","250,000"],["G2","30 / 40","750,000"]],caption:"CPM uses assigned sample feature-count total × 1e6"},
+12:{kind:"cpm",items:[["G1","10 / ?","?"],["G2","30 / ?","?"]],caption:"Predict denominator and both CPM values before reveal"},
+13:{kind:"cpm",items:[["G1","10 / 40","250,000"],["G2","30 / 40","750,000"]],caption:"Two shares total one million CPM by definition"},
+14:{kind:"cpm",items:[["G1","0 / 0","None"],["G2","0 / 0","None"]],caption:"Zero assigned library makes CPM undefined"},
+15:{kind:"cpm",items:[["Same G1 count","10 / 40","250,000"],["Same G1 count","10 / 100","100,000"]],caption:"Compositional CPM change is not a measured expression effect"},
+16:{kind:"record",items:[["Mapped any","0.75"],["Library A","5 counts"],["Library B","0 counts"]],caption:"Different denominators, same source-aware report"},
+17:{kind:"record",items:[["Provenance","synthetic"],["Coverage","unique-only"],["Coordinates","0-based [start:end)"]],caption:"Report required assumptions, reference and sample IDs"},
+18:{kind:"record",items:[["Source fraction","3 / 4"],["Covered bases","5 / 6"],["Count totals","A=10, B=0"]],caption:"The end-to-end toy audit is reproducible, not biological evidence"},
+19:{kind:"decision",items:[["Mapping","Read IDs once"],["Coverage","Clip and exclude multi"],["Counts/CPM","Declare zeros and total"]],caption:"Independent transfer on new input; no solution shown"}
+};
 function add(p,tag,attr={}){let n=document.createElementNS(NS,tag);Object.entries(attr).forEach(([k,v])=>n.setAttribute(k,String(v)));p.append(n);return n;}
 function t(p,x,y,s,fill=C.ink,size=15,weight=620){let q=add(p,"text",{x,y,fill,"font-size":size,"font-weight":weight,"text-anchor":"middle","font-family":"system-ui, sans-serif"});q.textContent=s;return q;}
 function rect(p,x,y,w,h,fill=C.panel,stroke=C.line){return add(p,"rect",{x,y,width:w,height:h,rx:8,fill,stroke,"stroke-width":1.5});}
@@ -83,8 +106,13 @@ function cycles(svg,d){t(svg,260,21,"PER-CYCLE SUMMARY (SYNTHETIC)",C.blue,13);d
 function trim(svg,d){t(svg,260,22,"BASES AND QUALITY IN INPUT ORDER",C.blue,13);const chars=[...d.seq],cw=65,gap=9,left=(520-(chars.length*cw+(chars.length-1)*gap))/2;chars.forEach((b,i)=>{const g=group(svg,i),x=left+i*(cw+gap),removed=i>=d.kept,low=d.q[i]<20;rect(g,x,42,cw,83,removed?"#583237":low?"#59472f":"#244b42",removed?C.error:low?C.warn:C.ok);t(g,x+cw/2,74,b,C.ink,23);t(g,x+cw/2,108,"Q"+d.q[i],low?C.warn:C.ok,16);});t(svg,260,147,"RETAINED PREFIX: "+(d.seq.slice(0,d.kept)||"∅"),C.ok,18);t(svg,260,181,d.caption,C.muted,12);}
 function kmers(svg,d){t(svg,260,21,"OVERLAPPING WINDOWS  ·  "+d.seq,C.blue,14);const count=d.windows.length,cw=count>4?79:102,gap=8,left=(520-(count*cw+(count-1)*gap))/2;d.windows.forEach((w,i)=>{const g=group(svg,i),x=left+i*(cw+gap),invalid=d.status[i]==="×";rect(g,x,49,cw,64,invalid?"#573537":"#204b42",invalid?C.error:C.ok);t(g,x+cw/2,75,w,invalid?C.error:C.ink,21);t(g,x+cw/2,101,d.status[i],invalid?C.error:C.ok,15);});t(svg,260,142,"COUNTED: "+d.result,d.result==="?"?C.warn:C.ok,19);t(svg,260,178,d.caption,C.muted,12);}
 function align(svg,d){t(svg,260,23,"EXPLICIT GLOBAL ALIGNMENT",C.blue,14);const left=[...d.left],right=[...d.right],n=Math.max(left.length,right.length),cw=63,gap=10,x0=(520-(cw*n+(n-1)*gap))/2;for(let i=0;i<n;i++){const g=group(svg,i),x=x0+i*(cw+gap),a=left[i]||"",b=right[i]||"",match=a===b;rect(g,x,42,cw,42,match?"#244b42":"#59432d",match?C.ok:C.warn);t(g,x+cw/2,69,a,match?C.ok:C.ink,23);rect(g,x,91,cw,42,match?"#244b42":"#59432d",match?C.ok:C.warn);t(g,x+cw/2,118,b,match?C.ok:C.ink,23);}t(svg,260,155,"SCORE "+d.score,C.ok,19);t(svg,260,181,d.caption,C.muted,12);}
-const painters={route,bases,fraction,strand,codons,decision,record,fasta,interval,quality,cycles,trim,kmers,align};
-function render(container,ch,index){container.replaceChildren();const d=ch==="N01"?D[index]:ch==="N02"?D02[index]:ch==="N03"?D03[index]:null;if(!d)return false;const svg=add(container,"svg",{viewBox:"0 0 520 190",role:"img","aria-label":"Illustrative synthetic DNA teaching diagram: "+(d.caption||d.nodes?.join(" to ")||d.kind),class:"bps-example-illustration",focusable:"false"});rect(svg,0,0,520,190,C.bg,C.bg);painters[d.kind](svg,d);return true;}
+
+function mapping(svg,d){t(svg,260,23,"ONE SOURCE READ = ONE STATUS",C.blue,14);d.labels.forEach((name,i)=>{const g=group(svg,i),x=14+i*128,cl=name==="mapped"?C.ok:name==="multi"?C.warn:C.error;rect(g,x,51,116,76,name==="mapped"?"#244a41":name==="multi"?"#56482c":"#553438",cl);t(g,x+58,76,"read "+(i+1),C.muted,13);t(g,x+58,109,name,cl,name.length>7?15:17);});t(svg,260,160,"Mapped any = mapped + multi, counted once each",C.ink,13);t(svg,260,181,d.caption,C.muted,11);}
+function depth(svg,d){t(svg,260,21,"REFERENCE POSITIONS 0–5",C.blue,13);d.depth.forEach((v,i)=>{const g=group(svg,i),x=26+i*84;rect(g,x,46,75,90,v>0?"#244e43":C.panel,v>0?C.ok:C.line);t(g,x+37,69,"pos "+i,C.muted,11);t(g,x+37,112,String(v),v>0?C.ok:C.ink,29);});t(svg,260,159,d.intervals,C.ink,d.intervals.length>35?12:14);t(svg,260,181,d.caption,C.muted,12);}
+function matrix(svg,d){const cols=d.cols.length,w=470/cols,left=24;t(svg,260,22,"SOURCE RECORDS → DECLARED AGGREGATION",C.blue,13);d.cols.forEach((x,j)=>{const g=group(svg,j),px=left+j*w;rect(g,px,40,w-5,37,"#294b59");t(g,px+(w-5)/2,63,x,C.blue,13);});d.rows.forEach((row,i)=>row.forEach((cell,j)=>{const g=group(svg,10+i*3+j),px=left+j*w,y=83+i*42;rect(g,px,y,w-5,38,j===d.cols.length-1?"#215043":C.panel,j===d.cols.length-1?C.ok:C.line);t(g,px+(w-5)/2,y+25,cell,j===d.cols.length-1?C.ok:C.ink,cell.length>13?12:15);}));t(svg,260,181,d.caption,C.muted,12);}
+function cpm(svg,d){t(svg,260,25,"DECLARED NUMERATOR / DENOMINATOR",C.blue,13);d.items.forEach(([name,numer,out],i)=>{const g=group(svg,i),y=42+i*65;rect(g,20,y,480,58,i===1?"#254a40":C.panel,i===1?C.ok:C.line);t(g,102,y+24,name,C.muted,name.length>15?12:14);t(g,266,y+34,numer,C.ink,18);t(g,433,y+34,out,out==="?"?C.warn:C.ok,16);});t(svg,260,186,d.caption,C.muted,12);}
+const painters={route,bases,fraction,strand,codons,decision,record,fasta,interval,quality,cycles,trim,kmers,align,mapping,depth,matrix,cpm};
+function render(container,ch,index){container.replaceChildren();const d=ch==="N01"?D[index]:ch==="N02"?D02[index]:ch==="N03"?D03[index]:ch==="N04"?D04[index]:null;if(!d)return false;const svg=add(container,"svg",{viewBox:"0 0 520 190",role:"img","aria-label":"Illustrative synthetic DNA teaching diagram: "+(d.caption||d.nodes?.join(" to ")||d.kind),class:"bps-example-illustration",focusable:"false"});rect(svg,0,0,520,190,C.bg,C.bg);painters[d.kind](svg,d);return true;}
 function progress(container,value){const svg=container.querySelector("svg");if(!svg)return;const nodes=[...svg.querySelectorAll("[data-bps-part]")];if(!nodes.length)return;for(const [i,n] of nodes.entries()){n.classList.toggle("bps-is-future",value!=null&&i>Math.min(nodes.length-1,Math.floor(Math.max(0,Math.min(1,Number(value)||0))*nodes.length)));n.classList.toggle("bps-is-current",value!=null&&i===Math.min(nodes.length-1,Math.floor(Math.max(0,Math.min(1,Number(value)||0))*nodes.length)));}svg.classList.toggle("bps-is-speaking",value!=null);}
-window.BioPythonSequenceIllustrations=Object.freeze({render,progress,has:(ch,i)=>Boolean(ch==="N01"?D[i]:ch==="N02"?D02[i]:ch==="N03"?D03[i]:false)});
+window.BioPythonSequenceIllustrations=Object.freeze({render,progress,has:(ch,i)=>Boolean(ch==="N01"?D[i]:ch==="N02"?D02[i]:ch==="N03"?D03[i]:ch==="N04"?D04[i]:false)});
 })();
