@@ -42,6 +42,27 @@
     {kind:"route",headline:"INDEPENDENT NATIVE IMAGE TRANSFER",nodes:["New TIFF","New T/C/Z","Source hash","Human review"],caption:"No solved answers for new data or delayed review"}
   ];
 
+
+  const DATA02=[
+    {kind:"route",headline:"CANDIDATE MASKS NEED A FAILURE AUDIT",nodes:["Image plane","Corrected","Mask + labels","Sensitivity"],caption:"An algorithm returns candidates; independent validation comes later"},
+    {kind:"mask",headline:"CAST AND CORRECT BEFORE THRESHOLD",grid:[[0,1],[4,9]],marks:[[1,0],[1,1]],caption:"Original uint16 values changed only in a new float array"},
+    {kind:"mask",headline:"CORRECTED PIXELS ABOVE 3",grid:[[0,0],[1,1]],marks:[[1,0],[1,1]],caption:"Two passing pixels, not two biological objects"},
+    {kind:"mask",headline:"BRIGHT FOREGROUND: > 5",grid:[[0,1],[0,1]],marks:[[0,1],[1,1]],caption:"Bright foreground candidate mask: 2 pixels"},
+    {kind:"mask",headline:"DARK FOREGROUND: < 5",grid:[[1,0],[1,0]],marks:[[0,0],[1,0]],caption:"Same source can yield different candidates by polarity"},
+    {kind:"split",headline:"BORDER-HEURISTIC POLARITY",left:["BORDER MEDIAN","240","55% of 255"],right:["HEURISTIC","dark","Needs verification"],caption:"Illumination artifacts can fool a border median"},
+    {kind:"mask",headline:"DIAGONAL CONNECTIVITY CHANGES COUNT",grid:[[1,0],[0,1]],marks:[[0,0],[1,1]],caption:"4-neighbor = 2 regions; 8-neighbor = 1 region"},
+    {kind:"mask",headline:"MINIMUM AREA CAN ERASE SMALL SIGNAL",grid:[[1,0,0,0],[0,0,1,1],[0,0,1,1],[0,0,0,0]],marks:[[1,2],[1,3],[2,2],[2,3]],caption:"min_area = 2 excludes the isolated foreground pixel"},
+    {kind:"mask",headline:"PREDICT FOUR-CONNECTED REGION COUNT",grid:[[1,1,0,0,1],[0,0,0,0,0],[0,0,1,1,0],[0,0,0,1,0]],marks:[],caption:"Filter: min_area = 2; count withheld"},
+    {kind:"mask",headline:"REVEAL KEPT COMPONENTS: 2 AND 3 PIXELS",grid:[[1,1,0,0,0],[0,0,0,0,0],[0,0,2,2,0],[0,0,0,2,0]],marks:[[0,0],[0,1],[2,2],[2,3],[3,3]],caption:"Two candidate regions survive; the singleton is excluded"},
+    {kind:"mask",headline:"DISTANCE TO NEAREST BACKGROUND",grid:[[0,0,0,0,0],[0,1,1,1,0],[0,1,2,1,0],[0,1,1,1,0],[0,0,0,0,0]],marks:[[2,2]],caption:"Interior distance can guide marker placement"},
+    {kind:"mask",headline:"TWO MARKERS DIVIDE A CANDIDATE BAND",grid:[[0,0,0,0,0],[0,1,1,2,2],[0,0,0,0,0]],marks:[[1,1],[1,3]],caption:"Two watershed IDs cover the same five mask pixels"},
+    {kind:"split",headline:"SAME MASK, DIFFERENT SEED COUNT",left:["ONE MARKER","1 region","Same pixels"],right:["TWO MARKERS","2 regions","Same pixels"],caption:"Counting labels cannot identify true object boundaries"},
+    {kind:"mask",headline:"MASK A AND B DISAGREE ON 2 / 6 PIXELS",grid:[[1,2,0],[0,1,2]],marks:[[0,1],[1,2]],caption:"IoU = 2/4 = 0.5; changed fraction = 2/6"},
+    {kind:"split",headline:"AGREEMENT IS NOT ACCURACY",left:["VARIANT MASKS","IoU = 1.0","Same result"],right:["TRUE REFERENCE","Absent","Not validated"],caption:"Two identical mistakes can have perfect agreement"},
+    {kind:"mask",headline:"AUDITED CANDIDATE LABELS, NOT CELLS",grid:[[1,1,0,0],[0,0,0,2],[0,2,2,2],[0,0,0,0]],marks:[[0,0],[0,1],[1,3],[2,1],[2,2],[2,3]],caption:"Two candidates, areas 2 and 4 pixels; validated=False"},
+    {kind:"route",headline:"INDEPENDENT SEGMENTATION TRANSFER",nodes:["New image","Polarity","3 variants","Annotated review"],caption:"The next chapter tests candidate error against references"}
+  ];
+
   const make=(parent,name,attrs={})=>{const e=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));parent.appendChild(e);return e;};
   const txt=(p,x,y,v,size=13,color=C.ink,weight=550)=>{const t=make(p,"text",{x,y,"text-anchor":"middle","font-family":"system-ui, sans-serif","font-size":size,"font-weight":weight,fill:color});t.textContent=String(v);return t;};
   const rect=(p,x,y,w,h,fill=C.panel,stroke=C.stroke)=>make(p,"rect",{x,y,width:w,height:h,rx:10,fill,stroke,"stroke-width":1.4});
@@ -57,9 +78,22 @@
 
   function axis(svg,d){const n=d.axes.length;d.axes.forEach(([name,length],i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=20+i*100,active=name==="Y"||name==="X";rect(g,x,42,91,110,active?"#215348":C.panel,active?C.green:C.stroke);txt(g,x+45,70,name,19,active?C.green:C.blue,700);lines(g,x+45,110,String(length),8,21,C.ink);});}
   function pixels(svg,d){const vals=d.values,n=vals.length,cols=n===4?2:3,rows=Math.ceil(n/cols),w=100,h=rows===1?98:48,x0=260-cols*w/2,y0=rows===1?46:43;vals.forEach((value,i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=x0+(i%cols)*w,y=y0+Math.floor(i/cols)*h,yes=d.selected.includes(i);rect(g,x+3,y+2,w-6,h-4,yes?"#225145":C.panel,yes?C.green:C.stroke);txt(g,x+w/2,y+h/2+6,String(value),16,yes?C.green:C.ink,700);});}
-  const painters={route,cards,split,animals,axis,pixels};
+
+  function mask(svg,d){
+    const rows=d.grid.length,cols=Math.max(...d.grid.map(r=>r.length));
+    const cell=Math.min(53,Math.floor(275/Math.max(rows,cols)));
+    const x0=260-cols*cell/2,y0=36;
+    const hits=new Set((d.marks||[]).map(p=>p.join(",")));
+    d.grid.forEach((row,y)=>row.forEach((v,x)=>{
+      const g=make(svg,"g",{"data-bps-part":y*cols+x}),on=hits.has(y+","+x);
+      const px=x0+x*cell,py=y0+y*cell;
+      rect(g,px+1,py+1,cell-2,cell-2,on?"#225748":v===0?"#182b36":"#2d4052",on?C.green:C.stroke);
+      txt(g,px+cell/2,py+cell/2+5,String(v),Math.min(17,cell*.4),on?C.green:C.ink,700);
+    }));
+  }
+  const painters={route,cards,split,animals,axis,pixels,mask};
   function render(container,ch,index){
-    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:null;if(!catalogue||!catalogue[index])return false;
+    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:null;if(!catalogue||!catalogue[index])return false;
     const d=catalogue[index],svg=make(container,"svg",{viewBox:"0 0 520 190",class:"bps-example-illustration",role:"img",focusable:"false","aria-label":"Original "+ch+" scientific microscopy source audit diagram: "+d.headline+". "+d.caption});
     rect(svg,0,0,520,190,C.bg,C.bg);txt(svg,260,23,d.headline,13,C.blue,700);painters[d.kind](svg,d);
     txt(svg,260,177,d.caption,11,C.muted,450);return true;
@@ -70,5 +104,5 @@
     nodes.forEach((e,i)=>{e.classList.toggle("bps-is-future",value!==null&&i>current);e.classList.toggle("bps-is-current",value!==null&&i===current);});
     svg.classList.toggle("bps-is-speaking",value!==null);
   }
-  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:false),render,progress});
+  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:false),render,progress});
 })();
