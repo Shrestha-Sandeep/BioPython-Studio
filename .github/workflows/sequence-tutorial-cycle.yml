@@ -10,7 +10,9 @@ on:
       - 'src/tutorials/p01-viewer.js'
       - 'index.html'
       - 'tests/sequence_tutorials.test.mjs'
+      - 'tests/n02_tutorials.test.mjs'
       - 'tests/test_sequence_tutorial_browser.py'
+      - 'tests/test_n02_tutorial_browser.py'
       - 'docs/tutorials/N*_RESEARCH_BLUEPRINT.md'
 permissions:
   contents: read
@@ -30,11 +32,14 @@ jobs:
       - name: Validate syntax, provenance, examples and changed-input behavior
         run: |
           node --check src/tutorials/n01-data.js
+          node --check src/tutorials/n02-data.js
           node --check src/tutorials/sequence-illustrations.js
           node --check src/tutorials/p01-viewer.js
-          node --test tests/sequence_tutorials.test.mjs
+          node --test tests/sequence_tutorials.test.mjs tests/n02_tutorials.test.mjs
           python tests/test_sequence_ml_import.py
       - name: Install test browser
         run: python -m playwright install --with-deps chromium
       - name: Verify responsive UI and independent tasks
-        run: python tests/test_sequence_tutorial_browser.py
+        run: |
+          python tests/test_sequence_tutorial_browser.py
+          python tests/test_n02_tutorial_browser.py
