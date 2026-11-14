@@ -485,7 +485,7 @@
           "Effect only; no inference"
         ]
       ],
-      "output": "{'control_n': 2, 'treated_n': 2, 'effect': 5.0, 'excluded_fields': 1, 'pseudoreplication_avoided': True}",
+      "output": "{'control_n': 2, 'treated_n': 2, 'effect': 4.5, 'excluded_fields': 1, 'pseudoreplication_avoided': True}",
       "note": "This capstone deliberately has too few animals to pass A05's real-data bootstrap gate; do not compute or report a credible CI or causal effect from it."
     },
     {
