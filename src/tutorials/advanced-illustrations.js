@@ -81,8 +81,8 @@
 
   function mask(svg,d){
     const rows=d.grid.length,cols=Math.max(...d.grid.map(r=>r.length));
-    const cell=Math.min(53,Math.floor(275/Math.max(rows,cols)));
-    const x0=260-cols*cell/2,y0=36;
+    const cell=Math.min(39,Math.floor(121/rows),Math.floor(460/cols));
+    const x0=260-cols*cell/2,y0=37+(121-rows*cell)/2;
     const hits=new Set((d.marks||[]).map(p=>p.join(",")));
     d.grid.forEach((row,y)=>row.forEach((v,x)=>{
       const g=make(svg,"g",{"data-bps-part":y*cols+x}),on=hits.has(y+","+x);
