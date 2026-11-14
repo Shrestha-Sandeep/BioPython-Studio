@@ -12,9 +12,11 @@ on:
       - 'tests/sequence_tutorials.test.mjs'
       - 'tests/n02_tutorials.test.mjs'
       - 'tests/n03_tutorials.test.mjs'
+      - 'tests/n04_tutorials.test.mjs'
       - 'tests/test_sequence_tutorial_browser.py'
       - 'tests/test_n02_tutorial_browser.py'
       - 'tests/test_n03_tutorial_browser.py'
+      - 'tests/test_n04_tutorial_browser.py'
       - 'docs/tutorials/N*_RESEARCH_BLUEPRINT.md'
 permissions:
   contents: read
@@ -30,15 +32,16 @@ jobs:
         with:
           python-version: '3.13'
       - name: Install actual Python science and browser libraries
-        run: python -m pip install biopython==1.86 playwright==1.56.0
+        run: python -m pip install biopython==1.86 playwright==1.56.0 pandas==3.1.0
       - name: Validate syntax, provenance, examples and changed-input behavior
         run: |
           node --check src/tutorials/n01-data.js
           node --check src/tutorials/n02-data.js
           node --check src/tutorials/n03-data.js
+          node --check src/tutorials/n04-data.js
           node --check src/tutorials/sequence-illustrations.js
           node --check src/tutorials/p01-viewer.js
-          node --test tests/sequence_tutorials.test.mjs tests/n02_tutorials.test.mjs tests/n03_tutorials.test.mjs
+          node --test tests/sequence_tutorials.test.mjs tests/n02_tutorials.test.mjs tests/n03_tutorials.test.mjs tests/n04_tutorials.test.mjs
           python tests/test_sequence_ml_import.py
       - name: Install test browser
         run: python -m playwright install --with-deps chromium
@@ -47,3 +50,4 @@ jobs:
           python tests/test_sequence_tutorial_browser.py
           python tests/test_n02_tutorial_browser.py
           python tests/test_n03_tutorial_browser.py
+          python tests/test_n04_tutorial_browser.py
