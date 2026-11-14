@@ -44,7 +44,7 @@ test('A03 original SVG matrix and instance diagrams use same frozen optional vie
  assert.match(svg,/const DATA03=/);
  for(const kind of ['instances','matrix']) assert.match(svg,new RegExp('function '+kind+'\\('));
  assert.match(svg,/ch==="A03"/);assert.match(svg,/role:"img"/);
- const body=svg.slice(svg.indexOf('const DATA03='),svg.indexOf('const make='));
+ const body=svg.slice(svg.indexOf('const DATA03='),svg.indexOf('const DATA05='));
  assert.equal((body.match(/kind:"(?:route|split|cards|animals|axis|pixels|mask|instances|matrix)"/g)||[]).length,17);
 });
 test('A03 all displayed Python outputs are real CPython/SciPy results',{skip:!hasScience?'Install SciPy':false},()=>{
