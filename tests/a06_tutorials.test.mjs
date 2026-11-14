@@ -30,7 +30,7 @@ test('A06 canonical goals, 18 scenes, true hidden checkpoint and independent rev
 test('A06 original figures and route integrate without changing frozen viewer',()=>{
  assert.ok(html.indexOf('src/tutorials/a05-data.js')<html.indexOf('src/tutorials/a06-data.js'));
  assert.ok(html.indexOf('src/tutorials/a06-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
- const block=art.slice(art.indexOf('const DATA06='),art.indexOf('const make='));
+ const block=art.slice(art.indexOf('const DATA06='),art.indexOf('const DATA07='));
  assert.equal((block.match(/kind:"(?:route|cards|split|hierarchy|mask|axis|pixels)"/g)||[]).length,18);
  assert.match(art,/ch==="A06"/);assert.match(art,/role:"img"/);
 });
