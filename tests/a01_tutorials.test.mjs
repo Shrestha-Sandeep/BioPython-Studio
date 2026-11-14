@@ -49,7 +49,7 @@ test('A01 original SVG diagrams and advanced-only existing viewer script order',
  assert.match(images,/function pixels\(/);
  assert.match(images,/ch==="A01"/);
  assert.match(images,/role:"img"/);
- const block=images.slice(images.indexOf('const DATA01='),images.indexOf('const make='));
+ const block=images.slice(images.indexOf('const DATA01='),images.indexOf('const DATA02='));
  assert.equal((block.match(/kind:"(?:route|split|cards|animals|axis|pixels)"/g)||[]).length,17);
 });
 test('A01 all printed NumPy and real tifffile values agree with fresh native Python',{skip:!hasTiff?'Install NumPy and tifffile':false},()=>{
