@@ -66,7 +66,7 @@ test('A00 independent input perturbations and scientific guardrails',()=>{
     ["rows=[('A',3),('A',9),('B',9),('C',2)];print(len(rows),len({a for a,_ in rows}))","4 3"],
     ["from pathlib import Path;root=Path('/work/raw').resolve();print((root/'other.csv').resolve().is_relative_to(root),(root/'../other.csv').resolve().is_relative_to(root))","True False"],
     ["from pathlib import PurePosixPath;p=PurePosixPath('/tmp/raw.csv');print(p.is_absolute());print('..' in PurePosixPath('../escape.csv').parts)","True\nTrue"],
-    ["def ok(x):return x is not None and x>=.8;print(ok(.8),ok(.799),ok(None))","True False False"],
+    ["def ok(x):return x is not None and x>=.8\nprint(ok(.8),ok(.799),ok(None))","True False False"],
     ["import hashlib;print(hashlib.sha256(b'abc').digest()!=hashlib.sha256(b'abd').digest())","True"],
     ["import json,hashlib;f=lambda d:hashlib.sha256(json.dumps(d,sort_keys=True,separators=(',',':')).encode()).hexdigest();print(f({'b':2,'a':1})==f({'a':1,'b':2}));print(f({'a':1})!=f({'a':2}))","True\nTrue"],
     ["from collections import defaultdict;rows=[('A',4),('A',6),('B',9),('C',3)];d=defaultdict(list);[(d[a].append(x)) for a,x in rows];print({a:sum(v)/len(v) for a,v in d.items()},len(d))","{'A': 5.0, 'B': 9.0, 'C': 3.0} 3"]
