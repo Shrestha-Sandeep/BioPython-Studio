@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
 const ctx={window:{}};
-for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09','I10','I11','I12']){
+for(const chapter of ['I01','I02','I03','I04','I05','I06','I07','I08','I09','I10','I11','I12','I13']){
  const source=readFileSync(new URL('src/tutorials/'+chapter.toLowerCase()+'-data.js',root),'utf8');
  assert.doesNotThrow(()=>new Function(source),chapter+' syntax');
  vm.runInNewContext(source,ctx);
@@ -640,4 +640,89 @@ test('I12 changed-input small n, zero SEM, Holm original ordering and reproducib
   const cp=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:15000});
   assert.equal(cp.status,0,cp.stderr);assert.equal(cp.stdout.trimEnd(),expected);
  }
+});
+
+const sourceImagePython=spawnSync('python3',['-c','import numpy;from PIL import Image;from skimage.measure import label,regionprops;import matplotlib;matplotlib.use("Agg")'],{encoding:'utf8'});
+test('I13 source-aware real PNG final microscopy goals and contract',()=>{
+ const t=tutorials.find(x=>x.chapter==='I13');
+ assert.ok(t,'I13 not registered');
+ const ids=Array.from({length:5},(_,i)=>'I13-G'+String(i+1).padStart(2,'0')).concat('I13-CAPSTONE');
+ assert.deepEqual(t.goals,ids);
+ assert.equal(t.steps.length,18);
+ assert.equal(t.steps.filter(s=>s.checkpoint).length,1);
+ assert.equal(t.steps.find(s=>s.checkpoint).output,'');
+ assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),ids.slice().sort());
+ assert.match(t.steps.at(-1).note,/independent/i);
+ assert.equal(t.steps[0].preview.image,'fluorescence-single');
+ assert.ok(html.indexOf('src/tutorials/i12-data.js')<html.indexOf('src/tutorials/i13-data.js'));
+ assert.ok(html.indexOf('src/tutorials/i13-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
+ const path='assets/witz/fluorescence-single.png';
+ const source=readFileSync(new URL(path,root));
+ assert.equal(source.length,87150,'Bundled original source PNG changed unexpectedly');
+ const declared=readFileSync(new URL('assets/witz/CREDITS.md',root),'utf8');
+ assert.match(declared,/rendered figure/);
+ assert.match(declared,/Human Protein Atlas/);
+ for(const s of t.steps){
+  assert.ok(s.say.trim().split(/\s+/).length>=18,s.title);
+  assert.ok(s.note.length>=30,s.title);
+  const n=s.code?s.code.split('\n').length:0;
+  for(const line of s.focus)assert.ok(line>=1&&line<=n,s.title+':'+line);
+  if(s.output)assert.ok(s.code,s.title);
+ }
+ assert.ok(t.steps.some(s=>s.code.includes("Image.open")));
+ assert.ok(t.steps.some(s=>s.code.includes("label(mask,connectivity=1)")));
+ assert.ok(t.steps.some(s=>s.code.includes("sha256")));
+ assert.ok(t.steps.some(s=>s.code.includes("fig.savefig")));
+ assert.ok(t.steps.every(s=>!/reproduces? (true|raw) nuclear/i.test(s.say)));
+});
+test('I13 all fixed-output numeric and real-source examples match fresh CPython',{
+ skip:sourceImagePython.status!==0?'Pillow/skimage/Matplotlib stack unavailable':false
+},()=>{
+ let n=0;
+ for(const [i,s] of tutorials.find(x=>x.chapter==='I13').steps.entries()){
+  if(!s.code||!s.output)continue;
+  const cp=spawnSync('python3',['-c',s.code],{
+   encoding:'utf8',timeout:24000,env:{...process.env,MPLBACKEND:'Agg'}
+  });
+  assert.equal(cp.status,0,'I13 '+i+' '+s.title+': '+cp.stderr);
+  assert.equal(cp.stdout.trimEnd(),s.output,'I13 '+i+' '+s.title);
+  n++;
+ }
+ assert.ok(n>=13,'Only '+n+' fixed-output executable I13 scenes');
+});
+test('I13 actual credited source PNG decodes, thresholds and yields reproducible candidate counts',{
+ skip:sourceImagePython.status!==0?'Pillow/skimage stack unavailable':false
+},()=>{
+ const t=tutorials.find(x=>x.chapter==='I13');
+ const scene=t.steps[12]; // actual source ROI, dynamic candidate count
+ assert.ok(scene.code.includes("fluorescence-single.png"));
+ const cp=spawnSync('python3',['-c',scene.code],{encoding:'utf8',timeout:16000});
+ assert.equal(cp.status,0,cp.stderr);
+ assert.match(cp.stdout,/ROI pixels: 2304/);
+ assert.match(cp.stdout,/Calibrated: False/);
+ const count=cp.stdout.match(/Candidates: (\d+)/);
+ assert.ok(count,'real image count not calculated');
+ assert.ok(Number(count[1])>=0&&Number(count[1])<=2304);
+ // Visible in QA to allow replacing placeholder with a verified source result
+ console.log('I13_REAL_PNG_CANDIDATES='+count[1]);
+ const again=spawnSync('python3',['-c',scene.code],{encoding:'utf8',timeout:16000});
+ assert.equal(again.stdout,cp.stdout,'Source bytes must return reproducible candidate count');
+});
+test('I13 changed-source crop, threshold, missing file and overlay are real behavior',{
+ skip:sourceImagePython.status!==0?'Pillow/skimage stack unavailable':false
+},()=>{
+ const cases=[
+ ["import numpy as np\nx=np.array([250],dtype=np.uint8);print((x+np.array([20],np.uint8)).tolist(),(x.astype(float)+20).tolist())","[14] [270.0]"],
+ ["from pathlib import Path\np=Path('assets/witz/missing-file.png');print(p.is_file())","False"],
+ ["import numpy as np\nfrom PIL import Image\nx=np.asarray(Image.open('assets/witz/fluorescence-single.png').convert('RGB'));a=x[:48,:48,1];b=x[5:53,5:53,1];print(a.shape,b.shape,a.dtype.name)","(48, 48) (48, 48) uint8"],
+ ["import numpy as np\nfrom PIL import Image\nx=np.asarray(Image.open('assets/witz/fluorescence-single.png').convert('RGB'))[:48,:48,1];print(int((x>180).sum())<=int((x>90).sum()))","True"]
+ ];
+ for(const [code,output] of cases){
+  const cp=spawnSync('python3',['-c',code],{encoding:'utf8',timeout:16000});
+  assert.equal(cp.status,0,cp.stderr);assert.equal(cp.stdout.trimEnd(),output);
+ }
+ const cap=tutorials.find(x=>x.chapter==='I13').steps[15];
+ const cp=spawnSync('python3',['-c',cap.code],{encoding:'utf8',timeout:24000,env:{...process.env,MPLBACKEND:'Agg'}});
+ assert.equal(cp.status,0,cp.stderr);
+ assert.equal(cp.stdout.trimEnd(),cap.output);
 });
