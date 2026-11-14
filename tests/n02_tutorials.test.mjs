@@ -8,7 +8,7 @@ const root=new URL('../',import.meta.url),read=p=>readFileSync(new URL(p,root),'
 const src=read('src/tutorials/n02-data.js'),svg=read('src/tutorials/sequence-illustrations.js');
 const html=read('index.html'),reader=read('src/tutorials/p01-viewer.js');
 const ctx={window:{}};
-for(const file of ['n01-data.js','n02-data.js']) {
+for(const file of ['n01-data.js','n02-data.js','n03-data.js']) {
  const code=read('src/tutorials/'+file);
  assert.doesNotThrow(()=>new Function(code));
  vm.runInNewContext(code,ctx);
