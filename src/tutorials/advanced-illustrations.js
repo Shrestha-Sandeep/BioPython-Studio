@@ -128,6 +128,28 @@
     {kind:"route",headline:"INDEPENDENT SOURCE-SAFE REPLAY",nodes:["New TIFFs","Fresh manifest","Unchanged SHA","Local QA"],caption:"Review real source and candidate error cases"}
   ];
 
+
+  const DATA07=[
+    {kind:"route",headline:"A GENUINE RESEARCH RESULT NEEDS EVIDENCE",nodes:["Question","Native sources","Reference errors","Human verdict"],caption:"Not every correct Python output is a valid scientific claim"},
+    {kind:"cards",headline:"DEFINE THE EXPERIMENT BEFORE ITS RESULT",cards:[["TARGET","Nucleus","good"],["BIOLOGICAL UNIT","Animal","good"],["ENDPOINT","Object F1","good"]],caption:"Prespecified QC rules and controls are essential"},
+    {kind:"cards",headline:"INCOMPLETE STUDY PLAN",cards:[["TARGET","Declared","good"],["ENDPOINT","Declared","good"],["EXCLUSIONS","Missing","bad"]],caption:"Incomplete preregistered-style rules block analysis readiness"},
+    {kind:"axis",headline:"ORIGINAL IMAGE METADATA: TCZYX",axes:[["T",2],["C",3],["Z",2],["Y",4],["X",5]],caption:"YX spatial shape 4 × 5; preserve native uint16"},
+    {kind:"cards",headline:"DECLARED SCALE IS NOT CALIBRATION",cards:[["OME DECLARED","0.2 µm/px","warn"],["VERIFIED","False","bad"],["AREA OUTPUT","None","warn"]],caption:"Physical units require independent scale verification"},
+    {kind:"cards",headline:"REFERENCE TYPE DEFINES PERMITTED METRICS",cards:[["PIXEL MASK","IoU allowed","good"],["INSTANCE IDS","Object matching","good"],["BIOLOGICAL TRUTH","Human review","warn"]],caption:"Annotation correctness and completeness remain separate"},
+    {kind:"cards",headline:"COUNT REFERENCES HAVE NO BOUNDARIES",cards:[["COUNT ERROR","Allowed","good"],["PIXEL IoU","Not allowed","bad"],["OBJECT TP","Not allowed","bad"]],caption:"Do not invent spatial masks from reported counts"},
+    {kind:"split",headline:"TRAIN–HOLDOUT BIOLOGICAL LEAKAGE",left:["DEVELOPMENT","Animal A, B",""],right:["HELD OUT","Animal A, C","Shared A"],caption:"Unseen file is not the same as unseen organism"},
+    {kind:"split",headline:"RESERVE COMPLETE BIOLOGICAL GROUPS",left:["DEVELOPMENT","A, B","n=2"],right:["HELD-OUT","C, D","n=2"],caption:"No shared animal IDs: necessary but not sufficient"},
+    {kind:"split",headline:"PREDICT INDEPENDENCE",left:["DEVELOPMENT","A, B",""],right:["HELD-OUT","B, C","Result withheld"],caption:"Is this evaluation independent at the subject level?"},
+    {kind:"split",headline:"REVEAL THE LEAKED ANIMAL",left:["DEVELOPMENT","A, B","n=2"],right:["HELD-OUT","B, C","B leaked"],caption:"Overlap is B; the split is not a valid unseen-animal holdout"},
+    {kind:"cards",headline:"POOL OBJECT ERRORS BEFORE MICRO F1",cards:[["TRUE POSITIVE","3","good"],["FALSE POSITIVE","3","bad"],["FALSE NEGATIVE","1","warn"]],caption:"Micro F1 = 0.6 from summed TP/FP/FN"},
+    {kind:"cards",headline:"COUNT ERRORS NEED FAILURE EXPLANATIONS",cards:[["IMAGE ONE","Error 1","warn"],["IMAGE TWO","Error 1","warn"],["IMAGE THREE","Error 2","bad"]],caption:"MAE 1.33; inspect misses, merges and false splits"},
+    {kind:"split",headline:"A DIFFERENT OUTPUT HAS A DIFFERENT HASH",left:["SOURCE + CONFIG","Same hashes",""],right:["OUTPUT BYTES","Changed","mismatch"],caption:"Exact source/parameters/output identities matter"},
+    {kind:"split",headline:"MATCHING STRINGS ARE NOT EXECUTION",left:["HASH ENTRIES","Match",""],right:["FRESH CHECKOUT","Not run","Not ready"],caption:"A copied manifest is no substitute for a real replay"},
+    {kind:"decision",headline:"LEAKAGE BLOCKS ALL PERFORMANCE CLAIMS",cases:[["Leaked groups","NO_GO"],["Bad replay","NO_GO"],["High F1 alone","INSUFFICIENT"]],caption:"Stop rather than reward a contaminated held-out score"},
+    {kind:"decision",headline:"SCIENTIFIC TRIAGE IS NOT AUTOMATIC PASS",cases:[["Weak reference","MORE ANNOTATION"],["Low object F1","IMPROVE METHOD"],["Promising evidence","HUMAN REVIEW"]],caption:"Software never certifies biological validity"},
+    {kind:"route",headline:"INDEPENDENT SEVEN-FILE EVIDENCE PACKET",nodes:["Plan + image audit","Holdout + metrics","Replay + failures","Methods + verdict"],caption:"Actual original images and annotations remain an external gate"}
+  ];
+
   const make=(parent,name,attrs={})=>{const e=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));parent.appendChild(e);return e;};
   const txt=(p,x,y,v,size=13,color=C.ink,weight=550)=>{const t=make(p,"text",{x,y,"text-anchor":"middle","font-family":"system-ui, sans-serif","font-size":size,"font-weight":weight,fill:color});t.textContent=String(v);return t;};
   const rect=(p,x,y,w,h,fill=C.panel,stroke=C.stroke)=>make(p,"rect",{x,y,width:w,height:h,rx:10,fill,stroke,"stroke-width":1.4});
@@ -203,9 +225,18 @@
     make(c,"circle",{cx:px(d.center),cy:100,r:8,fill:C.amber,stroke:C.bg,"stroke-width":2});
     txt(svg,px(d.low),82,String(d.low),16,C.green);txt(svg,px(d.center),76,String(d.center),16,C.amber);txt(svg,px(d.high),82,String(d.high),16,C.green);
   }
-  const painters={route,cards,split,animals,axis,pixels,mask,instances,matrix,hierarchy,pair,interval};
+
+  function decision(svg,d){
+    const a=d.cases,w=152;
+    a.forEach(([problem,verdict],i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=22+i*164,bad=/NO_GO|IMPROVE|INSUFFICIENT/.test(verdict);
+      rect(g,x,44,w,106,bad?"#493439":"#21483f",bad?C.red:C.green);
+      txt(g,x+w/2,72,problem,problem.length>16?12:14,C.muted);
+      lines(g,x+w/2,114,verdict,19,verdict.length>16?12:15,bad?C.red:C.green);
+    });
+  }
+  const painters={route,cards,split,animals,axis,pixels,mask,instances,matrix,hierarchy,pair,interval,decision};
   function render(container,ch,index){
-    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:ch==="A03"?DATA03:ch==="A05"?DATA05:ch==="A06"?DATA06:null;if(!catalogue||!catalogue[index])return false;
+    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:ch==="A03"?DATA03:ch==="A05"?DATA05:ch==="A06"?DATA06:ch==="A07"?DATA07:null;if(!catalogue||!catalogue[index])return false;
     const d=catalogue[index],svg=make(container,"svg",{viewBox:"0 0 520 190",class:"bps-example-illustration",role:"img",focusable:"false","aria-label":"Original "+ch+" scientific microscopy source audit diagram: "+d.headline+". "+d.caption});
     rect(svg,0,0,520,190,C.bg,C.bg);txt(svg,260,23,d.headline,13,C.blue,700);painters[d.kind](svg,d);
     txt(svg,260,177,d.caption,11,C.muted,450);return true;
@@ -216,5 +247,5 @@
     nodes.forEach((e,i)=>{e.classList.toggle("bps-is-future",value!==null&&i>current);e.classList.toggle("bps-is-current",value!==null&&i===current);});
     svg.classList.toggle("bps-is-speaking",value!==null);
   }
-  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:ch==="A03"?DATA03[i]:ch==="A05"?DATA05[i]:ch==="A06"?DATA06[i]:false),render,progress});
+  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:ch==="A03"?DATA03[i]:ch==="A05"?DATA05[i]:ch==="A06"?DATA06[i]:ch==="A07"?DATA07[i]:false),render,progress});
 })();
