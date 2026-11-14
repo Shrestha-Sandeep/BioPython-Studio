@@ -49,7 +49,7 @@ test('A02 original diagrams use accessible mask visuals and existing frozen view
  assert.match(fig,/function mask\(/);
  assert.match(fig,/ch==="A02"/);
  assert.match(fig,/role:"img"/);
- const block=fig.slice(fig.indexOf('const DATA02='),fig.indexOf('const make='));
+ const block=fig.slice(fig.indexOf('const DATA02='),fig.indexOf('const DATA03='));
  assert.equal((block.match(/kind:"(?:route|split|cards|animals|axis|pixels|mask)"/g)||[]).length,17);
 });
 test('A02 all printed NumPy/SciPy/scikit-image outputs match native CPython',{skip:!hasScience?'Install science dependencies':false},()=>{

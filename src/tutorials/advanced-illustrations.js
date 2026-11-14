@@ -63,6 +63,27 @@
     {kind:"route",headline:"INDEPENDENT SEGMENTATION TRANSFER",nodes:["New image","Polarity","3 variants","Annotated review"],caption:"The next chapter tests candidate error against references"}
   ];
 
+
+  const DATA03=[
+    {kind:"route",headline:"ANNOTATIONS MAKE EVALUATION POSSIBLE",nodes:["Reference IDs","Candidate IDs","One-to-one IoU","Error report"],caption:"Object-level evidence depends on independent annotations"},
+    {kind:"instances",headline:"PERFECT PIXEL IoU CAN HIDE A MERGE",truth:[1,0,2],pred:[1,0,1],caption:"Foreground IoU=1.0; reference 2 instances, prediction 1"},
+    {kind:"instances",headline:"A FALSE MERGE STILL HAS 0.8 PIXEL IoU",truth:[1,1,0,2,2],pred:[1,1,1,1,1],caption:"Four shared pixels and one extra predicted pixel"},
+    {kind:"instances",headline:"OBJECT IDS ARE CATEGORIES, NOT SIGNALS",truth:[0,1,1,0,2,2],pred:[0,1,1,0,2,2],caption:"Label 0 is background; 1 and 2 identify objects"},
+    {kind:"matrix",headline:"PAIRWISE REFERENCE × PREDICTION IoU",matrix:[["0.90","0.80"],["0.81","0.10"]],selected:[[0,0],[1,0]],caption:"IoU scores are invented, not real annotations"},
+    {kind:"matrix",headline:"ONE PREDICTION CANNOT MATCH TWICE",matrix:[["0.80"],["0.70"]],selected:[[0,0]],caption:"Two references, one prediction: only one true match"},
+    {kind:"matrix",headline:"GREEDY 0.90 FIRST LOSES A MATCH",matrix:[["0.90","0.80"],["0.81","0.10"]],selected:[[0,0]],caption:"Greedy diagonal gives 1 TP; crossing gives 2"},
+    {kind:"matrix",headline:"MAXIMUM-CARDINALITY ONE-TO-ONE MATCH",matrix:[["0.90","0.80"],["0.81","0.10"]],selected:[[0,1],[1,0]],caption:"Cross pairs 0.80 and 0.81 qualify"},
+    {kind:"matrix",headline:"PREDICT TP, FP AND FN",matrix:[["0.60","0.10"],["0.70","0.80"]],selected:[],caption:"Threshold 0.5; pair counts withheld"},
+    {kind:"matrix",headline:"REVEAL TWO TRUE POSITIVES",matrix:[["0.60","0.10"],["0.70","0.80"]],selected:[[0,0],[1,1]],caption:"Two qualified one-to-one pairs; FP=0, FN=0"},
+    {kind:"split",headline:"CALIBRATION AND HOLDOUT SHARE AN ANIMAL",left:["TRAIN","A, B",""],right:["HOLDOUT","A again","LEAKAGE"],caption:"Different image files do not guarantee independence"},
+    {kind:"split",headline:"GROUPS DISJOINT, CLAIMS STILL LIMITED",left:["TRAIN ANIMALS","A, B",""],right:["HELD-OUT","C, D","no overlap"],caption:"Batch and experiment dependence still require checking"},
+    {kind:"cards",headline:"OBJECT ERROR METRICS",cards:[["PRECISION","0.667","good"],["RECALL","0.400","warn"],["F1","0.500","warn"]],caption:"TP=2, FP=1, FN=3"},
+    {kind:"split",headline:"BIOLOGICAL N IS NOT IMAGE COUNT",left:["IMAGE FIELDS","4",""],right:["ANIMALS","2","independent n"],caption:"Several images from one animal remain correlated"},
+    {kind:"cards",headline:"COUNTS-ONLY REFUSES PIXEL IoU",cards:[["REFERENCE","12 counts","warn"],["PREDICTED","10 counts","warn"],["SPATIAL MASK","Absent","bad"]],caption:"Absolute count error = 2; IoU is unsupported"},
+    {kind:"instances",headline:"CAPSTONE: OBJECT F1=0, PIXEL IoU=0.8",truth:[1,1,0,2,2],pred:[1,1,1,1,1],caption:"2 reference instances merged; TP=0 FP=1 FN=2"},
+    {kind:"route",headline:"INDEPENDENT ANNOTATION TRANSFER",nodes:["New masks","Max TP pairs","Group holdout","Failure gallery"],caption:"Scientific validity needs verified references and biological groups"}
+  ];
+
   const make=(parent,name,attrs={})=>{const e=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));parent.appendChild(e);return e;};
   const txt=(p,x,y,v,size=13,color=C.ink,weight=550)=>{const t=make(p,"text",{x,y,"text-anchor":"middle","font-family":"system-ui, sans-serif","font-size":size,"font-weight":weight,fill:color});t.textContent=String(v);return t;};
   const rect=(p,x,y,w,h,fill=C.panel,stroke=C.stroke)=>make(p,"rect",{x,y,width:w,height:h,rx:10,fill,stroke,"stroke-width":1.4});
@@ -91,9 +112,29 @@
       txt(g,px+cell/2,py+cell/2+5,String(v),Math.min(17,cell*.4),on?C.green:C.ink,700);
     }));
   }
-  const painters={route,cards,split,animals,axis,pixels,mask};
+
+  function instances(svg,d){
+    const n=Math.max(d.truth.length,d.pred.length),cell=Math.min(57,Math.floor(430/n)),x0=260-n*cell/2;
+    [["REFERENCE",d.truth,43],["PREDICTED",d.pred,102]].forEach(([name,values,y],i)=>{
+      const lab=make(svg,"g",{"data-bps-part":i});txt(lab,260,y-9,name,11,i?C.amber:C.blue,700);
+      values.forEach((value,j)=>{const g=make(svg,"g",{"data-bps-part":i*n+j}),x=x0+j*cell,
+      fill=value===0?"#192b36":value===1?"#225447":"#385378",stroke=value===0?C.stroke:value===1?C.green:C.blue;
+      rect(g,x+1,y,cell-2,33,fill,stroke);txt(g,x+cell/2,y+22,String(value),16,value===0?C.muted:C.ink,700);});
+    });
+  }
+  function matrix(svg,d){
+    const n=d.matrix.length,m=Math.max(...d.matrix.map(row=>row.length)),w=100,h=43,x0=260-m*w/2,y0=44;
+    const good=new Set((d.selected||[]).map(x=>x.join(",")));
+    d.matrix.forEach((row,i)=>row.forEach((value,j)=>{
+      const g=make(svg,"g",{"data-bps-part":i*m+j}),active=good.has(i+","+j);
+      rect(g,x0+j*w+3,y0+i*h,w-6,h-3,active?"#245748":C.panel,active?C.green:C.stroke);
+      txt(g,x0+j*w+w/2,y0+i*h+27,value,17,active?C.green:C.ink,700);
+    }));
+    txt(svg,260,y0+n*h+15,"rows = reference · columns = predictions",10,C.muted,450);
+  }
+  const painters={route,cards,split,animals,axis,pixels,mask,instances,matrix};
   function render(container,ch,index){
-    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:null;if(!catalogue||!catalogue[index])return false;
+    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:ch==="A03"?DATA03:null;if(!catalogue||!catalogue[index])return false;
     const d=catalogue[index],svg=make(container,"svg",{viewBox:"0 0 520 190",class:"bps-example-illustration",role:"img",focusable:"false","aria-label":"Original "+ch+" scientific microscopy source audit diagram: "+d.headline+". "+d.caption});
     rect(svg,0,0,520,190,C.bg,C.bg);txt(svg,260,23,d.headline,13,C.blue,700);painters[d.kind](svg,d);
     txt(svg,260,177,d.caption,11,C.muted,450);return true;
@@ -104,5 +145,5 @@
     nodes.forEach((e,i)=>{e.classList.toggle("bps-is-future",value!==null&&i>current);e.classList.toggle("bps-is-current",value!==null&&i===current);});
     svg.classList.toggle("bps-is-speaking",value!==null);
   }
-  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:false),render,progress});
+  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:ch==="A03"?DATA03[i]:false),render,progress});
 })();
