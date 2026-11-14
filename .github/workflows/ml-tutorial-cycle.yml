@@ -1,0 +1,45 @@
+name: Biological machine-learning narrated tutorial QA
+on:
+  push:
+    branches:
+      - feature/ml-tutorial-cycle-*
+  pull_request:
+    paths:
+      - 'src/tutorials/l*-data.js'
+      - 'src/tutorials/ml-illustrations.js'
+      - 'src/tutorials/p01-viewer.js'
+      - 'index.html'
+      - 'tests/l*_tutorials.test.mjs'
+      - 'tests/test_l*_tutorial_browser.py'
+      - 'docs/tutorials/L*_RESEARCH_BLUEPRINT.md'
+permissions:
+  contents: read
+jobs:
+  ml-tutorial:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.13'
+      - name: Install real science and browser dependencies
+        run: python -m pip install numpy==2.3.5 pandas==3.1.0 biopython==1.86 scikit-learn==1.9.1 playwright==1.56.0
+      - name: Validate modules, canonical goals and clean CPython outputs
+        run: |
+          node --check src/tutorials/l01-data.js
+          node --check src/tutorials/ml-illustrations.js
+          node --check src/tutorials/p01-viewer.js
+          node --test tests/sequence_tutorials.test.mjs tests/n02_tutorials.test.mjs tests/n03_tutorials.test.mjs tests/n04_tutorials.test.mjs tests/l01_tutorials.test.mjs
+          python tests/test_sequence_ml_import.py
+      - name: Install browser engine
+        run: python -m playwright install --with-deps chromium
+      - name: Verify lesson UI and independent practice on desktop/mobile
+        run: |
+          python tests/test_sequence_tutorial_browser.py
+          python tests/test_n02_tutorial_browser.py
+          python tests/test_n03_tutorial_browser.py
+          python tests/test_n04_tutorial_browser.py
+          python tests/test_l01_tutorial_browser.py
