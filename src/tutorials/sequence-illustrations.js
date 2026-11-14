@@ -42,6 +42,27 @@ const D02={
 16:{kind:"record",items:[["FASTA IDs","r1, r2"],["FASTQ IDs","r1, r2"],["Low Q read","r1"]],caption:"The report preserves sequence identity and QC origin"},
 17:{kind:"decision",items:[["Identity","Duplicate IDs?"],["Format","Valid FASTQ?"],["Interval","Bounds valid?"]],caption:"Independent audit: no worked answer"}
 };
+
+const D03={
+0:{kind:"route",nodes:["Read Q","Cycle mean","3′ trim","k-mers","Score"]},
+1:{kind:"cycles",data:[["0","30,40","35.0","2"],["1","20,20","20.0","2"],["2","10","10.0","1"]],caption:"Only reads with a present cycle contribute"},
+2:{kind:"cycles",data:[["0","30,40","n=2","2"],["1","20,20","n=2","2"],["2","10","n=1","1"]],caption:"Later cycle has n=1, not n=2"},
+3:{kind:"decision",items:[["Observed Q","10"],["Wrong / pad 0","5.0"],["Correct / n1","10.0"]],caption:"Missing position ≠ Q0"},
+4:{kind:"trim",seq:"ACGTT",q:[35,35,35,7,4],kept:3,caption:"Terminal low-Q tail removed; keep ACG"},
+5:{kind:"trim",seq:"ACGT",q:[35,6,35,3],kept:3,caption:"Internal Q6 retained, terminal Q3 removed"},
+6:{kind:"trim",seq:"ACG",q:[5,4,3],kept:0,caption:"Zero bases remain; retain exclusion metadata"},
+7:{kind:"kmers",seq:"AAAA",windows:["AA","AA","AA"],status:["✓","✓","✓"],result:"AA × 3",caption:"Sliding k=2 windows overlap"},
+8:{kind:"kmers",seq:"AANAAC",windows:["AA","AN","NA","AA","AC"],status:["✓","×","×","✓","✓"],result:"3 valid",caption:"Windows containing N are excluded"},
+9:{kind:"kmers",seq:"AANAAC",windows:["AA","AN","NA","AA","AC"],status:["✓","×","×","✓","✓"],result:"?",caption:"Predict AA and AC counts"},
+10:{kind:"kmers",seq:"AANAAC",windows:["AA","AN","NA","AA","AC"],status:["✓","×","×","✓","✓"],result:"AA ×2; AC ×1",caption:"Three valid overlapping windows"},
+11:{kind:"trim",seq:"ACGTT",q:[35,35,35,7,4],kept:3,caption:"Before: 4 windows; after: AC and CG"},
+12:{kind:"align",left:"ACG",right:"ACG",score:"6.0",caption:"3 matches × +2; global alignment"},
+13:{kind:"align",left:"ACG",right:"ATG",score:"3.0",caption:"Two matches and one −1 mismatch"},
+14:{kind:"align",left:"ACGT",right:"A-GT",score:"4.0",caption:"3 × +2; one gap-open −2"},
+15:{kind:"record",items:[["Mode","global"],["Match / mismatch","+2 / −1"],["Gap open / extend","−2 / −0.5"]],caption:"Record mode and scoring policy"},
+16:{kind:"record",items:[["r1 retained","ACG"],["r2 retained","ACGN"],["Motifs","AC ×2; CG ×2"]],caption:"Keep each source ID and output policy"},
+17:{kind:"decision",items:[["Quality","Missing ≠ zero"],["Trimming","Declared tail policy"],["Motifs / align","New inputs"]],caption:"Independent transfer without shown solution"}
+};
 function add(p,tag,attr={}){let n=document.createElementNS(NS,tag);Object.entries(attr).forEach(([k,v])=>n.setAttribute(k,String(v)));p.append(n);return n;}
 function t(p,x,y,s,fill=C.ink,size=15,weight=620){let q=add(p,"text",{x,y,fill,"font-size":size,"font-weight":weight,"text-anchor":"middle","font-family":"system-ui, sans-serif"});q.textContent=s;return q;}
 function rect(p,x,y,w,h,fill=C.panel,stroke=C.line){return add(p,"rect",{x,y,width:w,height:h,rx:8,fill,stroke,"stroke-width":1.5});}
@@ -57,8 +78,13 @@ function record(svg,d){d.items.forEach(([a,b],i)=>{const g=group(svg,i),y=20+i*4
 function fasta(svg,d){t(svg,122,20,"RAW FASTA",C.blue,13);t(svg,382,20,"PARSED RECORDS",C.blue,13);const g0=group(svg,0);rect(g0,18,30,212,130);d.lines.forEach((line,i)=>t(g0,120,47+i*21,line,line.startsWith(">")?C.warn:C.ink,line.length>14?12:16));d.ids.forEach(([id,seq],i)=>{const g=group(svg,i+1),y=43+i*65;rect(g,281,y,224,50,id==="r1"&&i===1?"#5a3733":C.panel,id==="r1"&&i===1?C.error:C.line);t(g,347,y+20,"ID "+id,C.blue,15);t(g,394,y+41,seq,C.ok,19);});t(svg,260,180,d.caption,C.muted,12);}
 function interval(svg,d){const seq=[...d.seq],x0=45,cw=66,gap=7;t(svg,260,20,"REFERENCE INDEX: 0  1  2  3  4  5",C.muted,13);seq.forEach((b,i)=>{let g=group(svg,i),x=x0+i*(cw+gap),selected=i>=d.start&&i<d.end;rect(g,x,44,cw,63,selected?"#245747":C.panel,selected?C.ok:C.line);t(g,x+cw/2,83,b,selected?C.ok:C.ink,26);});t(svg,260,135,"SELECTED ["+d.start+":"+d.end+")   →   "+d.out,d.out==="?"?C.warn:C.blue,17);t(svg,260,178,d.caption,C.muted,12);}
 function quality(svg,d){t(svg,100,24,"BASE",C.blue,13);t(svg,100,78,"FASTQ ASCII",C.muted,12);t(svg,100,131,"PHRED Q",C.ok,12);d.bases.forEach((base,i)=>{const x=172+i*107;const arr=[base,d.ascii[i],d.scores[i]];arr.forEach((value,row)=>{const g=group(svg,i*3+row),y=32+row*53;rect(g,x,y,92,44,row===2&&Number(value)<20?"#60402d":row===2?"#205245":C.panel,row===2&&Number(value)<20?C.error:row===2?C.ok:C.line);t(g,x+46,y+29,value,row===2&&Number(value)<20?C.error:row===2?C.ok:C.ink,23);});});t(svg,260,186,d.caption,C.muted,12);}
-const painters={route,bases,fraction,strand,codons,decision,record,fasta,interval,quality};
-function render(container,ch,index){container.replaceChildren();const d=ch==="N01"?D[index]:ch==="N02"?D02[index]:null;if(!d)return false;const svg=add(container,"svg",{viewBox:"0 0 520 190",role:"img","aria-label":"Illustrative synthetic DNA teaching diagram: "+(d.caption||d.nodes?.join(" to ")||d.kind),class:"bps-example-illustration",focusable:"false"});rect(svg,0,0,520,190,C.bg,C.bg);painters[d.kind](svg,d);return true;}
+
+function cycles(svg,d){t(svg,260,21,"PER-CYCLE SUMMARY (SYNTHETIC)",C.blue,13);d.data.forEach(([cycle,qs,mean,n],i)=>{const g=group(svg,i),x=23+i*169;rect(g,x,35,153,113,i===2?"#294b43":C.panel);t(g,x+76,58,"CYCLE "+cycle,C.muted,13);t(g,x+76,85,qs,C.ink,18);t(g,x+76,111,mean,C.ok,20);t(g,x+76,136,"observed n = "+n,C.muted,12);});t(svg,260,181,d.caption,C.muted,12);}
+function trim(svg,d){t(svg,260,22,"BASES AND QUALITY IN INPUT ORDER",C.blue,13);const chars=[...d.seq],cw=65,gap=9,left=(520-(chars.length*cw+(chars.length-1)*gap))/2;chars.forEach((b,i)=>{const g=group(svg,i),x=left+i*(cw+gap),removed=i>=d.kept,low=d.q[i]<20;rect(g,x,42,cw,83,removed?"#583237":low?"#59472f":"#244b42",removed?C.error:low?C.warn:C.ok);t(g,x+cw/2,74,b,C.ink,23);t(g,x+cw/2,108,"Q"+d.q[i],low?C.warn:C.ok,16);});t(svg,260,147,"RETAINED PREFIX: "+(d.seq.slice(0,d.kept)||"∅"),C.ok,18);t(svg,260,181,d.caption,C.muted,12);}
+function kmers(svg,d){t(svg,260,21,"OVERLAPPING WINDOWS  ·  "+d.seq,C.blue,14);const count=d.windows.length,cw=count>4?79:102,gap=8,left=(520-(count*cw+(count-1)*gap))/2;d.windows.forEach((w,i)=>{const g=group(svg,i),x=left+i*(cw+gap),invalid=d.status[i]==="×";rect(g,x,49,cw,64,invalid?"#573537":"#204b42",invalid?C.error:C.ok);t(g,x+cw/2,75,w,invalid?C.error:C.ink,21);t(g,x+cw/2,101,d.status[i],invalid?C.error:C.ok,15);});t(svg,260,142,"COUNTED: "+d.result,d.result==="?"?C.warn:C.ok,19);t(svg,260,178,d.caption,C.muted,12);}
+function align(svg,d){t(svg,260,23,"EXPLICIT GLOBAL ALIGNMENT",C.blue,14);const left=[...d.left],right=[...d.right],n=Math.max(left.length,right.length),cw=63,gap=10,x0=(520-(cw*n+(n-1)*gap))/2;for(let i=0;i<n;i++){const g=group(svg,i),x=x0+i*(cw+gap),a=left[i]||"",b=right[i]||"",match=a===b;rect(g,x,42,cw,42,match?"#244b42":"#59432d",match?C.ok:C.warn);t(g,x+cw/2,69,a,match?C.ok:C.ink,23);rect(g,x,91,cw,42,match?"#244b42":"#59432d",match?C.ok:C.warn);t(g,x+cw/2,118,b,match?C.ok:C.ink,23);}t(svg,260,155,"SCORE "+d.score,C.ok,19);t(svg,260,181,d.caption,C.muted,12);}
+const painters={route,bases,fraction,strand,codons,decision,record,fasta,interval,quality,cycles,trim,kmers,align};
+function render(container,ch,index){container.replaceChildren();const d=ch==="N01"?D[index]:ch==="N02"?D02[index]:ch==="N03"?D03[index]:null;if(!d)return false;const svg=add(container,"svg",{viewBox:"0 0 520 190",role:"img","aria-label":"Illustrative synthetic DNA teaching diagram: "+(d.caption||d.nodes?.join(" to ")||d.kind),class:"bps-example-illustration",focusable:"false"});rect(svg,0,0,520,190,C.bg,C.bg);painters[d.kind](svg,d);return true;}
 function progress(container,value){const svg=container.querySelector("svg");if(!svg)return;const nodes=[...svg.querySelectorAll("[data-bps-part]")];if(!nodes.length)return;for(const [i,n] of nodes.entries()){n.classList.toggle("bps-is-future",value!=null&&i>Math.min(nodes.length-1,Math.floor(Math.max(0,Math.min(1,Number(value)||0))*nodes.length)));n.classList.toggle("bps-is-current",value!=null&&i===Math.min(nodes.length-1,Math.floor(Math.max(0,Math.min(1,Number(value)||0))*nodes.length)));}svg.classList.toggle("bps-is-speaking",value!=null);}
-window.BioPythonSequenceIllustrations=Object.freeze({render,progress,has:(ch,i)=>Boolean(ch==="N01"?D[i]:ch==="N02"?D02[i]:false)});
+window.BioPythonSequenceIllustrations=Object.freeze({render,progress,has:(ch,i)=>Boolean(ch==="N01"?D[i]:ch==="N02"?D02[i]:ch==="N03"?D03[i]:false)});
 })();

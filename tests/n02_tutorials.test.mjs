@@ -8,7 +8,7 @@ const root=new URL('../',import.meta.url),read=p=>readFileSync(new URL(p,root),'
 const src=read('src/tutorials/n02-data.js'),svg=read('src/tutorials/sequence-illustrations.js');
 const html=read('index.html'),reader=read('src/tutorials/p01-viewer.js');
 const ctx={window:{}};
-for(const file of ['n01-data.js','n02-data.js']) {
+for(const file of ['n01-data.js','n02-data.js','n03-data.js']) {
  const code=read('src/tutorials/'+file);
  assert.doesNotThrow(()=>new Function(code));
  vm.runInNewContext(code,ctx);
@@ -18,7 +18,7 @@ const t=chapters.find(x=>x.chapter==='N02');
 const hasBio=spawnSync('python3',['-c','from Bio import SeqIO; from Bio.SeqRecord import SeqRecord'],{encoding:'utf8'}).status===0;
 
 test('N02 exact goal and 18-scene canonical contract',()=>{
- assert.deepEqual(chapters.map(x=>x.chapter),['N01','N02']);
+ assert.deepEqual(chapters.slice(0,2).map(x=>x.chapter),['N01','N02']);
  assert.ok(t); assert.deepEqual(t.goals,['N02-G01','N02-G02','N02-G03','N02-G04','N02-CAPSTONE']);
  assert.equal(t.steps.length,18);
  assert.deepEqual([...new Set(t.steps.map(s=>s.goal))].sort(),t.goals.slice().sort());
