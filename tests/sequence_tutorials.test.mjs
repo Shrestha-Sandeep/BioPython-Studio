@@ -33,10 +33,10 @@ test('N01 exact canonical goals, independent capstone and scene coverage',()=>{
  assert.equal(t.steps.at(-1).output,'');
  assert.ok(!t.steps.some(s=>s.code.includes('sample.')||s.code.includes('data.')),'Never leak Apply or Prove inputs');
  for(const s of t.steps){
-   assert.ok(s.say.trim().split(/\\s+/).length>=18,'Narration too thin: '+s.title);
+   assert.ok(s.say.trim().split(/\s+/).length>=18,'Narration too thin: '+s.title);
    assert.ok(s.note.length>=40,'Scientifically thin caveat: '+s.title);
    assert.ok(Array.isArray(s.visual)&&s.visual.every(v=>v.length===2),'Scene visual: '+s.title);
-   let lines=s.code?s.code.split('\\n').length:0;
+   let lines=s.code?s.code.split('\n').length:0;
    for(const n of s.focus)assert.ok(n>=1&&n<=lines,'Bad code highlight: '+s.title+' '+n);
    if(s.output)assert.ok(s.code,'No executable code: '+s.title);
  }
@@ -46,7 +46,7 @@ test('N01 source-safe SVG and existing Learn-only reader',()=>{
  assert.match(illustrations,/role:"img"/);
  assert.match(illustrations,/viewBox:"0 0 520 190"/);
  assert.match(illustrations,/codons/);
- assert.match(html,/src\\/tutorials\\/sequence-illustrations.js/);
+ assert.match(html,/src\/tutorials\/sequence-illustrations.js/);
  assert.ok(html.indexOf('src/tutorials/sequence-illustrations.js')<html.indexOf('src/tutorials/n01-data.js'));
  assert.ok(html.indexOf('src/tutorials/n01-data.js')<html.indexOf('src/tutorials/p01-viewer.js'));
  assert.match(viewer,/BioPythonSequenceTutorials/);
