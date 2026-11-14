@@ -30,9 +30,10 @@ jobs:
       - name: Validate modules, canonical goals and clean CPython outputs
         run: |
           node --check src/tutorials/l01-data.js
+          node --check src/tutorials/l02-data.js
           node --check src/tutorials/ml-illustrations.js
           node --check src/tutorials/p01-viewer.js
-          node --test tests/sequence_tutorials.test.mjs tests/n02_tutorials.test.mjs tests/n03_tutorials.test.mjs tests/n04_tutorials.test.mjs tests/l01_tutorials.test.mjs
+          node --test tests/sequence_tutorials.test.mjs tests/n02_tutorials.test.mjs tests/n03_tutorials.test.mjs tests/n04_tutorials.test.mjs tests/l01_tutorials.test.mjs tests/l02_tutorials.test.mjs
           python tests/test_sequence_ml_import.py
       - name: Install browser engine
         run: python -m playwright install --with-deps chromium
@@ -43,3 +44,4 @@ jobs:
           python tests/test_n03_tutorial_browser.py
           python tests/test_n04_tutorial_browser.py
           python tests/test_l01_tutorial_browser.py
+          python tests/test_l02_tutorial_browser.py
