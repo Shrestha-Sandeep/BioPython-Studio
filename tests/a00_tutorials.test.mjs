@@ -49,7 +49,8 @@ test('A00 integrates original SVG viewer, preserving frozen course and storage c
   assert.match(viewer,/window\.BioPythonAdvancedIllustrations/);
   assert.match(pictures,/role:"img"/);
   assert.match(pictures,/data-bps-part/);
-  assert.equal((pictures.match(/kind:"(?:route|split|cards|animals)"/g)||[]).length,16);
+  const a00Only=pictures.slice(pictures.indexOf('const DATA=['),pictures.indexOf('const DATA01='));
+  assert.equal((a00Only.match(/kind:"(?:route|split|cards|animals)"/g)||[]).length,16);
   assert.match(read('src/course-adapter.js'),/advancedLab.*get\("lab"\)==="advanced"/);
 });
 test('A00 every printed example matches fresh native CPython',()=>{
