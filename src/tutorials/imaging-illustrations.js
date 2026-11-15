@@ -1,0 +1,245 @@
+// Original scientific array illustrations for I01/I02; no external image values assumed.
+"use strict";
+(() => {
+const NS="http://www.w3.org/2000/svg";
+const C={bg:"#101c28",surface:"#1b3040",line:"#476275",text:"#eff7f8",muted:"#bdced6",green:"#72e0bb",blue:"#9bcff3",amber:"#f8d18b",red:"#ffaaa6"};
+const descriptors={
+I01:{
+1:{type:"comparison",headline:"Python list × 2",parts:["Repeated elements","NumPy array × 2","Each value doubles"]},
+2:{type:"comparison",headline:"dtype = uint16",parts:["10, 20, 30","Shape: (3,)","12, 22, 32"]},
+3:{type:"grid",rows:2,cols:3,base:1,selected:[],caption:"Image: 2 rows × 3 columns (Y, X)"},
+4:{type:"grid",rows:2,cols:3,base:1,selected:[3],caption:"[row 1, col 0] selects the fourth value"},
+5:{type:"grid",rows:3,cols:4,selected:[9],hide:true,caption:"Predict [2,1] — the selected value is hidden"},
+6:{type:"grid",rows:3,cols:4,selected:[9],caption:"Reveal: the value at [2,1] is 9"},
+7:{type:"comparison",headline:"Published Witz/HPA PNG",parts:["Source: credited","Format: rendered figure","Raw calibration: absent"]},
+9:{type:"rgb",caption:"One row × two columns × three display components"},
+10:{type:"rgb",caption:"RGB components are not verified fluorophore channels"},
+11:{type:"grid",rows:3,cols:4,selected:[9],caption:"Array [row=2,col=1] ⇔ display (x=1,y=2)"},
+12:{type:"comparison",headline:"8-bit colour value",parts:["Allowed: 0 ... 255","Observed: 255","Raw saturation: unknown"]},
+13:{type:"comparison",headline:"Honest report",parts:["Source: synthetic RGB","Shape: (1,2,3)","Calibrated raw: False"]}
+},
+I02:{
+1:{type:"grid",rows:4,cols:5,selected:[7,8,9,12,13,14],caption:"The crop uses rows [1:3) and columns [2:5)"},
+2:{type:"grid",rows:4,cols:5,selected:[7],caption:"Source [1,2] becomes crop [0,0]"},
+3:{type:"comparison",headline:"Slicing shares storage",parts:["Source: 1, 2, 3, 4","View changes first to 99","Saved copy stays at 1"]},
+4:{type:"comparison",headline:"Copy protects the source",parts:["Original first: 1","Copied ROI first: 99","No change to source"]},
+6:{type:"comparison",headline:"Validate bounds first",parts:["Image rows: 0 ... 3","Requested end: 99","ROI rejected"]},
+7:{type:"grid",rows:3,cols:3,selected:[4],hide:true,caption:"Predict: will source [1,1] change?"},
+8:{type:"grid",rows:3,cols:3,selected:[4],overrides:{4:"99"},caption:"After view mutation, source [1,1] is 99"},
+9:{type:"comparison",headline:"Example scale only",parts:["50 px","0.2 µm / pixel","10.0 µm"]},
+10:{type:"comparison",headline:"Area requires squared scale",parts:["50 selected pixels","(0.2 µm/px)²","2.0 µm²"]},
+11:{type:"comparison",headline:"Declared axis order",parts:["T=2, C=3, Z=1","Y=4, X=5","Shape alone is not metadata"]},
+12:{type:"comparison",headline:"TCZYX plane selection",parts:["Select T1, C2, Z0","Remaining Y and X","Plane shape (4,5)"]},
+13:{type:"comparison",headline:"Synthetic TIFF container",parts:["2 × 2 uint16","Tag: synthetic TIFF","OME not validated"]},
+14:{type:"comparison",headline:"Traceable ROI report",parts:["Source (5,7)","Crop (3,4), origin (1,2)","Independent memory"]}
+},
+I03:{
+1:{type:"comparison",headline:"Elementwise NumPy transform",parts:["Input: 1,4,9","Apply square root","Result: 1,2,3"]},
+2:{type:"comparison",headline:"Broadcast along declared final axis",parts:["Rows × 2 columns","Background (1,2)","Corrected each column"]},
+3:{type:"comparison",headline:"Broadcast requires compatible shapes",parts:["Data: 2×3","Background: 2","ValueError"]},
+4:{type:"comparison",headline:"Boolean mask and NaN",parts:["0.9 → True","NaN → False","0.5 → False"]},
+5:{type:"comparison",headline:"Preserve original data",parts:["Source: 1,9,3","Copy, threshold","Result: 0,9,0"]},
+6:{type:"comparison",headline:"Which axis is averaged?",parts:["axis=0 → 5,7,9","axis=1 → 4,10","Pixels ≠ replicates"]},
+7:{type:"comparison",headline:"Document the denominator",parts:["Supplied: 3","Finite: 2","Mean: 3.0"]},
+8:{type:"comparison",headline:"Predict NaN propagation",parts:["2.0, NaN, 4.0","np.mean(values)","Result: ?"]},
+9:{type:"comparison",headline:"Reveal missing-value treatment",parts:["np.mean → nan","np.nanmean → 3.0","Missing policy is explicit"]},
+11:{type:"comparison",headline:"Reproducible simulation",parts:["Generator seed: 17","Five simulated values","3,4,0,0,2"]},
+12:{type:"comparison",headline:"Avoid uint8 overflow",parts:["uint8 250 + 10","Wraps to 4","Wide integer: 260"]},
+13:{type:"grid",rows:2,cols:2,base:1,selected:[2,3],caption:"Mask selects values 3 and 4 — not two specimens"},
+14:{type:"comparison",headline:"Synthetic ROI report",parts:["Shape: 2×3","Valid: 5, missing: 1","Mean: 6.0 a.u."]}
+},
+I04:{
+1:{type:"comparison",headline:"Figure → axes → labelled data",parts:["Figure contains axes","X: Field number","Y: synthetic a.u."]},
+2:{type:"comparison",headline:"Use truthful axis titles",parts:["X: Field","Y: illustrative a.u.","No raw fluorescence claim"]},
+3:{type:"plot",caption:"Connected lines imply ordered change; scatter keeps points separate"},
+4:{type:"comparison",headline:"Independent categories",parts:["Control","Treated","Recovery — no line"]},
+5:{type:"hist",counts:[0,2,1,1],edges:["0–1","1–2","2–3","3–4"],caption:"4 values distributed across 4 specified bins"},
+6:{type:"comparison",headline:"Last bin includes rightmost edge",parts:["[0,2): 2 values","[2,4]: 3 values","Count total: 5"]},
+7:{type:"comparison",headline:"A figure can have two panels",parts:["Left: ordered values","Right: distribution","Total axes: 2"]},
+8:{type:"contrast",caption:"One numeric array; two display mappings, no inferred detector values"},
+9:{type:"comparison",headline:"Predict: did the source change?",parts:["Stored array","Display vmin / vmax","Equal afterward: ?"]},
+10:{type:"contrast",caption:"Reveal: source array equality is True after changing display limits"},
+12:{type:"hist",counts:[1,3,0],edges:["0–50","50–100","100–150"],caption:"Histogram of four synthetic green RGB display components"},
+13:{type:"comparison",headline:"Auditable two-panel example",parts:["Source: synthetic RGB","2 axes, 4 pixels","Array unchanged: True"]}
+},
+I05:{
+1:{type:"comparison",headline:"Declare the background estimator",parts:["Values: 2,3,8,15","25th percentile","Background: 2.75"]},
+3:{type:"comparison",headline:"Gaussian smooths a bright impulse",parts:["Center: 9.0","Sigma: 0.5 px","Center after: 5.57"]},
+4:{type:"comparison",headline:"Median can remove an isolated spot",parts:["Center before: 9","Median neighborhood","Center after: 0"]},
+6:{type:"mask",threshold:4,caption:"Threshold >4 selects four candidate pixels, not four cells"},
+7:{type:"mask",threshold:8,caption:"Strict >8 excludes the pixel equal to 8"},
+8:{type:"comparison",headline:"Predict a stricter threshold",parts:["Source: 0,2,6,8,10,12","Apply strict >10","How many survive?"]},
+9:{type:"mask",threshold:10,caption:"Reveal: strict >10 retains only the pixel 12"},
+10:{type:"comparison",headline:"Otsu gives a candidate threshold",parts:["Source: 0,0,2,2,10,10","Otsu cutoff: 2","Candidate pixels: 2"]},
+12:{type:"comparison",headline:"Check sensitivity, not one mask",parts:[">4 selects 4",">8 selects 2",">10 selects 1"]},
+13:{type:"comparison",headline:"Compare two candidate masks",parts:["Intersection: 2 px","Union: 4 px","IoU: 0.5"]},
+14:{type:"comparison",headline:"Document a candidate pixel report",parts:["Background: 3.0","Low/high: 3 / 1","Source preserved"]}
+}
+,I06:{"1":{"type":"comparison","headline":"One mask, opposing operations","parts":["8 source pixels","Closing: 9 pixels","Opening: 0 pixels"]},"2":{"type":"comparison","headline":"Small features can be eliminated","parts":["10 initial pixels","5 after opening","Isolated pixel lost"]},"3":{"type":"pair","headline":"Four-neighbor labels","left":[[1,0,0],[0,1,0],[0,0,1]],"right":[[1,0,0],[0,2,0],[0,0,3]],"caption":"Three diagonal pixels → three labels"},"4":{"type":"pair","headline":"Eight-neighbor labels","left":[[1,0,0],[0,1,0],[0,0,1]],"right":[[1,0,0],[0,1,0],[0,0,1]],"caption":"Three diagonal pixels → one label"},"5":{"type":"comparison","headline":"Prediction: diagonal connectivity","parts":["Four pixels, diagonal","connectivity = 1","Count = ?"]},"6":{"type":"comparison","headline":"Reveal: same pixels, two rules","parts":["4-neighbor: 4 labels","8-neighbor: 1 label","Input never changed"]},"7":{"type":"comparison","headline":"Area screening","parts":["Candidates: [1,4] px","Keep area ≥ 2 px","Retained: [4] px"]},"8":{"type":"comparison","headline":"Explicit inclusive area range","parts":["Min: 2 pixels","Max: 4 pixels","Exclude one singleton"]},"9":{"type":"pair","headline":"Clear border","left":[[0,1,1,0,0],[0,0,0,0,0],[0,0,1,1,0],[0,0,1,1,0],[0,0,0,0,0]],"right":[[0,0,0,0,0],[0,0,0,0,0],[0,0,1,1,0],[0,0,1,1,0],[0,0,0,0,0]],"caption":"Top-edge component excluded; central square retained"},"10":{"type":"comparison","headline":"One square, two borders","parts":["Full image: 4 px","Cropped image: 0 px","Crop makes a new edge"]},"11":{"type":"pair","headline":"Watershed candidates","left":[[0,1,1,1,0],[0,1,1,1,0],[0,1,1,1,0]],"right":[[0,1,1,2,0],[0,1,1,2,0],[0,1,1,2,0]],"caption":"Illustrative split: two explicit markers, not annotated nuclei"},"12":{"type":"comparison","headline":"Seed sensitivity","parts":["Same 9-pixel mask","One marker supplied","One output label"]},"13":{"type":"comparison","headline":"Projection loses z separation","parts":["Z0: one voxel","Z1: empty, Z2: one","XY maximum: one pixel"]},"14":{"type":"comparison","headline":"Adjacent z voxels connect","parts":["Z0: same XY","Z1: same XY","3D 6-neighbor: one"]},"15":{"type":"comparison","headline":"One function, changed image","parts":["Threshold: >4","Area cutoff: ≥2 px","Source unchanged"]},"16":{"type":"comparison","headline":"Complete rejection audit","parts":["3 initial components","1 small + 1 border","1 kept; verified=False"]}},
+I07:{"1":{"type":"rows","headline":"One specimen, two fields","cols":["ID","FIELD","AREA"],"left":[["S01","F01","4"],["S01","F02","7"]],"right":[["S01","F01","4"],["S01","F02","7"]],"caption":"Two field rows do not mean two animals"},"2":{"type":"rows","headline":"Preserve zero-padded IDs","cols":["SPECIMEN","SCORE"],"left":[["0003","5"],["0012","7"]],"right":[["0003","5"],["0012","7"]],"caption":"Text IDs survive CSV when dtype is string"},"4":{"type":"rows","headline":"Filter and retain identity","cols":["FIELD","SCORE"],"left":[["F01","0.8"],["F02","0.3"],["F03","0.9"]],"right":[["F01","0.8"],["F03","0.9"]],"caption":"Keep ≥0.7 without dropping source rows"},"5":{"type":"comparison","headline":"Index labels differ from row positions","parts":["Retained labels: 0,2","iloc[1]: F03","loc[1]: absent"]},"6":{"type":"comparison","headline":"Predict the retained IDs","parts":["Scores: .2,.8,.9,.6","Cutoff: ≥0.8","Which field IDs?"]},"7":{"type":"comparison","headline":"Reveal: retain both ID and score","parts":["F02: 0.8","F03: 0.9","Original: 4 fields"]},"8":{"type":"comparison","headline":"Schema check fails transparently","parts":["Required: specimen_id","Present: field_id,score","Missing: specimen_id"]},"10":{"type":"rows","headline":"Trim whitespace, preserve case","cols":["ID"],"left":[[" N2 "],["mutA "],["muta"]],"right":[["N2"],["mutA"],["muta"]],"caption":"Both spellings of mutA and muta remain distinct"},"11":{"type":"comparison","headline":"Normalization collision","parts":["Raw: ' A' and 'A '","Both normalize to A","Review, do not merge"]},"12":{"type":"rows","headline":"One ID, contradictory conditions","cols":["ID","COND"],"left":[["S01","ctrl"],["S01","heat"],["S02","ctrl"]],"right":[["S01","REVIEW"],["S02","ctrl"]],"caption":"Repeated S01 + conflict; preserve the source"},"14":{"type":"rows","headline":"Missing is not zero","cols":["FIELD","SCORE"],"left":[["F1","0"],["F2","NA"],["F3","2"]],"right":[["F1","ZERO"],["F2","MISSING"],["F3","OBS."]],"caption":"Three different measurement statuses"},"15":{"type":"comparison","headline":"Dropping NA hides missingness","parts":["Before A:2, B:1","After A:1, B:1","One A field vanished"]},"16":{"type":"comparison","headline":"Reproducible QC audit","parts":["Four source rows","S01 conflict + duplicate","F1,F3 missing; no deletion"]}}
+,
+I08:{"1":{"type":"rows","headline":"Validated join keeps fields","cols":["SPEC","FIELD","AREA"],"left":[["S1","F1","2"],["S1","F2","4"],["S2","F3","6"]],"right":[["S1","F1","ctrl"],["S1","F2","ctrl"],["S2","F3","heat"]],"caption":"3 source fields stay 3 after many-to-one join"},"2":{"type":"comparison","headline":"Metadata key must be unique","parts":["S1 source: 2 fields","S1 metadata: 2 rows","MergeError prevents 4 rows"]},"3":{"type":"rows","headline":"Keep unmatched left rows","cols":["SPEC","FIELD"],"left":[["S1","F1"],["S3","F2"]],"right":[["S1","both"],["S3","left_only"]],"caption":"S3 stays visible rather than being silently dropped"},"4":{"type":"comparison","headline":"Aggregate within specimen","parts":["S1: 2,4 px","S1 mean: 3.0 px","Two specimen IDs"]},"5":{"type":"comparison","headline":"Fields are not replicates","parts":["Five field rows","Two specimen IDs","True n needs design"]},"6":{"type":"rows","headline":"Wide rows become long","cols":["FIELD","GREEN","RED"],"left":[["F1","3","6"],["F2","4","7"]],"right":[["F1","green","3"],["F2","green","4"],["F1","red","6"]],"caption":"Illustrates 3 of 4 long rows; field pairing retained"},"7":{"type":"comparison","headline":"Predict the melt shape","parts":["3 original fields","2 channels each","New row count = ?"]},"8":{"type":"comparison","headline":"Reveal the melt shape","parts":["Six long rows","Three unique fields","No new biological units"]},"9":{"type":"comparison","headline":"Timestamp parsing","parts":["UTC string: valid","'unknown' → NaT","No invented date"]},"10":{"type":"comparison","headline":"Category order is metadata","parts":["baseline","treated","recovery (not time)"]},"11":{"type":"rows","headline":"CSV roundtrip with text IDs","cols":["ID","AREA"],"left":[["0003","4"],["0004","8"]],"right":[["0003","4"],["0004","8"]],"caption":"Explicit string dtype preserves zero-padded IDs"},"13":{"type":"comparison","headline":"Scatter describes points","parts":["One artist","Three synthetic points","No significance claim"]},"14":{"type":"comparison","headline":"Field-level plotting trap","parts":["4 field points","2 specimen summaries","Report actual unit"]},"15":{"type":"comparison","headline":"Label figure scales","parts":["Y: candidate area","Unit: pixel²","Range: 0 to 8"]},"16":{"type":"comparison","headline":"Two genuine export formats","parts":["SVG vector bytes","PNG at 100 DPI","Valid bytes ≠ valid science"]},"17":{"type":"comparison","headline":"Auditable report","parts":["4 fields kept","S3 unmatched, F2 missing","3 specimen summaries"]}}
+,
+I09:{"1":{"type":"pair","headline":"Area, label and center","left":[[0,1,1,0],[0,0,0,0],[0,0,0,2],[0,0,0,2]],"right":[[0,1,1,0],[0,0,0,0],[0,0,0,2],[0,0,0,2]],"caption":"Labels 1 and 2; centroid order is y,x"},"2":{"type":"comparison","headline":"Scale area by the square","parts":["2 px × (0.2)²","8 px × (0.2)²","0.08 and 0.32 µm²"]},"3":{"type":"pair","headline":"Exact label footprint intensity","left":[[1,1,0],[0,0,2]],"right":[[4,6,2],[1,3,9]],"caption":"Means: label 1 = 5, label 2 = 9"},"4":{"type":"comparison","headline":"Channel/label mismatch","parts":["Label shape: 2×2","Signal: 3×2","Reject before measurement"]},"5":{"type":"pair","headline":"Inside vs outside mask","left":[[1,1,0],[0,0,0]],"right":[[8,4,2],[2,2,2]],"caption":"Inside 6, outside 2; not a cell cytoplasm"},"6":{"type":"comparison","headline":"Guard an empty complement","parts":["All four selected","Outside pixels: 0","Ratio: None"]},"7":{"type":"comparison","headline":"Predict a candidate ratio","parts":["Inside: 5,7","Outside: 2,2,2,2","Mean ratio: ?"]},"8":{"type":"comparison","headline":"Reveal candidate ratio","parts":["Inside mean: 6","Outside mean: 2","Ratio: 3"]},"9":{"type":"comparison","headline":"Pearson is not interaction","parts":["A: 1,2,3","B: 2,4,6","r = 1, synthetic"]},"10":{"type":"comparison","headline":"Constant channel: undefined r","parts":["A: 1,2,3","B: 4,4,4","r = None"]},"11":{"type":"pair","headline":"Conditional overlap","left":[[1,1,1,0]],"right":[[1,0,0,0]],"caption":"A-positive: 2; both-positive: 1 → 0.5"},"12":{"type":"pair","headline":"Candidate peaks, y/x","left":[[0,0,0,0,0],[0,9,0,0,0],[0,0,0,0,0],[0,0,0,8,0],[0,0,0,0,0]],"right":[[0,0,0,0,0],[0,1,0,0,0],[0,0,0,0,0],[0,0,0,2,0],[0,0,0,0,0]],"caption":"Threshold >5; two local maxima"},"13":{"type":"comparison","headline":"Border policy changes count","parts":["Keep interior: [2,2]","Include edge: [0,2]","Record exclude_border"]},"14":{"type":"comparison","headline":"Nearest-center distances","parts":["Point (0,0) → 0 px","Point (3,4) → 5 px","All coordinates y,x"]},"15":{"type":"comparison","headline":"Distance needs real calibration","parts":["5 pixels","0.2 µm per pixel","1.0 µm (synthetic)"]},"16":{"type":"comparison","headline":"A measurable but unverified report","parts":["Candidate 1: 2 px, mean 5","Candidate 2: 1 px, mean 9","Verified=False"]}}
+,
+I10:{"1":{"type":"comparison","headline":"Displacement needs verified identity","parts":["5 px motion","0.2 µm/px, 2 sec","0.5 µm/s (if linked)"]},"2":{"type":"comparison","headline":"Two positions ≠ same object","parts":["Point t0: (1,1)","Point t1: (4,5)","Identity not confirmed"]},"3":{"type":"comparison","headline":"Compare two nearest distances","parts":["Best: 1.0 px","Runner-up: 1.2 px","Gap: 0.2 px"]},"4":{"type":"comparison","headline":"Ambiguity rule","parts":["Nearest gap: 0.2 px","Cutoff: ≤ 0.5 px","Flag ambiguous"]},"5":{"type":"comparison","headline":"Reference data contract","parts":["Image ID: SYN01","Axes y,x; shape 3×3","Not human validated"]},"6":{"type":"comparison","headline":"Image bounds reject row 3","parts":["Valid: (0,1)","Invalid: (3,1)","One point rejected"]},"7":{"type":"pair","headline":"Accuracy misses foreground failure","left":[[0,0,0,0,0],[0,1,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],"right":[[0,0,0,0,0],[0,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],"caption":"Different single positives: IoU=0 though high accuracy"},"8":{"type":"pair","headline":"Predict overlap without reveal","left":[[1,1,0,0]],"right":[[1,0,1,0]],"caption":"Count intersection and union; IoU = ?"},"9":{"type":"comparison","headline":"Reveal pixel IoU","parts":["Intersection: 1 px","Union: 3 px","IoU: 0.33"]},"10":{"type":"comparison","headline":"Global one-to-one matching","parts":["Reference: 2","Detections: 2","1 px matches, each once"]},"11":{"type":"comparison","headline":"Reject a forced long match","parts":["TP: 1 within radius","FP: 1 unmatched detection","FN: 1 reference"]},"12":{"type":"comparison","headline":"Object F1, not pixel IoU","parts":["TP: 2","FP: 1, FN: 1","Object F1: 0.67"]},"13":{"type":"comparison","headline":"Threshold stress test","parts":["t=4 → IoU 1.00","t=6 → 0.67","t=8 → 0.33"]},"14":{"type":"pair","headline":"Corner artifact ruins an IoU","left":[[0,0,0],[0,1,0],[0,0,0]],"right":[[1,0,0],[0,1,0],[0,0,0]],"caption":"One corner false positive yields IoU 0.5"},"15":{"type":"comparison","headline":"Complete validation audit","parts":["Pixel IoU: 0.5","Matched speed: 0.1 µm/s","Validated=False"]},"16":{"type":"comparison","headline":"Why success is not biology","parts":["Synthetic annotations","Identity/calibration unverified","Independent evidence needed"]}}
+,
+I11:{"1":{"type":"comparison","headline":"Nested experiment hierarchy","parts":["6 measured fields","2 sample preparations","n depends on design"]},"2":{"type":"rows","headline":"Keep field → unit association","cols":["BIO","FIELD"],"left":[["B1","F1"],["B1","F2"],["B2","F4"]],"right":[["B1","3 fields"],["B2","2 fields"]],"caption":"Five fields, two source preparation IDs"},"3":{"type":"rows","headline":"Explicit paired unit IDs","cols":["BIO","COND","SCORE"],"left":[["B1","ctrl","2"],["B1","trt","3"],["B2","ctrl","4"]],"right":[["B1","delta 1"],["B2","delta 2"]],"caption":"Pair by unit key, not row position"},"4":{"type":"comparison","headline":"Incomplete paired units","parts":["B1 has both conditions","B2 control only","B3 treatment only"]},"5":{"type":"comparison","headline":"QC exclusions by condition","parts":["Control: 1 fail","Treated: 0 fails","Record attrition"]},"6":{"type":"comparison","headline":"Selection changes description","parts":["Before exclusion: 0","After excluding ctrl 9: 4","No causal claim"]},"7":{"type":"comparison","headline":"Predeclare descriptive estimand","parts":["Unit B1 delta 1","Unit B2 delta 2","Mean matched delta 1.5"]},"8":{"type":"comparison","headline":"Predict paired mean","parts":["Controls: 2,6","Treated: 5,8","Matched mean = ?"]},"9":{"type":"comparison","headline":"Reveal paired mean","parts":["B1: +3","B2: +2","Mean: +2.5"]},"10":{"type":"comparison","headline":"Fields aggregate within unit","parts":["B1 mean: 3","B2 mean: 7","Independent n not fields"]},"11":{"type":"comparison","headline":"Unequal fields change weighting","parts":["Pooled fields mean: 8","Equal-unit mean: 5","Choice is estimand"]},"12":{"type":"rows","headline":"Perfect batch confounding","cols":["BATCH","CTRL","TRT"],"left":[["A","2","0"],["B","0","2"]],"right":[["A","only ctrl"],["B","only trt"]],"caption":"Treatment and batch inseparable"},"13":{"type":"rows","headline":"Both conditions each batch","cols":["BATCH","CTRL","TRT"],"left":[["A","1","1"],["B","1","1"]],"right":[["A","covered"],["B","covered"]],"caption":"Coverage helps separate influences"},"14":{"type":"comparison","headline":"Center with raw data retained","parts":["Batch A: -1,+1","Batch B: -1,+1","Original source untouched"]},"15":{"type":"comparison","headline":"Centering cannot restore inference","parts":["Raw group difference: 5","Centered: 0","Treatment not identifiable"]},"16":{"type":"comparison","headline":"Full QC-preserving report","parts":["6 field records, F5 missing","B1 only complete pair","Validated=False"]}}
+,
+I12:{"6":{"type":"comparison","headline":"Confidence is procedural, not posterior","parts":["95% coverage in repeated samples","Fixed parameter is not random","One observed CI is not 95% probability"]},"1":{"type":"comparison","headline":"Two meanings of variability","parts":["Biological n = 3","Sample SD = 1.000","Mean SEM = 0.577"]},"2":{"type":"comparison","headline":"Fields are not biological n","parts":["6 field observations","2 independent units assumed","Do not inflate n"]},"3":{"type":"comparison","headline":"Robust summaries of skewed values","parts":["Median = 2.5","Q1 = 1.75, Q3 = 9.75","IQR = 8.0"]},"4":{"type":"comparison","headline":"Mean shifts with an outlier","parts":["Mean: 9.0","Median: 2.5","Keep original value"]},"5":{"type":"comparison","headline":"95% t confidence interval","parts":["n = 4, mean = 5","t critical × SEM","[0.89, 9.11]"]},"7":{"type":"comparison","headline":"Replicate bootstrap","parts":["3 biological units","200 numerical resamples","Percentile [2.65, 6]"]},"9":{"type":"comparison","headline":"Paired data need matched IDs","parts":["Same source measured twice","Within-unit difference","Paired test declared first"]},"10":{"type":"comparison","headline":"Welch for independent units","parts":["Separate control sources","Separate treated sources","Do not pair rows"]},"11":{"type":"comparison","headline":"Holm retains comparison order","parts":["p: .03, .001, .02","adjusted: .04, .003, .04","Family defined first"]},"12":{"type":"comparison","headline":"Bonferroni is not effect size","parts":["p adjusted: .09, .003, .06","Holm: .04, .003, .04","Report effect too"]},"13":{"type":"rows","headline":"Show observed biological units","cols":["GROUP","VALUE"],"left":[["CTRL","2"],["CTRL","4"],["CTRL","6"]],"right":[["TRT","3"],["TRT","7"],["TRT","8"]],"caption":"Scatter shows one point per assumed source"},"14":{"type":"comparison","headline":"Predict paired trajectories","parts":["3 matched sources","Control and treatment each","Line artists = ?"]},"15":{"type":"comparison","headline":"Reveal paired trajectories","parts":["3 connecting lines","6 displayed values","Independent n=3"]},"16":{"type":"comparison","headline":"Report provenance as JSON","parts":["source=synthetic","n_bio=3; seed=7","alpha=0.05"]},"17":{"type":"rows","headline":"Keep individual source IDs","cols":["UNIT","VALUE"],"left":[["0001","2.0"],["0002","4.0"]],"right":[["0001","2.0"],["0002","4.0"]],"caption":"CSV roundtrip retains leading-zero source IDs"},"18":{"type":"comparison","headline":"Three different intervals","parts":["SD: 1.000","SEM: 0.577","95% CI half-width: 2.484"]},"19":{"type":"comparison","headline":"Label uncertainty on the graph","parts":["Real Matplotlib errorbar","Y: synthetic mean ± sample SD","2 groups"]},"20":{"type":"comparison","headline":"Transparent paired capstone","parts":["n_bio=4","Mean change +2.5","95% t CI [0.45,4.55]"]}}
+,
+I13:{"1":{"type":"comparison","headline":"Unsigned overflow is real","parts":["uint8: 250+20 → 14","Float: 250+20 → 270","Do not overwrite source"]},"2":{"type":"pair","headline":"Rows first, columns second","left":[[0,1,2,3,4,5],[6,7,8,9,10,11],[12,13,14,15,16,17],[18,19,20,21,22,23],[24,25,26,27,28,29]],"right":[[8,9,10],[14,15,16],[20,21,22]],"caption":"y[1:4], x[2:5] → 3×3 cropped values"},"3":{"type":"comparison","headline":"An image ID occurs twice","parts":["img1 / img1 / img2","Duplicate: img1","Audit before joining"]},"4":{"type":"rows","headline":"Do not drop unmatched files","cols":["IMAGE","VALUE"],"left":[["img1","2"],["img2","4"]],"right":[["img1","matched"],["img2","left_only"]],"caption":"Source field records both retained"},"5":{"type":"comparison","headline":"Show per-unit observations","parts":["Control: 2 units","Treatment: 2 units","Real Matplotlib scatter"]},"6":{"type":"comparison","headline":"Axis units must be honest","parts":["Synthetic response","arbitrary units (a.u.)","Source unverified"]},"7":{"type":"comparison","headline":"Publication figure provenance","parts":["Axes: y,x,RGB","Raw calibrated: False","Segmentation validated: False"]},"8":{"type":"comparison","headline":"Threshold sensitivity","parts":["Strict >100: 3 pixels","Strict >200: 1 pixel","No verified nuclei"]},"9":{"type":"comparison","headline":"Read real committed PNG bytes","parts":["fluorescence-single.png","Pillow convert RGB","Not source 16-bit TIFF"]},"10":{"type":"comparison","headline":"Rendered green is not GFP data","parts":["RGB last axis: 3","Display band index 1","Raw fluorescence: False"]},"11":{"type":"comparison","headline":"Real 48×48 source-pixel ROI","parts":["Rows 0–47","Columns 0–47","2304 display pixels"]},"12":{"type":"comparison","headline":"Actual PNG segmentation","parts":["Strict mask: RGB green >127","4-connected regions","Count computed, not validated"]},"13":{"type":"pair","headline":"Predict a synthetic candidate count","left":[[0,8,0],[0,8,0],[5,0,5]],"right":[[0,1,0],[0,1,0],[1,0,1]],"caption":"Four selected pixels. How many components?"},"14":{"type":"pair","headline":"Reveal three four-connected labels","left":[[0,1,0],[0,1,0],[1,0,1]],"right":[[0,1,0],[0,1,0],[2,0,3]],"caption":"3 labels, 4 pixels, synthetic only"},"15":{"type":"comparison","headline":"Source-aware real overlay","parts":["Pillow PNG → 48×48 ROI","4-neighbor mask → Matplotlib","No raw nuclei/fluorescence claim"]},"16":{"type":"comparison","headline":"Audit source authenticity","parts":["SHA-256: 64 hex chars","ROI, threshold and channel","Calibrated=False, verified=False"]}}
+};
+function add(parent,tag,attrs={}){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));parent.append(el);return el;}
+function rect(parent,x,y,w,h,fill=C.surface,stroke=C.line){return add(parent,"rect",{x,y,width:w,height:h,rx:8,fill,stroke,"stroke-width":1.5});}
+function label(parent,x,y,s,sz=15,color=C.text,weight=600,anchor="middle"){const t=add(parent,"text",{x,y,"font-size":sz,fill:color,"text-anchor":anchor,"font-weight":weight,"font-family":"system-ui,sans-serif"});t.textContent=s;return t;}
+function group(parent,index){return add(parent,"g",{"data-bps-part":index});}
+function comparison(svg,d){
+ label(svg,260,29,d.headline,17,C.blue,740);
+ const gap=10,w=154;
+ d.parts.forEach((x,i)=>{
+  const g=group(svg,i),left=19+i*(w+gap);
+  rect(g,left,55,w,65,i===d.parts.length-1?"#1e493d":C.surface,i===d.parts.length-1?C.green:C.line);
+  const p=x.length>23?11:x.length>17?12:14;
+  label(g,left+w/2,92,x,p,i===2?C.green:C.text);
+ });
+}
+function grid(svg,d){
+ const rows=d.rows,cols=d.cols,gap=6,cw=Math.min(103,(466-gap*(cols-1))/cols);
+ const ch=Math.min(30,(100-gap*(rows-1))/rows);
+ const totalw=cw*cols+gap*(cols-1),left=(520-totalw)/2,top=26;
+ for(let r=0;r<rows;r++){
+  for(let c=0;c<cols;c++){
+   const i=r*cols+c,g=group(svg,i),chosen=d.selected.includes(i),x=left+c*(cw+gap),y=top+r*(ch+gap);
+   rect(g,x,y,cw,ch,chosen?"#1a4b40":C.surface,chosen?C.green:C.line);
+   label(g,x+cw/2,y+ch/2+5,chosen&&d.hide?"?":String(d.overrides?.[i]??(i+(d.base||0))),14,chosen?C.green:C.text,720);
+  }
+ }
+ label(svg,260,145,d.caption,13,C.muted,480);
+ label(svg,30,18,"row ↓",10,C.muted,550,"start");label(svg,490,18,"col →",10,C.muted,550,"end");
+}
+function rgb(svg,d){
+ const samples=[[12,20,30],[90,110,130]];
+ for(let i=0;i<2;i++){
+   const g=group(svg,i),x=35+i*244;
+   label(g,x+104,36,"pixel "+String(i),13,C.muted);
+   samples[i].forEach((v,j)=>{const xx=x+j*70;rect(g,xx,53,64,59,j===0?"#482d34":j===1?"#24463b":"#243952",C.line);label(g,xx+32,88,String(v),19,C.text,720);});
+ }
+ label(svg,260,145,d.caption,13,C.muted,480);
+}
+function plot(svg,d){
+  const xsets=[[60,107,154],[304,351,398]];
+  const ys=[96,49,72];
+  for(let k=0;k<2;k++){
+    const g=group(svg,k),x=k===0?42:286;
+    rect(g,x,31,191,101,"#142530",C.line);
+    label(g,x+96,46,k===0?"LINE — ORDERED":"SCATTER — INDIVIDUAL",10,C.blue,740);
+    add(g,"line",{x1:x+22,y1:109,x2:x+169,y2:109,stroke:C.muted,"stroke-width":1});
+    add(g,"line",{x1:x+22,y1:59,x2:x+22,y2:109,stroke:C.muted,"stroke-width":1});
+    const pts=xsets[k].map((px,i)=>[px,ys[i]]);
+    if(k===0)add(g,"polyline",{points:pts.map(p=>p.join(",")).join(" "),fill:"none",stroke:C.green,"stroke-width":2.5});
+    for(const [px,py] of pts)add(g,"circle",{cx:px,cy:py,r:4.6,fill:k===0?C.green:C.blue});
+  }
+  label(svg,260,151,d.caption,12,C.muted,500);
+}
+function hist(svg,d){
+  const n=d.counts.length,width=380/n,left=72,top=42,height=83,maximum=Math.max(1,...d.counts);
+  label(svg,260,26,"COUNT EACH INPUT ONCE",13,C.blue,700);
+  const baseline=top+height;
+  add(svg,"line",{x1:61,y1:baseline,x2:464,y2:baseline,stroke:C.muted,"stroke-width":1.2});
+  d.counts.forEach((count,i)=>{
+    const g=group(svg,i),x=left+i*width+8,h=count/maximum*57;
+    rect(g,x,baseline-h,width-16,Math.max(1,h),count?C.green:"#203740",C.line);
+    label(g,x+(width-16)/2,baseline-h-7,String(count),14,C.text,740);
+    label(g,x+(width-16)/2,baseline+15,d.edges[i],11,C.muted,520);
+  });
+  label(svg,260,158,d.caption,12,C.muted,450);
+}
+function contrast(svg,d){
+ const values=[0,100,150,255];
+ const grids=[
+   {x:42,min:0,max:255,title:"DISPLAY 0–255"},
+   {x:288,min:50,max:200,title:"DISPLAY 50–200"}
+ ];
+ grids.forEach((cfg,k)=>{
+   const g=group(svg,k);
+   label(g,cfg.x+85,29,cfg.title,12,C.blue,720);
+   values.forEach((v,i)=>{
+     const intensity=Math.max(0,Math.min(255,Math.round((v-cfg.min)/(cfg.max-cfg.min)*255)));
+     const gray="#"+intensity.toString(16).padStart(2,"0").repeat(3);
+     const x=cfg.x+(i%2)*88,y=37+Math.floor(i/2)*47;
+     rect(g,x,y,78,41,gray,"#627686");
+     label(g,x+39,y+25,String(v),13,intensity>135?"#101c28":"#ffffff",750);
+   });
+ });
+ label(svg,260,151,d.caption,12,C.muted,450);
+}
+function mask(svg,d){
+  const values=[0,2,6,8,10,12];
+  const labels=["SOURCE PIXELS","CANDIDATE MASK"];
+  [0,1].forEach(k=>{
+    const g=group(svg,k),left=k===0?23:280;
+    label(g,left+105,27,labels[k],12,C.blue,730);
+    values.forEach((v,i)=>{
+      const chosen=v>d.threshold;
+      const x=left+(i%3)*70,y=38+Math.floor(i/3)*48;
+      rect(g,x,y,64,40,k===0?C.surface:chosen?"#1c5146":"#263743",k===1&&chosen?C.green:C.line);
+      label(g,x+32,y+25,k===0?String(v):chosen?"1":"0",17,k===1&&chosen?C.green:C.text,740);
+    });
+  });
+  label(svg,260,153,d.caption,12,C.muted,470);
+}
+function pair(svg,d){
+ label(svg,260,23,d.headline,15,C.blue,740);
+ const boards=[{x:48,data:d.left,caption:"SOURCE MASK"},{x:305,data:d.right,caption:"LABELS / RESULT"}];
+ boards.forEach((board,j)=>{
+  const g=group(svg,j),rows=board.data.length,cols=board.data[0].length,side=Math.min(27,110/Math.max(rows,cols));
+  label(g,board.x+cols*side/2,37,board.caption,10,C.muted,680);
+  board.data.forEach((row,r)=>row.forEach((value,c)=>{
+   const x=board.x+c*side,y=44+r*side;
+   const palette=["#213240","#276a61","#426da6","#a77639","#7d578d"];
+   add(g,"rect",{x,y,width:side-2,height:side-2,rx:3,fill:palette[Math.min(4,value)],stroke:C.line,"stroke-width":0.8});
+   label(g,x+(side-2)/2,y+side/2+3,String(value),11,C.text,720);
+  }));
+ });
+ label(svg,260,157,d.caption,11,C.muted,470);
+}
+function rows(svg,d){
+ label(svg,260,21,d.headline,15,C.blue,720);
+ const tables=[{x:22,name:"SOURCE RECORDS",data:d.left},{x:285,name:"AFTER / AUDIT",data:d.right}];
+ tables.forEach((table,i)=>{
+  const g=group(svg,i),cols=d.cols.length,cw=220/cols;
+  label(g,table.x+110,36,table.name,10,C.muted,720);
+  for(let c=0;c<cols;c++){
+   rect(g,table.x+c*cw,43,cw-2,21,"#263f51",C.line);
+   label(g,table.x+c*cw+(cw-2)/2,57,d.cols[c],9,C.text,680);
+  }
+  table.data.slice(0,3).forEach((row,r)=>row.forEach((value,c)=>{
+   const x=table.x+c*cw,y=66+r*21;
+   rect(g,x,y,cw-2,20,i===1?"#20483f":C.surface,C.line);
+   label(g,x+(cw-2)/2,y+14,String(value),10,i===1?C.green:C.text,650);
+  }));
+ });
+ label(svg,260,157,d.caption,11,C.muted,470);
+}
+const painters={comparison,grid,rgb,plot,hist,contrast,mask,pair,rows};
+function render(container,chapter,index){
+ container.replaceChildren();
+ const d=descriptors[chapter]?.[index];if(!d)return false;
+ const svg=add(container,"svg",{viewBox:"0 0 520 165",role:"img",class:"bps-example-illustration","aria-label":"Scientific teaching diagram: "+(d.caption||d.headline)+". Values are illustrative.",focusable:"false"});
+ rect(svg,0,0,520,165,C.bg,C.bg);painters[d.type](svg,d);return true;
+}
+function progress(container,value){
+ const svg=container.querySelector("svg");if(!svg)return;
+ const nodes=[...svg.querySelectorAll("[data-bps-part]")];if(!nodes.length)return;
+ if(value===null||value===undefined){
+  svg.classList.remove("bps-is-speaking");
+  nodes.forEach(n=>n.classList.remove("bps-is-future","bps-is-current"));return;
+ }
+ const p=Math.max(0,Math.min(1,Number(value)||0));
+ const current=Math.min(nodes.length-1,Math.floor(p*nodes.length));
+ svg.classList.add("bps-is-speaking");
+ nodes.forEach((n,i)=>{n.classList.toggle("bps-is-future",i>current);n.classList.toggle("bps-is-current",i===current);});
+}
+window.BioPythonImagingIllustrations=Object.freeze({render,progress,has:(ch,i)=>Boolean(descriptors[ch]?.[i])});
+})();

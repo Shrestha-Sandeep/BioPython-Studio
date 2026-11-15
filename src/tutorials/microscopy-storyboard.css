@@ -1,0 +1,34 @@
+
+/* Real published microscopy previews are visually distinct from illustrative lesson numbers. */
+.bps-example-workflow-box[hidden]{display:none!important}
+.bps-example-workflow{display:grid;gap:11px;min-width:0}
+.bps-example-workflow-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.bps-example-workflow-head strong{font-size:13px;font-weight:750}
+.bps-example-workflow-head small{font-size:11px;color:var(--muted,#acbbc4)}
+.bps-example-workflow-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.bps-example-workflow-tile{padding:8px;border:1px solid var(--line,#405362);border-radius:9px;min-width:0;background:#101c28;display:flex;flex-direction:column;gap:7px}
+.bps-example-workflow-title{display:flex;gap:6px;align-items:baseline;min-height:27px}
+.bps-example-workflow-title span{font-size:10px;color:var(--green,#69dfb0);font-weight:750}
+.bps-example-workflow-title strong{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
+.bps-example-workflow-image,.bps-example-workflow-plain{display:block;width:100%;height:95px;max-height:95px;border-radius:5px;background:#0b1520}
+.bps-example-workflow-image{object-fit:contain}
+.bps-example-workflow-plain{padding:10px 5px;display:flex;justify-content:center;flex-direction:column;gap:7px}
+.bps-example-workflow-plain span{font-size:12px;line-height:1.25;overflow-wrap:anywhere;font-weight:600}
+.bps-example-workflow-tag{margin-top:auto;color:var(--muted,#acbbc4);font-size:10px}
+.bps-example-workflow-focus{border-left:3px solid var(--green,#69dfb0);padding:5px 10px;display:flex;gap:5px;flex-wrap:wrap;align-items:baseline}
+.bps-example-workflow-focus span{font-size:11px;color:var(--green,#69dfb0);font-weight:700}
+.bps-example-workflow-focus strong{font-size:12px;font-weight:600}
+.bps-example-workflow-caveat{font-size:10px;line-height:1.5;color:var(--muted,#acbbc4);margin:0}
+.bps-example-workflow-caveat a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.bps-example-illustration [data-bps-part]{transition:opacity .22s ease,filter .22s ease}
+.bps-example-illustration.bps-is-speaking .bps-is-future{opacity:.18}
+.bps-example-illustration.bps-is-speaking .bps-is-current{opacity:1;filter:drop-shadow(0 0 3px rgba(105,223,176,.25))}
+@media(max-width:720px){
+  .bps-example-workflow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bps-example-workflow-image,.bps-example-workflow-plain{height:85px;max-height:85px}
+}
+@media(prefers-reduced-motion:reduce){
+  .bps-example-illustration [data-bps-part]{transition:none!important}
+  .bps-example-illustration.bps-is-speaking .bps-is-future{opacity:1!important}
+  .bps-example-illustration.bps-is-speaking .bps-is-current{filter:none!important}
+}

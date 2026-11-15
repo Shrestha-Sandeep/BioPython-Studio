@@ -6,7 +6,7 @@ The primary source of this application is Guillaume Witz and the University of B
 
 **Microscopy source imagery:** Original Witz example data originate from the Human Protein Atlas Cell Atlas (Thul PJ et al., *Science* 2017, DOI 10.1126/science.aal3321). Witz's `images/LICENSE.txt` and README document CC Attribution-ShareAlike 3.0 for their copied image set. Image copies/derived output figures retain this attribution and applicable share-alike terms. The application does **not** claim these visualizations are calibrated raw fluorescence measurements. For source-specific conditions, consult the upstream repository and HPA.
 
-**Bundled figures:** Each PNG below is a reproduced notebook cell output (not generated or hand-drawn by BioPython Studio). These PNGs are for teaching context; valid quantitative pixel analysis must use the source TIFF rather than screen pixels from charts. Figures are based on HPA source imagery.
+**Bundled figures:** Each PNG below is a reproduced notebook cell output (not generated or hand-drawn by BioPython Studio). These PNGs are **rendered figures** for teaching context, not raw acquisition files; valid quantitative image-intensity analysis must use calibrated source acquisition data (such as the original TIFF) rather than screen pixels from plots. Figures are based on HPA source imagery.
 
 | Bundled image | Witz notebook | Output cell |
 |---|---|---:|

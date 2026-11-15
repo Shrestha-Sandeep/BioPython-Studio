@@ -1,0 +1,251 @@
+// A00: original editable-free scientific SVG diagrams, synthetic specimen data only.
+"use strict";
+(()=>{
+  const NS="http://www.w3.org/2000/svg";
+  const C={bg:"#101c28",panel:"#1d3442",stroke:"#506f80",ink:"#f4f9ff",muted:"#c3d3dd",blue:"#91d0f8",green:"#72dfb4",amber:"#f2d18b",red:"#f8aca5"};
+  const DATA=[
+    {kind:"route",headline:"FROM RAW FILE TO AUDITABLE BIOLOGY",nodes:["Original CSV","Animal means","Tests + SHA","Reproduce"],caption:"A workflow, not a single calculation"},
+    {kind:"split",headline:"TWO EXECUTION CONTEXTS",left:["BROWSER PYODIDE","Browser runtime","Not a desktop install"],right:["DESKTOP PYTHON","Your local interpreter","Must be verified"],caption:"A browser pass cannot certify a desktop project"},
+    {kind:"cards",headline:"RECORD THE RUNTIME",cards:[["EXECUTABLE","Exact Python path"],["PREFIX","Runtime environment"],["PACKAGE VERSIONS","Pinned local dependencies"]],caption:"Interpreter identity belongs in the research record"},
+    {kind:"route",headline:"REPRODUCIBLE PROJECT ENVIRONMENT",nodes:["venv","pip install","pytest","record identity"],caption:"Commands must be executed locally; tutorial does not run them"},
+    {kind:"cards",headline:"FIRST-PASS PATH REJECTION",cards:[["SAFE","fields.csv","good"],["TRAVERSAL","../secret.csv","bad"],["ABSOLUTE","/tmp/raw.csv","bad"]],caption:"POSIX example; resolve local paths before access"},
+    {kind:"split",headline:"RESOLVE FIRST, THEN CHECK ROOT",left:["ROOT","/work/raw",""],right:["RESOLVED TARGET","/work/other.csv","OUTSIDE ROOT"],caption:"A sibling path is not contained by the original folder"},
+    {kind:"animals",headline:"FIELDS ARE NOT INDEPENDENT ANIMALS",left:["ANIMAL A","3 fields","4, 6, 8"],right:["ANIMAL B","1 field","10"],caption:"4 image rows • 2 animal IDs"},
+    {kind:"route",headline:"GROUPING PRESERVES BIOLOGICAL UNITS",nodes:["Field records","Group by ID","Subject mean","n by animal"],caption:"A reusable pure function is easier to validate"},
+    {kind:"animals",headline:"PREDICT BEFORE THE CODE REVEALS",left:["ANIMAL A","4, 6, 8","mean = ?"],right:["ANIMAL B","10","mean = ?"],caption:"Biological n = ? • output withheld"},
+    {kind:"animals",headline:"REVEAL: GROUPED MEASUREMENT",left:["ANIMAL A","mean = 6.0","3 fields"],right:["ANIMAL B","mean = 10.0","1 field"],caption:"Biological n = 2, not 4"},
+    {kind:"cards",headline:"MISSING IS NOT A ZERO SCORE",cards:[["F1 · 0.80","PASS","good"],["F2 · 0.79","LOW","bad"],["F3 · None","MISSING","warn"]],caption:"Boundary equality is included by >= 0.8"},
+    {kind:"cards",headline:"TEST CHANGED AND FAILURE CASES",cards:[["EQUALITY","PASS","good"],["BELOW MIN","FAIL","bad"],["MISSING","REJECT","warn"]],caption:"Assertions catch off-by-one and missing-value mistakes"},
+    {kind:"split",headline:"CONTENT HASH NOT A FILE LABEL",left:["FILENAME","fields.csv","Not unique"],right:["SOURCE SHA-256","cb0ebabb0aa3","12-char prefix"],caption:"The exact bytes—not the path name—define the digest"},
+    {kind:"split",headline:"CANONICAL CONFIGURATION",left:["CONFIG A","z:1, channel:0",""],right:["CONFIG B","channel:0, z:1","SAME DIGEST"],caption:"Sort JSON keys before hashing identical settings"},
+    {kind:"route",headline:"A SMALL AUDITABLE REPORT",nodes:["CSV (3 fields)","2 animals","means + digest","Git + tests"],caption:"Synthetic calculation first; real desktop evidence later"},
+    {kind:"route",headline:"INDEPENDENT RESEARCH TRANSFER",nodes:["New dataset","Path safety","Biological n","Local replay"],caption:"No completed answer is provided for this task"}
+  ];
+
+  const DATA01=[
+    {kind:"route",headline:"FROM ORIGINAL TIFF TO AUDITABLE PLANE",nodes:["TIFF bytes","T / C / Z","Native YX","Hash + report"],caption:"Scientific identity depends on source and correct axis selection"},
+    {kind:"axis",headline:"FIVE NAMED DIMENSIONS",axes:[["T",2],["C",3],["Z",2],["Y",2],["X",3]],caption:"Shape (2,3,2,2,3) is not meaningful without TCZYX"},
+    {kind:"pixels",headline:"EXPLICIT PLANE T1 C2 Z0",values:[60,61,62,63,64,65],selected:[0,5],caption:"The YX plane is 2 rows × 3 columns"},
+    {kind:"axis",headline:"SELECT BY AXIS NAME, NOT BY GUESS",axes:[["T",1],["C",2],["Z",0],["Y","all"],["X","all"]],caption:"After selection, Y and X remain spatial axes"},
+    {kind:"cards",headline:"CHANNEL INDICES MUST BE VALID",cards:[["CHANNEL 0","Valid","good"],["CHANNEL 2","Valid","good"],["CHANNEL 3","Reject","bad"]],caption:"The stack has only C0, C1, C2"},
+    {kind:"split",headline:"A BIT-DEPTH CONVERSION CAN LOSE DATA",left:["UINT16 PIXEL","40000","original"],right:["CAST UINT8","64","different value"],caption:"Display convenience must not change scientific measurements"},
+    {kind:"split",headline:"UNSIGNED BACKGROUND SUBTRACTION",left:["MATHEMATICAL","100 − 200 = −100",""],right:["UINT16 RESULT","65436","WRAPPED"],caption:"Type overflow creates a false bright value"},
+    {kind:"split",headline:"CAST BEFORE SUBTRACTING",left:["ORIGINAL UINT16","100, 1000","unchanged"],right:["CORRECTED FLOAT","0.0, 800.0","document floor"],caption:"Safe arithmetic preserves original source values"},
+    {kind:"pixels",headline:"PREDICT A STRICT THRESHOLD",values:[120,1100,50000],selected:[],caption:"How many values are >1000? Count withheld"},
+    {kind:"pixels",headline:"REVEAL THE THRESHOLD HITS",values:[120,1100,50000],selected:[1,2],caption:"Exactly 2 native pixels pass >1000"},
+    {kind:"split",headline:"PIXEL VALUES VERSUS DISPLAY LUT",left:["NATIVE PIXEL","50000","source intact"],right:["DISPLAY VALUE","1.0","clipped preview"],caption:"Brightness rendering is not native intensity"},
+    {kind:"cards",headline:"OME SIZE IS A DECLARATION",cards:[["OME SCALE","0.2 µm/px","warn"],["VERIFICATION","Not provided","bad"],["AREA OUTPUT","Unknown","warn"]],caption:"Do not report µm² without independent scale validation"},
+    {kind:"split",headline:"SQUARED PIXEL SCALE FOR AREA",left:["AREA","25 pixels²",""],right:["VERIFIED AREA","1.0 µm²","0.2 µm/px"],caption:"Correct geometry does not verify the object mask"},
+    {kind:"pixels",headline:"REAL TIFF ENCODE AND DECODE",values:[100,40000,500,65535],selected:[1,3],caption:"Synthetic 2 × 2 uint16 TIFF, actual decoded bytes"},
+    {kind:"split",headline:"SOURCE BYTES REMAIN THE SAME",left:["SHA BEFORE READ","64 hex chars",""],right:["SHA AFTER READ","Equal hash","same bytes"],caption:"Fingerprint the original TIFF, not an exported preview"},
+    {kind:"route",headline:"A SMALL SOURCE-AWARE AUDIT",nodes:["Native uint16","YX (2×2)","2 candidate px","scale unknown"],caption:"A candidate pixel is not a biological object"},
+    {kind:"route",headline:"INDEPENDENT NATIVE IMAGE TRANSFER",nodes:["New TIFF","New T/C/Z","Source hash","Human review"],caption:"No solved answers for new data or delayed review"}
+  ];
+
+
+  const DATA02=[
+    {kind:"route",headline:"CANDIDATE MASKS NEED A FAILURE AUDIT",nodes:["Image plane","Corrected","Mask + labels","Sensitivity"],caption:"An algorithm returns candidates; independent validation comes later"},
+    {kind:"mask",headline:"CAST AND CORRECT BEFORE THRESHOLD",grid:[[0,1],[4,9]],marks:[[1,0],[1,1]],caption:"Original uint16 values changed only in a new float array"},
+    {kind:"mask",headline:"CORRECTED PIXELS ABOVE 3",grid:[[0,0],[1,1]],marks:[[1,0],[1,1]],caption:"Two passing pixels, not two biological objects"},
+    {kind:"mask",headline:"BRIGHT FOREGROUND: > 5",grid:[[0,1],[0,1]],marks:[[0,1],[1,1]],caption:"Bright foreground candidate mask: 2 pixels"},
+    {kind:"mask",headline:"DARK FOREGROUND: < 5",grid:[[1,0],[1,0]],marks:[[0,0],[1,0]],caption:"Same source can yield different candidates by polarity"},
+    {kind:"split",headline:"BORDER-HEURISTIC POLARITY",left:["BORDER MEDIAN","240","55% of 255"],right:["HEURISTIC","dark","Needs verification"],caption:"Illumination artifacts can fool a border median"},
+    {kind:"mask",headline:"DIAGONAL CONNECTIVITY CHANGES COUNT",grid:[[1,0],[0,1]],marks:[[0,0],[1,1]],caption:"4-neighbor = 2 regions; 8-neighbor = 1 region"},
+    {kind:"mask",headline:"MINIMUM AREA CAN ERASE SMALL SIGNAL",grid:[[1,0,0,0],[0,0,1,1],[0,0,1,1],[0,0,0,0]],marks:[[1,2],[1,3],[2,2],[2,3]],caption:"min_area = 2 excludes the isolated foreground pixel"},
+    {kind:"mask",headline:"PREDICT FOUR-CONNECTED REGION COUNT",grid:[[1,1,0,0,1],[0,0,0,0,0],[0,0,1,1,0],[0,0,0,1,0]],marks:[],caption:"Filter: min_area = 2; count withheld"},
+    {kind:"mask",headline:"REVEAL KEPT COMPONENTS: 2 AND 3 PIXELS",grid:[[1,1,0,0,0],[0,0,0,0,0],[0,0,2,2,0],[0,0,0,2,0]],marks:[[0,0],[0,1],[2,2],[2,3],[3,3]],caption:"Two candidate regions survive; the singleton is excluded"},
+    {kind:"mask",headline:"DISTANCE TO NEAREST BACKGROUND",grid:[[0,0,0,0,0],[0,1,1,1,0],[0,1,2,1,0],[0,1,1,1,0],[0,0,0,0,0]],marks:[[2,2]],caption:"Interior distance can guide marker placement"},
+    {kind:"mask",headline:"TWO MARKERS DIVIDE A CANDIDATE BAND",grid:[[0,0,0,0,0],[0,1,1,2,2],[0,0,0,0,0]],marks:[[1,1],[1,3]],caption:"Two watershed IDs cover the same five mask pixels"},
+    {kind:"split",headline:"SAME MASK, DIFFERENT SEED COUNT",left:["ONE MARKER","1 region","Same pixels"],right:["TWO MARKERS","2 regions","Same pixels"],caption:"Counting labels cannot identify true object boundaries"},
+    {kind:"mask",headline:"MASK A AND B DISAGREE ON 2 / 6 PIXELS",grid:[[1,2,0],[0,1,2]],marks:[[0,1],[1,2]],caption:"IoU = 2/4 = 0.5; changed fraction = 2/6"},
+    {kind:"split",headline:"AGREEMENT IS NOT ACCURACY",left:["VARIANT MASKS","IoU = 1.0","Same result"],right:["TRUE REFERENCE","Absent","Not validated"],caption:"Two identical mistakes can have perfect agreement"},
+    {kind:"mask",headline:"AUDITED CANDIDATE LABELS, NOT CELLS",grid:[[1,1,0,0],[0,0,0,2],[0,2,2,2],[0,0,0,0]],marks:[[0,0],[0,1],[1,3],[2,1],[2,2],[2,3]],caption:"Two candidates, areas 2 and 4 pixels; validated=False"},
+    {kind:"route",headline:"INDEPENDENT SEGMENTATION TRANSFER",nodes:["New image","Polarity","3 variants","Annotated review"],caption:"The next chapter tests candidate error against references"}
+  ];
+
+
+  const DATA03=[
+    {kind:"route",headline:"ANNOTATIONS MAKE EVALUATION POSSIBLE",nodes:["Reference IDs","Candidate IDs","One-to-one IoU","Error report"],caption:"Object-level evidence depends on independent annotations"},
+    {kind:"instances",headline:"PERFECT PIXEL IoU CAN HIDE A MERGE",truth:[1,0,2],pred:[1,0,1],caption:"Foreground IoU=1.0; reference 2 instances, prediction 1"},
+    {kind:"instances",headline:"A FALSE MERGE STILL HAS 0.8 PIXEL IoU",truth:[1,1,0,2,2],pred:[1,1,1,1,1],caption:"Four shared pixels and one extra predicted pixel"},
+    {kind:"instances",headline:"OBJECT IDS ARE CATEGORIES, NOT SIGNALS",truth:[0,1,1,0,2,2],pred:[0,1,1,0,2,2],caption:"Label 0 is background; 1 and 2 identify objects"},
+    {kind:"matrix",headline:"PAIRWISE REFERENCE × PREDICTION IoU",matrix:[["0.90","0.80"],["0.81","0.10"]],selected:[[0,0],[1,0]],caption:"IoU scores are invented, not real annotations"},
+    {kind:"matrix",headline:"ONE PREDICTION CANNOT MATCH TWICE",matrix:[["0.80"],["0.70"]],selected:[[0,0]],caption:"Two references, one prediction: only one true match"},
+    {kind:"matrix",headline:"GREEDY 0.90 FIRST LOSES A MATCH",matrix:[["0.90","0.80"],["0.81","0.10"]],selected:[[0,0]],caption:"Greedy diagonal gives 1 TP; crossing gives 2"},
+    {kind:"matrix",headline:"MAXIMUM-CARDINALITY ONE-TO-ONE MATCH",matrix:[["0.90","0.80"],["0.81","0.10"]],selected:[[0,1],[1,0]],caption:"Cross pairs 0.80 and 0.81 qualify"},
+    {kind:"matrix",headline:"PREDICT TP, FP AND FN",matrix:[["0.60","0.10"],["0.70","0.80"]],selected:[],caption:"Threshold 0.5; pair counts withheld"},
+    {kind:"matrix",headline:"REVEAL TWO TRUE POSITIVES",matrix:[["0.60","0.10"],["0.70","0.80"]],selected:[[0,0],[1,1]],caption:"Two qualified one-to-one pairs; FP=0, FN=0"},
+    {kind:"split",headline:"CALIBRATION AND HOLDOUT SHARE AN ANIMAL",left:["TRAIN","A, B",""],right:["HOLDOUT","A again","LEAKAGE"],caption:"Different image files do not guarantee independence"},
+    {kind:"split",headline:"GROUPS DISJOINT, CLAIMS STILL LIMITED",left:["TRAIN ANIMALS","A, B",""],right:["HELD-OUT","C, D","no overlap"],caption:"Batch and experiment dependence still require checking"},
+    {kind:"cards",headline:"OBJECT ERROR METRICS",cards:[["PRECISION","0.667","good"],["RECALL","0.400","warn"],["F1","0.500","warn"]],caption:"TP=2, FP=1, FN=3"},
+    {kind:"split",headline:"BIOLOGICAL N IS NOT IMAGE COUNT",left:["IMAGE FIELDS","4",""],right:["ANIMALS","2","independent n"],caption:"Several images from one animal remain correlated"},
+    {kind:"cards",headline:"COUNTS-ONLY REFUSES PIXEL IoU",cards:[["REFERENCE","12 counts","warn"],["PREDICTED","10 counts","warn"],["SPATIAL MASK","Absent","bad"]],caption:"Absolute count error = 2; IoU is unsupported"},
+    {kind:"instances",headline:"CAPSTONE: OBJECT F1=0, PIXEL IoU=0.8",truth:[1,1,0,2,2],pred:[1,1,1,1,1],caption:"2 reference instances merged; TP=0 FP=1 FN=2"},
+    {kind:"route",headline:"INDEPENDENT ANNOTATION TRANSFER",nodes:["New masks","Max TP pairs","Group holdout","Failure gallery"],caption:"Scientific validity needs verified references and biological groups"}
+  ];
+
+
+  const DATA05=[
+    {kind:"route",headline:"FROM FIELDS TO BIOLOGICAL INFERENCE",nodes:["Image fields","Animal means","Effect / design","Reproducibility"],caption:"The scientific unit determines valid uncertainty"},
+    {kind:"cards",headline:"FIELD METADATA JOIN AUDIT",cards:[["F1","Worm A","good"],["F2","Worm B","good"],["F3","Missing ID","bad"]],caption:"Two matched fields; one requires metadata review"},
+    {kind:"cards",headline:"CONFLICTING PRIMARY KEY",cards:[["FIELD F1","Animal A","good"],["FIELD F2","Animal B","good"],["FIELD F1","Animal C","bad"]],caption:"Detect a repeated field key before building a dictionary"},
+    {kind:"hierarchy",headline:"UNEQUAL FIELDS ALTER THE POOLED MEAN",groups:[["A","0,0,0","0.0"],["B","10","10.0"]],caption:"Field pooled: 2.5; equal-animal mean: 5.0"},
+    {kind:"hierarchy",headline:"COUNT WORMS, NOT IMAGE FIELDS",groups:[["A","3 fields","1 animal"],["B","1 field","1 animal"]],caption:"Four field records are only two biological units"},
+    {kind:"cards",headline:"KEEP THE EXCLUSION REASONS",cards:[["A / F1","Value 4","good"],["A / F2","Out of focus","bad"],["B / F3","Value 8","good"]],caption:"Retained data and discarded source record are both auditable"},
+    {kind:"hierarchy",headline:"AFTER EXCLUSION, TWO ANIMAL MEANS",groups:[["A","4 retained","mean 4"],["B","8 retained","mean 8"]],caption:"The excluded value 99 must not distort animal A"},
+    {kind:"pair",headline:"COMPARE WITHIN-ANIMAL DIFFERENCES",items:[["A",4,6],["B",5,9],["C",7,8]],caption:"Independent paired changes: +2, +4, +1"},
+    {kind:"split",headline:"NO CONTROL FOR ANIMAL C",left:["COMPLETE","A, B","2 pairs"],right:["INCOMPLETE","C treatment only","Flag before analysis"],caption:"Do not turn missing pair data into a new independent sample"},
+    {kind:"pair",headline:"PREDICT THREE NEW PAIRED DIFFERENCES",items:[["A",3,4],["B",5,9],["C",6,8]],hide:true,caption:"Calculate treatment − control; mean withheld"},
+    {kind:"pair",headline:"REVEAL THE PER-PAIR CHANGES",items:[["A",3,4],["B",5,9],["C",6,8]],caption:"Differences 1,4,2 → mean 2.33; n=3 pairs"},
+    {kind:"hierarchy",headline:"BOOTSTRAP THE ANIMALS, NOT FIELDS",groups:[["CONTROL","2, 3, 4","3 animals"],["TREATED","5, 7, 9","3 animals"]],caption:"Sample whole independent units with replacement per group"},
+    {kind:"interval",headline:"SEE WHAT THE SEEDED BOOTSTRAP DOES",center:4,low:2,high:6,left:0,right:8,caption:"Toy effect=4; percentile range 2 to 6, not validated uncertainty"},
+    {kind:"hierarchy",headline:"20 IMAGES ≠ 20 INDEPENDENT WORMS",groups:[["WORM A","10 fields","1 biological unit"],["WORM B","10 fields","1 biological unit"]],caption:"A narrow interval with only two animals cannot establish certainty"},
+    {kind:"hierarchy",headline:"PLOT ONE LARGE POINT PER ANIMAL",groups:[["CONTROL","A 3.0 · B 4.0","n=2"],["TREATED","C 7.0","n=1"]],caption:"Y axis: invented signal in arbitrary units (a.u.)"},
+    {kind:"hierarchy",headline:"FIELDS NEST INSIDE ANIMAL DOTS",groups:[["A","1,3,5","mean 3"],["B","7","mean 7"]],caption:"Four field-level points but only two biological replicates"},
+    {kind:"route",headline:"A SOURCE-AWARE BIOLOGICAL REPORT",nodes:["Retain source","Exclude 1 field","2+2 animals","Effect 4.5"],caption:"Too few for inference; no invented p-value or causal claim"},
+    {kind:"route",headline:"INDEPENDENT STATISTICS TRANSFER",nodes:["New table","Declare unit","Choose design","Replay locally"],caption:"A05-REVIEW and Prove stay unsolved"}
+  ];
+
+
+  const DATA06=[
+    {kind:"route",headline:"MANY TIFFS → ONE SOURCE-AWARE REPORT",nodes:["Native TIFFs","Manifest audit","Candidate masks","Animal CSV"],caption:"Every result must trace to original image bytes and parameters"},
+    {kind:"mask",headline:"SOURCE PRESERVED, FLOAT-CORRECTED",grid:[[1,5,10]],marks:[[0,2]],caption:"Corrected [0,1,6]; just one pixel passes >2"},
+    {kind:"split",headline:"ONE PURE FUNCTION, TWO INPUTS",left:["IMAGE A","1 candidate","[1,5,10]"],right:["IMAGE B","2 candidates","[1,2,3]"],caption:"Changed inputs run without stale notebook state"},
+    {kind:"axis",headline:"DECLARE TCZYX BEFORE SELECTING",axes:[["T",2],["C",3],["Z",2],["Y",4],["X",5]],caption:"Y and X remain 4×5 after explicit T/C/Z selection"},
+    {kind:"cards",headline:"REFUSE AMBIGUOUS MULTI-AXIS TIFF",cards:[["TIME","No selection","bad"],["CHANNEL","No selection","bad"],["Z PLANE","No selection","bad"]],caption:"All non-singleton axes need a justified selector"},
+    {kind:"split",headline:"SELECT THE EXACT SOURCE PLANE",left:["SELECTORS","T1 C2 Z0",""],right:["YX","4 × 5","first 200"],caption:"A wrong source channel changes the entire analysis"},
+    {kind:"cards",headline:"DUPLICATE MANIFEST IMAGE IDS",cards:[["IMAGE","F1","good"],["IMAGE","F2","good"],["IMAGE","F2 AGAIN","bad"]],caption:"Never overwrite one source record with another"},
+    {kind:"cards",headline:"DECLARED BUT MISSING TIFF FILE",cards:[["F1","Source found","good"],["F2","Source found","good"],["F3","Not found","bad"]],caption:"Do not export a partial-looking complete report"},
+    {kind:"cards",headline:"PREDICT WHETHER PREFLIGHT MAY PASS",cards:[["ROWS","4 entries","warn"],["REPEATED ID","Present","warn"],["CAN START?","Withheld","warn"]],caption:"Predict the fail-closed decision before reveal"},
+    {kind:"cards",headline:"PREFLIGHT REFUSAL IS A SUCCESS",cards:[["DUPLICATE","F2","bad"],["MISSING","F3","bad"],["CAN START?","False","bad"]],caption:"Identified blockers before writing outputs"},
+    {kind:"split",headline:"ORIGINAL BYTE FINGERPRINT",left:["SOURCE IMAGE","64-char SHA",""],right:["CHANGED BYTE","Different hash","reported"],caption:"A hash proves byte identity, not source biological validity"},
+    {kind:"split",headline:"PARAMETERS AND SOFTWARE HAVE IDENTITY",left:["CONFIG","Canonical JSON","hash separately"],right:["ENVIRONMENT","Package versions","record versions"],caption:"Exact reproduction needs source, config, code and runtime"},
+    {kind:"mask",headline:"REGRESSION: > VERSUS ≥",grid:[[4,5,6]],marks:[[0,2]],caption:"Strict >5 counts 1; incorrect ≥5 counts 2"},
+    {kind:"cards",headline:"TEST INVALID CONFIGURATIONS",cards:[["MIN AREA","0","bad"],["VALID RULE","At least 1","good"],["EXPECTED","ValueError","warn"]],caption:"A failed invalid-input case is good test coverage"},
+    {kind:"split",headline:"TWO RUN MANIFESTS ARE DIFFERENT",left:["SOURCE HASH","Same",""],right:["CONFIG HASH","Changed","Mismatch"],caption:"Output hashes alone cannot prove exact procedure equality"},
+    {kind:"split",headline:"OUTPUT SAME, RUNTIME DIFFERENT",left:["FIRST RUN","Python 3.12","result 3"],right:["SECOND RUN","Python 3.13","result 3"],caption:"Matching numbers do not hide an environment change"},
+    {kind:"hierarchy",headline:"THREE FIELDS, TWO ANIMALS",groups:[["ANIMAL A","F1: 1 · F2: 2","mean 1.5"],["ANIMAL B","F3: 0","mean 0"]],caption:"Candidate only; field_n=3, biological_n=2"},
+    {kind:"route",headline:"INDEPENDENT SOURCE-SAFE REPLAY",nodes:["New TIFFs","Fresh manifest","Unchanged SHA","Local QA"],caption:"Review real source and candidate error cases"}
+  ];
+
+
+  const DATA07=[
+    {kind:"route",headline:"A GENUINE RESEARCH RESULT NEEDS EVIDENCE",nodes:["Question","Native sources","Reference errors","Human verdict"],caption:"Not every correct Python output is a valid scientific claim"},
+    {kind:"cards",headline:"DEFINE THE EXPERIMENT BEFORE ITS RESULT",cards:[["TARGET","Nucleus","good"],["BIOLOGICAL UNIT","Animal","good"],["ENDPOINT","Object F1","good"]],caption:"Prespecified QC rules and controls are essential"},
+    {kind:"cards",headline:"INCOMPLETE STUDY PLAN",cards:[["TARGET","Declared","good"],["ENDPOINT","Declared","good"],["EXCLUSIONS","Missing","bad"]],caption:"Incomplete preregistered-style rules block analysis readiness"},
+    {kind:"axis",headline:"ORIGINAL IMAGE METADATA: TCZYX",axes:[["T",2],["C",3],["Z",2],["Y",4],["X",5]],caption:"YX spatial shape 4 × 5; preserve native uint16"},
+    {kind:"cards",headline:"DECLARED SCALE IS NOT CALIBRATION",cards:[["OME DECLARED","0.2 µm/px","warn"],["VERIFIED","False","bad"],["AREA OUTPUT","None","warn"]],caption:"Physical units require independent scale verification"},
+    {kind:"cards",headline:"REFERENCE TYPE DEFINES PERMITTED METRICS",cards:[["PIXEL MASK","IoU allowed","good"],["INSTANCE IDS","Object matching","good"],["BIOLOGICAL TRUTH","Human review","warn"]],caption:"Annotation correctness and completeness remain separate"},
+    {kind:"cards",headline:"COUNT REFERENCES HAVE NO BOUNDARIES",cards:[["COUNT ERROR","Allowed","good"],["PIXEL IoU","Not allowed","bad"],["OBJECT TP","Not allowed","bad"]],caption:"Do not invent spatial masks from reported counts"},
+    {kind:"split",headline:"TRAIN–HOLDOUT BIOLOGICAL LEAKAGE",left:["DEVELOPMENT","Animal A, B",""],right:["HELD OUT","Animal A, C","Shared A"],caption:"Unseen file is not the same as unseen organism"},
+    {kind:"split",headline:"RESERVE COMPLETE BIOLOGICAL GROUPS",left:["DEVELOPMENT","A, B","n=2"],right:["HELD-OUT","C, D","n=2"],caption:"No shared animal IDs: necessary but not sufficient"},
+    {kind:"split",headline:"PREDICT INDEPENDENCE",left:["DEVELOPMENT","A, B",""],right:["HELD-OUT","B, C","Result withheld"],caption:"Is this evaluation independent at the subject level?"},
+    {kind:"split",headline:"REVEAL THE LEAKED ANIMAL",left:["DEVELOPMENT","A, B","n=2"],right:["HELD-OUT","B, C","B leaked"],caption:"Overlap is B; the split is not a valid unseen-animal holdout"},
+    {kind:"cards",headline:"POOL OBJECT ERRORS BEFORE MICRO F1",cards:[["TRUE POSITIVE","3","good"],["FALSE POSITIVE","3","bad"],["FALSE NEGATIVE","1","warn"]],caption:"Micro F1 = 0.6 from summed TP/FP/FN"},
+    {kind:"cards",headline:"COUNT ERRORS NEED FAILURE EXPLANATIONS",cards:[["IMAGE ONE","Error 1","warn"],["IMAGE TWO","Error 1","warn"],["IMAGE THREE","Error 2","bad"]],caption:"MAE 1.33; inspect misses, merges and false splits"},
+    {kind:"split",headline:"A DIFFERENT OUTPUT HAS A DIFFERENT HASH",left:["SOURCE + CONFIG","Same hashes",""],right:["OUTPUT BYTES","Changed","mismatch"],caption:"Exact source/parameters/output identities matter"},
+    {kind:"split",headline:"MATCHING STRINGS ARE NOT EXECUTION",left:["HASH ENTRIES","Match",""],right:["FRESH CHECKOUT","Not run","Not ready"],caption:"A copied manifest is no substitute for a real replay"},
+    {kind:"decision",headline:"LEAKAGE BLOCKS ALL PERFORMANCE CLAIMS",cases:[["Leaked groups","NO_GO"],["Bad replay","NO_GO"],["High F1 alone","INSUFFICIENT"]],caption:"Stop rather than reward a contaminated held-out score"},
+    {kind:"decision",headline:"SCIENTIFIC TRIAGE IS NOT AUTOMATIC PASS",cases:[["Weak reference","MORE ANNOTATION"],["Low object F1","IMPROVE METHOD"],["Promising evidence","HUMAN REVIEW"]],caption:"Software never certifies biological validity"},
+    {kind:"route",headline:"INDEPENDENT SEVEN-FILE EVIDENCE PACKET",nodes:["Plan + image audit","Holdout + metrics","Replay + failures","Methods + verdict"],caption:"Actual original images and annotations remain an external gate"}
+  ];
+
+  const make=(parent,name,attrs={})=>{const e=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));parent.appendChild(e);return e;};
+  const txt=(p,x,y,v,size=13,color=C.ink,weight=550)=>{const t=make(p,"text",{x,y,"text-anchor":"middle","font-family":"system-ui, sans-serif","font-size":size,"font-weight":weight,fill:color});t.textContent=String(v);return t;};
+  const rect=(p,x,y,w,h,fill=C.panel,stroke=C.stroke)=>make(p,"rect",{x,y,width:w,height:h,rx:10,fill,stroke,"stroke-width":1.4});
+  function lines(p,x,y,value,max=20,size=14,color=C.ink){
+    const tokens=String(value).split(" ");const out=[];let part="";
+    for(const word of tokens){if(part.length+word.length+1>max&&part){out.push(part);part=word;}else part=(part?part+" ":"")+word;}if(part)out.push(part);
+    out.slice(0,3).forEach((str,i)=>txt(p,x,y+i*19,str,size,color));
+  }
+  function route(svg,d){const nodes=d.nodes,n=nodes.length,w=(494-(n-1)*13)/n;nodes.forEach((str,i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=13+i*(w+13),last=i===n-1;rect(g,x,54,w,79,last?"#254f43":C.panel,last?C.green:C.stroke);lines(g,x+w/2,87,str,13,13,last?C.green:C.ink);if(i<n-1)txt(svg,x+w+6,96,"→",17,C.blue);});}
+  function cards(svg,d){d.cards.forEach((card,i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=13+i*169,tone=card[2]==="good"?C.green:card[2]==="bad"?C.red:card[2]==="warn"?C.amber:C.blue;rect(g,x,43,156,108,card[2]==="bad"?"#4b3037":card[2]==="good"?"#22483f":C.panel);txt(g,x+78,69,card[0],11,C.muted);lines(g,x+78,104,card[1],17,15,tone);});}
+  function split(svg,d){const halves=[[d.left,14],[d.right,267]];halves.forEach(([v,x],i)=>{const g=make(svg,"g",{"data-bps-part":i});rect(g,x,43,239,108,i?"#22423f":"#243c51",i?C.green:C.blue);txt(g,x+119,70,v[0],13,i?C.green:C.blue);lines(g,x+119,105,v[1],25,15,C.ink);if(v[2])lines(g,x+119,130,v[2],27,12,i?C.amber:C.muted);});}
+  function animals(svg,d){const halves=[[d.left,14,310],[d.right,337,168]];halves.forEach(([v,x,w],i)=>{const g=make(svg,"g",{"data-bps-part":i});rect(g,x,43,w,107,i?"#253f59":"#214940",i?C.blue:C.green);txt(g,x+w/2,66,v[0],13,i?C.blue:C.green);lines(g,x+w/2,98,v[1],i?15:28,i?15:17,C.ink);lines(g,x+w/2,127,v[2],i?15:28,15,C.amber);});}
+
+  function axis(svg,d){const n=d.axes.length;d.axes.forEach(([name,length],i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=20+i*100,active=name==="Y"||name==="X";rect(g,x,42,91,110,active?"#215348":C.panel,active?C.green:C.stroke);txt(g,x+45,70,name,19,active?C.green:C.blue,700);lines(g,x+45,110,String(length),8,21,C.ink);});}
+  function pixels(svg,d){const vals=d.values,n=vals.length,cols=n===4?2:3,rows=Math.ceil(n/cols),w=100,h=rows===1?98:48,x0=260-cols*w/2,y0=rows===1?46:43;vals.forEach((value,i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=x0+(i%cols)*w,y=y0+Math.floor(i/cols)*h,yes=d.selected.includes(i);rect(g,x+3,y+2,w-6,h-4,yes?"#225145":C.panel,yes?C.green:C.stroke);txt(g,x+w/2,y+h/2+6,String(value),16,yes?C.green:C.ink,700);});}
+
+  function mask(svg,d){
+    const rows=d.grid.length,cols=Math.max(...d.grid.map(r=>r.length));
+    const cell=Math.min(39,Math.floor(121/rows),Math.floor(460/cols));
+    const x0=260-cols*cell/2,y0=37+(121-rows*cell)/2;
+    const hits=new Set((d.marks||[]).map(p=>p.join(",")));
+    d.grid.forEach((row,y)=>row.forEach((v,x)=>{
+      const g=make(svg,"g",{"data-bps-part":y*cols+x}),on=hits.has(y+","+x);
+      const px=x0+x*cell,py=y0+y*cell;
+      rect(g,px+1,py+1,cell-2,cell-2,on?"#225748":v===0?"#182b36":"#2d4052",on?C.green:C.stroke);
+      txt(g,px+cell/2,py+cell/2+5,String(v),Math.min(17,cell*.4),on?C.green:C.ink,700);
+    }));
+  }
+
+  function instances(svg,d){
+    const n=Math.max(d.truth.length,d.pred.length),cell=Math.min(57,Math.floor(430/n)),x0=260-n*cell/2;
+    [["REFERENCE",d.truth,43],["PREDICTED",d.pred,102]].forEach(([name,values,y],i)=>{
+      const lab=make(svg,"g",{"data-bps-part":i});txt(lab,260,y-9,name,11,i?C.amber:C.blue,700);
+      values.forEach((value,j)=>{const g=make(svg,"g",{"data-bps-part":i*n+j}),x=x0+j*cell,
+      fill=value===0?"#192b36":value===1?"#225447":"#385378",stroke=value===0?C.stroke:value===1?C.green:C.blue;
+      rect(g,x+1,y,cell-2,33,fill,stroke);txt(g,x+cell/2,y+22,String(value),16,value===0?C.muted:C.ink,700);});
+    });
+  }
+  function matrix(svg,d){
+    const n=d.matrix.length,m=Math.max(...d.matrix.map(row=>row.length)),w=100,h=43,x0=260-m*w/2,y0=44;
+    const good=new Set((d.selected||[]).map(x=>x.join(",")));
+    d.matrix.forEach((row,i)=>row.forEach((value,j)=>{
+      const g=make(svg,"g",{"data-bps-part":i*m+j}),active=good.has(i+","+j);
+      rect(g,x0+j*w+3,y0+i*h,w-6,h-3,active?"#245748":C.panel,active?C.green:C.stroke);
+      txt(g,x0+j*w+w/2,y0+i*h+27,value,17,active?C.green:C.ink,700);
+    }));
+    txt(svg,260,y0+n*h+15,"rows = reference · columns = predictions",10,C.muted,450);
+  }
+
+  function hierarchy(svg,d){
+    const a=d.groups,columns=a.length,w=(490-12*(columns-1))/columns;
+    a.forEach(([group,fields,unit],i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=15+i*(w+12);rect(g,x,42,w,110,i%2?"#263e58":"#214839",i%2?C.blue:C.green);
+      txt(g,x+w/2,64,group,14,i%2?C.blue:C.green,750);
+      txt(g,x+w/2,96,fields,fields.length>22?11:16,C.ink);
+      txt(g,x+w/2,131,unit,12,C.amber);
+    });
+  }
+  function pair(svg,d){
+    const items=d.items,w=147;
+    items.forEach(([id,control,treated],i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=29+i*163;
+      rect(g,x,43,w,107,i%2?"#243c54":"#214639",i%2?C.blue:C.green);
+      txt(g,x+w/2,64,"ANIMAL "+id,13,C.muted);
+      txt(g,x+w/2,96,control+" → "+treated,18,C.ink);
+      txt(g,x+w/2,130,d.hide?"Δ = ?":"Δ = +"+(treated-control),16,d.hide?C.amber:C.green);
+    });
+  }
+  function interval(svg,d){
+    rect(svg,16,52,488,87,C.panel);
+    const px=v=>27+(v-d.left)/(d.right-d.left)*465;
+    make(svg,"line",{x1:px(d.left),y1:109,x2:px(d.right),y2:109,stroke:C.stroke,"stroke-width":3});
+    make(svg,"line",{x1:px(d.low),y1:100,x2:px(d.high),y2:100,stroke:C.green,"stroke-width":7,"stroke-linecap":"round"});
+    const c=make(svg,"g",{"data-bps-part":1});
+    make(c,"circle",{cx:px(d.center),cy:100,r:8,fill:C.amber,stroke:C.bg,"stroke-width":2});
+    txt(svg,px(d.low),82,String(d.low),16,C.green);txt(svg,px(d.center),76,String(d.center),16,C.amber);txt(svg,px(d.high),82,String(d.high),16,C.green);
+  }
+
+  function decision(svg,d){
+    const a=d.cases,w=152;
+    a.forEach(([problem,verdict],i)=>{const g=make(svg,"g",{"data-bps-part":i}),x=22+i*164,bad=/NO_GO|IMPROVE|INSUFFICIENT/.test(verdict);
+      rect(g,x,44,w,106,bad?"#493439":"#21483f",bad?C.red:C.green);
+      txt(g,x+w/2,72,problem,problem.length>16?12:14,C.muted);
+      lines(g,x+w/2,114,verdict,19,verdict.length>16?12:15,bad?C.red:C.green);
+    });
+  }
+  const painters={route,cards,split,animals,axis,pixels,mask,instances,matrix,hierarchy,pair,interval,decision};
+  function render(container,ch,index){
+    container.replaceChildren();const catalogue=ch==="A00"?DATA:ch==="A01"?DATA01:ch==="A02"?DATA02:ch==="A03"?DATA03:ch==="A05"?DATA05:ch==="A06"?DATA06:ch==="A07"?DATA07:null;if(!catalogue||!catalogue[index])return false;
+    const d=catalogue[index],svg=make(container,"svg",{viewBox:"0 0 520 190",class:"bps-example-illustration",role:"img",focusable:"false","aria-label":"Original "+ch+" scientific microscopy source audit diagram: "+d.headline+". "+d.caption});
+    rect(svg,0,0,520,190,C.bg,C.bg);txt(svg,260,23,d.headline,13,C.blue,700);painters[d.kind](svg,d);
+    txt(svg,260,177,d.caption,11,C.muted,450);return true;
+  }
+  function progress(container,value){
+    const svg=container.querySelector("svg");if(!svg)return;
+    const nodes=[...svg.querySelectorAll("[data-bps-part]")],current=Math.min(nodes.length-1,Math.floor(Math.max(0,Math.min(1,Number(value)||0))*nodes.length));
+    nodes.forEach((e,i)=>{e.classList.toggle("bps-is-future",value!==null&&i>current);e.classList.toggle("bps-is-current",value!==null&&i===current);});
+    svg.classList.toggle("bps-is-speaking",value!==null);
+  }
+  window.BioPythonAdvancedIllustrations=Object.freeze({has:(ch,i)=>Boolean(ch==="A00"?DATA[i]:ch==="A01"?DATA01[i]:ch==="A02"?DATA02[i]:ch==="A03"?DATA03[i]:ch==="A05"?DATA05[i]:ch==="A06"?DATA06[i]:ch==="A07"?DATA07[i]:false),render,progress});
+})();
