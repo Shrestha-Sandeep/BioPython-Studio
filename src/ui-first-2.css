@@ -171,3 +171,7 @@ body.nav-collapsed .app-layout.reference-open { grid-template-columns:minmax(0,1
   #p01-check, .run-button { padding:6px 11px; font-size:11px; }
 }
 @media(prefers-reduced-motion:reduce) { .view-switch button, .mobile-workspace-tabs button { transition:none; } }
+
+/* Legacy ?lab=advanced links retain their former Microscopy mode;
+   the main app has a directly accessible Advanced research topic instead. */
+.course-link[hidden] { display:none; }
