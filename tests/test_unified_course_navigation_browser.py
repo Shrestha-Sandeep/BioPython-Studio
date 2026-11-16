@@ -25,8 +25,8 @@ def check():
                         nav.click()
                         assert page.locator('#sidebar').evaluate('(e)=>e.classList.contains("open")')
                     page.locator('[data-stage="'+stage+'"]').click()
-                    page.wait_for_function("""(stage)=>document.querySelector('[data-stage="'+stage+'"]')?.getAttribute('aria-current')==='page'""",stage,timeout=20000)
-                    page.wait_for_function("""(count)=>document.querySelectorAll('#bps-chapter-select option').length===count""",count,timeout=20000)
+                    page.wait_for_function("""(stage)=>document.querySelector('[data-stage="'+stage+'"]')?.getAttribute('aria-current')==='page'""",arg=stage,timeout=20000)
+                    page.wait_for_function("""(count)=>document.querySelectorAll('#bps-chapter-select option').length===count""",arg=count,timeout=20000)
                     if width<=720:
                         assert not page.locator('#sidebar').evaluate('(e)=>e.classList.contains("open")')
                 assert page.locator('#bps-chapter-select optgroup').count()==2
@@ -34,7 +34,6 @@ def check():
                 change_selection(page,'bps-chapter-select','A07')
                 assert selector.input_value()=='A07'
                 assert page.locator('#bps-example-trigger').is_visible()
-                assert 'Advanced' not in page.locator('#page-title').inner_text() or page.locator('#page-title').inner_text()
                 initial=page.evaluate("() => localStorage.getItem('biopython.a07.v1')")
                 assert initial is not None
                 # Advanced > Microscopy > Advanced retains the chapter, state and editor.
