@@ -34,19 +34,29 @@ def check():
                 change_selection(page,'bps-chapter-select','A07')
                 assert selector.input_value()=='A07'
                 assert page.locator('#bps-example-trigger').is_visible()
-                initial=page.evaluate("() => localStorage.getItem('biopython.a07.v1')")
-                assert initial is not None
+                # Exercise a real editor draft. Rendering may add metadata, so compare
+                # saved learning content rather than an unstable whole JSON string.
+                test_code='# Persistent research draft\\nprint(7)'
+                page.locator('.CodeMirror').evaluate("(el,code)=>el.CodeMirror.setValue(code)",test_code)
+                page.wait_for_function("""() => JSON.parse(localStorage.getItem('biopython.a07.v1')||'{}').drafts
+                    && JSON.stringify(JSON.parse(localStorage.getItem('biopython.a07.v1')).drafts).includes('Persistent research draft')""")
+                initial=page.evaluate("() => JSON.parse(localStorage.getItem('biopython.a07.v1'))")
+                assert initial['drafts']
                 # Advanced > Microscopy > Advanced retains the chapter, state and editor.
                 if width<=720: page.locator('#nav-toggle').click()
                 page.locator('[data-stage="Microscopy"]').click()
                 if width<=720: page.locator('#nav-toggle').click()
                 page.locator('[data-stage="Advanced"]').click()
                 assert selector.input_value()=='A07'
-                assert page.evaluate("() => localStorage.getItem('biopython.a07.v1')")==initial
+                recovered=page.evaluate("() => JSON.parse(localStorage.getItem('biopython.a07.v1'))")
+                assert recovered['drafts']==initial['drafts']
+                assert recovered['progress']==initial['progress']
+                assert page.locator('.CodeMirror').evaluate("(el)=>el.CodeMirror.getValue()")==test_code
                 assert page.evaluate("() => document.documentElement.scrollWidth<=innerWidth+1"),width
                 page.reload(wait_until='domcontentloaded')
                 selector.wait_for(state='attached',timeout=60000)
                 assert selector.input_value()=='A07','Saved course and advanced chapter should resume'
+                assert page.locator('.CodeMirror').evaluate("(el)=>el.CodeMirror.getValue()")==test_code
                 assert page.locator('[data-stage="Advanced"]').get_attribute('aria-current')=='page'
                 assert not errors,(width,errors)
                 page.close()
