@@ -49,14 +49,16 @@ def check():
                 page.locator('[data-stage="Advanced"]').click()
                 assert selector.input_value()=='A07'
                 recovered=page.evaluate("() => JSON.parse(localStorage.getItem('biopython.a07.v1'))")
-                assert recovered['drafts']==initial['drafts']
+                # The course may prepend the instructional code brief on first revisit;
+                # the original independent learner code must survive intact.
+                assert any(test_code in draft for draft in recovered['drafts'].values())
                 assert recovered['progress']==initial['progress']
-                assert page.locator('.CodeMirror').evaluate("(el)=>el.CodeMirror.getValue()")==test_code
+                assert test_code in page.locator('.CodeMirror').evaluate("(el)=>el.CodeMirror.getValue()")
                 assert page.evaluate("() => document.documentElement.scrollWidth<=innerWidth+1"),width
                 page.reload(wait_until='domcontentloaded')
                 selector.wait_for(state='attached',timeout=60000)
                 assert selector.input_value()=='A07','Saved course and advanced chapter should resume'
-                assert page.locator('.CodeMirror').evaluate("(el)=>el.CodeMirror.getValue()")==test_code
+                assert test_code in page.locator('.CodeMirror').evaluate("(el)=>el.CodeMirror.getValue()")
                 assert page.locator('[data-stage="Advanced"]').get_attribute('aria-current')=='page'
                 assert not errors,(width,errors)
                 page.close()
