@@ -36,7 +36,7 @@ def check():
                 assert page.locator('#bps-example-trigger').is_visible()
                 # Exercise a real editor draft. Rendering may add metadata, so compare
                 # saved learning content rather than an unstable whole JSON string.
-                test_code='# Persistent research draft\\nprint(7)'
+                test_code='# Persistent research draft\nprint(7)'
                 page.locator('.CodeMirror').evaluate("(el,code)=>el.CodeMirror.setValue(code)",test_code)
                 page.wait_for_function("""() => JSON.parse(localStorage.getItem('biopython.a07.v1')||'{}').drafts
                     && JSON.stringify(JSON.parse(localStorage.getItem('biopython.a07.v1')).drafts).includes('Persistent research draft')""")
