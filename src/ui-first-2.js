@@ -7,7 +7,7 @@
   const body = document.body;
   const KEY = "biopython.ui-first-2.v1";
   const phases = ["learn", "apply", "prove"];
-  const stageLabels = {Python:"Python", Microscopy:"Images", NGS:"Sequences", ML:"Models"};
+  const stageLabels = {Python:"Python", Microscopy:"Images", NGS:"Sequences", ML:"Models", Advanced:"Research"};
   let view = "learn";
   let mobilePane = "code";
   let current = null;
@@ -34,7 +34,7 @@
     const stage = current?.stage || document.querySelector('[data-stage][aria-current="page"]')?.dataset.stage || "Python";
     $("top-section").textContent = stageLabels[stage] || "Python";
     $("page-title").textContent = view === "learn" ? (current?.title || "Python") :
-      (stage === "Microscopy" ? "Images" : "Code");
+      (stage === "Microscopy" || stage === "Advanced" ? "Images" : "Code");
   }
   function setMobilePane(next, persist = true) {
     if (!["code", "image", "result"].includes(next)) return;
