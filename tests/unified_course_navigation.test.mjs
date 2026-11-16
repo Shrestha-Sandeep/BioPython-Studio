@@ -36,7 +36,7 @@ test('advanced is independent of microscopy and maintains local draft identity',
  assert.match(adapter,/A_IDS\.includes\(id\)\?\(advancedLab\?"Microscopy":"Advanced"\)/);
  assert.match(adapter,/else if\(A_IDS\.includes\(id\)\)\{if\(advancedLab\)lastI=id;else lastA=id;\}/);
  assert.match(adapter,/Advanced:lastA/);
- assert.match(adapter,/biopython\.\+id\.toLowerCase\(\)\+"\.v1"/);
+ assert.ok(adapter.includes('"biopython."+id.toLowerCase()+".v1"'));
  assert.match(adapter,/biopython\.advanced-selected\.v1/);
  assert.match(adapter,/biopython\.course-selected\.v1/);
  assert.match(adapter,/optgroup/);
