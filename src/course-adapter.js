@@ -6,10 +6,10 @@ const P_IDS=["P01","P02","P03","P04","P05","P06"];
 const I_IDS=["I01","I02","I03","I04","I05","I06","I07","I08","I09","I10","I11","I12","I13"];
 const N_IDS=["N01","N02","N03","N04"];
 const L_IDS=["L01","L02","L03"];
-// Optional: the frozen 26-chapter course and its navigation remain unchanged by default.
+// Unified 33-chapter course: A04 is conditional, not a missing mandatory module.
 const A_IDS=["A00","A01","A02","A03","A05","A06","A07"];
 const advancedLab=new URLSearchParams(window.location.search).get("lab")==="advanced";
-const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...(advancedLab?A_IDS:[])];
+const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...A_IDS];
 const GOAL_COUNTS={P01:7,P02:4,P03:7,P04:6,P05:6,P06:6,I01:8,I02:6,I03:10,I04:6,I05:6,I06:7,I07:7,I08:8,I09:6,I10:6,I11:7,I12:9,I13:5,N01:4,N02:4,N03:4,N04:5,L01:4,L02:4,L03:4,A00:5,A01:4,A02:5,A03:5,A05:6,A06:6,A07:7};
 const KEYS=Object.fromEntries(IDS.map(id=>[id,"biopython."+id.toLowerCase()+".v1"]));
 const SELECT_KEY=advancedLab?"biopython.advanced-selected.v1":"biopython.course-selected.v1";
@@ -35,13 +35,14 @@ function loadState(id){
 let activeId=advancedLab?"A00":"P01",chapter=null,state=fresh(),worker=null,pending=null,busy=false,seq=0;
 try{const selected=localStorage.getItem(SELECT_KEY);if(KEYS[selected])activeId=selected;}catch{}
 const selectedStage=()=>document.querySelector('[data-stage][aria-current="page"]')?.dataset.stage||"Python";
-const stageOf=id=>P_IDS.includes(id)?"Python":(I_IDS.includes(id)||A_IDS.includes(id))?"Microscopy":N_IDS.includes(id)?"NGS":"ML";
+const stageOf=id=>P_IDS.includes(id)?"Python":I_IDS.includes(id)?"Microscopy":A_IDS.includes(id)?(advancedLab?"Microscopy":"Advanced"):N_IDS.includes(id)?"NGS":"ML";
 const isImaging=id=>I_IDS.includes(id)||A_IDS.includes(id);
-const stageIds=()=>({Python:P_IDS,Microscopy:advancedLab?[...I_IDS,...A_IDS]:I_IDS,NGS:N_IDS,ML:L_IDS})[selectedStage()]||P_IDS;
-let lastP="P01",lastI=advancedLab?"A00":"I01",lastN="N01",lastL="L01";
+const stageIds=()=>({Python:P_IDS,Microscopy:advancedLab?[...I_IDS,...A_IDS]:I_IDS,NGS:N_IDS,ML:L_IDS,Advanced:A_IDS})[selectedStage()]||P_IDS;
+let lastP="P01",lastI=advancedLab?"A00":"I01",lastN="N01",lastL="L01",lastA="A00";
 function rememberLast(id){
  if(P_IDS.includes(id))lastP=id;
- else if(I_IDS.includes(id)||A_IDS.includes(id))lastI=id;
+ else if(A_IDS.includes(id)){if(advancedLab)lastI=id;else lastA=id;}
+ else if(I_IDS.includes(id))lastI=id;
  else if(N_IDS.includes(id))lastN=id;
  else lastL=id;
 }
@@ -154,7 +155,7 @@ function render(){
     }
   }
   bridge()?.writeCode?.(value);
- el("crumb").textContent=({Python:"Python foundations",Microscopy:"Microscopy",NGS:"Sequence analysis",ML:"Machine learning"})[stageOf(activeId)]+" · "+activeId;
+ el("crumb").textContent=({Python:"Python foundations",Microscopy:"Microscopy",NGS:"Sequence analysis",ML:"Machine learning",Advanced:"Advanced research"})[stageOf(activeId)]+" · "+activeId;
  el("page-title").textContent=g.title;
  el("page-subtitle").textContent="";
  save();
@@ -274,7 +275,7 @@ function syncActivity(){
  const navigation=el("p01-navigation");
  if(navigation)navigation.hidden=!visible;
  const realLink=el("bps-real-data-project");if(realLink)realLink.hidden=activeId!=="I13"||!visible;
- const researchEntry=el("bps-advanced-entry");if(researchEntry)researchEntry.hidden=activeId!=="I13"||advancedLab||!visible;
+ const researchEntry=el("bps-advanced-entry");if(researchEntry)researchEntry.hidden=true;
  const advancedDocs=el("bps-advanced-docs");if(advancedDocs)advancedDocs.hidden=!A_IDS.includes(activeId)||!visible;
  const returnLink=el("bps-standard-return");if(returnLink)returnLink.hidden=!advancedLab||!visible;
  el("run-button").disabled=!visible||busy;
@@ -321,15 +322,27 @@ function exportPython(){
  document.body.append(link);link.click();link.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-function refreshChapterOptions(){
- const selector=el("bps-chapter-select");if(!selector)return;
+function populateChapterOptions(selector){
  selector.replaceChildren();
- for(const id of stageIds()){
-  if(!chapters[id])continue;
-  const option=document.createElement("option");option.value=id;
-  option.textContent=chapters[id].title;selector.append(option);
- }
+ const add=(parent,id)=>{
+  if(!chapters[id])return;
+  const opt=document.createElement("option");opt.value=id;
+  opt.textContent=id+" · "+chapters[id].title;parent.append(opt);
+ };
+ if(selectedStage()==="Advanced"){
+  for(const [label,ids] of [
+   ["Research foundations · A00–A03",A_IDS.slice(0,4)],
+   ["Research applications · A05–A07",A_IDS.slice(4)]
+  ]){
+   const group=document.createElement("optgroup");group.label=label;
+   ids.forEach(id=>add(group,id));selector.append(group);
+  }
+ }else stageIds().forEach(id=>add(selector,id));
  selector.value=activeId;
+}
+function refreshChapterOptions(){
+ const selector=el("bps-chapter-select");
+ if(selector)populateChapterOptions(selector);
 }
 function refreshGoalOptions(selector=el("p01-goal-select")){
  if(!selector)return;
@@ -354,16 +367,12 @@ function switchChapter(next){
  const projectLink=el("bps-real-data-project");if(projectLink)projectLink.hidden=activeId!=="I13";
  const advancedDocs=el("bps-advanced-docs");
  if(advancedDocs){advancedDocs.hidden=!A_IDS.includes(activeId);advancedDocs.href="./projects/advanced/"+activeId.toLowerCase()+"/README.md";}
- const researchEntry=el("bps-advanced-entry");if(researchEntry)researchEntry.hidden=activeId!=="I13"||advancedLab;
+ const researchEntry=el("bps-advanced-entry");if(researchEntry)researchEntry.hidden=true;
 }
 function mount(){
  const nav=document.querySelector(".sidebar-section");nav.querySelector(".quiet-text")?.remove();
- const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Lesson";chapterLabel.className="p01-label";
- const chapterSelect=document.createElement("select");chapterSelect.id="bps-chapter-select";chapterSelect.setAttribute("aria-label","Choose Python chapter");
- for(const id of stageIds()){
-   const o=document.createElement("option");o.value=id;o.textContent=chapters[id].title;
-   chapterSelect.append(o);
- }
+ const chapterLabel=document.createElement("label");chapterLabel.htmlFor="bps-chapter-select";chapterLabel.textContent="Chapter";chapterLabel.className="p01-label";
+ const chapterSelect=document.createElement("select");chapterSelect.id="bps-chapter-select";chapterSelect.setAttribute("aria-label","Choose course chapter");
  chapterSelect.addEventListener("change",()=>switchChapter(chapterSelect.value));
  const label=document.createElement("label");label.id="p01-goal-label";label.htmlFor="p01-goal-select";label.textContent="Task";label.className="p01-label";
  const select=document.createElement("select");select.id="p01-goal-select";select.setAttribute("aria-label","P01 mini-goal");
@@ -372,6 +381,7 @@ function mount(){
  const evidence=document.createElement("p");evidence.id="p01-evidence";evidence.className="p01-quiet";
  const navigation=document.createElement("div");navigation.id="p01-navigation";navigation.append(chapterLabel,chapterSelect,label,select,evidence);
  nav.append(navigation);
+  refreshChapterOptions();
  const pane=el("phase-panel"),prediction=document.createElement("p");prediction.id="p01-predict";prediction.className="p01-context";
  const hint=document.createElement("button");hint.type="button";hint.id="p01-hint";hint.className="subtle-button";hint.textContent="Hint";
  const hintText=document.createElement("p");hintText.id="p01-hint-text";hintText.className="p01-context";
@@ -393,7 +403,7 @@ function mount(){
  advancedEntry.id="bps-advanced-entry";advancedEntry.href="./?lab=advanced";
  advancedEntry.textContent="Advanced research lab";
  advancedEntry.title="Open optional applied research projects in the same Python IDE";
- advancedEntry.hidden=activeId!=="I13"||advancedLab;
+ advancedEntry.hidden=true; // Fifth topic replaces the hidden legacy research link.
  const advancedDocs=document.createElement("a");advancedDocs.id="bps-advanced-docs";
  advancedDocs.href="./projects/advanced/"+activeId.toLowerCase()+"/README.md";advancedDocs.target="_blank";
  advancedDocs.rel="noopener noreferrer";advancedDocs.textContent="Advanced project · local data guide";
@@ -415,7 +425,7 @@ function mount(){
   b.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight"].includes(e.key))queueMicrotask(()=>choosePhase(document.querySelector('[data-phase][aria-selected="true"]')?.dataset.phase||"learn"));});
  });
  document.querySelectorAll("[data-stage]").forEach(b=>b.addEventListener("click",()=>{
-  const target=({Python:lastP,Microscopy:lastI,NGS:lastN,ML:lastL})[b.dataset.stage];
+  const target=({Python:lastP,Microscopy:lastI,NGS:lastN,ML:lastL,Advanced:lastA})[b.dataset.stage];
    if(target && stageOf(activeId)!==b.dataset.stage)switchChapter(target);
    syncActivity();if(active()){render();if(newerChapter())preferEditorWhenCoding();else bridge()?.expandLesson?.(true);}
  }));
@@ -434,6 +444,8 @@ async function start(){
   }
   if(!chapters[activeId])activeId="P01";
   if(advancedLab && !A_IDS.includes(activeId))activeId="A00";
+   // Keep historical ?lab=advanced bookmarks working with their former layout.
+   if(advancedLab)document.querySelector('[data-stage="Advanced"]').hidden=true;
   chapter=chapters[activeId];state=states[activeId];
   rememberLast(activeId);
   state.goal=Math.max(0,Math.min(state.goal,goals().length-1));
