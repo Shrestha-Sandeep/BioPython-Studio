@@ -21,6 +21,7 @@
   const STAGES = {
     Python: { title: "Python workspace", crumb: "Python foundations", subtitle: "A focused environment to learn and explore Python.", mode: "python" },
     Microscopy: { title: "Image analysis workspace", crumb: "Microscopy", subtitle: "Write code and inspect microscopy image previews side by side.", mode: "image" },
+    Advanced: { title: "Research workflow workspace", crumb: "Advanced research", subtitle: "Reproducibility, source-aware analysis and scientific validation.", mode: "image" },
     NGS: { title: "Sequence analysis workspace", crumb: "Sequence analysis", subtitle: "A workspace for biological sequence analysis in Python.", mode: "python" },
     ML: { title: "Machine learning workspace", crumb: "Machine learning", subtitle: "A workspace for models, data and scientific predictions.", mode: "python" }
   };
