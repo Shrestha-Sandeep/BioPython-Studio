@@ -32,5 +32,5 @@ def test_52_individual_goal_references_and_no_copying():
 def test_advanced_reference_map_does_not_override_foundation():
     source=(ROOT/"src/course-adapter.js").read_text(encoding="utf-8")
     assert 'const A_IDS=["A00","A01","A02","A03","A05","A06","A07"]' in source
-    assert 'const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...(advancedLab?A_IDS:[])];' in source
+    assert 'const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...A_IDS];' in source
     assert 'advancedLab?"biopython.advanced-selected.v1":"biopython.course-selected.v1"' in source

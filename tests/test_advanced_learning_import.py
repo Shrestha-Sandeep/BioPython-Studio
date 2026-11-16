@@ -123,13 +123,18 @@ def test_all_real_python_reference_solutions_against_changed_cases(chapter):
     assert count == expected
 
 
-def test_optional_url_route_and_course_state_are_separate():
+def test_unified_five_topic_course_and_legacy_advanced_route_preserve_state():
     adapter = (ROOT / "src" / "course-adapter.js").read_text(encoding="utf-8")
     assert 'new URLSearchParams(window.location.search).get("lab")==="advanced"' in adapter
-    assert 'const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...(advancedLab?A_IDS:[])];' in adapter
+    assert 'const IDS=[...P_IDS,...I_IDS,...N_IDS,...L_IDS,...A_IDS];' in adapter
     assert 'advancedLab?"biopython.advanced-selected.v1":"biopython.course-selected.v1"' in adapter
     assert 'advancedLab?"A00":"P01"' in adapter
     assert 'advancedLab?[...I_IDS,...A_IDS]:I_IDS' in adapter
+    assert 'Advanced:A_IDS' in adapter
+    assert 'A_IDS.includes(id)?(advancedLab?"Microscopy":"Advanced")' in adapter
+    assert 'if(A_IDS.includes(activeId))localStorage.setItem("biopython.advanced-selected.v1",activeId)' in adapter
+    assert 'if(advancedLab)document.querySelector(\'[data-stage="Advanced"]\').hidden=true' in adapter
+    assert 'lastA="A00"' in adapter
     assert 'A00:5,A01:4,A02:5,A03:5,A05:6,A06:6,A07:7' in adapter
     assert 'href="./?lab=advanced"' in adapter
     assert 'href="./"' in adapter

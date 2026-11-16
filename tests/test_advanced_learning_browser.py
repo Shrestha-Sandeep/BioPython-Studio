@@ -69,8 +69,10 @@ def main():
                 assert page.locator("#bps-chapter-select option").count()==13
                 page.locator("#bps-chapter-select").select_option("I13")
                 assert page.locator("#bps-advanced-entry").get_attribute("href")=="./?lab=advanced"
-                assert page.locator("#bps-advanced-entry").get_attribute("hidden") is None
-                # Store existing 26-chapter selection, then verify advanced
+                # Advanced is now a directly accessible fifth topic, not a hidden link in I13.
+                assert page.locator('[data-stage="Advanced"]').count()==1
+                assert page.locator("#bps-advanced-entry").get_attribute("hidden") is not None
+                # Preserve the current course selection while opening a legacy advanced
                 # navigation never clobbers the standard selection key.
                 original=page.evaluate("localStorage.getItem('biopython.course-selected.v1')")
                 assert original=="I13"
