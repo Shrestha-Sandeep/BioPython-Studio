@@ -39,6 +39,10 @@ const stageOf=id=>P_IDS.includes(id)?"Python":I_IDS.includes(id)?"Microscopy":A_
 const isImaging=id=>I_IDS.includes(id)||A_IDS.includes(id);
 const stageIds=()=>({Python:P_IDS,Microscopy:advancedLab?[...I_IDS,...A_IDS]:I_IDS,NGS:N_IDS,ML:L_IDS,Advanced:A_IDS})[selectedStage()]||P_IDS;
 let lastP="P01",lastI=advancedLab?"A00":"I01",lastN="N01",lastL="L01",lastA="A00";
+// Restore the last advanced chapter selected on the previous ?lab=advanced route.
+try{const oldAdvanced=localStorage.getItem("biopython.advanced-selected.v1");
+ if(A_IDS.includes(oldAdvanced))lastA=oldAdvanced;
+}catch{}
 function rememberLast(id){
  if(P_IDS.includes(id))lastP=id;
  else if(A_IDS.includes(id)){if(advancedLab)lastI=id;else lastA=id;}
@@ -63,6 +67,7 @@ function save(){
  try{
   localStorage.setItem(KEYS[activeId],JSON.stringify({schema_version:1,content_version:chapter?.version,goal:state.goal,phase:state.phase,drafts:state.drafts,briefIntroduced:state.briefIntroduced,hints:state.hints,progress:state.progress,reflections:state.reflections,capstoneFirstPassAt:state.capstoneFirstPassAt}));
   localStorage.setItem(SELECT_KEY,activeId);
+  if(A_IDS.includes(activeId))localStorage.setItem("biopython.advanced-selected.v1",activeId);
   el("save-status").textContent="Saved locally";
  }catch{el("save-status").textContent="Saving blocked";}
 }
